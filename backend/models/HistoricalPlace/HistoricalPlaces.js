@@ -17,4 +17,4 @@ const HistoricalPlacesSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-module.exports = mongoose.model('HistoricalPlaces', HistoricalPlacesSchema);
+module.exports = mongoose.model('HistoricalPlace', HistoricalPlacesSchema);
