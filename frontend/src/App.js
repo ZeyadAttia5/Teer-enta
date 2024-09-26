@@ -4,6 +4,9 @@ import AddTourismGovernor from './components/addTourismGovernor.js';
 import AddAdmin from './components/addAdmin.js';
 import CreateCategory from './components/addActivityCategory.js';
 import DeleteActivityCategory from './components/deleteActivityCategory.js';
+import ViewActivityCategories from './components/viewActivityCategory.js';
+import UpdateActivityCategory from './components/updateActivityCategory.js';
+
 function App() {
   return (
     <div className="App">
@@ -19,6 +22,11 @@ function App() {
       <CreateCategory/>
       <br></br>
       <DeleteActivityCategory/>
+      <br></br>
+      <ViewActivityCategories/>
+      <br></br>
+      <UpdateActivityCategory/>
+
     </div>
     
   );

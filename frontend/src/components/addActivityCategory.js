@@ -44,14 +44,7 @@ const AddActivityCategory = () => {
                         placeholder='description'
                         onChange={(e) => setDescription(e.target.value)}
                     />
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={isActive}
-                            onChange={(e) => setIsActive(e.target.checked)} 
-                        />
-                        Is Active
-                    </label>
+                    
                 <button type="submit">Add Category</button> 
             </form>
             {message && <p>{message}</p>} 
