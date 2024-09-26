@@ -4,8 +4,11 @@ const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const dbUrl = process.env.DB_URL;
 const PORT= process.env.PORT || 8000;
-
 const app = express();
+
+const activityRoutes = require('./routes/activity');
+
+
 app.use((req, res, next) => {
     console.log(`Received ${req.method} request for ${req.url}`);
     res.setHeader("Content-Type", "application/json");
@@ -23,6 +26,7 @@ app.use((req, res, next) => {
     next();
 
 });
+
 app.use(bodyParser.json({type: "application/json", limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: false}));
 mongoose.connect(dbUrl).then(r => {
@@ -33,4 +37,9 @@ mongoose.connect(dbUrl).then(r => {
     console.log(dbUrl);
 })
 
+app.use("/activity", activityRoutes);
+
+app.use((req, res) => {
+    res.status(404).json({ message: "this page doesnt exist" });
+});
 app.listen(PORT);
