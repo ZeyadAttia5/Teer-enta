@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const advertiserProfile = require('../../models/advertiser');
+const advertiserProfile = require('../../models/Users/Advertiser');
 
 exports.createAdvertiserProfile = async (req, res, next) => {
     try {

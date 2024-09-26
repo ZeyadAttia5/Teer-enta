@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const User = require('../../models/user');
-const TourGuideProfile = require('../../models/TourGuide');
+const User = require('../../models/Users/User');
+const TourGuideProfile = require('../../models/Users/TourGuide');
 
 exports.createTourGuideProfile = async (req, res, next) => {
     try {

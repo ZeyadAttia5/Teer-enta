@@ -1,5 +1,5 @@
-const TouristProfile = require('../../models/Tourist');
-const User = require('../../models/User');
+const TouristProfile = require('../../models/Users/Tourist');
+const User = require('../../models/Users/User');
 const mongoose = require('mongoose')
 
 exports.updateTourist = async (req, res, next) => {

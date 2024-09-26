@@ -1,5 +1,5 @@
-const Tourist = require('../models/Tourist');
-const User = require("../models/User");
+const Tourist = require('../models/Users/Tourist');
+const User = require("../models/Users/User");
 
 exports.signup = async (req, res) => {
     const { email, username, password, userType, profileData } = req.body;

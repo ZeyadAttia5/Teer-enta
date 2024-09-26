@@ -1,4 +1,4 @@
-const Tag = require("../models/Tag")
+const Tag = require("../models/HistoricalPlace/Tag")
 const mongoose = require('mongoose');
 
 exports.getTags = async (req, res) => {
