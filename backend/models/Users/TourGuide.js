@@ -26,7 +26,7 @@ const TourGuideProfileSchema = new mongoose.Schema({
     }],
     comments: [{
         createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-        rating: Number,
+        comment: String,
     }],
     isAccepted: {type: Boolean, default: false}
 }, {timestamps: true});
