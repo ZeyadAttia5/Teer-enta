@@ -11,6 +11,16 @@ exports.updateTourist = async (req, res, next) => {
         }
         const {email, username, wallet, mobileNumber, nationality, dateOfBirth, occupation} = req.body;
 
+        const emailExists = await User.findOne({email:email});
+        if (emailExists){
+            return res.status(400).json({message: 'Email already exists'})
+        }
+        const usernameExists = await User.findOne({username:username});
+        if (usernameExists){
+            return res.status(400).json({message: 'Username already exists'})
+        }
+
+
         // Find and update the User document
         const updatedUser = await User.findByIdAndUpdate(userId, {
             email,

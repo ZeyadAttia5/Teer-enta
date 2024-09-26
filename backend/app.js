@@ -29,7 +29,7 @@ mongoose.connect(dbUrl).then(r => {
     console.log('Connected to DB');
 }).catch(e => {
     console.error(e);
-    console.log('Could not connect to DB');
+    console.log('Could not connect to DB.');
     console.log(dbUrl);
 })
 
