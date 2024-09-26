@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
+const User = require('./User');
 
 const SellerProfileSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    name: String,
-    description: String,
-    isAccepted: { type: Boolean, default: false }
+    name: {type: String, required: true},
+    profileImage: {type: String, required: true},
+    profileDocument: {type: String, required: true},
+    description: {type: String, required: true},
+    isAccepted: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true } ,
 } , {timestamps:true});
 
-module.exports = mongoose.model("Seller", SellerProfileSchema);
+const Seller = User.discriminator('Seller', SellerProfileSchema);
+
+module.exports = Seller;

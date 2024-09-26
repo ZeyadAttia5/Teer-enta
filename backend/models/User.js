@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    email: {type: String,  unique: true},
-    username: {type: String, required: true, unique: true},
-    password: {type: String, required: true},
-    userType: {
+    email: { type: String, unique: true },
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    userRole: {
         type: String,
-        enum: ['Tourist', 'TourGuide', 'Advertiser', 'Seller', 'Admin', 'Governor'],
+        enum: ['Tourist', 'TourGuide', 'Advertiser', 'Seller', 'Admin', 'TourismGovernor'],
         required: true
     },
-    //checking if the user has a profile or not
-    hasProfile: {type: Boolean, default: false},
-    profile: {type: mongoose.Schema.Types.ObjectId, refPath: 'userType'},
-    wallet: {type: Number, default: 0},
-}, {timestamps: true});
+    hasProfile: { type: Boolean, default: false },
+}, { timestamps: true, discriminatorKey: 'userRole' }); // discriminatorKey is important
 
-module.exports = mongoose.model('User', userSchema);
+// Base model
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;

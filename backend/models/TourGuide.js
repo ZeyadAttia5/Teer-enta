@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
+
+const User = require('./User');
+
 const TourGuideProfileSchema = new mongoose.Schema({
-    user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    mobileNumber: String,
-    yearsOfExperience: Number,
-    previousWork: [
+    mobileNumber: {type: String, required: true},
+    yearsOfExperience: {type: Number, required: true},
+    profileImage: {type: String, required: true},
+    profileDocument: {type: String, required: true},
+    isActive: {type: Boolean, default: true},
+    previousWorks: [
         {
             jobTitle: String,
             jobDescription: String,
@@ -15,6 +20,17 @@ const TourGuideProfileSchema = new mongoose.Schema({
             ]
         }
     ],
+    ratings: [{
+        createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+        rating: Number
+    }],
+    comments: [{
+        createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+        rating: Number,
+    }],
     isAccepted: {type: Boolean, default: false}
 }, {timestamps: true});
-module.exports = mongoose.model('TourGuide', TourGuideProfileSchema);
+
+const TourGuide = User.discriminator('TourGuide', TourGuideProfileSchema);
+
+module.exports = TourGuide;

@@ -1,4 +1,4 @@
-const Category = require('../models/Category')
+const Category = require('../models/ActivityCategory')
 const mongoose = require('mongoose');
 
 exports.getCategories = async (req, res) => {
