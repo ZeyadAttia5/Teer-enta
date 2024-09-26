@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const dbUrl = process.env.DB_URL;
+const PORT= process.env.PORT || 8000;
 const tagRouter = require('./routes/tag');
 
 const app = express();
@@ -33,6 +34,6 @@ mongoose.connect(dbUrl).then(r => {
     console.log(dbUrl);
 })
 
-app.listen(3000);
+app.listen(PORT);
 
 app.use('/tag' , tagRouter ) ;
