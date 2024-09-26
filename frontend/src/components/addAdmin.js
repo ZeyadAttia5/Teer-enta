@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const AddTourismGovernor = () => {
+const AddAdmin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleAddGovernor = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+  const handleAddAdmin = async (e) => {
+    e.preventDefault(); // Prevent the default form submission
+
     try {
-      const response = await axios.post('/addTourismGovernor', { username, password });
-      setMessage(response.data.message); 
+      const response = await axios.post('/addAdmin', { username, password });
+      setMessage(response.data.message);
       setUsername('');
       setPassword('');
     } catch (error) {
-      setMessage('Error adding Tourism Governor: ' + error.response?.data?.message || 'An unexpected error occurred.');
+      setMessage('Error adding Admin: ' + error.response?.data?.message || 'An unexpected error occurred.');
     }
   };
 
   return (
     <div>
-      <form onSubmit={handleAddGovernor}>
+      <form onSubmit={handleAddAdmin}>
         <input 
           type="text" 
           placeholder="Enter username" 
@@ -35,12 +36,11 @@ const AddTourismGovernor = () => {
           onChange={(e) => setPassword(e.target.value)} 
           required 
         />
-        <button type="submit">Add Governor</button>
+        <button type="submit">Add Admin</button>
       </form>
       {message && <p>{message}</p>} {/* Display message if it exists */}
     </div>
   );
 };
 
-export default AddTourismGovernor; // Export the component
-
+export default AddAdmin; // Exporting the AddAdmin component
