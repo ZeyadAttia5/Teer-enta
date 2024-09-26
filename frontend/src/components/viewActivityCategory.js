@@ -9,7 +9,7 @@ const ViewActivityCategories = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('/api/activityCategories'); // Get the categories from the backend
+        const response = await axios.get('/api/activity-Categories'); // Get the categories from the backend
         setCategories(response.data); // Store the categories in state
       } catch (error) {
         console.error("Error fetching categories: ", error); // Log any errors

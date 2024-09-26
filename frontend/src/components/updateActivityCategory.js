@@ -23,7 +23,6 @@ const UpdateActivityCategory = () => {
 
   return (
     <div>
-      <h2>Update Activity Category</h2>
       <input 
         type="text" 
         placeholder="Enter Category ID" 
