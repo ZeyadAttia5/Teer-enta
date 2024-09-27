@@ -14,6 +14,10 @@ import CreatePreferenceTag from './components/CRUGtag/preference/createPreferenc
 import ViewPreferenceTags from './components/CRUGtag/preference/viewPreferenceTag.js'; 
 import UpdatePreferenceTag from './components/CRUGtag/preference/updatePreferenceTag.js'; 
 import DeletePreferenceTag from './components/CRUGtag/preference/deletePreferenceTag.js'; 
+import DeleteActivityTag from './components/CRUGtag/activity/deleteActivityTag.js';
+import ViewActivityTags from './components/CRUGtag/activity/viewActivityTag.js';
+import UpdateActivityTag from './components/CRUGtag/activity/updateActivityTag.js';
+import CreateActivityTag from './components/CRUGtag/activity/createActivityTag.js';
 function App() {
   return (
     <div className="App">
@@ -48,6 +52,14 @@ function App() {
       <UpdatePreferenceTag/>
       <br></br>
       <DeletePreferenceTag/>
+      <br></br>
+      <DeleteActivityTag/>
+      <br></br>
+      <UpdateActivityTag/>
+      <br></br>
+      <CreateActivityTag/>
+      <br></br>
+      <ViewActivityTags/>
 
     </div>
     
