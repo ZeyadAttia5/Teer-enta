@@ -2,14 +2,18 @@ import './App.css';
 import DeleteUser from './components/deleteUser.js';
 import AddTourismGovernor from './components/addTourismGovernor.js';
 import AddAdmin from './components/addAdmin.js';
-import CreateCategory from './components/addActivityCategory.js';
-import DeleteActivityCategory from './components/deleteActivityCategory.js';
-import ViewActivityCategories from './components/viewActivityCategory.js';
-import UpdateActivityCategory from './components/updateActivityCategory.js';
-import CreateHistoricalTag from './components/createHistoricalTag.js';
-import DeleteHistoricalTag from './components/deleteHistoricalTag.js';
-import UpdateHistoricalTag from './components/updateHistoricalTag.js';
-import ViewHistoricalTag from './components/viewHistoricalTag.js';
+import CreateCategory from './components/CRUDactivitycategory/addActivityCategory.js';
+import DeleteActivityCategory from './components/CRUDactivitycategory/deleteActivityCategory.js';
+import ViewActivityCategories from './components/CRUDactivitycategory/viewActivityCategory.js';
+import UpdateActivityCategory from './components/CRUDactivitycategory/updateActivityCategory.js';
+import CreateHistoricalTag from './components/CRUGtag/historical/createHistoricalTag.js';
+import DeleteHistoricalTag from './components/CRUGtag/historical/deleteHistoricalTag.js';
+import UpdateHistoricalTag from './components/CRUGtag/historical/updateHistoricalTag.js';
+import ViewHistoricalTag from './components/CRUGtag/historical/viewHistoricalTag.js';
+import CreatePreferenceTag from './components/CRUGtag/preference/createPreferenceTag.js'; 
+import ViewPreferenceTags from './components/CRUGtag/preference/viewPreferenceTag.js'; 
+import UpdatePreferenceTag from './components/CRUGtag/preference/updatePreferenceTag.js'; 
+import DeletePreferenceTag from './components/CRUGtag/preference/deletePreferenceTag.js'; 
 function App() {
   return (
     <div className="App">
@@ -36,6 +40,14 @@ function App() {
       <UpdateHistoricalTag/>
       <br></br>
       <ViewHistoricalTag/>
+      <br></br>
+      <CreatePreferenceTag/>
+      <br></br>
+      <ViewPreferenceTags/>
+      <br></br>
+      <UpdatePreferenceTag/>
+      <br></br>
+      <DeletePreferenceTag/>
 
     </div>
     
