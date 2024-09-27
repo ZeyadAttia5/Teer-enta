@@ -10,6 +10,7 @@ const authRoutes = require('./routes/auth');
 const activityRoutes = require('./routes/activity');
 const profileRoutes = require('./routes/profile');
 const accountRoutes = require('./routes/account');
+const productRoutes = require('./routes/product');
 
 
 app.use((req, res, next) => {
@@ -45,6 +46,7 @@ app.use("/activity", activityRoutes);
 app.use("/auth" , authRoutes ) ;
 app.use("/profile", profileRoutes);
 app.use("/account" , accountRoutes) ;
+app.use("/product" , productRoutes) ;
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });
