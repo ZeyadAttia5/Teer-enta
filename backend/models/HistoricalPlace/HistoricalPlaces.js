@@ -7,6 +7,7 @@ const HistoricalPlacesSchema = new mongoose.Schema({
     location: { type: String, required: true },
     images: [{ type: String, required: true }],
     isActive: { type: Boolean, default: true },
+    tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
     tickets:[
         {
             type: { type: String, required: true },

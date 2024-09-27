@@ -6,11 +6,11 @@ const activityController = require("../controllers/activity");
 
 router.get("/", activityController.getActivities);
 
-router.post("/add-activity", activityController.createActivity);
+router.post("/create", activityController.createActivity);
 
-router.put("/edit-activity/:activityId", activityController.updateActivity);
+router.put("/edit/:id", activityController.updateActivity);
 
-router.delete("/delete-activity/:activityId", activityController.deleteActivity);
+router.delete("/delete/:id", activityController.deleteActivity);
 
 
 
