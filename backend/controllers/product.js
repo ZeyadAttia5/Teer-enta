@@ -1,26 +1,25 @@
 const product = require('../models/Product/Product');
 const mongoose = require("mongoose");
+const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.createProduct = async (req, res) => {
     try {
         const createdProduct = await product.create(req.body);
         res.status(201).json({message: 'Product created successfully', createdProduct});
     } catch (err) {
-        const status = err.statusCode || 500;
-        res.status(status).json({message: err.message, errors: err.data});
+        errorHandler.SendError(res, err);
     }
 }
 
 exports.getProducts = async (req, res) => {
     try {
         const products = await product.find();
-        if (!products) {
+        if (products.length === 0) {
             return res.status(404).send({message: 'No products found'});
         }
         res.status(200).json(products);
     } catch (err) {
-        const status = err.statusCode || 500;
-        res.status(status).send({message: err.message, errors: err.data});
+        errorHandler.SendError(res, err);
     }
 }
 
@@ -36,8 +35,7 @@ exports.getProduct = async (req, res) => {
         }
         res.status(200).json(foundProduct);
     } catch (err) {
-        const status = err.statusCode || 500;
-        res.status(status).send({message: err.message, errors: err.data});
+        errorHandler.SendError(res, err);
     }
 }
 
@@ -53,8 +51,7 @@ exports.editProduct = async (req, res) => {
         }
         res.status(200).json({message: 'Product updated successfully', updatedProduct});
     } catch (err) {
-        const status = err.statusCode || 500;
-        res.status(status).send({message: err.message, errors: err.data});
+        errorHandler.SendError(res, err);
     }
 
 }

@@ -1,4 +1,5 @@
 const User = require('../models/Users/User');
+const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.deleteAccount = async (req, res) => {
     try {
@@ -13,8 +14,7 @@ exports.deleteAccount = async (req, res) => {
         await User.findByIdAndDelete(userId);
         res.status(200).json({message: 'User deleted successfully'});
     } catch (err) {
-        const status = err.statusCode || 500;
-        res.status(status).send({message: err.message, errors: err.data});
+        errorHandler.SendError(res, err);
     }
 }
 
@@ -24,7 +24,6 @@ exports.createAccount = async (req, res) => {
         await User.create(req.body);
         res.status(201).send({message: 'User created successfully.'});
     } catch (err) {
-        const status = err.statusCode || 500;
-        res.status(status).send({message: err.message, errors: err.data});
+        errorHandler.SendError(res, err);
     }
 }

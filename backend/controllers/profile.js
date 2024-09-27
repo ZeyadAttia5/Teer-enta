@@ -3,6 +3,7 @@ const Seller = require('../models/Users/Seller');
 const TourGuide = require('../models/Users/TourGuide');
 const Advertiser = require('../models/Users/Advertiser');
 const mongoose = require("mongoose");
+const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 
 // Define the middleware to create or update the profile based on userRole
@@ -48,7 +49,7 @@ exports.createProfile = async (req, res, next) => {
         }
         res.status(200).json({"message":"user created successfully" ,updatedProfile}) ;
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        errorHandler.SendError(res, err);
     }
 };
 
@@ -59,8 +60,7 @@ exports.getProfile = async (req, res) => {
         const user = await User.findById(userId);
         return res.status(200).json(user);
     } catch (err) {
-        const status = err.statusCode || 500;
-        res.status(status).send({message: err.message, errors: err.data});
+        errorHandler.SendError(res, err);
     }
 };
 
@@ -103,7 +103,7 @@ exports.updateProfile = async (req, res) => {
         }
         res.status(200).json({"message":"profile updated successfully" ,updatedProfile}) ;
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        errorHandler.SendError(res, err);
     }
 }
 
