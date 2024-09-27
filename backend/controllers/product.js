@@ -17,7 +17,7 @@ exports.getProducts = async (req, res) => {
         if (!products) {
             return res.status(404).send({message: 'No products found'});
         }
-        res.status(200).json({products});
+        res.status(200).json(products);
     } catch (err) {
         const status = err.statusCode || 500;
         res.status(status).send({message: err.message, errors: err.data});
@@ -34,7 +34,7 @@ exports.getProduct = async (req, res) => {
         if (!foundProduct) {
             return res.status(404).send({message: 'Product not found'});
         }
-        res.status(200).json({foundProduct});
+        res.status(200).json(foundProduct);
     } catch (err) {
         const status = err.statusCode || 500;
         res.status(status).send({message: err.message, errors: err.data});
