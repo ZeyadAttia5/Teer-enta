@@ -3,7 +3,7 @@ const errorHandler = require('../util/HandleErrors');
 
 exports.getActivities = async (req, res, next) => {
     try {
-        const activities = await Activity.find();
+        const activities = await Activity.find({isActive: true});
         if(activities.length ===0) {
             return res.status(404).json({ message: 'No Activities found' });
         }
@@ -12,9 +12,54 @@ exports.getActivities = async (req, res, next) => {
         errorHandler.SendError(res, err);
     }
 }
+
+exports.getActivity = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const activity = await Activity.findOne({ _id: id, isActive: true });
+        if (!activity) {
+            return res.status(404).json({ message: 'Activity not found or Inactive' });
+        }
+        res.status(200).json({ activity });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.getMyActivities = async (req, res, next) => {
+    try {
+        // req.user = { _id: '66f59e1617ed32dc57a4ca2f' };
+        const createdBy = req.user._id;
+        const activities = await Activity.find({ createdBy });
+        if(activities.length ===0) {
+            return res.status(404).json({ message: 'No Activities found' });
+        }
+        res.status(200).json({ activities });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.getUpcomingActivities = async (req, res, next) => {
+    try {
+        const today = new Date();
+        const activities = await Activity.find(
+            {
+                date: { $gte: today } ,
+                isActive: true
+            });
+        if(activities.length ===0) {
+            return res.status(404).json({ message: 'No upcoming Activities found' });
+        }
+        res.status(200).json({ activities });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
 exports.createActivity = async (req, res, next) => {
     try {
-        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
+        req.user = { _id: '66f59e1617ed32dc57a4ca2f' };
 
         const createdBy = req.user._id;
         req.body.createdBy = createdBy;

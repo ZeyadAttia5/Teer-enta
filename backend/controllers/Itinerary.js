@@ -4,7 +4,34 @@ const errorHandler = require("../Util/HandleErrors"); // Ensure mongoose is requ
 
 exports.getItineraries = async (req, res, next) => {
     try {
-        const itineraries = await Itinerary.find();
+        const itineraries = await Itinerary.findOne({ _id: id, isActive: true });
+        if(itineraries.length === 0) {
+            return res.status(404).json({ message: 'No itineraries found or Inactive' });
+        }
+        res.status(200).json({ itineraries });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.getItinerary = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const itinerary = await Itinerary.find({ _id: id, isActive: true });
+        if (!itinerary) {
+            return res.status(404).json({ message: 'Itinerary not found' });
+        }
+        res.status(200).json({ itinerary });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.getMyItineraries = async (req, res, next) => {
+    try {
+        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
+        const createdBy = req.user._id;
+        const itineraries = await Itinerary.find({ createdBy });
         if(itineraries.length === 0) {
             return res.status(404).json({ message: 'No itineraries found' });
         }
@@ -14,9 +41,29 @@ exports.getItineraries = async (req, res, next) => {
     }
 }
 
+exports.getUpcomingItineraries = async (req, res, next) => {
+    try {
+        const today = new Date();
+
+        const upcomingItineraries = await Itinerary.find({
+            availableDates: {
+                $elemMatch: { Date: { $gte: today } }
+            },
+            isActive: true
+        });
+        if (upcomingItineraries.length === 0) {
+            return res.status(404).json({ message: 'No upcoming itineraries found' });
+        }
+
+        res.status(200).json({upcomingItineraries});
+    } catch (error) {
+        errorHandler.SendError(res, err);
+    }
+}
+
 exports.createItinerary = async (req, res, next) => {
     try {
-        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
+        req.user = { _id: '66f6564440ed4375b2abcdfb' };
         const createdBy = req.user._id;
         req.body.createdBy = createdBy;
 

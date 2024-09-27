@@ -4,7 +4,7 @@ const errorHandler = require("../Util/HandleErrors");
 
 exports.getHistoricalPlaces = async (req, res, next) => {
     try {
-        const historicalPlaces = await HistoricalPlace.find();
+        const historicalPlaces = await HistoricalPlace.find({isActive: true});
         if(historicalPlaces.length === 0) {
             return res.status(404).json({ message: 'No historical places found' });
         }
@@ -13,6 +13,39 @@ exports.getHistoricalPlaces = async (req, res, next) => {
         errorHandler.SendError(res, err);
     }
 }
+
+exports.getHistoricalPlace = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const historicalPlace = await HistoricalPlace.findOne({ _id: id, isActive: true });
+        if (!historicalPlace) {
+            return res.status(404).json({ message: 'Historical place not found or Inactive' });
+        }
+        res.status(200).json({ historicalPlace });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.getMyHistoricalPlaces = async (req, res, next) => {
+    try {
+        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
+        const createdBy = req.user._id;
+        const historicalPlaces = await HistoricalPlace.find({ createdBy });
+        if(historicalPlaces.length === 0) {
+            return res.status(404).json({ message: 'No historical places found' });
+        }
+        res.status(200).json({ historicalPlaces });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+// will be completed later . There is no date field in the model
+exports.getUpcomingHistoricalPlaces = async (req, res, next) => {
+
+}
+
+
 
 exports.createHistoricalPlace = async (req, res, next) => {
     try {

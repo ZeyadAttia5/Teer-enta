@@ -7,6 +7,12 @@ const router = express.Router();
 
 router.get("/", historicalPlacesController.getHistoricalPlaces);
 
+router.get("/:id", historicalPlacesController.getHistoricalPlace);
+
+router.get("/my", historicalPlacesController.getMyHistoricalPlaces);
+
+router.get("/upcoming", historicalPlacesController.getUpcomingHistoricalPlaces);
+
 router.post("/create", historicalPlacesController.createHistoricalPlace);
 
 router.put("/update/:id", historicalPlacesController.updateHistoricalPlace);
