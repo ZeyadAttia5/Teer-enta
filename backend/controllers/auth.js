@@ -1,9 +1,10 @@
 const User = require('../models/Users/User');
 const Tourist = require('../models/Users/Tourist');
-const bcrypt = require('bcryptjs');
 const TourGuide = require('../models/Users/TourGuide');
 const Advertiser = require('../models/Users/Advertiser');
 const Seller = require('../models/Users/Seller');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.signup = async (req, res) => {
     try {
@@ -64,6 +65,25 @@ exports.signup = async (req, res) => {
                 return res.status(201).send({message: 'Seller created successfully.'});
         }
 
+    } catch (err) {
+        const status = err.statusCode || 500;
+        res.status(status).send({message: err.message, errors: err.data});
+    }
+}
+
+exports.login = async (req, res) => {
+    try {
+        const {username, password} = req.body;
+        const user = await User.findOne({username});
+        if (!user) return res.status(404).json({message: 'User not found'});
+
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) return res.status(400).json({message: 'Invalid credentials'});
+
+        const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRES_IN,
+        });
+        res.json({token});
     } catch (err) {
         const status = err.statusCode || 500;
         res.status(status).send({message: err.message, errors: err.data});
