@@ -16,6 +16,7 @@ exports.getItineraries = async (req, res, next) => {
 
 exports.createItinerary = async (req, res, next) => {
     try {
+        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
         const createdBy = req.user._id;
         req.body.createdBy = createdBy;
 
@@ -29,11 +30,11 @@ exports.createItinerary = async (req, res, next) => {
 
 exports.updateItinerary = async (req, res, next) => {
     try {
-        const { itinerary_id } = req.params.id;
+        const { id } = req.params;
         const updates = req.body;
 
         const updatedItinerary = await Itinerary.findByIdAndUpdate(
-            itinerary_id,
+            id,
             updates,
             { new: true, runValidators: true, overwrite: false }
         );
@@ -52,21 +53,21 @@ exports.updateItinerary = async (req, res, next) => {
 };
 exports.deleteItinerary = async (req, res, next) => {
     try {
-        const { id } = req.params.id;
+        const { id } = req.params;
 
         const itinerary = await Itinerary.findById(id);
         if (!itinerary) {
             return res.status(404).json({ message: 'Itinerary not found' });
         }
 
-        const bookings = await BookedItinerary.findOne({ itinerary: id, isActive: true });
+        const bookings = await BookedItinerary.find({ itinerary: id, isActive: true });
         if (bookings.length > 0) {
             return res.status(400).json({ message: 'Cannot delete itinerary with existing bookings' });
         }
 
         await Itinerary.findByIdAndDelete(id);
-        res.status(200).json({ message: 'Itinerary deleted successfully' });
+        res.status(200).json({ message: 'Itinerary deleted successfully' ,data : itinerary });
     } catch (err) {
-        next(err); // Pass errors to the next middleware for handling
+        errorHandler.SendError(res, err);
     }
 };

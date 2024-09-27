@@ -8,11 +8,9 @@ router.get("/", activityController.getActivities);
 
 router.post("/create", activityController.createActivity);
 
-router.put("/edit/:id", activityController.updateActivity);
+router.put("/update/:id", activityController.updateActivity);
 
 router.delete("/delete/:id", activityController.deleteActivity);
-
-
 
 
 module.exports = router;

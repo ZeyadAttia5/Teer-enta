@@ -16,6 +16,7 @@ exports.getHistoricalPlaces = async (req, res, next) => {
 
 exports.createHistoricalPlace = async (req, res, next) => {
     try {
+        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
         const createdBy = req.user._id;
         req.body.createdBy = createdBy;
 
@@ -28,7 +29,7 @@ exports.createHistoricalPlace = async (req, res, next) => {
 
 exports.updateHistoricalPlace = async (req, res, next) => {
     try {
-        const { id } = req.params.id;
+        const { id } = req.params;
 
 
         const updates = req.body;
@@ -54,13 +55,14 @@ exports.updateHistoricalPlace = async (req, res, next) => {
 
 exports.deleteHistoricalPlace = async (req, res, next) => {
     try {
-        const {id} = req.params.id;
+        const {id} = req.params;
 
         const historicalPlace = await HistoricalPlace.findById(id);
         if (!historicalPlace) {
             return res.status(404).json({message: 'Historical place not found'});
         }
         await HistoricalPlace.findByIdAndDelete(id);
+        res.status(200).json({message: 'Historical place deleted successfully' , data: historicalPlace});
     }catch (err){
         errorHandler.SendError(res, err);
     }

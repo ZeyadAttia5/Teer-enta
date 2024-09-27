@@ -15,6 +15,7 @@ exports.getTags = async (req, res, next) => {
 
 exports.createTag = async (req, res, next) => {
     try {
+        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
         const createdBy = req.user._id;
         req.body.createdBy = createdBy
 
@@ -27,7 +28,7 @@ exports.createTag = async (req, res, next) => {
 
 exports.updateTag = async (req, res, next) => {
     try {
-        const {id} = req.params.id;
+        const {id} = req.params;
 
         const updates = req.body;
 
@@ -53,13 +54,14 @@ exports.updateTag = async (req, res, next) => {
 
 exports.deleteTag = async (req, res, next) => {
     try {
-        const {id} = req.params.id;
+        const {id} = req.params;
 
         const tag = await Tag.findById(id);
         if(!tag) {
             return res.status(404).json({ message: 'Tag not found' });
         }
 
+        await Tag.findByIdAndDelete(id);
         res.status(200).json({
             message: 'Tag deleted successfully',
             data: tag

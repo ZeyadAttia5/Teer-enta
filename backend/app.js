@@ -8,8 +8,11 @@ const app = express();
 
 const authRoutes = require('./routes/auth');
 const activityRoutes = require('./routes/activity');
+const activityCategoryRoutes = require('./routes/activityCategory');
 const itineraryRoutes = require('./routes/itinerary');
 const historicalPlacesRoutes = require('./routes/historicalPlace');
+const tagRoutes = require('./routes/tag');
+const preferenceTagRoutes = require('./routes/preferenceTags');
 const profileRoutes = require('./routes/profile');
 const accountRoutes = require('./routes/account');
 const productRoutes = require('./routes/product');
@@ -46,8 +49,10 @@ mongoose.connect(dbUrl).then(r => {
 
 app.use("/activity", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
-app.use("/historicalPlaces", historicalPlacesRoutes);
-
+app.use("/historicalPlace", historicalPlacesRoutes);
+app.use("/activityCategory", activityCategoryRoutes);
+app.use("/tag", tagRoutes);
+app.use("/preferenceTag", preferenceTagRoutes);
 app.use("/auth" , authRoutes ) ;
 app.use("/profile", profileRoutes);
 app.use("/account" , accountRoutes) ;

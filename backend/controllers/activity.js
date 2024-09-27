@@ -14,6 +14,8 @@ exports.getActivities = async (req, res, next) => {
 }
 exports.createActivity = async (req, res, next) => {
     try {
+        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
+
         const createdBy = req.user._id;
         req.body.createdBy = createdBy;
         const activity = await Activity.create(req.body);
@@ -26,13 +28,13 @@ exports.createActivity = async (req, res, next) => {
 
 exports.updateActivity = async (req, res, next) => {
     try {
-        const { activityId } = req.params.id;
+        const { id } = req.params;
 
         const updates = req.body;
 
 
         const updatedActivity = await Activity.findByIdAndUpdate(
-            activityId,
+            id,
             updates,
             { new: true, runValidators: true, overwrite: false } // Options: return the updated document and run validators
         );
@@ -46,14 +48,13 @@ exports.updateActivity = async (req, res, next) => {
             data: updatedActivity,
         });
     } catch (err) {
-        // Pass errors to the error handler
         errorHandler.SendError(res, err);
     }
 };
 
 exports.deleteActivity = async (req, res, next) => {
     try {
-        const { id } = req.params.id;
+        const { id } = req.params;
 
         const activity = await Activity.findById(id);
         if (!activity) {
@@ -61,7 +62,10 @@ exports.deleteActivity = async (req, res, next) => {
         }
 
         await Activity.findByIdAndDelete(id);
-        res.status(200).json({ message: 'Activity deleted successfully' });
+        res.status(200).json({
+            message: 'Activity deleted successfully',
+            data: activity
+        });
     } catch (err) {
         errorHandler.SendError(res, err);
     }

@@ -10,3 +10,5 @@ router.post("/create", tagController.createTag);
 router.put("/update/:id", tagController.updateTag);
 
 router.delete("/delete/:id", tagController.deleteTag);
+
+module.exports = router;
