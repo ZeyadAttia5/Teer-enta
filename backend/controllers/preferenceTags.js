@@ -1,6 +1,6 @@
 const PreferenceTag = require("../models/Itinerary/PreferenceTags"); // Ensure mongoose is required
 
-const errorHandler = require("../Util/HandleErrors"); // Ensure mongoose is required
+const errorHandler = require("../Util/ErrorHandler/errorSender"); // Ensure mongoose is required
 
 exports.getPreferenceTags = async (req, res, next) => {
     try {

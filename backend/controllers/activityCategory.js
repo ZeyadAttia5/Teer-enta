@@ -1,5 +1,5 @@
 const ActivityCategory = require("../models/Activity/ActivityCategory");
-const errorHandler = require('../util/HandleErrors');
+const errorHandler = require('../Util/ErrorHandler/errorSender');
 
 exports.getActivityCategories = async (req, res, next) => {
     try {

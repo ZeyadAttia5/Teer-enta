@@ -1,5 +1,5 @@
 const Activity = require('../models/Activity/Activity');
-const errorHandler = require('../util/HandleErrors');
+const errorHandler = require('../Util/ErrorHandler/errorSender');
 
 exports.getActivities = async (req, res, next) => {
     try {

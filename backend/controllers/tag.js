@@ -1,5 +1,5 @@
 const Tag = require('../models/Tag');
-const errorHandler = require("../Util/HandleErrors");
+const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.getTags = async (req, res, next) => {
     try {

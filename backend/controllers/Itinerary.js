@@ -1,6 +1,6 @@
 const Itinerary = require('../models/Itinerary/Itinerary');
 const BookedItinerary = require('../models/Booking/BookedItinerary');
-const errorHandler = require("../Util/HandleErrors"); // Ensure mongoose is required
+const errorHandler = require("../Util/ErrorHandler/errorSender"); // Ensure mongoose is required
 
 exports.getItineraries = async (req, res, next) => {
     try {

@@ -1,6 +1,6 @@
 const HistoricalPlace = require("../models/HistoricalPlace/HistoricalPlaces");
 
-const errorHandler = require("../Util/HandleErrors");
+const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.getHistoricalPlaces = async (req, res, next) => {
     try {

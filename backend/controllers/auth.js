@@ -4,7 +4,8 @@ const TourGuide = require('../models/Users/TourGuide');
 const Advertiser = require('../models/Users/Advertiser');
 const Seller = require('../models/Users/Seller');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const TokenHandler = require('../util/TokenHandler/tokenGenerator');
+const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.signup = async (req, res) => {
     try {
@@ -66,26 +67,31 @@ exports.signup = async (req, res) => {
         }
 
     } catch (err) {
-        const status = err.statusCode || 500;
-        res.status(status).send({message: err.message, errors: err.data});
+        errorHandler.SendError(res, err);
     }
 }
 
 exports.login = async (req, res) => {
     try {
         const {username, password} = req.body;
+
         const user = await User.findOne({username});
         if (!user) return res.status(404).json({message: 'User not found'});
 
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) return res.status(400).json({message: 'Invalid credentials'});
+        const doMatch = await bcrypt.compare(password, user.password);
+        if (!doMatch) return res.status(401).json({ message: "Wrong Password" });
 
-        const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_EXPIRES_IN,
+        const { token: accessToken, expiresIn: accessExpiresIn } = await TokenHandler.generateAccessToken(user);
+        const { token: refreshToken, expiresIn: refreshExpiresIn } = await TokenHandler.generateRefreshToken(user);
+
+        res.status(200).json({
+            accessToken,
+            accessExpiresIn,
+            refreshToken,
+            refreshExpiresIn,
+            user: user,
         });
-        res.json({token});
     } catch (err) {
-        const status = err.statusCode || 500;
-        res.status(status).send({message: err.message, errors: err.data});
+        errorHandler.SendError(res, err);
     }
 }
