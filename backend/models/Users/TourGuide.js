@@ -3,15 +3,15 @@ const mongoose = require('mongoose');
 const User = require('./User');
 
 const TourGuideProfileSchema = new mongoose.Schema({
-    mobileNumber: {type: String, required: true},
-    yearsOfExperience: {type: Number, required: true},
-    profileImage: {type: String, required: true},
-    profileDocument: {type: String, required: true},
+    mobileNumber: {type: String, default: null},
+    yearsOfExperience: {type: Number, default: 0},
+    profileImage: {type: String, default: null},
+    profileDocument: {type: String, default: null},
     isActive: {type: Boolean, default: true},
     previousWorks: [
         {
-            jobTitle: String,
-            jobDescription: String,
+            jobTitle: {type: String, default: null},
+            jobDescription: {type: String, default: null},
             timeLine: [
                 {
                     startTime: {type: Date},
@@ -22,11 +22,11 @@ const TourGuideProfileSchema = new mongoose.Schema({
     ],
     ratings: [{
         createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-        rating: Number
+        rating: {type: Number}
     }],
     comments: [{
         createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-        comment: String,
+        comment: {type: String},
     }],
     isAccepted: {type: Boolean, default: false}
 }, {timestamps: true});
