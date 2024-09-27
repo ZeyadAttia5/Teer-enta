@@ -1,77 +1,65 @@
 const mongoose = require('mongoose');
 const User = require('./User');
 
-
 const AdvertiserProfileSchema = new mongoose.Schema({
     companyName: {
         type: String,
-        required: true
+        default: null
     },
-
     website: {
         type: String,
-        required: true,
+        default: null
     },
-
     profileImage: {
         type: String,
-        required: false
+        default: null // Default profile image if not uploaded
     },
-
     profileDocument: {
         type: String,
-        required: false
+        default: null
     },
-
     hotline: {
         type: String,
-        required: true
+        default: null
     },
-
     companyProfile: {
         type: String,
-        required: true
+        default: null
     },
-
     industry: {
         type: String,
-        required: true
+        default: null
     },
-
     companySize: {
         type: String,
         enum: ['1-10', '11-50', '51-200', '201-500', '501-1000', '1001+'],
-        required: true
+        default: '1-10'
     },
-
     founded: {
         type: Date,
-        required: false
+        default: null
     },
-
     location: {
-        address: String,
-        city: String,
-        country: String
+        address: { type: String, default: null },
+        city: { type: String, default: null },
+        country: { type: String, default: null}
     },
-
     socialMediaLinks: {
-        linkedin: { type: String },
-        facebook: { type: String },
-        twitter: { type: String },
-        instagram: { type: String }
+        linkedin: { type: String, default: null },
+        facebook: { type: String, default: null },
+        twitter: { type: String, default: null },
+        instagram: { type: String, default: null }
     },
-
     isAccepted: {
         type: Boolean,
         default: false
     },
-
     isActive: {
         type: Boolean,
         default: true
-    },
+    }
 }, { timestamps: true });
+
 
 
 const Advertiser = User.discriminator('Advertiser', AdvertiserProfileSchema);

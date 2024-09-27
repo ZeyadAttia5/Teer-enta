@@ -6,9 +6,12 @@ const dbUrl = process.env.DB_URL;
 const PORT= process.env.PORT || 8000;
 const app = express();
 
+const authRoutes = require('./routes/auth');
 const activityRoutes = require('./routes/activity');
 const itineraryRoutes = require('./routes/itinerary');
 const historicalPlacesRoutes = require('./routes/historicalPlace');
+const profileRoutes = require('./routes/profile');
+const accountRoutes = require('./routes/account');
 
 
 app.use((req, res, next) => {
@@ -33,6 +36,7 @@ app.use(bodyParser.json({type: "application/json", limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: false}));
 mongoose.connect(dbUrl).then(r => {
     console.log('Connected to DB');
+    console.log(PORT)
 }).catch(e => {
     console.error(e);
     console.log('Could not connect to DB.');
@@ -43,6 +47,9 @@ app.use("/activity", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
 app.use("/historicalPlaces", historicalPlacesRoutes);
 
+app.use("/auth" , authRoutes ) ;
+app.use("/profile", profileRoutes);
+app.use("/account" , accountRoutes) ;
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });

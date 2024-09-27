@@ -7,9 +7,9 @@ const touristSchema = new mongoose.Schema({
     nationality: {type: String, required: true},
     dateOfBirth: {type: Date, required: true},
     occupation: {type: String, required: true},// Job or Student
-    level: {type: String, required: true},
+    level: {type: String},
     loyalityPoints: {type: Number, default: 0},
-    isActive: {type: Boolean, default: false},
+    isActive: {type: Boolean, default: true},
     wallet: {type: Number, default: 0},
     preferenceTags: [
         {
@@ -22,7 +22,7 @@ const touristSchema = new mongoose.Schema({
         ref: 'Complain'
     }] ,
     addresses: [
-        {type:String , required: true}
+        {type:String }
     ],
     wishList: [
         {
@@ -33,7 +33,7 @@ const touristSchema = new mongoose.Schema({
     cart: [
         {
             product: {type: mongoose.Schema.Types.ObjectId, ref: 'Product'},
-            quantity: {type: Number, required: true}
+            quantity: {type: Number}
         }
     ],
 }, {timestamps: true});
