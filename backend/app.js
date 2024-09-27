@@ -7,6 +7,8 @@ const PORT= process.env.PORT || 8000;
 const app = express();
 
 const activityRoutes = require('./routes/activity');
+const itineraryRoutes = require('./routes/itinerary');
+const historicalPlacesRoutes = require('./routes/historicalPlace');
 
 
 app.use((req, res, next) => {
@@ -38,8 +40,12 @@ mongoose.connect(dbUrl).then(r => {
 })
 
 app.use("/activity", activityRoutes);
+app.use("/itinerary", itineraryRoutes);
+app.use("/historicalPlaces", historicalPlacesRoutes);
+
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });
 });
+
 app.listen(PORT);

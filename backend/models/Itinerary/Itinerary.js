@@ -21,7 +21,9 @@ const ItinerarySchema = new mongoose.Schema({
             }
         }
     ],
-    locations: [{name: String, required: true}],
+    locations: [{
+        name: { type: String, required: true } // Corrected usage
+    }],
     timeline: [{
         activity: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity' },
         startTime: String,
