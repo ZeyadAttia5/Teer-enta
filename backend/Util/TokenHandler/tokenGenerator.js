@@ -4,7 +4,7 @@ const errorHandler = require("../ErrorHandler/errorSender");
 
 const generateAccessToken = async (user) => {
     const accessToken = jwt.sign(
-        { userId : user._id , userEmail: user.email , userRole: user.userRole },
+        { userId : user._id , hasProfile : user.hasProfile , userRole: user.userRole },
         process.env.JWT_SECRET_ACCESS,
         { expiresIn: process.env.JWT_EXPIRES_IN }
     );
