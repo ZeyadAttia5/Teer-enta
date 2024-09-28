@@ -15,4 +15,7 @@ const userSchema = new mongoose.Schema({
 // Base model
 const User = mongoose.model('User', userSchema);
 
+const TourismGovernor = User.discriminator('TourismGovernor', new mongoose.Schema({}));
+const Admin = User.discriminator('Admin', new mongoose.Schema({}));
+
 module.exports = User;

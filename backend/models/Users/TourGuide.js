@@ -28,7 +28,7 @@ const TourGuideProfileSchema = new mongoose.Schema({
         createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
         comment: {type: String},
     }],
-    isAccepted: {type: Boolean, default: false}
+    isAccepted: {type:String , enum:['Pending','Accepted','Rejected'], default:'Pending'}
 }, {timestamps: true});
 
 const TourGuide = User.discriminator('TourGuide', TourGuideProfileSchema);

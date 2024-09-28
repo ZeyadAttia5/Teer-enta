@@ -50,10 +50,7 @@ const AdvertiserProfileSchema = new mongoose.Schema({
         twitter: { type: String, default: null },
         instagram: { type: String, default: null }
     },
-    isAccepted: {
-        type: Boolean,
-        default: false
-    },
+    isAccepted: {type:String , enum:['Pending','Accepted','Rejected'], default:'Pending'},
     isActive: {
         type: Boolean,
         default: true
