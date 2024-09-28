@@ -1,4 +1,5 @@
 import './index.css';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import DeleteUser from './components/deleteUser.js';
 import AddTourismGovernor from './components/addTourismGovernor.js';
 import AddAdmin from './components/addAdmin.js';
@@ -18,61 +19,40 @@ import DeleteActivityTag from './components/CRUGtag/activity/deleteActivityTag.j
 import ViewActivityTags from './components/CRUGtag/activity/viewActivityTag.js';
 import UpdateActivityTag from './components/CRUGtag/activity/updateActivityTag.js';
 import CreateActivityTag from './components/CRUGtag/activity/createActivityTag.js';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import HistoricalPlacesRouting from './components/historicalPlaces/historicalPlacesRouting.js';
+
 function App() {
   return (
     <div className="App">
-      <br></br>
-      <DeleteUser/>
-      <br></br>
-      <br></br>
-      <AddTourismGovernor/>
-      <br></br>
-      <AddAdmin/>
-      <br></br>
-      <CreateCategory/>
-      <br></br>
-      <DeleteActivityCategory/>
-      <br></br>
-      <ViewActivityCategories/>
-      <br></br>
-      <UpdateActivityCategory/>
-      <br></br>
-      <CreateHistoricalTag/>
-      <br></br>
-      <DeleteHistoricalTag/>
-      <br></br>
-      <UpdateHistoricalTag/>
-      <br></br>
-      <ViewHistoricalTag/>
-      <br></br>
-      <CreatePreferenceTag/>
-      <br></br>
-      <ViewPreferenceTags/>
-      <br></br>
-      <UpdatePreferenceTag/>
-      <br></br>
-      <DeletePreferenceTag/>
-      <br></br>
-      <DeleteActivityTag/>
-      <br></br>
-      <UpdateActivityTag/>
-      <br></br>
-      <CreateActivityTag/>
-      <br></br>
-      <ViewActivityTags/>
-      <br></br>
       <Router>
-          <HistoricalPlacesRouting/>
-          <Toaster />
+        <Switch>
+          <Route path="/delete-user" component={DeleteUser} />
+          <Route path="/add-tourism-governor" component={AddTourismGovernor} />
+          <Route path="/add-admin" component={AddAdmin} />
+          <Route path="/create-activity-category" component={CreateCategory} />
+          <Route path="/delete-activity-category" component={DeleteActivityCategory} />
+          <Route path="/view-activity-categories" component={ViewActivityCategories} />
+          <Route path="/update-activity-category" component={UpdateActivityCategory} />
+          <Route path="/create-historical-tag" component={CreateHistoricalTag} />
+          <Route path="/delete-historical-tag" component={DeleteHistoricalTag} />
+          <Route path="/update-historical-tag" component={UpdateHistoricalTag} />
+          <Route path="/view-historical-tags" component={ViewHistoricalTag} />
+          <Route path="/create-preference-tag" component={CreatePreferenceTag} />
+          <Route path="/view-preference-tags" component={ViewPreferenceTags} />
+          <Route path="/update-preference-tag" component={UpdatePreferenceTag} />
+          <Route path="/delete-preference-tag" component={DeletePreferenceTag} />
+          <Route path="/delete-activity-tag" component={DeleteActivityTag} />
+          <Route path="/update-activity-tag" component={UpdateActivityTag} />
+          <Route path="/create-activity-tag" component={CreateActivityTag} />
+          <Route path="/view-activity-tags" component={ViewActivityTags} />
+        </Switch>
+        <HistoricalPlacesRouting />
+        <Toaster />
       </Router>
-      <br></br>
-
     </div>
-    
   );
 }
 
 export default App;
+

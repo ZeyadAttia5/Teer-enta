@@ -38,14 +38,8 @@ const ViewActivityTags = () => {
                             <p><strong>Location:</strong> {activity.location}</p>
                             <p><strong>Price Range:</strong> {activity.price?.min} - {activity.price?.max}</p>
                             <p><strong>Is Active:</strong> {activity.isActive ? 'Yes' : 'No'}</p>
-
-                            
                             <p><strong>Category:</strong> {activity.category?.name || 'N/A'}</p>
-
-                           
                             <p><strong>Tags:</strong> {activity.tags?.map(tag => tag.name).join(', ') || 'No tags'}</p>
-
-                            
                             <p><strong>Special Discounts:</strong></p>
                             {activity.specialDiscounts.length > 0 ? (
                                 <ul>
