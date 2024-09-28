@@ -19,5 +19,3 @@ const TourismGovernor = User.discriminator('TourismGovernor', new mongoose.Schem
 const Admin = User.discriminator('Admin', new mongoose.Schema({}));
 
 module.exports = User;
-module.exports = TourismGovernor;
-module.exports = Admin;

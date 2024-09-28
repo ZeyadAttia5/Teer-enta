@@ -50,6 +50,7 @@ function App() {
         <HistoricalPlacesRouting />
         <Toaster />
       </Router>
+      <br></br>
     </div>
   );
 }
