@@ -69,7 +69,6 @@ function App() {
           <Toaster />
       </Router>
       <br></br>
-
     </div>
     
   );
