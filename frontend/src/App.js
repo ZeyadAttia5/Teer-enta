@@ -12,7 +12,7 @@ import DeleteHistoricalTag from './components/CRUGtag/historical/deleteHistorica
 import UpdateHistoricalTag from './components/CRUGtag/historical/updateHistoricalTag.js';
 import ViewHistoricalTag from './components/CRUGtag/historical/viewHistoricalTag.js';
 import CreatePreferenceTag from './components/CRUGtag/preference/createPreferenceTag.js'; 
-import ViewPreferenceTags from './components/CRUGtag/preference/viewPreferenceTag.js'; 
+import ViewPreferenceTags from './components/CRUGtag/preference/viewPreferenceTag.js';
 import UpdatePreferenceTag from './components/CRUGtag/preference/updatePreferenceTag.js'; 
 import DeletePreferenceTag from './components/CRUGtag/preference/deletePreferenceTag.js'; 
 import DeleteActivityTag from './components/CRUGtag/activity/deleteActivityTag.js';
@@ -44,7 +44,7 @@ function App() {
           <Route path="/update-historical-tag" component={UpdateHistoricalTag} />
           <Route path="/view-historical-tags" component={ViewHistoricalTag} />
           <Route path="/create-preference-tag" component={CreatePreferenceTag} />
-          <Route path="/view-preference-tags" component={ViewPreferenceTags} />
+          <Route path="/view-preference-tags" element={<ViewPreferenceTags/>} />
           <Route path="/update-preference-tag" component={UpdatePreferenceTag} />
           <Route path="/delete-preference-tag" component={DeletePreferenceTag} />
           <Route path="/delete-activity-tag" component={DeleteActivityTag} />
