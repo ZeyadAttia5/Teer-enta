@@ -1,4 +1,4 @@
-import './App.css';
+import './index.css';
 import DeleteUser from './components/deleteUser.js';
 import AddTourismGovernor from './components/addTourismGovernor.js';
 import AddAdmin from './components/addAdmin.js';
@@ -18,6 +18,9 @@ import DeleteActivityTag from './components/CRUGtag/activity/deleteActivityTag.j
 import ViewActivityTags from './components/CRUGtag/activity/viewActivityTag.js';
 import UpdateActivityTag from './components/CRUGtag/activity/updateActivityTag.js';
 import CreateActivityTag from './components/CRUGtag/activity/createActivityTag.js';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import HistoricalPlacesRouting from './components/historicalPlaces/historicalPlacesRouting.js';
 function App() {
   return (
     <div className="App">
@@ -60,6 +63,12 @@ function App() {
       <CreateActivityTag/>
       <br></br>
       <ViewActivityTags/>
+      <br></br>
+      <Router>
+          <HistoricalPlacesRouting/>
+          <Toaster />
+      </Router>
+      <br></br>
 
     </div>
     
