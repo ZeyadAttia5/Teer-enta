@@ -1,5 +1,5 @@
 import './index.css';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import DeleteUser from './components/deleteUser.js';
 import AddTourismGovernor from './components/addTourismGovernor.js';
 import AddAdmin from './components/addAdmin.js';
@@ -21,12 +21,17 @@ import UpdateActivityTag from './components/CRUGtag/activity/updateActivityTag.j
 import CreateActivityTag from './components/CRUGtag/activity/createActivityTag.js';
 import { Toaster } from 'react-hot-toast';
 import HistoricalPlacesRouting from './components/historicalPlaces/historicalPlacesRouting.js';
+import Signup from './screens/signup/Signup.js';
+import Login from './screens/login/login.js';
 
 function App() {
   return (
     <div className="App">
       <Router>
-        <Switch>
+        <Routes>
+
+          <Route path="/" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/delete-user" component={DeleteUser} />
           <Route path="/add-tourism-governor" component={AddTourismGovernor} />
           <Route path="/add-admin" component={AddAdmin} />
@@ -46,7 +51,7 @@ function App() {
           <Route path="/update-activity-tag" component={UpdateActivityTag} />
           <Route path="/create-activity-tag" component={CreateActivityTag} />
           <Route path="/view-activity-tags" component={ViewActivityTags} />
-        </Switch>
+        </Routes>
         <HistoricalPlacesRouting />
         <Toaster />
       </Router>
