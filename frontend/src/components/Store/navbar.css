@@ -1,0 +1,31 @@
+/* Navbar.css */
+.navbar {
+    background-color: #02735F;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; /* Full width */
+    z-index: 1000; /* Make sure it's on top */
+  }
+  
+  .nav-links {
+    list-style-type: none;
+    display: flex;
+    gap: 20px;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .nav-links a:hover {
+    color: #f1f1f1;
+  }
+  
