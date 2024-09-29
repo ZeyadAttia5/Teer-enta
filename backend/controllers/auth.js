@@ -4,7 +4,7 @@ const TourGuide = require('../models/Users/TourGuide');
 const Advertiser = require('../models/Users/Advertiser');
 const Seller = require('../models/Users/Seller');
 const bcrypt = require('bcryptjs');
-const TokenHandler = require('../util/TokenHandler/tokenGenerator');
+const TokenHandler = require('../Util/TokenHandler/tokenGenerator');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.signup = async (req, res) => {
