@@ -4,9 +4,10 @@ import Select from "react-select";
 import Toggle from "../../components/signup/Toggle.js";
 import { useNavigate } from "react-router-dom";
 import { FaExclamationCircle } from "react-icons/fa";
+import axios from 'axios';
 function Signup() {
   const navigate = useNavigate();
-
+  const [message, setMessage] = useState('');
   const [username, setUsername] = useState("");
   const handleUsernameChange = (event) => {
     setUsername(event.target.value); // Update the username state
@@ -92,8 +93,255 @@ function Signup() {
     { value: "china", label: "China" },
     { value: "japan", label: "Japan" },
     { value: "brazil", label: "Brazil" },
-    // Add more countries as needed
+    { value: "argentina", label: "Argentina" },
+    { value: "mexico", label: "Mexico" },
+    { value: "south-africa", label: "South Africa" },
+    { value: "russia", label: "Russia" },
+    { value: "italy", label: "Italy" },
+    { value: "spain", label: "Spain" },
+    { value: "south-korea", label: "South Korea" },
+    { value: "indonesia", label: "Indonesia" },
+    { value: "saudi-arabia", label: "Saudi Arabia" },
+    { value: "turkey", label: "Turkey" },
+    { value: "netherlands", label: "Netherlands" },
+    { value: "switzerland", label: "Switzerland" },
+    { value: "sweden", label: "Sweden" },
+    { value: "belgium", label: "Belgium" },
+    { value: "norway", label: "Norway" },
+    { value: "denmark", label: "Denmark" },
+    { value: "finland", label: "Finland" },
+    { value: "poland", label: "Poland" },
+    { value: "austria", label: "Austria" },
+    { value: "ireland", label: "Ireland" },
+    { value: "new-zealand", label: "New Zealand" },
+    { value: "portugal", label: "Portugal" },
+    { value: "greece", label: "Greece" },
+    { value: "hungary", label: "Hungary" },
+    { value: "czech-republic", label: "Czech Republic" },
+    { value: "romania", label: "Romania" },
+    { value: "chile", label: "Chile" },
+    { value: "colombia", label: "Colombia" },
+    { value: "peru", label: "Peru" },
+    { value: "venezuela", label: "Venezuela" },
+    { value: "malaysia", label: "Malaysia" },
+    { value: "singapore", label: "Singapore" },
+    { value: "thailand", label: "Thailand" },
+    { value: "philippines", label: "Philippines" },
+    { value: "vietnam", label: "Vietnam" },
+    { value: "pakistan", label: "Pakistan" },
+    { value: "bangladesh", label: "Bangladesh" },
+    { value: "egypt", label: "Egypt" },
+    { value: "nigeria", label: "Nigeria" },
+    { value: "kenya", label: "Kenya" },
+    { value: "ethiopia", label: "Ethiopia" },
+    { value: "morocco", label: "Morocco" },
+    { value: "algeria", label: "Algeria" },
+    { value: "tunisia", label: "Tunisia" },
+    { value: "israel", label: "Israel" },
+    { value: "iran", label: "Iran" },
+    { value: "iraq", label: "Iraq" },
+    { value: "syria", label: "Syria" },
+    { value: "jordan", label: "Jordan" },
+    { value: "lebanon", label: "Lebanon" },
+    { value: "kuwait", label: "Kuwait" },
+    { value: "qatar", label: "Qatar" },
+    { value: "united-arab-emirates", label: "United Arab Emirates" },
+    { value: "oman", label: "Oman" },
+    { value: "bahrain", label: "Bahrain" },
+    { value: "yemen", label: "Yemen" },
+    { value: "afghanistan", label: "Afghanistan" },
+    { value: "nepal", label: "Nepal" },
+    { value: "sri-lanka", label: "Sri Lanka" },
+    { value: "myanmar", label: "Myanmar" },
+    { value: "kazakhstan", label: "Kazakhstan" },
+    { value: "uzbekistan", label: "Uzbekistan" },
+    { value: "turkmenistan", label: "Turkmenistan" },
+    { value: "kyrgyzstan", label: "Kyrgyzstan" },
+    { value: "tajikistan", label: "Tajikistan" },
+    { value: "mongolia", label: "Mongolia" },
+    { value: "north-korea", label: "North Korea" },
+    { value: "bhutan", label: "Bhutan" },
+    { value: "maldives", label: "Maldives" },
+    { value: "brunei", label: "Brunei" },
+    { value: "laos", label: "Laos" },
+    { value: "cambodia", label: "Cambodia" },
+    { value: "east-timor", label: "East Timor" },
+    { value: "papua-new-guinea", label: "Papua New Guinea" },
+    { value: "fiji", label: "Fiji" },
+    { value: "solomon-islands", label: "Solomon Islands" },
+    { value: "vanuatu", label: "Vanuatu" },
+    { value: "samoa", label: "Samoa" },
+    { value: "tonga", label: "Tonga" },
+    { value: "micronesia", label: "Micronesia" },
+    { value: "palau", label: "Palau" },
+    { value: "marshall-islands", label: "Marshall Islands" },
+    { value: "kiribati", label: "Kiribati" },
+    { value: "nauru", label: "Nauru" },
+    { value: "tuvalu", label: "Tuvalu" },
+    { value: "seychelles", label: "Seychelles" },
+    { value: "mauritius", label: "Mauritius" },
+    { value: "comoros", label: "Comoros" },
+    { value: "madagascar", label: "Madagascar" },
+    { value: "mozambique", label: "Mozambique" },
+    { value: "zimbabwe", label: "Zimbabwe" },
+    { value: "zambia", label: "Zambia" },
+    { value: "malawi", label: "Malawi" },
+    { value: "angola", label: "Angola" },
+    { value: "namibia", label: "Namibia" },
+    { value: "botswana", label: "Botswana" },
+    { value: "lesotho", label: "Lesotho" },
+    { value: "swaziland", label: "Swaziland" },
+    { value: "tanzania", label: "Tanzania" },
+    { value: "uganda", label: "Uganda" },
+    { value: "rwanda", label: "Rwanda" },
+    { value: "burundi", label: "Burundi" },
+    { value: "congo", label: "Congo" },
+    { value: "democratic-republic-of-the-congo", label: "Democratic Republic of the Congo" },
+    { value: "gabon", label: "Gabon" },
+    { value: "equatorial-guinea", label: "Equatorial Guinea" },
+    { value: "sao-tome-and-principe", label: "Sao Tome and Principe" },
+    { value: "cameroon", label: "Cameroon" },
+    { value: "central-african-republic", label: "Central African Republic" },
+    { value: "chad", label: "Chad" },
+    { value: "niger", label: "Niger" },
+    { value: "mali", label: "Mali" },
+    { value: "mauritania", label: "Mauritania" },
+    { value: "senegal", label: "Senegal" },
+    { value: "gambia", label: "Gambia" },
+    { value: "guinea", label: "Guinea" },
+    { value: "guinea-bissau", label: "Guinea-Bissau" },
+    { value: "sierra-leone", label: "Sierra Leone" },
+    { value: "liberia", label: "Liberia" },
+    { value: "ivory-coast", label: "Ivory Coast" },
+    { value: "ghana", label: "Ghana" },
+    { value: "burkina-faso", label: "Burkina Faso" },
+    { value: "benin", label: "Benin" },
+    { value: "togo", label: "Togo" },
+    { value: "cape-verde", label: "Cape Verde" },
+    { value: "libya", label: "Libya" },
+    { value: "sudan", label: "Sudan" },
+    { value: "south-sudan", label: "South Sudan" },
+    { value: "somalia", label: "Somalia" },
+    { value: "djibouti", label: "Djibouti" },
+    { value: "eritrea", label: "Eritrea" },
+    { value: "sri-lanka", label: "Sri Lanka" },
+    { value: "bhutan", label: "Bhutan" },
+    { value: "maldives", label: "Maldives" },
+    { value: "nepal", label: "Nepal" },
+    { value: "bangladesh", label: "Bangladesh" },
+    { value: "pakistan", label: "Pakistan" },
+    { value: "afghanistan", label: "Afghanistan" },
+    { value: "iran", label: "Iran" },
+    { value: "iraq", label: "Iraq" },
+    { value: "syria", label: "Syria" },
+    { value: "jordan", label: "Jordan" },
+    { value: "lebanon", label: "Lebanon" },
+    { value: "israel", label: "Israel" },
+    { value: "palestine", label: "Palestine" },
+    { value: "saudi-arabia", label: "Saudi Arabia" },
+    { value: "yemen", label: "Yemen" },
+    { value: "oman", label: "Oman" },
+    { value: "united-arab-emirates", label: "United Arab Emirates" },
+    { value: "qatar", label: "Qatar" },
+    { value: "bahrain", label: "Bahrain" },
+    { value: "kuwait", label: "Kuwait" },
+    { value: "turkey", label: "Turkey" },
+    { value: "cyprus", label: "Cyprus" },
+    { value: "georgia", label: "Georgia" },
+    { value: "armenia", label: "Armenia" },
+    { value: "azerbaijan", label: "Azerbaijan" },
+    { value: "kazakhstan", label: "Kazakhstan" },
+    { value: "uzbekistan", label: "Uzbekistan" },
+    { value: "turkmenistan", label: "Turkmenistan" },
+    { value: "kyrgyzstan", label: "Kyrgyzstan" },
+    { value: "tajikistan", label: "Tajikistan" },
+    { value: "mongolia", label: "Mongolia" },
+    { value: "china", label: "China" },
+    { value: "north-korea", label: "North Korea" },
+    { value: "south-korea", label: "South Korea" },
+    { value: "japan", label: "Japan" },
+    { value: "taiwan", label: "Taiwan" },
+    { value: "hong-kong", label: "Hong Kong" },
+    { value: "macau", label: "Macau" },
+    { value: "vietnam", label: "Vietnam" },
+    { value: "laos", label: "Laos" },
+    { value: "cambodia", label: "Cambodia" },
+    { value: "thailand", label: "Thailand" },
+    { value: "myanmar", label: "Myanmar" },
+    { value: "malaysia", label: "Malaysia" },
+    { value: "singapore", label: "Singapore" },
+    { value: "brunei", label: "Brunei" },
+    { value: "indonesia", label: "Indonesia" },
+    { value: "east-timor", label: "East Timor" },
+    { value: "philippines", label: "Philippines" },
+    { value: "papua-new-guinea", label: "Papua New Guinea" },
+    { value: "solomon-islands", label: "Solomon Islands" },
+    { value: "vanuatu", label: "Vanuatu" },
+    { value: "fiji", label: "Fiji" },
+    { value: "tonga", label: "Tonga" },
+    { value: "samoa", label: "Samoa" },
+    { value: "kiribati", label: "Kiribati" },
+    { value: "tuvalu", label: "Tuvalu" },
+    { value: "nauru", label: "Nauru" },
+    { value: "palau", label: "Palau" },
+    { value: "micronesia", label: "Micronesia" },
+    { value: "marshall-islands", label: "Marshall Islands" },
+    { value: "australia", label: "Australia" },
+    { value: "new-zealand", label: "New Zealand" },
+    { value: "vanuatu", label: "Vanuatu" },
+    { value: "new-caledonia", label: "New Caledonia" },
+    { value: "french-polynesia", label: "French Polynesia" },
+    { value: "guam", label: "Guam" },
+    { value: "northern-mariana-islands", label: "Northern Mariana Islands" },
+    { value: "american-samoa", label: "American Samoa" },
+    { value: "cook-islands", label: "Cook Islands" },
+    { value: "niue", label: "Niue" },
+    { value: "tokelau", label: "Tokelau" },
+    { value: "pitcairn-islands", label: "Pitcairn Islands" },
+    { value: "wallis-and-futuna", label: "Wallis and Futuna" },
+    { value: "samoa", label: "Samoa" },
+    { value: "tonga", label: "Tonga" },
+    { value: "tuvalu", label: "Tuvalu" },
+    { value: "vanuatu", label: "Vanuatu" },
+    { value: "new-caledonia", label: "New Caledonia" },
+    { value: "french-polynesia", label: "French Polynesia" },
+    { value: "guam", label: "Guam" },
+    { value: "northern-mariana-islands", label: "Northern Mariana Islands" },
+    { value: "american-samoa", label: "American Samoa" },
+    { value: "cook-islands", label: "Cook Islands" },
+    { value: "niue", label: "Niue" },
+    { value: "tokelau", label: "Tokelau" },
+    { value: "pitcairn-islands", label: "Pitcairn Islands" },
+    { value: "wallis-and-futuna", label: "Wallis and Futuna" },
+    { value: "samoa", label: "Samoa" },
+    { value: "tonga", label: "Tonga" },
+    { value: "tuvalu", label: "Tuvalu" },
+    { value: "vanuatu", label: "Vanuatu" },
+    { value: "new-caledonia", label: "New Caledonia" },
+    { value: "french-polynesia", label: "French Polynesia" },
+    { value: "guam", label: "Guam" },
+    { value: "northern-mariana-islands", label: "Northern Mariana Islands" },
+    { value: "american-samoa", label: "American Samoa" },
+    { value: "cook-islands", label: "Cook Islands" },
+    { value: "niue", label: "Niue" },
+    { value: "tokelau", label: "Tokelau" },
+    { value: "pitcairn-islands", label: "Pitcairn Islands" },
+    { value: "wallis-and-futuna", label: "Wallis and Futuna" },
+    { value: "samoa", label: "Samoa" },
+    { value: "tonga", label: "Tonga" },
+    { value: "tuvalu", label: "Tuvalu" },
+    { value: "vanuatu", label: "Vanuatu" },
+    { value: "new-caledonia", label: "New Caledonia" },
+    { value: "french-polynesia", label: "French Polynesia" },
+    { value: "guam", label: "Guam" },
+    { value: "northern-mariana-islands", label: "Northern Mariana Islands" },
+    { value: "american-samoa", label: "American Samoa" },
+    { value: "cook-islands", label: "Cook Islands" },
+    { value: "niue", label: "Niue" },
+    
   ];
+  options.sort((a, b) => a.label.localeCompare(b.label));
+
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -115,23 +363,46 @@ function Signup() {
     }),
   };
   // State to manage the selected option
-
-  const handleButtonClick = () => {
-    if (isValid()) navigate("/login", { state: { userData: details } });
-    return false;
+  // const URL = process.env.REACT_APP_BACKEND_URL;
+  const URL = 'http://localhost:8000';
+  const handleButtonClick = async (e) => {
+    e.preventDefault();
+    if (!isValid()) {
+      return false;
+    }
+   
+    try {
+      const response = await axios.post(`${URL}/auth/signup`, 
+        {
+          "email": email,
+          "username": username,
+          "password": password,
+          "userRole": selectedRole,
+          "mobileNumber": mobileNumber,
+          "nationality": selectedNationality,
+          "dateOfBirth": dob,
+          "occupation": jobTitle,
+        }
+      );
+      
+      setMessage(response.data.message);
+    } catch (error) {
+      setMessage(error.response.data.message || 'Signup failed');
+    }
+    // navigate("/login", { state: { userData: details } });
   };
 
   function isValid() {
     const nonNumericRegex = /\D/;
     if (
-      nonNumericRegex.test(mobileNumber) ||
+      
       username === "" ||
       email === "" ||
       password === "" ||
       confirmPassword === "" ||
       isValidEmail === false ||
       (selectedRole === "Tourist" &&
-        (mobileNumber === "" ||
+        (mobileNumber === "" || nonNumericRegex.test(mobileNumber) ||
           jobTitle === "" ||
           dob === "" ||
           selectedNationality === null))
@@ -264,7 +535,9 @@ function Signup() {
               />
             </label>
 
-            <div className="">
+            <div className={`relative labelsignup ${
+                selectedRole !== "Tourist" ? "hidden" : ""
+              }`}>
               <label
                 className="block text-sm font-medium labelsignup text-gray-700"
                 for="dob"
@@ -326,6 +599,7 @@ function Signup() {
                 Signin
               </a>
             </p>
+            <p>{message}</p>
           </form>
         </div>
       </div>

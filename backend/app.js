@@ -5,11 +5,11 @@ const bodyParser = require('body-parser');
 const dbUrl = process.env.DB_URL;
 const PORT= process.env.PORT || 8000;
 const app = express();
-
+const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const activityRoutes = require('./routes/activity');
 const activityCategoryRoutes = require('./routes/activityCategory');
-const itineraryRoutes = require('./routes/itinerary');
+const itineraryRoutes = require('./routes/Itinerary');
 const historicalPlacesRoutes = require('./routes/historicalPlace');
 const tagRoutes = require('./routes/tag');
 const preferenceTagRoutes = require('./routes/preferenceTags');
@@ -36,7 +36,7 @@ app.use((req, res, next) => {
     next();
 
 });
-
+app.use(cors());
 app.use(bodyParser.json({type: "application/json", limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: false}));
 mongoose.connect(dbUrl).then(r => {
