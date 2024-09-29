@@ -4,7 +4,7 @@ const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.getHistoricalPlaces = async (req, res, next) => {
     try {
-        const historicalPlaces = await HistoricalPlace.find({isActive: true});
+        const historicalPlaces = await HistoricalPlace.find({isActive: true}).populate('Tag');
         if(historicalPlaces.length === 0) {
             return res.status(404).json({ message: 'No historical places found' });
         }
@@ -17,7 +17,7 @@ exports.getHistoricalPlaces = async (req, res, next) => {
 exports.getHistoricalPlace = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const historicalPlace = await HistoricalPlace.findOne({ _id: id, isActive: true });
+        const historicalPlace = await HistoricalPlace.findOne({ _id: id, isActive: true }).populate('Tag');
         if (!historicalPlace) {
             return res.status(404).json({ message: 'Historical place not found or Inactive' });
         }
@@ -31,7 +31,7 @@ exports.getMyHistoricalPlaces = async (req, res, next) => {
     try {
         // req.user = { _id: '66f6564440ed4375b2abcdfb' };
         const createdBy = req.user._id;
-        const historicalPlaces = await HistoricalPlace.find({ createdBy });
+        const historicalPlaces = await HistoricalPlace.find({ createdBy }).populate('Tag');
         if(historicalPlaces.length === 0) {
             return res.status(404).json({ message: 'No historical places found' });
         }
