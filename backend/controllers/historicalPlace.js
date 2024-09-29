@@ -8,7 +8,7 @@ exports.getHistoricalPlaces = async (req, res, next) => {
         if(historicalPlaces.length === 0) {
             return res.status(404).json({ message: 'No historical places found' });
         }
-        res.status(200).json({ historicalPlaces });
+        res.status(200).json(historicalPlaces);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -21,7 +21,7 @@ exports.getHistoricalPlace = async (req, res, next) => {
         if (!historicalPlace) {
             return res.status(404).json({ message: 'Historical place not found or Inactive' });
         }
-        res.status(200).json({ historicalPlace });
+        res.status(200).json(historicalPlace);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -35,7 +35,7 @@ exports.getMyHistoricalPlaces = async (req, res, next) => {
         if(historicalPlaces.length === 0) {
             return res.status(404).json({ message: 'No historical places found' });
         }
-        res.status(200).json({ historicalPlaces });
+        res.status(200).json( historicalPlaces );
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -49,10 +49,6 @@ exports.getUpcomingHistoricalPlaces = async (req, res, next) => {
 
 exports.createHistoricalPlace = async (req, res, next) => {
     try {
-        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
-        const createdBy = req.user._id;
-        req.body.createdBy = createdBy;
-
         const historicalPlace = await HistoricalPlace.create(req.body);
         res.status(201).json({ message: 'Historical Place created successfully', historicalPlace });
     } catch (err) {

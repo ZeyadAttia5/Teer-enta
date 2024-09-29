@@ -9,7 +9,7 @@ exports.getActivities = async (req, res, next) => {
         if (activities.length === 0) {
             return res.status(404).json({message: 'No Activities found'});
         }
-        res.status(200).json({activities});
+        res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -24,7 +24,7 @@ exports.getActivity = async (req, res, next) => {
         if (!activity) {
             return res.status(404).json({message: 'Activity not found or Inactive'});
         }
-        res.status(200).json({activity});
+        res.status(200).json(activity);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -40,7 +40,7 @@ exports.getMyActivities = async (req, res, next) => {
         if (activities.length === 0) {
             return res.status(404).json({message: 'No Activities found'});
         }
-        res.status(200).json({activities});
+        res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -59,7 +59,7 @@ exports.getUpcomingActivities = async (req, res, next) => {
         if (activities.length === 0) {
             return res.status(404).json({message: 'No upcoming Activities found'});
         }
-        res.status(200).json({activities});
+        res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);
     }

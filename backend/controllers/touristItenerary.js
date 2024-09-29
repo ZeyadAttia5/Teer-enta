@@ -32,10 +32,7 @@ exports.getAllItineraries = async (req, res) => {
             .populate('activities')
             .populate('tags');
 
-        return res.status(200).json({
-            success: true,
-            data: itineraries
-        });
+        return res.status(200).json(itineraries);
     } catch (err) {
         return res.status(500).json({
             success: false,
@@ -51,10 +48,7 @@ exports.getItineraryById = async (req, res) => {
             .populate('tags');
 
         if (!itinerary) {
-            return res.status(404).json({
-                success: false,
-                message: "Itinerary not found"
-            });
+            return res.status(404).json(itinerary);
         }
 
         return res.status(200).json({
