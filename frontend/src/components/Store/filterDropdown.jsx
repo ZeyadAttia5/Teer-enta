@@ -1,66 +1,36 @@
 import React, { useState } from 'react';
-import './filterDropdown.css'; // Custom styles for the dropdown
+import './filterDropdown.css';
 
-const FilterDropdown = ({ onFilterChange }) => {
-  const [selectedFilters, setSelectedFilters] = useState({
-    magnets: false,
-    tableware: false,
-    trinkets: false,
-    museums: false,
-  });
-
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [name]: checked,
-    }));
-  };
+const FilterDropdown = ({ filters, onFilterChange }) => {
+  const [minPrice, setMinPrice] = useState(filters.minPrice);
+  const [maxPrice, setMaxPrice] = useState(filters.maxPrice);
 
   const handleApply = () => {
-    onFilterChange(selectedFilters);
+    onFilterChange({ minPrice, maxPrice });
   };
 
   return (
     <div className="filter-dropdown">
-      <button className="dropdown-button">Choose Category ⌄</button>
+      <button className="dropdown-button">Filter by Price ⌄</button>
       <div className="dropdown-content">
-        <label>
-          <input
-            type="checkbox"
-            name="magnets"
-            checked={selectedFilters.hotels}
-            onChange={handleCheckboxChange}
-          />
-          Magnets
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="tableware"
-            checked={selectedFilters.restaurants}
-            onChange={handleCheckboxChange}
-          />
-          Tableware
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="trinkets"
-            checked={selectedFilters.landmarks}
-            onChange={handleCheckboxChange}
-          />
-          Trinkets
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            name="museums"
-            checked={selectedFilters.museums}
-            onChange={handleCheckboxChange}
-          />
-          Museums
-        </label>
+        <div className="price-filter">
+          <label>
+            Min Price:
+            <input
+              type="number"
+              value={minPrice}
+              onChange={(e) => setMinPrice(Number(e.target.value))}
+            />
+          </label>
+          <label>
+            Max Price:
+            <input
+              type="number"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(Number(e.target.value))}
+            />
+          </label>
+        </div>
         <button className="apply-button" onClick={handleApply}>Apply</button>
       </div>
     </div>

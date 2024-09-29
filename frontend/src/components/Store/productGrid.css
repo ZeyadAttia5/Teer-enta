@@ -83,3 +83,22 @@
 .product-button:hover {
     background-color: #025d4a;
 }
+
+/* Add New Product Button Styles */
+.add-product-button {
+    position: fixed; /* Stick to the bottom right */
+    bottom: 20px; /* Adjust as needed */
+    right: 20px; /* Adjust as needed */
+    background-color: #02735F; /* Same as the theme */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 1000; /* Ensure it is above other content */
+}
+
+.add-product-button:hover {
+    background-color: #025d4a; /* Darker shade for hover effect */
+}
