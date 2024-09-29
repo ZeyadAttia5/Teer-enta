@@ -4,7 +4,8 @@ const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.getHistoricalPlaces = async (req, res, next) => {
     try {
-        const historicalPlaces = await HistoricalPlace.find({isActive: true}).populate('Tag');
+        const historicalPlaces = await HistoricalPlace.find({isActive: true})
+            .populate('tags');
         if(historicalPlaces.length === 0) {
             return res.status(404).json({ message: 'No historical places found' });
         }
