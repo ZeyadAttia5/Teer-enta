@@ -53,5 +53,36 @@ exports.editProduct = async (req, res) => {
     } catch (err) {
         errorHandler.SendError(res, err);
     }
+}
 
+exports.archiveProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).send({message: 'Invalid product id'});
+        }
+        const archivedProduct = await product.findByIdAndUpdate(productId, {isActive: false}, {new: true});
+        if (!archivedProduct) {
+            return res.status(404).send({message: 'Product not found'});
+        }
+        res.status(200).json({message: 'Product archived successfully', archivedProduct});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.unArchiveProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).send({message: 'Invalid product id'});
+        }
+        const unArchivedProduct = await product.findByIdAndUpdate(productId, {isActive: false}, {new: true});
+        if (!unArchivedProduct) {
+            return res.status(404).send({message: 'Product not found'});
+        }
+        res.status(200).json({message: 'Product unarchived successfully', unArchivedProduct});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
 }
