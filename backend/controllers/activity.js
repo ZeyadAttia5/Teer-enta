@@ -3,11 +3,13 @@ const errorHandler = require('../Util/ErrorHandler/errorSender');
 
 exports.getActivities = async (req, res, next) => {
     try {
-        const activities = await Activity.find({isActive: true});
-        if(activities.length ===0) {
-            return res.status(404).json({ message: 'No Activities found' });
+        const activities = await Activity.find({isActive: true})
+            .populate('category')
+            .populate('tags');
+        if (activities.length === 0) {
+            return res.status(404).json({message: 'No Activities found'});
         }
-        res.status(200).json({ activities });
+        res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -15,12 +17,14 @@ exports.getActivities = async (req, res, next) => {
 
 exports.getActivity = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const activity = await Activity.findOne({ _id: id, isActive: true });
+        const {id} = req.params;
+        const activity = await Activity.findOne({_id: id, isActive: true})
+            .populate('category')
+            .populate('tags');
         if (!activity) {
-            return res.status(404).json({ message: 'Activity not found or Inactive' });
+            return res.status(404).json({message: 'Activity not found or Inactive'});
         }
-        res.status(200).json({ activity });
+        res.status(200).json(activity);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -30,11 +34,13 @@ exports.getMyActivities = async (req, res, next) => {
     try {
         // req.user = { _id: '66f59e1617ed32dc57a4ca2f' };
         const createdBy = req.user._id;
-        const activities = await Activity.find({ createdBy });
-        if(activities.length ===0) {
-            return res.status(404).json({ message: 'No Activities found' });
+        const activities = await Activity.find({createdBy})
+            .populate('category')
+            .populate('tags');
+        if (activities.length === 0) {
+            return res.status(404).json({message: 'No Activities found'});
         }
-        res.status(200).json({ activities });
+        res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -45,13 +51,15 @@ exports.getUpcomingActivities = async (req, res, next) => {
         const today = new Date();
         const activities = await Activity.find(
             {
-                date: { $gte: today } ,
+                date: {$gte: today},
                 isActive: true
-            });
-        if(activities.length ===0) {
-            return res.status(404).json({ message: 'No upcoming Activities found' });
+            })
+            .populate('category')
+            .populate('tags');
+        if (activities.length === 0) {
+            return res.status(404).json({message: 'No upcoming Activities found'});
         }
-        res.status(200).json({ activities });
+        res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -59,12 +67,12 @@ exports.getUpcomingActivities = async (req, res, next) => {
 
 exports.createActivity = async (req, res, next) => {
     try {
-        req.user = { _id: '66f59e1617ed32dc57a4ca2f' };
+        req.user = {_id: '66f92ee0e8036e924a7dec87'};
 
         const createdBy = req.user._id;
         req.body.createdBy = createdBy;
         const activity = await Activity.create(req.body);
-        res.status(201).json({ message: 'Activity created successfully', activity });
+        res.status(201).json({message: 'Activity created successfully', activity});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -73,7 +81,7 @@ exports.createActivity = async (req, res, next) => {
 
 exports.updateActivity = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
 
         const updates = req.body;
 
@@ -81,11 +89,11 @@ exports.updateActivity = async (req, res, next) => {
         const updatedActivity = await Activity.findByIdAndUpdate(
             id,
             updates,
-            { new: true, runValidators: true, overwrite: false } // Options: return the updated document and run validators
+            {new: true, runValidators: true, overwrite: false} // Options: return the updated document and run validators
         );
 
         if (!updatedActivity) {
-            return res.status(404).json({ message: 'Activity not found or inactive' });
+            return res.status(404).json({message: 'Activity not found or inactive'});
         }
 
         res.status(200).json({
@@ -99,11 +107,11 @@ exports.updateActivity = async (req, res, next) => {
 
 exports.deleteActivity = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
 
         const activity = await Activity.findById(id);
         if (!activity) {
-            return res.status(404).json({ message: 'Activity not found' });
+            return res.status(404).json({message: 'Activity not found'});
         }
 
         await Activity.findByIdAndDelete(id);

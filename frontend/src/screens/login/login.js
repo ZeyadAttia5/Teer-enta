@@ -2,18 +2,17 @@ import React, { useState, useEffect } from "react";
 import "./login.css";
 import { images } from "./loadImage.js";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Example icons from react-icons
-import { FaExclamationCircle } from "react-icons/fa";
+
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 function Login() {
-  const [email, setEmail] = useState("");
-  const [isValidEmail, setIsValidEmail] = useState(true);
+  const navigate = useNavigate();
+  const [message, setMessage] = useState('');
+  const [username, setUsername] = useState("");
+  
 
-  const handleEmailChange = (e) => {
-    const inputEmail = e.target.value;
-    setEmail(inputEmail);
-
-    // Simple email regex for validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    setIsValidEmail(emailRegex.test(inputEmail));
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
   };
 
   const [password, setPassword] = useState("");
@@ -31,6 +30,40 @@ function Login() {
 
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, [images.length]);
+
+  const URL = 'http://localhost:8000';
+  const handleLoginSubmission = async (e) => {
+    e.preventDefault();
+    if (!isValid()) 
+      return false;
+
+    try {
+      const response = await axios.post(`${URL}/auth/login`, 
+        {
+          "username": username,
+          "password": password,
+        }
+      );
+      
+      setMessage(response.data.message);
+    } catch (error) {
+      setMessage(error.response.data.message || 'Login failed');
+    }
+
+    // navigate("/", { state: { userData: details } });
+  };
+
+  function isValid() {
+    if (username === "" || password === "") {
+      return false;
+    }
+    return true;
+  }
+
+  const details = {
+    username: username,
+    password: password
+  };
   return (
     <div className="flex">
       <div className="relative w-2/3 h-screen overflow-hidden">
@@ -63,33 +96,21 @@ function Login() {
 
           <div className="flex items-center pt-4 pl-3 pr-3 text-sm leading-5 text-gray-400 mb-4">
             <div className="h-px flex-1 bg-gray-400 text-gray-800"></div>
-            <p className="pl-3 pr-3 text-sm leading-5 text-gray-400">Login with Email</p>
+            <p className="pl-3 pr-3 text-sm leading-5 text-gray-400">Login with Username & Password</p>
             <div className="h-px flex-1 bg-gray-400 text-gray-800"></div>
           </div>
 
-          <h6 className="text-sm font-medium text-gray-700">Email</h6>
+          <h6 className="text-sm font-medium text-gray-700">Username</h6>
           <div className="input-containerlogin relative">
             <input
             className="inputlogin"
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="Enter your email"
-              style={{
-                border: isValidEmail ? "1px solid #ccc" : "1px solid red",
-              }}
+              type="text"
+              value={username}
+              onChange={handleUsernameChange}
+              placeholder="Enter your username"
+              
             />
-            {!isValidEmail && (
-              <FaExclamationCircle
-                style={{
-                  position: "absolute",
-                  right: "10px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  color: "red",
-                }}
-              />
-            )}
+            
           </div>
 
           <h6 className="text-sm font-medium text-gray-700">Password</h6>
@@ -122,7 +143,9 @@ function Login() {
               Forgot password?
             </a>
           </div>
-          <button type="submit" className="buttonlogin bg-[#02735f] block pt-3 pb-3 pl-5 pr-5 text-white text-sm leading-5 font-medium w-full rounded-lg uppercase">
+          <button type="submit" className="buttonlogin bg-[#02735f] block pt-3 pb-3 pl-5 pr-5 text-white text-sm leading-5 font-medium w-full rounded-lg uppercase"
+          onClick={handleLoginSubmission}
+          >
             Login
           </button>
 

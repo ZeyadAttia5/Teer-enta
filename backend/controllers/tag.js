@@ -7,7 +7,7 @@ exports.getTags = async (req, res, next) => {
         if(tags.length === 0) {
             return res.status(404).json({ message: 'No tags found' });
         }
-        res.status(200).json({ tags });
+        res.status(200).json(tags);
     } catch (err) {
         errorHandler.SendError(res, err);
     }

@@ -29,7 +29,16 @@ exports.createAccount = async (req, res) => {
 
 exports.getAllPendingUsers = async (req, res) => {
     try {
-        const users = await User.find({isAccepted:'Pending'});
+        const users = await User.find({isAccepted: 'Pending'});
+        res.status(200).json({users});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.getAllAcceptedUsers = async (req, res) => {
+    try {
+        const users = await User.find({isAccepted: 'Accepted'});
         res.status(200).json({users});
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -43,12 +52,12 @@ exports.acceptRequest = async (req, res) => {
         if (!userId) {
             return res.status(400).json({message: 'Invalid user id'});
         }
-        const user = await User.findByIdAndUpdate(userId, {isAccepted: 'Accepted'} , {new: true});
+        const user = await User.findByIdAndUpdate(userId, {isAccepted: 'Accepted'}, {new: true});
         if (!user) {
             return res.status(404).json({message: 'User not found'});
         }
-        res.status(200).json({message: 'User accepted successfully' , user});
-    }catch (err){
+        res.status(200).json({message: 'User accepted successfully', user});
+    } catch (err) {
         errorHandler.SendError(res, err);
     }
 }
