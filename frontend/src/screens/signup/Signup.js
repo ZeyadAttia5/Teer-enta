@@ -70,17 +70,7 @@ function Signup() {
     setSelectedRole(event);
   };
 
-  const details = {
-    username: username,
-    email: email,
-    nationality: selectedNationality,
-    mobileNumber: mobileNumber,
-    jobTitle: jobTitle,
-    dob: dob,
-    password: password,
-    confirmPassword: confirmPassword,
-    role: selectedRole,
-  };
+ 
 
   const options = [
     { value: "united-states", label: "United States" },
@@ -389,7 +379,7 @@ function Signup() {
     } catch (error) {
       setMessage(error.response.data.message || 'Signup failed');
     }
-    // navigate("/login", { state: { userData: details } });
+    navigate("/login");
   };
 
   function isValid() {
