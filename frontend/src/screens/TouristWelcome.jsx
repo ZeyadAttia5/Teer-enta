@@ -1,6 +1,8 @@
 import TouristInstructionCard from "../components/TouristInstructionCard";
 import TouristNavBar from "../components/TouristNavBar";
 import airplaneImage from "../assets/airplane.png";
+import bedroom from '../assets/bedroom.png'
+import banat from '../assets/banat.png'
 import { Fade } from "react-awesome-reveal";
 
 const cards = [
@@ -12,18 +14,18 @@ const cards = [
     waterMark: "01",
   },
   {
-    superTitle: "GET Started",
-    title: "Book your Flight!",
-    desc: "The best part about booking a flight is that you don’t need to stress over the details – just pick your destination, and you’re halfway there. Whether it’s a quick getaway or an adventure abroad, booking is simple and hassle-free. No complicated steps, just click and get ready to take off!",
-    img: airplaneImage,
-    waterMark: "01",
+    superTitle: "Next Step",
+    title: "Book your Hotel!",
+    desc: "The great thing about finding a place to stay is that you don’t need anything fancy – just a cozy bed and a warm welcome. Booking a hotel is as easy as picking your favorite spot, and we’ll take care of the rest. No need to overthink it – comfort is waiting for you at the tap of a button!",
+    img: bedroom,
+    waterMark: "02",
   },
   {
-    superTitle: "GET Started",
-    title: "Book your Flight!",
-    desc: "The best part about booking a flight is that you don’t need to stress over the details – just pick your destination, and you’re halfway there. Whether it’s a quick getaway or an adventure abroad, booking is simple and hassle-free. No complicated steps, just click and get ready to take off!",
-    img: airplaneImage,
-    waterMark: "01",
+    superTitle: "where you go is the key",
+    title: "Plan your Trip!",
+    desc: "Planning your trip is easier than you think – just choose where you want to go, and we’ll help with the rest. From flights and hotels to local tour guides, must-see landmarks, and transportation options, we’ve got everything covered. Customize your adventure, explore at your own pace, and let us handle the details so you can enjoy the journey.",
+    img: banat,
+    waterMark: "03",
   },
 ];
 
