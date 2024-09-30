@@ -88,7 +88,6 @@ const CreateHistoricalPlaces = () => {
         />
 
         <div>
-          <label className="block text-gray-700">Image URL:</label>
           <input
             type="text"
             placeholder="Enter Image URL"
@@ -98,7 +97,6 @@ const CreateHistoricalPlaces = () => {
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
           />
           
-          {/* Optional: Preview the image if the URL is valid */}
           {image && (
             <div className="mt-2">
               <img
