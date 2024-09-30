@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const DeleteHistoricalTag = () => {
+const DeleteTag = () => {
     const [id, setId] = useState('');
     const [message, setMessage] = useState('');
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`/api/tags/delete/${id}`);
+            await axios.delete(`http://localhost:8000/tag/delete/${id}`);
             setMessage('Tag deleted successfully!');
         } catch (error) {
             setMessage('Error deleting tag: ' + error.response?.data?.message);
@@ -24,4 +24,4 @@ const DeleteHistoricalTag = () => {
     );
 };
 
-export default DeleteHistoricalTag;
+export default DeleteTag;
