@@ -5,27 +5,27 @@ import React from "react";
 import { Switch, Table, Tag, Form, Input } from "antd";
 import { TActivityCategory } from "../types/Activity/ActivityCategory.ts";
 import { TTag } from "../types/Tag.ts";
-import { SearchOutlined } from "@ant-design/icons";
 import Filter from "../components/Filter.jsx";
 
 // Tactivity keys are the dataIndex of each object in the data array
 const columns = [
-  // {
-  //   title: "id",
-  //   dataIndex: "_id",
-  //   key: "_id",
-  // },
   {
     title: "name",
     dataIndex: "name",
     key: "name",
+    ...Filter({
+      dataIndex: "name",
+      filterFunction: (value, record) =>
+        record.name.toLowerCase().startsWith(value.toLowerCase()),
+      type: "text",
+    }),
   },
   {
     title: "date",
     dataIndex: "date",
     key: "date",
     ...Filter({
-      dataIndex: "price",
+      dataIndex: "date",
       filterFunction: (value, record) =>
         new Date(value).getTime() === new Date(record.date).getTime(),
       type: "date",
@@ -76,12 +76,20 @@ const columns = [
     title: "category",
     dataIndex: "category",
     key: "category",
+    ...Filter({
+      dataIndex: "category",
+      filterFunction: (value, record) =>
+        record.category?.category.toLowerCase().startsWith(value.toLowerCase()),
+      type: "text",
+    }),
     render: (value: TActivityCategory) => value?.category,
   },
   {
     title: "tags",
     dataIndex: "tags",
     key: "tags",
+    filters: [],
+    onFilter: (value, record) => record.tags?.some((tag) => tag._id === value),
     render: (tags: TTag[]) => (
       <>
         {tags.map((tag, index) => {
@@ -123,13 +131,10 @@ const columns = [
     key: "ratings",
     ...Filter({
       dataIndex: "ratings",
-      filterFunction: (value, record) => {
-        // console.log(value, record);
-        
-        return record.ratings.some((rating) => {
-          console.log(rating.rating, value);
-          
-          return rating.rating === Number.parseFloat(value)});},
+      filterFunction: (value, record) =>
+        record.ratings.some(
+          (rating) => rating.rating === Number.parseFloat(value)
+        ),
       type: "number",
     }),
     render: (ratings: { createdBy: string; rating: number }[]) => (
@@ -171,7 +176,7 @@ const columns = [
 ];
 
 const Activity = () => {
-  const [activities, setActivities] = useState<TActivity[]>();
+  const [activities, setActivities] = useState<TActivity[]>([]);
   const [upcoming, setUpcoming] = useState(false);
   useEffect(() => {
     if (upcoming)
@@ -183,6 +188,16 @@ const Activity = () => {
         .then((res) => setActivities(res.data))
         .catch((err) => console.log(err));
   }, [upcoming]);
+
+  useEffect(() => {
+    columns.forEach((column) => {
+      if (column.key === "tags")
+        column["filters"] = activities
+          .map((activity) => activity.tags)
+          .flat()
+          .map((tag) => ({ text: tag.name, value: tag._id }));
+    });
+  }, [activities]);
 
   return (
     <main className="size-full p-16">

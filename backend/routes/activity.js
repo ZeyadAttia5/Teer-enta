@@ -6,7 +6,6 @@ const activityController = require("../controllers/activity");
 
 router.get("/", activityController.getActivities);
 
-router.get("/:id", activityController.getActivity);
 
 router.get("/my", activityController.getMyActivities);
 
@@ -18,5 +17,6 @@ router.put("/update/:id", activityController.updateActivity);
 
 router.delete("/delete/:id", activityController.deleteActivity);
 
+router.get("/:id", activityController.getActivity);
 
 module.exports = router;
