@@ -23,6 +23,7 @@ import { Toaster } from 'react-hot-toast';
 import HistoricalPlacesRouting from './components/historicalPlaces/historicalPlacesRouting.js';
 import Signup from './screens/signup/Signup.js';
 import Login from './screens/login/login.js';
+import Profile from './screens/profile/profile.js';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
 
           <Route path="/" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/delete-user" component={DeleteUser} />
           <Route path="/add-tourism-governor" component={AddTourismGovernor} />
           <Route path="/add-admin" component={AddAdmin} />
@@ -52,7 +54,7 @@ function App() {
           <Route path="/create-activity-tag" component={CreateActivityTag} />
           <Route path="/view-activity-tags" component={ViewActivityTags} />
         </Routes>
-        <HistoricalPlacesRouting />
+        {/* <HistoricalPlacesRouting /> */}
         <Toaster />
       </Router>
       <br></br>

@@ -31,7 +31,7 @@ function Login() {
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, [images.length]);
 
-  const URL = 'http://localhost:8000';
+  const URL = `http://localhost:${process.env.PORT}`;
   const handleLoginSubmission = async (e) => {
     e.preventDefault();
     if (!isValid()) 
@@ -138,7 +138,8 @@ function Login() {
         {showPassword ? <FaEyeSlash color="gray" /> : <FaEye color="gray" />}
       </span>
           </div>
-          <div className="flex justify-end mt-1 mb-4">
+          <div className="flex justify-between mt-1 mb-4">
+            <span className="text-red-500 text-xs ml-4">{message}</span>
             <a className="hover:underline text-[#474bca] text-xs" href="">
               Forgot password?
             </a>
@@ -151,7 +152,7 @@ function Login() {
 
           <p class="text-xs text-center">
             No account?
-            <a href="" className="text-[#474bca] hover:underline">
+            <a href="/" className="text-[#474bca] hover:underline">
               {" "}
               Sign up
             </a>
