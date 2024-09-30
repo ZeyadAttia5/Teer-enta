@@ -12,7 +12,7 @@ const TouristInstructionCard = ({
   return (
     <Fade direction={leftToRight ? "left" : "right"}>
       <Card
-        className={`flex bg-transparent items-center w-full mb-20 h-[480px] border-none ${
+        className={`flex bg-transparent items-center w-full mb-20 h-[480px] relative border-none ${
           leftToRight ? "xl:flex-row-reverse" : "xl:flex-row"
         }  flex-col-reverse `}
         data-aos="fade-up"
@@ -30,11 +30,17 @@ const TouristInstructionCard = ({
             </span>
           }
           description={
-            <desc className="text-white xl:text-[18px] text-sm font-bold leading-8">
-              {desc}
-            </desc>
+            <span className="text-white xl:text-[18px] text-sm font-bold leading-8">
+              {desc}n{" "}
+            </span>
           }
         />
+        <span
+          className={`text-white opacity-20 font-bold text-[240px] leading-[240px] absolute top-[-40%] left-0 xl:top-0 
+          ${leftToRight ? "xl:left-0" : "xl:left-1/3"}  mr-2 mb-2`}
+        >
+          {waterMark}
+        </span>
       </Card>
     </Fade>
   );
