@@ -1,24 +1,30 @@
-import React from 'react';
-import historicalPlacesData from './historicalPlacesData'; 
+import React,{useState, useEffect} from 'react';
+// import historicalPlacesData from './historicalPlacesData'; 
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const DeleteHistoricalPlaces = () => {
   const navigate = useNavigate();
+
   const { id } = useParams(); 
 
-  const handleDeleteHistoricalPlace = () => {
-    const index = historicalPlacesData.findIndex(place => place._id === id);
-    
-    if (index !== -1) {
-      historicalPlacesData.splice(index, 1);
-      toast.success("Historical place deleted successfully!");
-    } else {
-      toast.error("Historical place not found!");
+  const handleDeleteHistoricalPlace = async () => {
+    try {
+      const response = await axios.delete(`http://localhost:8000/historicalPlace/delete/${id}`);
+      
+      if (response.status === 200) {
+        toast.success('Historical place deleted successfully!');
+        navigate('/');
+      } else {
+        toast.error('Failed to delete the historical place.');
+      }
+    } catch (error) {
+      console.error('Error deleting historical place:', error);
+      toast.error('An error occurred while deleting the historical place.');
     }
-  
-    navigate('/');
   };
+
   
 
   return (

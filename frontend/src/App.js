@@ -28,7 +28,7 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Routes>
+        {/* <Routes>
 
           <Route path="/" element={<Signup />} />
           <Route path="/login" element={<Login />} />
@@ -51,7 +51,7 @@ function App() {
           <Route path="/update-activity-tag" component={UpdateActivityTag} />
           <Route path="/create-activity-tag" component={CreateActivityTag} />
           <Route path="/view-activity-tags" component={ViewActivityTags} />
-        </Routes>
+        </Routes> */}
         <HistoricalPlacesRouting />
         <Toaster />
       </Router>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import historicalPlacesData from './historicalPlacesData'; 
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const UpdateHistoricalPlaces = () => {
   const navigate = useNavigate();
@@ -9,30 +9,38 @@ const UpdateHistoricalPlaces = () => {
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [tag, setTag] = useState('');
+  const [tag, setTag] = useState(''); 
   const [openingHours, setOpeningHours] = useState('');
-  const [foreignerPrice, setForeignerPrice] = useState('');
-  const [studentPrice, setStudentPrice] = useState('');
-  const [nativePrice, setNativePrice] = useState('');
+  const [foreignerPrice, setForeignerPrice] = useState(0);
+  const [studentPrice, setStudentPrice] = useState(0);
+  const [nativePrice, setNativePrice] = useState(0);
   const [imageFile, setImageFile] = useState(null);
   const [existingImage, setExistingImage] = useState('');
+  
 
-  // Fetch current data for the historical place to update
   useEffect(() => {
-    const place = historicalPlacesData.find(place => place._id === Number(id));
-    if (place) {
-      setName(place.name);
-      setLocation(place.location);
-      setDescription(place.description);
-      setTag(place.tag);
-      setOpeningHours(place.openingHours);
-      setForeignerPrice(place.tickets.find(ticket => ticket.type === "Foreigner").price);
-      setStudentPrice(place.tickets.find(ticket => ticket.type === "Student").price);
-      setNativePrice(place.tickets.find(ticket => ticket.type === "Native").price);
-      setExistingImage(place.imageFile); // Set the existing image URL if needed
-    }
-  }, [id]);
+    const fetchPlace = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/historicalPlace/${id}`);
+        const place = response.data;
+        console.log('Fetched Place:', place); 
 
+        setName(place.name || '');
+        setLocation(place.location || '');
+        setDescription(place.description || '');
+        setTag(place.tags.length > 0 ? place.tags[0].type : '');  
+        setOpeningHours(place.openingHours || '');
+        setForeignerPrice(place.tickets.find(ticket => ticket.type === "Foreigner")?.price || 0);
+        setStudentPrice(place.tickets.find(ticket => ticket.type === "Student")?.price || 0);
+        setNativePrice(place.tickets.find(ticket => ticket.type === "Native")?.price || 0);
+        setExistingImage(place.images?.[0] || ''); 
+      } catch (error) {
+        console.error('Error fetching historical place:', error);
+      }
+    };
+    fetchPlace();
+  }, [id]);
+  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -40,34 +48,34 @@ const UpdateHistoricalPlaces = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const updatedPlace = {
-      _id: Number(id), // keep the same id
+    const data = {
       name,
-      location,
-      description,
-      imageFile: imageFile ? URL.createObjectURL(imageFile) : existingImage, // Use new image if provided, else use existing
-      tag,
       openingHours,
+      description,
+      location,
+      images: existingImage ? [existingImage] : [],
+      tags: [ tag ], 
       tickets: [
-        { type: "Foreigner", price: foreignerPrice },
-        { type: "Student", price: studentPrice },
-        { type: "Native", price: nativePrice },
+        { type: 'Foreigner', price: foreignerPrice },
+        { type: 'Student', price: studentPrice },   
+        { type: 'Native', price: nativePrice },
       ],
     };
-
-    // Find the index and update the historical place
-    const index = historicalPlacesData.findIndex(place => place._id === Number(id));
-    if (index !== -1) {
-      historicalPlacesData[index] = updatedPlace; // Update the data
-      toast.success("Historical place updated successfully!"); // Show success toast
-    } else {
-      toast.error("Historical place not found!"); // Show error toast
+    
+    try {
+      const response = await axios.put(`http://localhost:8000/historicalPlace/update/${id}`, data);
+      if (response.status === 200) {
+        toast.success('Historical place updated successfully!');
+        navigate('/');
+      } else {
+        toast.error('Failed to update the historical place.');
+      }
+    } catch (error) {
+      console.error('Error updating historical place:', error);
+      toast.error('An error occurred while updating the historical place.');
     }
-
-    navigate('/'); // Redirect after updating
   };
 
   return (
@@ -77,7 +85,7 @@ const UpdateHistoricalPlaces = () => {
         <input
           type="text"
           placeholder="Name"
-          value={name}
+          value={name} 
           onChange={(e) => setName(e.target.value)}
           required
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
@@ -85,14 +93,14 @@ const UpdateHistoricalPlaces = () => {
         <input
           type="text"
           placeholder="Location"
-          value={location}
+          value={location} 
           onChange={(e) => setLocation(e.target.value)}
           required
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
         />
         <textarea
           placeholder="Description"
-          value={description}
+          value={description} 
           onChange={(e) => setDescription(e.target.value)}
           required
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 h-24"
@@ -115,7 +123,7 @@ const UpdateHistoricalPlaces = () => {
               />
             </div>
           )}
-          {existingImage && !imageFile && ( // Show existing image if no new image is uploaded
+          {existingImage && !imageFile && (
             <div className="mt-2">
               <img
                 src={existingImage}
@@ -126,25 +134,25 @@ const UpdateHistoricalPlaces = () => {
           )}
         </div>
 
+        <h2 className="text-xl font-semibold text-gray-800 mt-6">Tag</h2>
         <select
-          value={tag}
+          value={tag} 
           onChange={(e) => setTag(e.target.value)}
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
         >
-          <option value="" disabled>
-            Tags
-          </option>
+          <option value="" disabled>Select a tag</option>
           <option value="Monuments">Monuments</option>
           <option value="Museums">Museums</option>
           <option value="Religious Sites">Religious Sites</option>
-          <option value="Palaces/Castles">Palaces/Castles</option>
+          <option value="Palaces">Palaces</option>
+          <option value="Castles">Castles</option>
         </select>
 
         <h2 className="text-xl font-semibold text-gray-800 mt-6">Opening Hours</h2>
         <input
           type="text"
           placeholder="e.g. 10:00 AM - 5:30 PM"
-          value={openingHours}
+          value={openingHours} 
           onChange={(e) => setOpeningHours(e.target.value)}
           required
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
@@ -157,8 +165,8 @@ const UpdateHistoricalPlaces = () => {
             <input
               type="number"
               placeholder="Price"
-              value={foreignerPrice}
-              onChange={(e) => setForeignerPrice(e.target.value)}
+              value={foreignerPrice} 
+              onChange={(e) => setForeignerPrice(Number(e.target.value))} 
               required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 w-1/3"
             />
@@ -168,8 +176,8 @@ const UpdateHistoricalPlaces = () => {
             <input
               type="number"
               placeholder="Price"
-              value={studentPrice}
-              onChange={(e) => setStudentPrice(e.target.value)}
+              value={studentPrice} 
+              onChange={(e) => setStudentPrice(Number(e.target.value))} 
               required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 w-1/3"
             />
@@ -179,8 +187,8 @@ const UpdateHistoricalPlaces = () => {
             <input
               type="number"
               placeholder="Price"
-              value={nativePrice}
-              onChange={(e) => setNativePrice(e.target.value)}
+              value={nativePrice} 
+              onChange={(e) => setNativePrice(Number(e.target.value))}
               required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 w-1/3"
             />
