@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const TouristItinerarySchema = new mongoose.Schema({
+    name: {type: String, required: true},
     activities: [{type: mongoose.Schema.Types.ObjectId, ref: 'Activity'}],
     startDate: {type: Date, required: true},
     endDate: {type: Date, required: true},
