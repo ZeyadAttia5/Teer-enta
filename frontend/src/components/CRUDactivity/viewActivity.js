@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const ViewActivityTags = () => {
+const ViewActivities = () => {
     const [activities, setActivities] = useState([]);
     const [message, setMessage] = useState('');
     const [showActivities, setShowActivities] = useState(false); // To toggle the view
 
     const fetchActivities = async () => {
         try {
-            const response = await axios.get('/api/activities');
+            const response = await axios.get('http://localhost:8000/activity');
             setActivities(response.data);
         } catch (error) {
             setMessage('Error fetching activities: ' + error.response?.data?.message);
@@ -53,7 +53,6 @@ const ViewActivityTags = () => {
                                 <p>No special discounts available.</p>
                             )}
 
-                           
                             <p><strong>Ratings:</strong></p>
                             {activity.ratings.length > 0 ? (
                                 <ul>
@@ -67,7 +66,6 @@ const ViewActivityTags = () => {
                                 <p>No ratings available.</p>
                             )}
 
-                           
                             <p><strong>Comments:</strong></p>
                             {activity.comments.length > 0 ? (
                                 <ul>
@@ -81,7 +79,6 @@ const ViewActivityTags = () => {
                                 <p>No comments available.</p>
                             )}
 
-                            
                             <p><strong>Created By:</strong> {activity.createdBy?.name || 'N/A'}</p>
                         </li>
                     ))}
@@ -91,5 +88,4 @@ const ViewActivityTags = () => {
     );
 };
 
-export default ViewActivityTags;
-
+export default ViewActivities;

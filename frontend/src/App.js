@@ -7,18 +7,10 @@ import CreateCategory from './components/CRUDactivitycategory/addActivityCategor
 import DeleteActivityCategory from './components/CRUDactivitycategory/deleteActivityCategory.js';
 import ViewActivityCategories from './components/CRUDactivitycategory/viewActivityCategory.js';
 import UpdateActivityCategory from './components/CRUDactivitycategory/updateActivityCategory.js';
-import CreateHistoricalTag from './components/CRUGtag/historical/createHistoricalTag.js';
-import DeleteHistoricalTag from './components/CRUGtag/historical/deleteHistoricalTag.js';
-import UpdateHistoricalTag from './components/CRUGtag/historical/updateHistoricalTag.js';
-import ViewHistoricalTag from './components/CRUGtag/historical/viewHistoricalTag.js';
-import CreatePreferenceTag from './components/CRUGtag/preference/createPreferenceTag.js'; 
-import ViewPreferenceTags from './components/CRUGtag/preference/viewPreferenceTag.js';
-import UpdatePreferenceTag from './components/CRUGtag/preference/updatePreferenceTag.js'; 
-import DeletePreferenceTag from './components/CRUGtag/preference/deletePreferenceTag.js'; 
-import DeleteActivityTag from './components/CRUGtag/activity/deleteActivityTag.js';
-import ViewActivityTags from './components/CRUGtag/activity/viewActivityTag.js';
-import UpdateActivityTag from './components/CRUGtag/activity/updateActivityTag.js';
-import CreateActivityTag from './components/CRUGtag/activity/createActivityTag.js';
+import CreateTag from "./components/CRUDtag/createTag.js";
+import ViewTags from "./components/CRUDtag/viewTag.js";
+import UpdateTag from "./components/CRUDtag/updateTag.js";
+import DeleteTag from "./components/CRUDtag/deleteTag.js";
 import { Toaster } from 'react-hot-toast';
 import HistoricalPlacesRouting from './components/historicalPlaces/historicalPlacesRouting.js';
 import Signup from './screens/signup/Signup.js';
@@ -31,7 +23,10 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-
+        <Route path="/tags/create" element={<CreateTag />} />
+        <Route path="/tags/view" element={<ViewTags />} />
+        <Route path="/tags/update" element={<UpdateTag />} />
+         <Route path="/tags/delete" element={<DeleteTag />} />
           <Route path="/" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
@@ -42,18 +37,8 @@ function App() {
           <Route path="/delete-activity-category" element={<DeleteActivityCategory />} />
           <Route path="/view-activity-categories" element={<ViewActivityCategories />} />
           <Route path="/update-activity-category" element={<UpdateActivityCategory />} />
-          <Route path="/create-historical-tag" element={<CreateHistoricalTag />} />
-          <Route path="/delete-historical-tag" element={<DeleteHistoricalTag />} />
-          <Route path="/update-historical-tag" element={<UpdateHistoricalTag />} />
-          <Route path="/view-historical-tags" element={<ViewHistoricalTag />} />
-          <Route path="/create-preference-tag" element={<CreatePreferenceTag />} />
-          <Route path="/view-preference-tags" element={<ViewPreferenceTags />} />
-          <Route path="/update-preference-tag" element={<UpdatePreferenceTag />} />
-          <Route path="/delete-preference-tag" element={<DeletePreferenceTag />} />
-          <Route path="/delete-activity-tag" element={<DeleteActivityTag />} />
-          <Route path="/update-activity-tag" element={<UpdateActivityTag />} />
-          <Route path="/create-activity-tag" element={<CreateActivityTag />} />
-          <Route path="/view-activity-tags" element={<ViewActivityTags />} />
+
+
         </Routes>
         <HistoricalPlacesRouting />
         <Toaster />
