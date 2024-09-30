@@ -4,6 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
+
+const PORT = process.env.PORT || 8000;
+
 const DeleteHistoricalPlaces = () => {
   const navigate = useNavigate();
 
@@ -11,7 +14,7 @@ const DeleteHistoricalPlaces = () => {
 
   const handleDeleteHistoricalPlace = async () => {
     try {
-      const response = await axios.delete(`http://localhost:8000/historicalPlace/delete/${id}`);
+      const response = await axios.delete(`http://localhost:${PORT}/historicalPlace/delete/${id}`);
       
       if (response.status === 200) {
         toast.success('Historical place deleted successfully!');

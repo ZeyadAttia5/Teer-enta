@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
+const PORT = process.env.PORT || 8000;
+
 const CreateHistoricalPlaces = () => {
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [image, setImage] = useState(''); // Initialize as an empty string
+  const [image, setImage] = useState(''); 
   const [tag, setTag] = useState('');
   const [openingHours, setOpeningHours] = useState('');
   const [foreignerPrice, setForeignerPrice] = useState(0);
@@ -33,7 +35,7 @@ const CreateHistoricalPlaces = () => {
     };
   
     try {
-      const response = await axios.post('http://localhost:8000/historicalPlace/create', data);
+      const response = await axios.post(`http://localhost:${PORT}/historicalPlace/create`, data);
       if (response.status === 201) {
         toast.success('Historical place created successfully!');
         navigate('/historicalPlace');
@@ -86,7 +88,6 @@ const CreateHistoricalPlaces = () => {
         />
 
         <div>
-          <label className="block text-gray-700">Image URL:</label>
           <input
             type="text"
             placeholder="Enter Image URL"
@@ -96,7 +97,6 @@ const CreateHistoricalPlaces = () => {
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
           />
           
-          {/* Optional: Preview the image if the URL is valid */}
           {image && (
             <div className="mt-2">
               <img
