@@ -7,26 +7,25 @@ import CreateCategory from './components/CRUDactivitycategory/addActivityCategor
 import DeleteActivityCategory from './components/CRUDactivitycategory/deleteActivityCategory.js';
 import ViewActivityCategories from './components/CRUDactivitycategory/viewActivityCategory.js';
 import UpdateActivityCategory from './components/CRUDactivitycategory/updateActivityCategory.js';
-import CreateTag from "./components/CRUDtag/createTag.js";
-import ViewTags from "./components/CRUDtag/viewTag.js";
-import UpdateTag from "./components/CRUDtag/updateTag.js";
-import DeleteTag from "./components/CRUDtag/deleteTag.js";
 import { Toaster } from 'react-hot-toast';
-import HistoricalPlacesRouting from './components/historicalPlaces/historicalPlacesRouting.js';
 import Signup from './screens/signup/Signup.js';
 import Login from './screens/login/login.js';
 import Profile from './screens/profile/profile.js';
+import CreateActivity from './components/CRUDactivity/createActivity.js';
+import ViewActivities from './components/CRUDactivity/viewActivity.js';
+import UpdateActivity from './components/CRUDactivity/updateActivity.js';
+import DeleteActivity from './components/CRUDactivity/deleteActivity.js';
+import CreateTag from './components/CRUDtag/createTag.js';
+import ViewTags from './components/CRUDtag/viewTag.js';
+import UpdateTag from './components/CRUDtag/updateTag.js';
+import DeleteTag from './components/CRUDtag/deleteTag.js';
 import TouristWelcome from "./screens/TouristWelcome.jsx";
-
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
-        <Route path="/tags/create" element={<CreateTag />} />
-        <Route path="/tags/view" element={<ViewTags />} />
-        <Route path="/tags/update" element={<UpdateTag />} />
-         <Route path="/tags/delete" element={<DeleteTag />} />
+
           <Route path="/" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
@@ -37,10 +36,16 @@ function App() {
           <Route path="/delete-activity-category" element={<DeleteActivityCategory />} />
           <Route path="/view-activity-categories" element={<ViewActivityCategories />} />
           <Route path="/update-activity-category" element={<UpdateActivityCategory />} />
-
-
+          <Route path="/create-activity" element={<CreateActivity />} />
+          <Route path="/view-activities" element={<ViewActivities />} />
+          <Route path="/update-activity" element={<UpdateActivity />} />
+          <Route path="/delete-activity" element={<DeleteActivity />} />
+          <Route path="/create-tag" element={<CreateTag />} />
+          <Route path="/view-tags" element={<ViewTags />} />
+          <Route path="/update-tag" element={<UpdateTag />} />
+          <Route path="/delete-tag" element={<DeleteTag />} />
+          
         </Routes>
-        <HistoricalPlacesRouting />
         <Toaster />
       </Router>
     </div>

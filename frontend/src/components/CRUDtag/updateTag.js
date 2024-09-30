@@ -29,13 +29,14 @@ const UpdateTag = () => {
     };
 
     return (
-        <div>
-            <h2>Update Tag</h2>
+        <div className="max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg">
+            <h2 className="text-xl font-semibold mb-4">Update Tag</h2>
             <input
                 type="text"
                 value={id}
                 onChange={(e) => setId(e.target.value)}
                 placeholder="Enter Tag ID"
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
             <form onSubmit={handleUpdate}>
                 <input
@@ -44,34 +45,54 @@ const UpdateTag = () => {
                     value={tag.name}
                     onChange={handleChange}
                     placeholder="Tag Name"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
-                <select name="type" value={tag.type} onChange={handleChange}>
-                    <option value="">Select Type</option>
+                <select 
+                    name="type" 
+                    value={tag.type} 
+                    onChange={handleChange}
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
+                >
+                    <option value="" disabled>Select Type</option>
                     <option value="Monuments">Monuments</option>
                     <option value="Museums">Museums</option>
-                    <option value="Religious">Religious</option>
-                    <option value="Sites">Sites</option>
+                    <option value="Religious Sites">Religious Sites</option>
                     <option value="Palaces">Palaces</option>
                     <option value="Castles">Castles</option>
                 </select>
-                <select name="historicalPeriod" value={tag.historicalPeriod} onChange={handleChange}>
-                    <option value="">Select Historical Period</option>
+                <select 
+                    name="historicalPeriod" 
+                    value={tag.historicalPeriod} 
+                    onChange={handleChange}
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
+                >
+                    <option value="" disabled >Select Historical Period</option>
                     <option value="Ancient">Ancient</option>
                     <option value="Medieval">Medieval</option>
                     <option value="Modern">Modern</option>
                 </select>
-                <input
-                    type="checkbox"
-                    name="isActive"
-                    checked={tag.isActive}
-                    onChange={() => setTag({ ...tag, isActive: !tag.isActive })}
-                /> Is Active
-                <button type="submit">Update Tag</button>
+                <label className="flex items-center mb-4">
+                    <input
+                        type="checkbox"
+                        name="isActive"
+                        checked={tag.isActive}
+                        onChange={() => setTag({ ...tag, isActive: !tag.isActive })}
+                        className="mr-2"
+                    />
+                    Is Active
+                </label>
+                <button 
+                    type="submit" 
+                    className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
+                >
+                    Update Tag
+                </button>
             </form>
-            {message && <p>{message}</p>} {/* Display feedback message */}
+            {message && <p className="mt-4 text-red-500">{message}</p>} {/* Display feedback message */}
         </div>
     );
 };
 
-export default UpdateTag;
+export default UpdateTag; // Export the component
+
 

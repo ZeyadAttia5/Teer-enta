@@ -15,7 +15,7 @@ const DeleteHistoricalPlaces = () => {
       
       if (response.status === 200) {
         toast.success('Historical place deleted successfully!');
-        navigate('/');
+        navigate('/historicalPlace');
       } else {
         toast.error('Failed to delete the historical place.');
       }

@@ -36,13 +36,14 @@ const UpdateActivity = () => {
     };
 
     return (
-        <div>
-            <h2>Update Activity</h2>
+        <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg">
+            <h2 className="text-xl font-semibold mb-4">Update Activity</h2>
             <input
                 type="text"
                 value={id}
                 onChange={(e) => setId(e.target.value)}
                 placeholder="Enter Activity ID"
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
             <form onSubmit={handleUpdate}>
                 <input
@@ -51,20 +52,21 @@ const UpdateActivity = () => {
                     value={activity.name}
                     onChange={handleChange}
                     placeholder="Activity Name"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <input
                     type="date"
                     name="date"
                     value={activity.date}
                     onChange={handleChange}
-                    placeholder="Date"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <input
                     type="time"
                     name="time"
                     value={activity.time}
                     onChange={handleChange}
-                    placeholder="Time"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <input
                     type="text"
@@ -72,6 +74,7 @@ const UpdateActivity = () => {
                     value={activity.location}
                     onChange={handleChange}
                     placeholder="Location"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <input
                     type="number"
@@ -79,6 +82,7 @@ const UpdateActivity = () => {
                     value={activity.priceMin}
                     onChange={handleChange}
                     placeholder="Min Price"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <input
                     type="number"
@@ -86,6 +90,7 @@ const UpdateActivity = () => {
                     value={activity.priceMax}
                     onChange={handleChange}
                     placeholder="Max Price"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <input
                     type="text"
@@ -93,6 +98,7 @@ const UpdateActivity = () => {
                     value={activity.category}
                     onChange={handleChange}
                     placeholder="Category ID"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
                 <input
                     type="text"
@@ -100,32 +106,45 @@ const UpdateActivity = () => {
                     value={activity.tags}
                     onChange={handleChange}
                     placeholder="Tags"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
                 />
 
-                <input
-                    type="checkbox"
-                    name="isBookingOpen"
-                    checked={activity.isBookingOpen}
-                    onChange={() =>
-                        setActivity({ ...activity, isBookingOpen: !activity.isBookingOpen })
-                    }
-                />{' '}
-                Booking Open
-                <input
-                    type="checkbox"
-                    name="isActive"
-                    checked={activity.isActive}
-                    onChange={() =>
-                        setActivity({ ...activity, isActive: !activity.isActive })
-                    }
-                />{' '}
-                Is Active
+                <label className="flex items-center mb-4">
+                    <input
+                        type="checkbox"
+                        name="isBookingOpen"
+                        checked={activity.isBookingOpen}
+                        onChange={() =>
+                            setActivity({ ...activity, isBookingOpen: !activity.isBookingOpen })
+                        }
+                        className="mr-2"
+                    />
+                    Booking Open
+                </label>
+                <label className="flex items-center mb-4">
+                    <input
+                        type="checkbox"
+                        name="isActive"
+                        checked={activity.isActive}
+                        onChange={() =>
+                            setActivity({ ...activity, isActive: !activity.isActive })
+                        }
+                        className="mr-2"
+                    />
+                    Is Active
+                </label>
 
-                <button type="submit">Update Activity</button>
+                <button
+                    type="submit"
+                    className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
+                >
+                    Update Activity
+                </button>
             </form>
-            {message && <p>{message}</p>}
+            {message && <p className="mt-4 text-red-500">{message}</p>} {/* Display feedback message */}
         </div>
     );
 };
 
-export default UpdateActivity;
+export default UpdateActivity; // Export the component
+

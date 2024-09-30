@@ -1,6 +1,5 @@
 import React, { useState,useEffect } from 'react';
 import HistoricalPlaceSingleCard from './historicalPlaceSingleCard';
-// import historicalPlacesData  from './historicalPlacesData';
 import { MdOutlineAddBox } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
@@ -23,16 +22,6 @@ const ReadHistoriaclPlaces = () => {
 
     fetchHistoricalPlaces();
   }, []);
-
-  // useEffect(() => {
-  //   axios.get('http://localhost:3000/historicalplaces')
-  //     .then((res) => {
-  //       setHistoricalPlacesData(res.data);
-  //     })
-  //     .catch(error => {
-  //       console.log(error.message);
-  //     });
-  // }, []);
 
 
 
@@ -73,7 +62,7 @@ const ReadHistoriaclPlaces = () => {
         </select>
       </div>
       <div className="flex justify-end p-4 w-full">
-        <Link to='/historicalPlaces/create'>
+        <Link to='/historicalPlace/create'>
           <button className="flex items-center px-4 py-2 bg-sky-800 text-white rounded-lg shadow hover:bg-sky-700 hover:scale-105 transition-all duration-300 ease-in-out">
             <span className="mr-2">Create New</span>
             <MdOutlineAddBox className='text-2xl' />

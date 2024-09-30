@@ -22,7 +22,7 @@ const CreateHistoricalPlaces = () => {
       name,
       location,
       description,
-      images: image ? [image] : [], // Ensure this is an array
+      images: image ? [image] : [], 
       tags: [tag],
       openingHours,
       tickets: [
@@ -34,9 +34,9 @@ const CreateHistoricalPlaces = () => {
   
     try {
       const response = await axios.post('http://localhost:8000/historicalPlace/create', data);
-      if (response.status === 200) {
+      if (response.status === 201) {
         toast.success('Historical place created successfully!');
-        navigate('/');
+        navigate('/historicalPlace');
       } else {
         toast.error('Failed to create the historical place.');
       }
@@ -45,11 +45,10 @@ const CreateHistoricalPlaces = () => {
       toast.error('An error occurred while creating the historical place.');
     }
   
-    // Reset form
     setName('');
     setLocation('');
     setDescription('');
-    setImage(null);
+    setImage('');
     setTag('');
     setOpeningHours('');
     setForeignerPrice(0);

@@ -7,8 +7,11 @@ import { MdOutlineDelete } from 'react-icons/md'
 const HistoricalPlaceSingleCard = ({ places }) => {
   return (
     <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
-      <img className="w-full h-48 object-cover" src={places.imageUrl} alt={places.name} />
-      
+      <img className="w-full h-48 object-cover" 
+     src={places.images && places.images.length > 0 ? places.images[0] : 'defaultImageUrl.jpg'} 
+     alt={places.name} 
+     loading="lazy" 
+    />
       <div className="p-6">
         <h3 className="font-bold text-2xl mb-2 text-gray-800">{places.name}</h3>
         <p className="text-gray-600 text-sm leading-relaxed mb-4">
@@ -45,10 +48,10 @@ const HistoricalPlaceSingleCard = ({ places }) => {
         ))}
       </div>
       <div className='flex justify-center items-center gap-10 mt-4 p-4'>
-          <Link to={`/historicalPlaces/update/${places._id}`}>
+          <Link to={`/historicalPlace/update/${places._id}`}>
               <AiOutlineEdit className='text-yellow-600 text-2xl hover:text-black hover:scale-105 hover:shadow-lg transition duration-300 ease-in-out' title='Edit'/>
           </Link>
-          <Link to={`/historicalPlaces/delete/${places._id}`}>
+          <Link to={`/historicalPlace/delete/${places._id}`}>
               <MdOutlineDelete className='text-red-600 text-2xl hover:text-black hover:scale-105 hover:shadow-lg transition duration-300 ease-in-out' title='Delete'/>
           </Link>
       </div>

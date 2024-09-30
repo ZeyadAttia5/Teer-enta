@@ -9,13 +9,13 @@ const UpdateHistoricalPlaces = () => {
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [tag, setTag] = useState(''); 
+  const [image, setImage] = useState(''); 
+  const [tag, setTag] = useState('');
   const [openingHours, setOpeningHours] = useState('');
   const [foreignerPrice, setForeignerPrice] = useState(0);
   const [studentPrice, setStudentPrice] = useState(0);
   const [nativePrice, setNativePrice] = useState(0);
-  const [imageFile, setImageFile] = useState(null);
-  const [existingImage, setExistingImage] = useState('');
+  
   
 
   useEffect(() => {
@@ -33,34 +33,27 @@ const UpdateHistoricalPlaces = () => {
         setForeignerPrice(place.tickets.find(ticket => ticket.type === "Foreigner")?.price || 0);
         setStudentPrice(place.tickets.find(ticket => ticket.type === "Student")?.price || 0);
         setNativePrice(place.tickets.find(ticket => ticket.type === "Native")?.price || 0);
-        setExistingImage(place.images?.[0] || ''); 
+        setImage(place.images?.[0] || ''); 
       } catch (error) {
         console.error('Error fetching historical place:', error);
       }
     };
     fetchPlace();
   }, [id]);
-  
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
       name,
-      openingHours,
-      description,
       location,
-      images: existingImage ? [existingImage] : [],
-      tags: [ tag ], 
+      description,
+      images: image ? [image] : [], 
+      tags: [tag],
+      openingHours,
       tickets: [
-        { type: 'Foreigner', price: foreignerPrice },
-        { type: 'Student', price: studentPrice },   
-        { type: 'Native', price: nativePrice },
+        { type: "Foreigner", price: foreignerPrice },
+        { type: "Student", price: studentPrice },
+        { type: "Native", price: nativePrice },
       ],
     };
     
@@ -68,7 +61,7 @@ const UpdateHistoricalPlaces = () => {
       const response = await axios.put(`http://localhost:8000/historicalPlace/update/${id}`, data);
       if (response.status === 200) {
         toast.success('Historical place updated successfully!');
-        navigate('/');
+        navigate('/historicalPlace');
       } else {
         toast.error('Failed to update the historical place.');
       }
@@ -107,28 +100,23 @@ const UpdateHistoricalPlaces = () => {
         />
         
         <div>
-          <label className="block text-gray-700">Upload Image:</label>
+          <label className="block text-gray-700">Image URL:</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
+            type="text"
+            placeholder="Enter Image URL"
+            value={image}
+            onChange={(e) => setImage(e.target.value)} 
+            required
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
           />
-          {imageFile && (
+          
+          {image && (
             <div className="mt-2">
               <img
-                src={URL.createObjectURL(imageFile)}
+                src={image}
                 alt="Preview"
                 className="w-full h-48 object-cover rounded-lg"
-              />
-            </div>
-          )}
-          {existingImage && !imageFile && (
-            <div className="mt-2">
-              <img
-                src={existingImage}
-                alt="Existing"
-                className="w-full h-48 object-cover rounded-lg"
+                onError={(e) => { e.target.onerror = null; e.target.src = 'fallback-image-url.png'; }} // Fallback if image fails to load
               />
             </div>
           )}
