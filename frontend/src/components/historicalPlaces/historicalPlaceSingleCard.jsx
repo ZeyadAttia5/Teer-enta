@@ -7,8 +7,11 @@ import { MdOutlineDelete } from 'react-icons/md'
 const HistoricalPlaceSingleCard = ({ places }) => {
   return (
     <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
-      <img className="w-full h-48 object-cover" src={places.imageUrl} alt={places.name} />
-      
+      <img className="w-full h-48 object-cover" 
+     src={places.images && places.images.length > 0 ? places.images[0] : 'defaultImageUrl.jpg'} 
+     alt={places.name} 
+     loading="lazy" 
+    />
       <div className="p-6">
         <h3 className="font-bold text-2xl mb-2 text-gray-800">{places.name}</h3>
         <p className="text-gray-600 text-sm leading-relaxed mb-4">
