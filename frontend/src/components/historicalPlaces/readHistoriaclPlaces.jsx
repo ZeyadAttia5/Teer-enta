@@ -4,6 +4,7 @@ import { MdOutlineAddBox } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
+const PORT = process.env.PORT || 8000;
 
 const ReadHistoriaclPlaces = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,7 +14,7 @@ const ReadHistoriaclPlaces = () => {
   useEffect(() => {
     const fetchHistoricalPlaces = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/historicalPlace');
+        const response = await axios.get(`http://localhost:${PORT}/historicalPlace`);
         setHistoricalPlacesData(response.data); 
       } catch (error) {
         console.error('Error fetching historical places:', error);
