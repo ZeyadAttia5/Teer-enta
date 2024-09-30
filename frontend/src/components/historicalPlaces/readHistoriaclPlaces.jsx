@@ -73,7 +73,7 @@ const ReadHistoriaclPlaces = () => {
         </select>
       </div>
       <div className="flex justify-end p-4 w-full">
-        <Link to='/historicalPlaces/create'>
+        <Link to='/historicalPlace/create'>
           <button className="flex items-center px-4 py-2 bg-sky-800 text-white rounded-lg shadow hover:bg-sky-700 hover:scale-105 transition-all duration-300 ease-in-out">
             <span className="mr-2">Create New</span>
             <MdOutlineAddBox className='text-2xl' />

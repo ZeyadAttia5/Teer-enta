@@ -45,10 +45,10 @@ const HistoricalPlaceSingleCard = ({ places }) => {
         ))}
       </div>
       <div className='flex justify-center items-center gap-10 mt-4 p-4'>
-          <Link to={`/historicalPlaces/update/${places._id}`}>
+          <Link to={`/historicalPlace/update/${places._id}`}>
               <AiOutlineEdit className='text-yellow-600 text-2xl hover:text-black hover:scale-105 hover:shadow-lg transition duration-300 ease-in-out' title='Edit'/>
           </Link>
-          <Link to={`/historicalPlaces/delete/${places._id}`}>
+          <Link to={`/historicalPlace/delete/${places._id}`}>
               <MdOutlineDelete className='text-red-600 text-2xl hover:text-black hover:scale-105 hover:shadow-lg transition duration-300 ease-in-out' title='Delete'/>
           </Link>
       </div>
