@@ -1,62 +1,62 @@
 import React, { useState } from 'react';
-import historicalPlacesData from './historicalPlacesData'; 
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const CreateHistoricalPlaces = () => {
-  const _id = `${historicalPlacesData.length + 1}`;
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [imageFile, setImageFile] = useState(null);
-  const [tag, setTag] = useState(''); 
-  const [openingHours, setOpeningHours] = useState(''); 
-  const [foreignerPrice, setForeignerPrice] = useState('');
-  const [studentPrice, setStudentPrice] = useState('');
-  const [nativePrice, setNativePrice] = useState('');
+  const [image, setImage] = useState(''); // Initialize as an empty string
+  const [tag, setTag] = useState('');
+  const [openingHours, setOpeningHours] = useState('');
+  const [foreignerPrice, setForeignerPrice] = useState(0);
+  const [studentPrice, setStudentPrice] = useState(0);
+  const [nativePrice, setNativePrice] = useState(0);
   const navigate = useNavigate();
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const newPlace = {
-      _id,
+  
+    const data = {
       name,
       location,
       description,
-      imageFile,
-      tag,
-      openingHours, 
+      images: image ? [image] : [], // Ensure this is an array
+      tags: [tag],
+      openingHours,
       tickets: [
         { type: "Foreigner", price: foreignerPrice },
         { type: "Student", price: studentPrice },
         { type: "Native", price: nativePrice },
       ],
     };
-
-    historicalPlacesData.push(newPlace); 
-
+  
+    try {
+      const response = await axios.post('http://localhost:8000/historicalPlace/create', data);
+      if (response.status === 200) {
+        toast.success('Historical place created successfully!');
+        navigate('/');
+      } else {
+        toast.error('Failed to create the historical place.');
+      }
+    } catch (error) {
+      console.error('Error creating historical place:', error);
+      toast.error('An error occurred while creating the historical place.');
+    }
+  
+    // Reset form
     setName('');
     setLocation('');
     setDescription('');
-    setImageFile(null);
+    setImage(null);
     setTag('');
-    setOpeningHours(''); 
-    setForeignerPrice('');
-    setStudentPrice('');
-    setNativePrice('');
-
-    toast.success('Historical place added successfully!');
-
-    navigate('/');
+    setOpeningHours('');
+    setForeignerPrice(0);
+    setStudentPrice(0);
+    setNativePrice(0);
   };
+  
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
@@ -85,22 +85,26 @@ const CreateHistoricalPlaces = () => {
           required
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 h-24"
         />
-        
+
         <div>
-          <label className="block text-gray-700">Upload Image:</label>
+          <label className="block text-gray-700">Image URL:</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
+            type="text"
+            placeholder="Enter Image URL"
+            value={image}
+            onChange={(e) => setImage(e.target.value)} 
             required
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
           />
-          {imageFile && (
+          
+          {/* Optional: Preview the image if the URL is valid */}
+          {image && (
             <div className="mt-2">
               <img
-                src={URL.createObjectURL(imageFile)}
+                src={image}
                 alt="Preview"
                 className="w-full h-48 object-cover rounded-lg"
+                onError={(e) => { e.target.onerror = null; e.target.src = 'fallback-image-url.png'; }} // Fallback if image fails to load
               />
             </div>
           )}
@@ -138,7 +142,7 @@ const CreateHistoricalPlaces = () => {
               type="number"
               placeholder="Price"
               value={foreignerPrice}
-              onChange={(e) => setForeignerPrice(e.target.value)}
+              onChange={(e) => setForeignerPrice(Number(e.target.value))} // Convert to number
               required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 w-1/3"
             />
@@ -149,7 +153,7 @@ const CreateHistoricalPlaces = () => {
               type="number"
               placeholder="Price"
               value={studentPrice}
-              onChange={(e) => setStudentPrice(e.target.value)}
+              onChange={(e) => setStudentPrice(Number(e.target.value))} // Convert to number
               required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 w-1/3"
             />
@@ -160,7 +164,7 @@ const CreateHistoricalPlaces = () => {
               type="number"
               placeholder="Price"
               value={nativePrice}
-              onChange={(e) => setNativePrice(e.target.value)}
+              onChange={(e) => setNativePrice(Number(e.target.value))} // Convert to number
               required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 w-1/3"
             />

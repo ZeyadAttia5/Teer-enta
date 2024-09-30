@@ -35,9 +35,14 @@ const HistoricalPlaceSingleCard = ({ places }) => {
         <span className="inline-block bg-blue-100 rounded-full px-3 py-1 text-xs font-medium text-blue-600 mr-2 mb-2">
           {places.location}
         </span>
-        <span className="inline-block bg-green-100 rounded-full px-3 py-1 text-xs font-medium text-green-600 mr-2 mb-2">
-          {places.tag}
-        </span>
+        {places.tags && places.tags.map((tag, index) => (
+          <span
+            key={index}
+            className="inline-block bg-green-100 rounded-full px-3 py-1 text-xs font-medium text-green-600 mr-2 mb-2"
+          >
+            {tag.type} 
+          </span>
+        ))}
       </div>
       <div className='flex justify-center items-center gap-10 mt-4 p-4'>
           <Link to={`/historicalPlaces/update/${places._id}`}>
