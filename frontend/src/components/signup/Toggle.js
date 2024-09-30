@@ -28,8 +28,8 @@ function Toggle(props){
                     <input
                         type="radio"
                         name="radio"
-                        value="Tour Guide"
-                        checked={selectedOption === 'Tour Guide'}
+                        value="TourGuide"
+                        checked={selectedOption === 'TourGuide'}
                         onChange={handleOptionChange}
                     />
                     <span className='spansignup text-sm block cursor-pointer bg-white px-3 py-1.5 relative ml-0.5 shadow-[0_0_0_1px] shadow-[#b5bfd9] tracking-wide text-[#3e4963] text-center transition-colors duration-500 ease' style={{ fontSize: 13 }}>Tour Guide</span>

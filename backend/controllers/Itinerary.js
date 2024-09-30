@@ -4,8 +4,9 @@ const errorHandler = require("../Util/ErrorHandler/errorSender"); // Ensure mong
 
 exports.getItineraries = async (req, res, next) => {
     try {
-        const itineraries = await Itinerary.findOne({ _id: id, isActive: true })
-            .populate('activities.activity').populate('preferenceTage');
+        const itineraries = await Itinerary.find()
+            .populate('activities.activity')
+            .populate('preferenceTags');
         if(itineraries.length === 0) {
             return res.status(404).json({ message: 'No itineraries found or Inactive' });
         }

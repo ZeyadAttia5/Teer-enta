@@ -1,15 +1,9 @@
-const touristItenerary = require("../models/TouristItenerary/TouristItenerary");
+const TouristItenerary = require("../models/TouristItenerary/TouristItenerary");
 
 exports.createItinerary = async (req, res) => {
     try {
-        const { activities, startDate, endDate, tags } = req.body;
 
-        const newItinerary = new TouristItinerary({
-            activities,
-            startDate,
-            endDate,
-            tags
-        });
+        const newItinerary = new TouristItenerary(req.body);
 
         await newItinerary.save();
 
@@ -28,7 +22,7 @@ exports.createItinerary = async (req, res) => {
 
 exports.getAllItineraries = async (req, res) => {
     try {
-        const itineraries = await TouristItinerary.find()
+        const itineraries = await TouristItenerary.find()
             .populate('activities')
             .populate('tags');
 
@@ -43,7 +37,7 @@ exports.getAllItineraries = async (req, res) => {
 
 exports.getItineraryById = async (req, res) => {
     try {
-        const itinerary = await TouristItinerary.findById(req.params.id)
+        const itinerary = await TouristItenerary.findById(req.params.id)
             .populate('activities')
             .populate('tags');
 
@@ -67,9 +61,9 @@ exports.updateItinerary = async (req, res) => {
     try {
         const { activities, startDate, endDate, tags } = req.body;
 
-        const updatedItinerary = await TouristItinerary.findByIdAndUpdate(
+        const updatedItinerary = await TouristItenerary.findByIdAndUpdate(
             req.params.id,
-            { activities, startDate, endDate, tags },
+            req.body,
             { new: true, runValidators: true }
         );
 
