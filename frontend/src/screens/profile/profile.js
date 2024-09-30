@@ -14,7 +14,7 @@ import axios from "axios";
 // }
 
 function Profile() {
-  const URL = `http://localhost:${process.env.PORT}`;
+  const URL = `${process.env.REACT_APP_BACKEND_URL}`;
   const [message, setMessage] = useState("");
 
   // const location = useLocation();

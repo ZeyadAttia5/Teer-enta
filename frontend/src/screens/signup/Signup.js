@@ -239,7 +239,7 @@ function Signup() {
   };
   // State to manage the selected option
   // const URL = process.env.REACT_APP_BACKEND_URL;
-  const URL = `http://localhost:${process.env.PORT}`;
+  const URL = `${process.env.REACT_APP_BACKEND_URL}`;
   const handleButtonClick = async (e) => {
     e.preventDefault();
     if (!isValid()) {
