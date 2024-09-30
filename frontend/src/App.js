@@ -25,6 +25,7 @@ import Signup from './screens/signup/Signup.js';
 import Login from './screens/login/login.js';
 import Profile from './screens/profile/profile.js';
 import TouristWelcome from "./screens/TouristWelcome.jsx";
+import Activity from "./screens/Activity.tsx";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
           <Route path="/update-activity-tag" element={<UpdateActivityTag />} />
           <Route path="/create-activity-tag" element={<CreateActivityTag />} />
           <Route path="/view-activity-tags" element={<ViewActivityTags />} />
+          <Route path="/activity" element={<Activity />} />
         </Routes>
         <HistoricalPlacesRouting />
         <Toaster />
