@@ -36,7 +36,7 @@ const CreateHistoricalPlaces = () => {
       const response = await axios.post('http://localhost:8000/historicalPlace/create', data);
       if (response.status === 201) {
         toast.success('Historical place created successfully!');
-        navigate('/');
+        navigate('/historicalPlace');
       } else {
         toast.error('Failed to create the historical place.');
       }

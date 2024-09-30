@@ -61,7 +61,7 @@ const UpdateHistoricalPlaces = () => {
       const response = await axios.put(`http://localhost:8000/historicalPlace/update/${id}`, data);
       if (response.status === 200) {
         toast.success('Historical place updated successfully!');
-        navigate('/');
+        navigate('/historicalPlace');
       } else {
         toast.error('Failed to update the historical place.');
       }

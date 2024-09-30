@@ -20,18 +20,20 @@ import ViewActivityTags from './components/CRUGtag/activity/viewActivityTag.js';
 import UpdateActivityTag from './components/CRUGtag/activity/updateActivityTag.js';
 import CreateActivityTag from './components/CRUGtag/activity/createActivityTag.js';
 import { Toaster } from 'react-hot-toast';
-import HistoricalPlacesRouting from './components/historicalPlaces/historicalPlacesRouting.js';
 import Signup from './screens/signup/Signup.js';
 import Login from './screens/login/login.js';
 import Profile from './screens/profile/profile.js';
 import TouristWelcome from "./screens/TouristWelcome.jsx";
+import ReadHistoriaclPlaces from './components/historicalPlaces/readHistoriaclPlaces.jsx';
+import CreateHistoricalPlaces from './components/historicalPlaces/createHistoricalPlaces.jsx';
+import UpdateHistoriaclPlaces from './components/historicalPlaces/updateHistoriaclPlaces.jsx';
+import DeleteHistoriaclPlaces from './components/historicalPlaces/deleteHistoriaclPlaces.jsx';
 
 function App() {
   return (
     <div className="App">
       <Router>
          <Routes>
-
           <Route path="/" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
@@ -84,8 +86,11 @@ function App() {
           <Route path="/update-activity-tag" component={UpdateActivityTag} />
           <Route path="/create-activity-tag" component={CreateActivityTag} />
           <Route path="/view-activity-tags" component={ViewActivityTags} />
+          <Route path='/historicalPlace' element={<ReadHistoriaclPlaces />} />
+          <Route path='/historicalPlace/create' element={<CreateHistoricalPlaces />} />
+          <Route path='/historicalPlace/update/:id' element={<UpdateHistoriaclPlaces />} />
+          <Route path='/historicalPlace/delete/:id' element={<DeleteHistoriaclPlaces />} />
         </Routes>
-        <HistoricalPlacesRouting />
         <Toaster />
       </Router>
     </div>

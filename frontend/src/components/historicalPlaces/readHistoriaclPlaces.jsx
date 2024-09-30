@@ -1,6 +1,5 @@
 import React, { useState,useEffect } from 'react';
 import HistoricalPlaceSingleCard from './historicalPlaceSingleCard';
-// import historicalPlacesData  from './historicalPlacesData';
 import { MdOutlineAddBox } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
@@ -23,16 +22,6 @@ const ReadHistoriaclPlaces = () => {
 
     fetchHistoricalPlaces();
   }, []);
-
-  // useEffect(() => {
-  //   axios.get('http://localhost:3000/historicalplaces')
-  //     .then((res) => {
-  //       setHistoricalPlacesData(res.data);
-  //     })
-  //     .catch(error => {
-  //       console.log(error.message);
-  //     });
-  // }, []);
 
 
 
