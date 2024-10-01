@@ -1,5 +1,4 @@
 import React,{useState, useEffect} from 'react';
-// import historicalPlacesData from './historicalPlacesData'; 
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';

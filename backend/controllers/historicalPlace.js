@@ -1,7 +1,6 @@
 const HistoricalPlace = require("../models/HistoricalPlace/HistoricalPlaces");
-const Tag = require('../models/Tag');
+
 const errorHandler = require("../Util/ErrorHandler/errorSender");
-const mongoose = require('mongoose');
 
 
 
@@ -53,58 +52,23 @@ exports.getUpcomingHistoricalPlaces = async (req, res, next) => {
 
 exports.createHistoricalPlace = async (req, res, next) => {
     try {
-      let { tags } = req.body;
-  
-      const tagPromises = tags.map(async (tag) => {
-        if (mongoose.Types.ObjectId.isValid(tag)) {
-          return tag;
-        } else {
-          const foundTag = await Tag.findOne({ type: tag });
-          if (!foundTag) {
-            throw new Error(`Tag "${tag}" does not exist`);
-          }
-          return foundTag._id;
-        }
-      });
-  
-      const resolvedTags = await Promise.all(tagPromises);
-  
-      const historicalPlace = await HistoricalPlace.create({
-        ...req.body,
-        tags: resolvedTags,
-      });
-  
-      res.status(201).json({ message: 'Historical Place created successfully', historicalPlace });
+        const historicalPlace = await HistoricalPlace.create(req.body);
+        res.status(201).json({ message: 'Historical Place created successfully', historicalPlace });
     } catch (err) {
-      res.status(400).json({ message: err.message });
+        errorHandler.SendError(res, err);
     }
-  };
+}
 
-  exports.updateHistoricalPlace = async (req, res, next) => {
+exports.updateHistoricalPlace = async (req, res, next) => {
     try {
         const { id } = req.params;
-        let { tags, ...otherUpdates } = req.body;
 
-        if (tags && Array.isArray(tags)) {
-            const tagPromises = tags.map(async (tag) => {
-                if (mongoose.Types.ObjectId.isValid(tag)) {
-                    return tag; 
-                } else {
-                    const foundTag = await Tag.findOne({ type: tag });
-                    if (!foundTag) {
-                        throw new Error(`Tag "${tag}" does not exist`);
-                    }
-                    return foundTag._id; 
-                }
-            });
 
-            const resolvedTags = await Promise.all(tagPromises);
-            otherUpdates.tags = resolvedTags; 
-        }
+        const updates = req.body;
 
         const updatedHistoricalPlace = await HistoricalPlace.findByIdAndUpdate(
             id,
-            otherUpdates,
+            updates,
             { new: true, runValidators: true, overwrite: false }
         );
 
@@ -117,7 +81,7 @@ exports.createHistoricalPlace = async (req, res, next) => {
             data: updatedHistoricalPlace,
         });
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        errorHandler.SendError(res, err);
     }
 };
 

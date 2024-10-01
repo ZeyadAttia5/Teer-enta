@@ -1,8 +1,8 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import HistoricalPlaceSingleCard from './historicalPlaceSingleCard';
-import { MdOutlineAddBox } from 'react-icons/md'
-import { Link } from 'react-router-dom'
-import axios from 'axios'
+import { MdOutlineAddBox } from 'react-icons/md';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const PORT = process.env.PORT || 8000;
 
@@ -10,6 +10,7 @@ const ReadHistoriaclPlaces = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
   const [historicalPlacesData, setHistoricalPlacesData] = useState([]);
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
     const fetchHistoricalPlaces = async () => {
@@ -24,9 +25,21 @@ const ReadHistoriaclPlaces = () => {
     fetchHistoricalPlaces();
   }, []);
 
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await axios.get(`http://localhost:${PORT}/tag`);
+        setTags(response.data);
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+      }
+    };
 
+    fetchTags();
+  }, []);
 
-  const tags = [...new Set(historicalPlacesData.flatMap(place => place.tags.map(tag => tag.type)))];
+  // Get unique tag types
+  const uniqueTagTypes = [...new Set(tags.map(tag => tag.type))];
 
   const filteredPlaces = historicalPlacesData.filter((place) => 
     (selectedTag ? place.tags.some(tag => tag.type === selectedTag) : true) && 
@@ -55,9 +68,9 @@ const ReadHistoriaclPlaces = () => {
           className="p-2 border border-slate-700 rounded-md cursor-pointer"
         >
           <option value="">All Tags</option>
-          {tags.map((tag, index) => (
-            <option key={index} value={tag}>
-              {tag}
+          {uniqueTagTypes.map((tagType, index) => (
+            <option key={index} value={tagType}>
+              {tagType}
             </option>
           ))}
         </select>
@@ -82,4 +95,4 @@ const ReadHistoriaclPlaces = () => {
   );
 }
 
-export default ReadHistoriaclPlaces
+export default ReadHistoriaclPlaces;
