@@ -59,12 +59,12 @@ const CreateTouristItinerary = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    if (start <= currentDate) {
+    if (start < currentDate) {
       setError("Start date must be after the current date.");
       return;
     }
 
-    if (end <= start) {
+    if (end < start) {
       setError("End date must be after the start date.");
       return;
     }
