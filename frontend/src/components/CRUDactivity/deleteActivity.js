@@ -1,33 +1,32 @@
-// src/components/CRUDActivityTags/DeleteActivityTag.js
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const DeleteActivityTag = () => {
+const DeleteActivity = () => {
     const [id, setId] = useState('');
     const [message, setMessage] = useState('');
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`/api/activity-tags/delete/${id}`);
-            setMessage('Tag deleted successfully!');
+            await axios.delete(`http://localhost:8000/activity/delete/${id}`);
+            setMessage('Activity deleted successfully!');
         } catch (error) {
-            setMessage('Error deleting tag: ' + error.response?.data?.message);
+            setMessage('Error deleting Activity: ' + error.response?.data?.message);
         }
     };
 
     return (
         <div>
-            <h2>Delete Activity Tag</h2>
+            <h2>Delete Activity </h2>
             <input 
                 type="text" 
                 value={id} 
                 onChange={(e) => setId(e.target.value)} 
-                placeholder="Enter Tag ID" 
+                placeholder="Enter Activity ID" 
             />
-            <button onClick={handleDelete}>Delete Tag</button>
+            <button onClick={handleDelete}>Delete Activity</button>
             {message && <p>{message}</p>}
         </div>
     );
 };
 
-export default DeleteActivityTag;
+export default DeleteActivity;

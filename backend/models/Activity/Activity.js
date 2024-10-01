@@ -4,7 +4,7 @@ const ActivitySchema = new mongoose.Schema({
     name: { type: String, required: true },
     date: { type: Date, required: true },
     time: { type: String, required: true },
-    isBookingOpen: { type: Boolean, required: true },
+    isBookingOpen: { type: Boolean, default: true },
     location: { type: String, required: true },
     isActive: { type: Boolean, default: true },
     price: {
@@ -21,12 +21,12 @@ const ActivitySchema = new mongoose.Schema({
         }
     ],
     ratings: [{
-        createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+        user: {type: mongoose.Schema.Types.ObjectId, ref: 'Tourist'},
         rating: Number
     }],
     comments: [{
-        createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-        comment: String,
+        user: {type: mongoose.Schema.Types.ObjectId, ref: 'Tourist'},
+        rating: Number,
     }],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 

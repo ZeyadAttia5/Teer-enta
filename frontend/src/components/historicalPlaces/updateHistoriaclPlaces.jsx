@@ -1,55 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import historicalPlacesData from './historicalPlacesData'; 
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import axios from 'axios';
+
+const PORT = process.env.PORT || 8000;
 
 const UpdateHistoricalPlaces = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [tag, setTag] = useState('');
+  const [image, setImage] = useState('');
+  const [selectedTagType, setSelectedTagType] = useState(''); 
+  const [selectedTagId, setSelectedTagId] = useState(''); 
   const [openingHours, setOpeningHours] = useState('');
-  const [foreignerPrice, setForeignerPrice] = useState('');
-  const [studentPrice, setStudentPrice] = useState('');
-  const [nativePrice, setNativePrice] = useState('');
-  const [imageFile, setImageFile] = useState(null);
-  const [existingImage, setExistingImage] = useState('');
-
-  // Fetch current data for the historical place to update
+  const [foreignerPrice, setForeignerPrice] = useState(0);
+  const [studentPrice, setStudentPrice] = useState(0);
+  const [nativePrice, setNativePrice] = useState(0);
+  const [tags, setTags] = useState([]); 
   useEffect(() => {
-    const place = historicalPlacesData.find(place => place._id === Number(id));
-    if (place) {
-      setName(place.name);
-      setLocation(place.location);
-      setDescription(place.description);
-      setTag(place.tag);
-      setOpeningHours(place.openingHours);
-      setForeignerPrice(place.tickets.find(ticket => ticket.type === "Foreigner").price);
-      setStudentPrice(place.tickets.find(ticket => ticket.type === "Student").price);
-      setNativePrice(place.tickets.find(ticket => ticket.type === "Native").price);
-      setExistingImage(place.imageFile); // Set the existing image URL if needed
-    }
+    const fetchPlace = async () => {
+      try {
+        const response = await axios.get(`http://localhost:${PORT}/historicalPlace/${id}`);
+        const place = response.data;
+
+        setName(place.name || '');
+        setLocation(place.location || '');
+        setDescription(place.description || '');
+        setOpeningHours(place.openingHours || '');
+        setForeignerPrice(place.tickets.find(ticket => ticket.type === "Foreigner")?.price || 0);
+        setStudentPrice(place.tickets.find(ticket => ticket.type === "Student")?.price || 0);
+        setNativePrice(place.tickets.find(ticket => ticket.type === "Native")?.price || 0);
+        setImage(place.images?.[0] || '');
+
+        if (place.tags.length > 0) {
+          const tag = place.tags[0]; 
+          setSelectedTagType(tag.type); 
+          setSelectedTagId(tag._id); 
+        }
+      } catch (error) {
+        console.error('Error fetching historical place:', error);
+      }
+    };
+
+    const fetchTags = async () => {
+      try {
+        const response = await axios.get(`http://localhost:${PORT}/tag`);
+        setTags(response.data); 
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+        toast.error('Failed to fetch tags.');
+      }
+    };
+
+    fetchPlace();
+    fetchTags();
   }, [id]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-    }
-  };
+  const uniqueTagTypes = [...new Set(tags.map(tag => tag.type))];
 
-  const handleSubmit = (e) => {
+  const filteredTags = tags.filter(tag => tag.type === selectedTagType);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const updatedPlace = {
-      _id: Number(id), // keep the same id
+    const data = {
       name,
       location,
       description,
-      imageFile: imageFile ? URL.createObjectURL(imageFile) : existingImage, // Use new image if provided, else use existing
-      tag,
+      images: image ? [image] : [],
+      tags: [selectedTagId], 
       openingHours,
       tickets: [
         { type: "Foreigner", price: foreignerPrice },
@@ -58,16 +78,18 @@ const UpdateHistoricalPlaces = () => {
       ],
     };
 
-    // Find the index and update the historical place
-    const index = historicalPlacesData.findIndex(place => place._id === Number(id));
-    if (index !== -1) {
-      historicalPlacesData[index] = updatedPlace; // Update the data
-      toast.success("Historical place updated successfully!"); // Show success toast
-    } else {
-      toast.error("Historical place not found!"); // Show error toast
+    try {
+      const response = await axios.put(`http://localhost:${PORT}/historicalPlace/update/${id}`, data);
+      if (response.status === 200) {
+        toast.success('Historical place updated successfully!');
+        navigate('/historicalPlace');
+      } else {
+        toast.error('Failed to update the historical place.');
+      }
+    } catch (error) {
+      console.error('Error updating historical place:', error);
+      toast.error('An error occurred while updating the historical place.');
     }
-
-    navigate('/'); // Redirect after updating
   };
 
   return (
@@ -97,48 +119,66 @@ const UpdateHistoricalPlaces = () => {
           required
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 h-24"
         />
-        
+
         <div>
-          <label className="block text-gray-700">Upload Image:</label>
+          <label className="block text-gray-700">Image URL:</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
+            type="text"
+            placeholder="Enter Image URL"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            required
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
           />
-          {imageFile && (
+
+          {image && (
             <div className="mt-2">
               <img
-                src={URL.createObjectURL(imageFile)}
+                src={image}
                 alt="Preview"
                 className="w-full h-48 object-cover rounded-lg"
-              />
-            </div>
-          )}
-          {existingImage && !imageFile && ( // Show existing image if no new image is uploaded
-            <div className="mt-2">
-              <img
-                src={existingImage}
-                alt="Existing"
-                className="w-full h-48 object-cover rounded-lg"
+                onError={(e) => { e.target.onerror = null; e.target.src = 'fallback-image-url.png'; }}
               />
             </div>
           )}
         </div>
 
+        <h2 className="text-xl font-semibold text-gray-800 mt-6">Tag Type</h2>
         <select
-          value={tag}
-          onChange={(e) => setTag(e.target.value)}
+          value={selectedTagType}
+          onChange={(e) => {
+            setSelectedTagType(e.target.value);
+            setSelectedTagId(''); 
+          }}
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
+          required
         >
-          <option value="" disabled>
-            Tags
-          </option>
-          <option value="Monuments">Monuments</option>
-          <option value="Museums">Museums</option>
-          <option value="Religious Sites">Religious Sites</option>
-          <option value="Palaces/Castles">Palaces/Castles</option>
+          <option value="" disabled>Select Tag Type</option>
+          {uniqueTagTypes.map((tagType, index) => (
+            <option key={index} value={tagType}>
+              {tagType}
+            </option>
+          ))}
         </select>
+
+        {selectedTagType && (
+          <>
+            <h2 className="text-xl font-semibold text-gray-800 mt-6">Tag Name</h2>
+            <select
+              value={selectedTagId}
+              onChange={(e) => setSelectedTagId(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
+              required
+            >
+              <option value="" disabled>Select Tag Name</option>
+              {filteredTags.map((tag) => (
+                <option key={tag._id} value={tag._id}>
+                  {tag.name}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
 
         <h2 className="text-xl font-semibold text-gray-800 mt-6">Opening Hours</h2>
         <input
@@ -158,7 +198,7 @@ const UpdateHistoricalPlaces = () => {
               type="number"
               placeholder="Price"
               value={foreignerPrice}
-              onChange={(e) => setForeignerPrice(e.target.value)}
+              onChange={(e) => setForeignerPrice(Number(e.target.value))}
               required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 w-1/3"
             />
@@ -169,7 +209,7 @@ const UpdateHistoricalPlaces = () => {
               type="number"
               placeholder="Price"
               value={studentPrice}
-              onChange={(e) => setStudentPrice(e.target.value)}
+              onChange={(e) => setStudentPrice(Number(e.target.value))}
               required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 w-1/3"
             />
@@ -180,7 +220,7 @@ const UpdateHistoricalPlaces = () => {
               type="number"
               placeholder="Price"
               value={nativePrice}
-              onChange={(e) => setNativePrice(e.target.value)}
+              onChange={(e) => setNativePrice(Number(e.target.value))}
               required
               className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500 w-1/3"
             />
