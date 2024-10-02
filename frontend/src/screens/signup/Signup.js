@@ -39,10 +39,31 @@ function Signup() {
   const handleJobTitleChange = (event) => {
     setJobTitle(event.target.value); // Update the job title state
   };
+  
   const [dob, setDob] = useState("");
+  const [isDobValid, setIsDobValid] = useState(true);
   const handleDobChange = (event) => {
-    setDob(event.target.value); // Update the date of birth state
+    const date = event.target.value;
+    setDob(date); // Update the date of birth state
+    setIsDobValid(validateDate(date)); // Validate the date
   };
+  
+const validateDate = (date) => {
+  const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
+  if (!date.match(regex)) return false;
+
+  const parsedDate = new Date(date);
+  const timestamp = parsedDate.getTime();
+
+  if (typeof timestamp !== 'number' || Number.isNaN(timestamp)) return false;
+
+  const currentYear = new Date().getFullYear();
+  const inputYear = parsedDate.getFullYear();
+
+  if (inputYear > currentYear) return false;
+
+  return parsedDate.toISOString().startsWith(date);
+};  
   const [password, setPassword] = useState("");
   const handlePasswordChange = (event) => {
     setPassword(event.target.value); // Update the password state
@@ -127,7 +148,6 @@ function Signup() {
     { value: "morocco", label: "Morocco" },
     { value: "algeria", label: "Algeria" },
     { value: "tunisia", label: "Tunisia" },
-    { value: "israel", label: "Israel" },
     { value: "iran", label: "Iran" },
     { value: "iraq", label: "Iraq" },
     { value: "syria", label: "Syria" },
@@ -247,27 +267,62 @@ function Signup() {
     }
    
     try {
+      var data;
+      
+      switch(selectedRole) {
+        case 'Tourist':
+          data = {
+              "email": email,
+              "username": username,
+              "password": password,
+              "userRole": selectedRole,
+              "mobileNumber": mobileNumber,
+              "nationality": selectedNationality.label,
+              "dateOfBirth": dob,
+              "occupation": jobTitle,
+            }
+          break;
+        case 'TourGuide':
+          data = {
+              "email": email,
+              "username": username,
+              "password": password,
+              "userRole": selectedRole,
+            }
+          break;
+        case 'Admin':
+          data = {
+              "email": email,
+              "username": username,
+              "password": password,
+              "userRole": selectedRole,
+            }
+          break;
+        default:
+          data = {
+              "email": email,
+              "username": username,
+              "password": password,
+              "userRole": selectedRole,
+            }
+          break;
+      }
       const response = await axios.post(`${URL}/auth/signup`, 
-        {
-          "email": email,
-          "username": username,
-          "password": password,
-          "userRole": selectedRole,
-          "mobileNumber": mobileNumber,
-          "nationality": selectedNationality,
-          "dateOfBirth": dob,
-          "occupation": jobTitle,
-        }
+        data
       );
       
       setMessage(response.data.message);
+      navigate("/login");
     } catch (error) {
       setMessage(error.response.data.message || 'Signup failed');
     }
-    navigate("/login");
   };
 
   function isValid() {
+    if(!isDobValid){
+      setMessage('Invalid date of birth');
+      return false;
+    }
     const nonNumericRegex = /\D/;
     if (
       
@@ -474,7 +529,7 @@ function Signup() {
                 Signin
               </a>
             </p>
-            <p>{message}</p>
+            <p className="text-red">{message}</p>
           </form>
         </div>
       </div>
