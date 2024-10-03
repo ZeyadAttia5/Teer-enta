@@ -25,6 +25,7 @@ import ReadAllTouristItinerary from "./components/CRUDtouristItinerary/readAllTo
 import UpdateTouristItinerary from "./components/CRUDtouristItinerary/updateTouristItinerary.js";
 import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import AddUser from "./components/Users/addUser/addUser";
+import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 
 
 function App() {
@@ -84,6 +85,7 @@ function App() {
                     />
                     <Route path="all-users" element={<AllUsers/>}></Route>
                     <Route path="add-user" element={<AddUser/>}></Route>
+                    <Route path="pending-users" element={<PendingUsers/>}></Route>
                 </Routes>
                 <Toaster/>
             </Router>
