@@ -34,7 +34,7 @@ exports.getMyHistoricalPlaces = async (req, res, next) => {
     try {
         // req.user = { _id: '66f6564440ed4375b2abcdfb' };
         const createdBy = req.user._id;
-        const historicalPlaces = await HistoricalPlace.find({ createdBy }).populate('Tag');
+        const historicalPlaces = await HistoricalPlace.find({ createdBy }).populate('tags');
         if(historicalPlaces.length === 0) {
             return res.status(404).json({ message: 'No historical places found' });
         }

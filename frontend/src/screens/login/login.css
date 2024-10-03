@@ -1,0 +1,22 @@
+ .input-containerlogin .inputlogin, .formlogin .buttonlogin {
+    outline: none;
+    border: 1px solid #ced0d4;
+    margin: 8px 0;
+  }
+  
+  .input-containerlogin .inputlogin {
+    background-color: #fff;
+    padding: 1rem;
+    padding-right: 3rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    width: 350px;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  
+ 
+  
+
+ 
+

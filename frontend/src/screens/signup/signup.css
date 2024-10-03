@@ -1,0 +1,21 @@
+
+.labelsignup .inputsignup {
+    width: 100%;
+    padding: 7px 7px 11px 7px;
+    outline: 0;
+    border: 1px solid rgba(105, 105, 105, 0.397);
+    border-radius: 5px;
+    color: black
+  }
+  
+  @keyframes pulse {
+    from {
+      transform: scale(0.9);
+      opacity: 1;
+    }
+  
+    to {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+  }
