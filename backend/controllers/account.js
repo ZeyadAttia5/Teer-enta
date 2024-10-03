@@ -84,3 +84,6 @@ exports.getAllUsers = async (req,res) =>{
         errorHandler.SendError(res, err);
     }
 }
+exports.requestDeleteMyAccount = async (req,res) =>{
+
+}

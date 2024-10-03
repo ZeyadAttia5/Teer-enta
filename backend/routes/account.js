@@ -7,5 +7,6 @@ router.get('/pending', accountController.getAllPendingUsers);
 router.patch('/accept/:id', accountController.acceptRequest);
 router.get('/accepted', accountController.getAllAcceptedUsers);
 router.get('/all' , accountController.getAllUsers) ;
+router.post('/requestDeleteMy', accountController.requestDeleteMyAccount);
 
 module.exports = router;
