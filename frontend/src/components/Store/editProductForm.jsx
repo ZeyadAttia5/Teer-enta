@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios'; // Import axios
 
 const EditProductForm = ({ productId }) => {
   const [product, setProduct] = useState({
@@ -8,25 +9,22 @@ const EditProductForm = ({ productId }) => {
     category: '',
     seller: '',
     imageUrl: '',
-    availableQuantity: '', // Add this field as well
+    availableQuantity: '',
   });
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
 
   useEffect(() => {
-    // Simulate fetching product data by ID
+    // Fetch product data by ID
     const fetchProductData = async () => {
-      // Replace this with your actual fetch logic to get product details by ID
-      const fetchedProduct = {
-        id: productId,
-        name: 'Hagia Sophia Magnet',
-        description: 'A beautiful magnet of Hagia Sophia.',
-        price: 100,
-        category: 'magnets',
-        seller: 'Turkish Souvenirs',
-        imageUrl: 'path_to_image',
-        availableQuantity: 50, // Example value
-      };
-
-      setProduct(fetchedProduct);
+      try {
+        const response = await axios.get(`YOUR_API_ENDPOINT/${productId}`); // Replace with your API endpoint
+        setProduct(response.data);
+      } catch (err) {
+        setError('Failed to fetch product data');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProductData();
@@ -40,12 +38,27 @@ const EditProductForm = ({ productId }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission logic here
-    console.log('Updated Product:', product);
-    // Reset form fields or redirect after submission if necessary
+    try {
+      const response = await axios.put(`YOUR_API_ENDPOINT/${productId}`, product); // Replace with your API endpoint
+      console.log('Updated Product:', response.data);
+      // Reset form fields or redirect after submission if necessary
+    } catch (err) {
+      setError('Failed to update product');
+    }
   };
+
+  // Handle loading state
+  if (loading) {
+    return <div className="text-center mt-24">Loading product data...</div>;
+  }
+
+  // Handle error state
+  if (error) {
+    return <div className="text-center mt-24">Error: {error}</div>;
+  }
 
   return (
     <div className="flex flex-col items-center py-16 px-5 mt-20">

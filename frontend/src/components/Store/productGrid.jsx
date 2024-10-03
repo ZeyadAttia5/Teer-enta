@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
-import FilterDropdown from './filterDropdown'; 
-import image1 from './sampleImages/pic1.jpg';
-import image2 from './sampleImages/pic2.jpg';
-import image3 from './sampleImages/pic3.jpg';
-import image4 from './sampleImages/pic4.jpg';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import FilterDropdown from './filterDropdown';
 
 const ProductGrid = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,14 +9,37 @@ const ProductGrid = () => {
     minPrice: 0,
     maxPrice: 100,
   });
+  const [products, setProducts] = useState([]); // State for fetched products
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
 
-  const products = [
-    { id: 1, name: 'Hagia Sophia Magnet', image: image1, category: 'magnets', price: 100, description: 'A beautiful magnet of Hagia Sophia.', seller: 'Turkish Souvenirs', ratings: 4.5, reviews: ['Great quality!', 'Perfect souvenir!']},
-    { id: 2, name: 'Decorated Plate', image: image2, category: 'tableware', price: 30, description: 'A hand-painted decorative plate.', seller: 'Crafts Shop', ratings: 4.0, reviews: ['Lovely craftsmanship!', 'Good price.'] },
-    { id: 3, name: 'Magnets', image: image3, category: 'magnets', price: 40, description: 'Set of fridge magnets.', seller: 'Local Artisans', ratings: 4.7, reviews: ['So cute!', 'Nice addition to my collection.']},
-    { id: 4, name: 'Amulet', image: image4, category: 'trinkets', price: 50, description: 'An authentic Turkish amulet.', seller: 'Turkish Souvenirs', ratings: 4.3, reviews: ['Love the design.', 'Beautiful colors.']},
-  ];
+  // Fetch products from the API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('YOUR_API_ENDPOINT'); // Replace with your API endpoint
+        setProducts(response.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchProducts();
+  }, []);
+
+  // Handle loading state
+  if (loading) {
+    return <div className="text-center mt-24">Loading products...</div>;
+  }
+
+  // Handle error state
+  if (error) {
+    return <div className="text-center mt-24">Error: {error}</div>;
+  }
+
+  // Filter products based on search term and price range
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesPrice = product.price >= filters.minPrice && product.price <= filters.maxPrice;
@@ -49,11 +69,11 @@ const ProductGrid = () => {
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 justify-items-center p-5 mt-5 gap-4">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="border-4 border-customGreen rounded-lg text-center transition-transform transform hover:scale-105 hover:bg-green-100 shadow-lg flex flex-col justify-between w-64">
+          <div key={product._id} className="border-4 border-customGreen rounded-lg text-center transition-transform transform hover:scale-105 hover:bg-green-100 shadow-lg flex flex-col justify-between w-64">
             <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-none" />
-            <h3 className="text-customGreen mt-1 font-semibold text-lg">{product.name}</h3> {/* Reduced margin */}
-            <Link to={`/product/${product.id}`}>
-              <button className="bg-customGreen text-white w-full py-2 mt-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none"> {/* Darker green on hover */}
+            <h3 className="text-customGreen mt-1 font-semibold text-lg">{product.name}</h3>
+            <Link to={`/product/${product._id}`}>
+              <button className="bg-customGreen text-white w-full py-2 mt-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none">
                 View Details
               </button>
             </Link>

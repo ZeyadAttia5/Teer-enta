@@ -1,21 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import image1 from './sampleImages/pic1.jpg';
-import image2 from './sampleImages/pic2.jpg';
-import image3 from './sampleImages/pic3.jpg';
-import image4 from './sampleImages/pic4.jpg';
+import axios from 'axios';
 
 const ProductDetails = () => {
   const { id } = useParams(); // Get product ID from URL
-  const products = [
-    { id: 1, name: 'Hagia Sophia Magnet', image: image1, price: 100, description: 'A beautiful magnet of Hagia Sophia.', seller: 'Turkish Souvenirs', ratings: 4.5, reviews: ['Great quality!', 'Perfect souvenir!'] },
-    { id: 2, name: 'Decorated Plate', image: image2, price: 30, description: 'A hand-painted decorative plate.', seller: 'Crafts Shop', ratings: 4.0, reviews: ['Lovely craftsmanship!', 'Good price.'] },
-    { id: 3, name: 'Magnets', image: image3, price: 40, description: 'Set of fridge magnets.', seller: 'Local Artisans', ratings: 4.7, reviews: ['So cute!', 'Nice addition to my collection.'] },
-    { id: 4, name: 'Amulet', image: image4, price: 50, description: 'An authentic Turkish amulet.', seller: 'Turkish Souvenirs', ratings: 4.3, reviews: ['Love the design.', 'Beautiful colors.'] },
-  ];
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const product = products.find((p) => p.id === parseInt(id));
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`https://your-api-endpoint.com/products/${id}`);
+        setProduct(response.data);
+      } catch (err) {
+        setError('Failed to fetch product details');
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchProduct();
+  }, [id]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
   if (!product) return <h2 className="text-center text-2xl font-bold">Product not found!</h2>;
 
   return (
@@ -31,13 +40,13 @@ const ProductDetails = () => {
         <h2 className="text-4xl font-semibold">{product.name}</h2>
         <p className="text-2xl text-green-600 mt-2">${product.price}</p>
         <p className="text-lg text-gray-700 mt-2">{product.description}</p>
-        <p className="text-gray-600 mt-2">Seller: <span className="font-medium">{product.seller}</span></p>
-        <p className="text-gray-600 mt-1">Ratings: <span className="font-medium">{product.ratings} / 5</span></p>
+        <p className="text-gray-600 mt-2">Seller: <span className="font-medium">{product.createdBy.name}</span></p>
+        <p className="text-gray-600 mt-1">Ratings: <span className="font-medium">{product.ratings.length > 0 ? (product.ratings.reduce((acc, cur) => acc + cur.rating, 0) / product.ratings.length).toFixed(1) : 'No ratings'} / 5</span></p>
         
         <h3 className="text-xl font-semibold mt-4">Reviews:</h3>
         <ul className="list-disc ml-5 mt-2">
           {product.reviews.map((review, index) => (
-            <li key={index} className="text-gray-700 text-lg">{review}</li>
+            <li key={index} className="text-gray-700 text-lg">{review.review} - <span className="font-medium">{review.createdBy.name}</span></li>
           ))}
         </ul>
 
