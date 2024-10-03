@@ -6,3 +6,7 @@
 body {
   margin: 0;
 }
+
+input:focus {
+  @apply ring-0 outline-none;
+}

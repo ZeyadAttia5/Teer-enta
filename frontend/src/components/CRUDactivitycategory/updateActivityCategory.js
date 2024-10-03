@@ -47,5 +47,4 @@ const UpdateActivityCategory = () => {
     </div>
   );
 };
-
 export default UpdateActivityCategory;

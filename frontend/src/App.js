@@ -19,10 +19,7 @@ import CreateTag from './components/CRUDtag/createTag.js';
 import ViewTags from './components/CRUDtag/viewTag.js';
 import UpdateTag from './components/CRUDtag/updateTag.js';
 import DeleteTag from './components/CRUDtag/deleteTag.js';
-import ReadHistoriaclPlaces from './components/historicalPlaces/readHistoriaclPlaces.jsx';
-import CreateHistoricalPlaces from './components/historicalPlaces/createHistoricalPlaces.jsx';
-import UpdateHistoricalPlaces from './components/historicalPlaces/updateHistoriaclPlaces.jsx';
-import DeleteHistoricalPlaces from './components/historicalPlaces/deleteHistoriaclPlaces.jsx';
+import TouristWelcome from "./screens/TouristWelcome.jsx";
 function App() {
   return (
     <div className="App">
@@ -47,10 +44,7 @@ function App() {
           <Route path="/view-tags" element={<ViewTags />} />
           <Route path="/update-tag" element={<UpdateTag />} />
           <Route path="/delete-tag" element={<DeleteTag />} />
-          <Route path="/historicalPlace" element={<ReadHistoriaclPlaces />} />
-          <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces />} />
-          <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces />} />
-          <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces />} />
+          
         </Routes>
         <Toaster />
       </Router>
