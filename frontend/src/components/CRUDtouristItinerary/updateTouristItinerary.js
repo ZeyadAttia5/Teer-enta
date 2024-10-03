@@ -1,18 +1,33 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
 const UpdateTouristItinerary = () => {
-  const { id } = useParams(); // Get the itinerary ID from the URL params
-  const navigate = useNavigate(); // Initialize useNavigate
+  const location = useLocation();
+  const itineraryData = location.state?.itinerary || {};
+
+  const [name, setName] = useState(itineraryData.name || "");
   const [activities, setActivities] = useState([]);
   const [tags, setTags] = useState([]);
-  const [selectedActivities, setSelectedActivities] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [selectedActivities, setSelectedActivities] = useState(
+    itineraryData.activities || []
+  );
+  const [selectedTags, setSelectedTags] = useState(itineraryData.tags || []);
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const month = ("0" + (d.getMonth() + 1)).slice(-2);
+    const day = ("0" + d.getDate()).slice(-2);
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`;
+  };
+
+  const [startDate, setStartDate] = useState(
+    formatDate(itineraryData.startDate)
+  );
+  const [endDate, setEndDate] = useState(formatDate(itineraryData.endDate));
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -20,7 +35,6 @@ const UpdateTouristItinerary = () => {
       try {
         const response = await axios.get(URL + "/activity/");
         setActivities(response.data.filter((activity) => activity.isActive));
-        console.log("Activities:", response.data);
       } catch (error) {
         console.error("Error fetching activities:", error);
       }
@@ -34,34 +48,17 @@ const UpdateTouristItinerary = () => {
         console.error("Error fetching tags:", error);
       }
     };
-
-    const fetchItinerary = async () => {
-      try {
-        const response = await axios.get(`${URL}/touristItinerary/${id}`);
-        const itinerary = response.data;
-        setSelectedActivities(itinerary.activities);
-        setSelectedTags(itinerary.tags);
-        setStartDate(itinerary.startDate);
-        setEndDate(itinerary.endDate);
-      } catch (error) {
-        console.error("Error fetching itinerary:", error);
-      }
-    };
-
     fetchActivities();
     fetchTags();
-    fetchItinerary();
-  }, [id]);
+  }, []);
 
   const handleActivityChange = (activity) => {
     setSelectedActivities((prev) =>
-      prev.includes(activity._id)
-        ? prev.filter((id) => id !== activity._id)
+      prev.some((t) => t._id === activity._id)
+        ? prev.filter((t) => t._id !== activity._id)
         : [...prev, activity]
     );
   };
-
-  console.log(selectedActivities);
 
   const handleTagChange = (tag) => {
     setSelectedTags((prev) =>
@@ -77,17 +74,20 @@ const UpdateTouristItinerary = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    if (start <= currentDate) {
+    if (start < currentDate) {
       setError("Start date must be after the current date.");
+      window.scrollTo(0, 0); // Scroll to top of the page
       return;
     }
 
-    if (end <= start) {
+    if (end < start) {
       setError("End date must be after the start date.");
+      window.scrollTo(0, 0); // Scroll to top of the page
       return;
     }
 
     const itinerary = {
+      name,
       activities: selectedActivities.map((activity) => activity._id),
       startDate,
       endDate,
@@ -95,13 +95,29 @@ const UpdateTouristItinerary = () => {
     };
 
     axios
-      .post(URL + "/touristItinerary/create", itinerary)
+      .put(URL + "/touristItenerary/update/" + itineraryData._id, {
+        ...itinerary,
+      })
       .then((response) => {
-        console.log("Itinerary created:", response.data);
-        navigate("/some-route"); // Navigate to a different route after successful submission
+        console.log("Itinerary updated:", response.data);
+        setError(""); // Clear any previous errors
+        // Show success message
+        const successMessage = document.createElement("div");
+        successMessage.textContent = "Itinerary updated successfully!";
+        successMessage.className = "text-green-500 mb-4";
+        document.querySelector(".container").prepend(successMessage);
+        window.scrollTo(0, 0); // Scroll to top of the page
+        // Redirect to read-all-tourist-itinerary
+        // setTimeout(() => {
+        //   window.location.href = "/read-all-tourist-itinerary";
+        // }, 5000);
       })
       .catch((error) => {
         console.error("There was an error creating the itinerary!", error);
+        setError(
+          "There was an error creating the itinerary. Please try again."
+        );
+        window.scrollTo(0, 0); // Scroll to top of the page
       });
   };
 
@@ -113,6 +129,16 @@ const UpdateTouristItinerary = () => {
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="form-group">
+          <label className="block mb-2 text-lg">Name:</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="border p-2 w-full rounded"
+          />
+        </div>
+        <div className="form-group">
           <label className="block mb-2 text-lg">Start Date:</label>
           <input
             type="date"
@@ -122,6 +148,7 @@ const UpdateTouristItinerary = () => {
             className="border p-2 w-full rounded"
           />
         </div>
+
         <div className="form-group">
           <label className="block mb-2 text-lg">End Date:</label>
           <input
@@ -146,11 +173,11 @@ const UpdateTouristItinerary = () => {
                   <input
                     type="checkbox"
                     value={activity._id}
+                    onChange={() => handleActivityChange(activity)}
+                    className="mr-2"
                     checked={selectedActivities.some(
                       (a) => a._id === activity._id
                     )}
-                    onChange={() => handleActivityChange(activity)}
-                    className="mr-2"
                   />
                   <div className="inline-block">
                     <strong>Name:</strong> {activity?.name}
@@ -183,21 +210,16 @@ const UpdateTouristItinerary = () => {
                   <input
                     type="checkbox"
                     value={tag?._id}
-                    checked={selectedTags.some((t) => t._id === tag._id)}
                     onChange={() => handleTagChange(tag)}
                     className="mr-2"
+                    checked={selectedTags.some((t) => t._id === tag._id)}
                   />
                   <div className="inline-block">
                     <strong>Name:</strong> {tag?.name}
                     <br />
                     <strong>Type:</strong> {tag?.type}
                     <br />
-                    {tag?.historicalPeriod && (
-                      <>
-                        <strong>Historical Period:</strong>{" "}
-                        {tag?.historicalPeriod}
-                      </>
-                    )}
+                    <strong>Historical Period:</strong> {tag?.historicalPeriod}
                   </div>
                 </div>
               ))}
@@ -216,7 +238,6 @@ const UpdateTouristItinerary = () => {
         <h2 className="text-2xl font-bold mb-4">Selected Activities:</h2>
         <div className="flex flex-wrap -mx-2">
           {selectedActivities.map((activity) => {
-            console.log(activity);
             return (
               <div
                 key={activity._id}
@@ -252,11 +273,7 @@ const UpdateTouristItinerary = () => {
                 <br />
                 <strong>Type:</strong> {tag.type}
                 <br />
-                {tag.historicalPeriod && (
-                  <>
-                    <strong>Historical Period:</strong> {tag.historicalPeriod}
-                  </>
-                )}
+                <strong>Historical Period:</strong> {tag.historicalPeriod}
               </div>
             </div>
           ))}
