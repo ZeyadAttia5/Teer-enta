@@ -4,6 +4,8 @@ import axios from 'axios';
 import FilterDropdown from './filterDropdown';
 
 const ProductGrid = () => {
+  const backURL = process.env.REACT_APP_BACKEND_URL ;
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     minPrice: 0,
@@ -17,7 +19,8 @@ const ProductGrid = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('YOUR_API_ENDPOINT'); // Replace with your API endpoint
+        console.log(`${backURL}/product/`);
+        const response = await axios.get(`${backURL}/product/`); // Replace with your API endpoint
         setProducts(response.data);
       } catch (err) {
         setError(err.message);
