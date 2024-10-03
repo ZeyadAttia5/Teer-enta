@@ -554,20 +554,10 @@ const ItineraryScreen = () => {
               allowClear
             >
               {preferenceTagsList.map((tag) => (
-                <Option key={tag._id} value={tag._id}>
-                  {tag.name}
+                <Option key={tag._id} value={tag.tag}>
+                  {tag.tag}
                 </Option>
               ))}
-            </Select>
-          </Form.Item>
-
-          <Divider />
-
-          {/* Active Status */}
-          <Form.Item name="isActive" label="Active Status" valuePropName="checked">
-            <Select>
-              <Option value={true}>Active</Option>
-              <Option value={false}>Inactive</Option>
             </Select>
           </Form.Item>
 
