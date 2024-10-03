@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios'; // Import axios
-import image1 from './sampleImages/pic1.jpg';
-import image2 from './sampleImages/pic2.jpg';
-import image3 from './sampleImages/pic3.jpg';
-import image4 from './sampleImages/pic4.jpg'; // Sample images can be removed if fetching images from API
+import axios from 'axios';
+import FilterDropdown from './filterDropdown'; // Reusing FilterDropdown
 
 const AdminProductGrid = () => {
+  const backURL = process.env.REACT_APP_BACKEND_URL; // Ensure consistent API URL
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     minPrice: 0,
@@ -20,17 +18,17 @@ const AdminProductGrid = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('YOUR_API_ENDPOINT'); // Replace with your API endpoint
+        const response = await axios.get(`${backURL}/product/`); // Replace with your API endpoint
         setProducts(response.data);
       } catch (err) {
-        setError('Failed to fetch products');
+        setError(err.message); // Updated to show error message
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [backURL]);
 
   // Handle loading state
   if (loading) {
@@ -66,7 +64,7 @@ const AdminProductGrid = () => {
             className="w-72 p-2 border-2 border-customGreen rounded-full text-base focus:outline-none focus:border-customGreen transition-colors duration-300"
           />
         </div>
-        {/* Optionally include your FilterDropdown here */}
+        <FilterDropdown filters={filters} onFilterChange={handleFilterChange} /> {/* Reusing FilterDropdown */}
       </div>
 
       {/* Product Grid */}

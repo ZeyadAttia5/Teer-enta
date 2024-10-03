@@ -9,7 +9,7 @@ const AdminProductForm = () => {
     category: '',
     seller: '',
     imageUrl: '',
-    quantity: '', // Added quantity field
+    quantity: '',
   });
   
   const [loading, setLoading] = useState(false); // Loading state
@@ -31,8 +31,9 @@ const AdminProductForm = () => {
     setSuccess(null);
 
     try {
+      const backURL = process.env.REACT_APP_BACKEND_URL;
       // Replace with your API endpoint
-      const response = await axios.post('YOUR_API_ENDPOINT/products', product);
+      const response = await axios.post(`${backURL}/product/create`, product);
       console.log('Product submitted:', response.data);
       setSuccess('Product successfully created!');
 
@@ -44,7 +45,7 @@ const AdminProductForm = () => {
         category: '',
         seller: '',
         imageUrl: '',
-        quantity: '', // Reset quantity field
+        quantity: '',
       });
     } catch (err) {
       setError('Failed to create product. Please try again.');

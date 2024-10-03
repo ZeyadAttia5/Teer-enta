@@ -9,16 +9,19 @@ const EditProductForm = ({ productId }) => {
     category: '',
     seller: '',
     imageUrl: '',
-    availableQuantity: '',
+    quantity: '', // Ensure you match this with your API response
   });
+  
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const [success, setSuccess] = useState(null); // Success message state
 
   useEffect(() => {
     // Fetch product data by ID
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`YOUR_API_ENDPOINT/${productId}`); // Replace with your API endpoint
+        const backURL = process.env.REACT_APP_BACKEND_URL;
+        const response = await axios.get(`${backURL}/product/${id}`); // Adjust to your API endpoint
         setProduct(response.data);
       } catch (err) {
         setError('Failed to fetch product data');
@@ -40,13 +43,21 @@ const EditProductForm = ({ productId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
     try {
-      const response = await axios.put(`YOUR_API_ENDPOINT/${productId}`, product); // Replace with your API endpoint
+      const backURL = process.env.REACT_APP_BACKEND_URL;
+      const response = await axios.put(`${backURL}/product/update/${productId}`, product); // Adjust to your API endpoint
       console.log('Updated Product:', response.data);
-      // Reset form fields or redirect after submission if necessary
+      setSuccess('Product successfully updated!');
+
+      // Optionally, you can redirect or reset form fields after successful update
     } catch (err) {
       setError('Failed to update product');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,6 +75,10 @@ const EditProductForm = ({ productId }) => {
     <div className="flex flex-col items-center py-16 px-5 mt-20">
       <h2 className="text-2xl font-bold text-customGreen mb-6">Edit Product</h2>
       <form className="bg-white border-4 border-customGreen p-8 rounded-lg shadow-md w-full max-w-md" onSubmit={handleSubmit}>
+        
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+        {success && <div className="text-green-500 mb-4">{success}</div>}
+
         <div className="mb-4">
           <label className="block text-lg text-customGreen mb-2">Product Name:</label>
           <input
@@ -145,8 +160,8 @@ const EditProductForm = ({ productId }) => {
           <label className="block text-lg text-customGreen mb-2">Available Quantity:</label>
           <input
             type="number"
-            name="availableQuantity"
-            value={product.availableQuantity}
+            name="quantity"
+            value={product.quantity}
             onChange={handleChange}
             placeholder="Enter available quantity"
             required
@@ -154,7 +169,10 @@ const EditProductForm = ({ productId }) => {
           />
         </div>
 
-        <button type="submit" className="bg-customGreen text-white px-4 py-2 rounded-lg transition-colors duration-300 hover:bg-darkerGreen">
+        <button
+          type="submit"
+          className={`bg-customGreen text-white px-4 py-2 rounded-lg transition-colors duration-300 hover:bg-darkerGreen`}
+        >
           Update Product
         </button>
       </form>

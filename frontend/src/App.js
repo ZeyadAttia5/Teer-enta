@@ -85,7 +85,7 @@ function App() {
             element={<UpdateTouristItinerary />}
           />
           {/*<Navbar />*/}
-          <Route path="/all-products" element={<ProductGrid />} />
+          <Route path="/product" element={<ProductGrid />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/product/form" element={<AdminProductForm />} />
           <Route path="/product/adminGrid" element={<AdminProductGrid />} />
