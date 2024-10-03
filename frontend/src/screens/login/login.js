@@ -29,24 +29,23 @@ function Login() {
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, [images.length]);
 
-  
   const URL = `${process.env.REACT_APP_BACKEND_URL}`;
   const handleLoginSubmission = async (e) => {
     e.preventDefault();
     if (!isValid()) return false;
-
+    var user;
     try {
-      const response = await axios.post(`${URL}/auth/login`, {
-        username: username,
-        password: password,
-      });
+      const response = await axios.post(`${URL}/auth/login`, details);
+      user = response.data.user;
 
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
+      return false;
     }
 
-    navigate("/profile", { state: { userData: details } });
+    navigate("/profile", {
+      state: { user: user },});
   };
 
   function isValid() {

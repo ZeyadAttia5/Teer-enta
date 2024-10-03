@@ -6,5 +6,6 @@ router.post('/create', accountController.createAccount);
 router.get('/pending', accountController.getAllPendingUsers);
 router.patch('/accept/:id', accountController.acceptRequest);
 router.get('/accepted', accountController.getAllAcceptedUsers);
+router.get('/all' , accountController.getAllUsers) ;
 
 module.exports = router;

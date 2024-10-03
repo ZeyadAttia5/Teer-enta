@@ -1,4 +1,5 @@
 const TouristItenerary = require("../models/TouristItenerary/TouristItenerary");
+const mongoose = require("mongoose");
 
 exports.createItinerary = async (req, res) => {
     try {
@@ -86,3 +87,19 @@ exports.updateItinerary = async (req, res) => {
         });
     }
 };
+
+exports.deleteItenerary = async (req,res)=>{
+    try {
+        const id = req.params.id ;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({message:"not a valid id"})
+        }
+        const deletedItenerary = await TouristItenerary.findByIdAndDelete(id) ;
+        if (!deletedItenerary){
+            return res.status(404).json({message:"Itenerary not found"}) ;
+        }
+        return res.status(200).json({message:"Itenerary deleted successfully"})
+    }catch (err){
+
+    }
+}
