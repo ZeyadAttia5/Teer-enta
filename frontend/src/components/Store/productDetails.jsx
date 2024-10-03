@@ -41,7 +41,7 @@ const ProductDetails = () => {
           ))}
         </ul>
 
-        <Link to="/" className="inline-block mt-6">
+        <Link to="/all-products" className="inline-block mt-6">
           <button className="bg-customGreen text-white px-6 py-3 rounded-md shadow-lg hover:bg-darkerGreen transition duration-300">
             Back to Products
           </button>

@@ -3,12 +3,12 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      colors: {
+        customGreen: '#02735F', // Your custom green color
+        darkerGreen: '#075B4C'
+      },
       backgroundSize: {
         'fit': '100% 100%',
-        colors: {
-          customGreen: '#02735F', // Your custom green color
-          darkerGreen: '#075B4C'
-        },
         keyframes: {
           "tourist-background-keyframe": {
             "0%": {
@@ -36,8 +36,5 @@ module.exports = {
       },
     },
   },
-  content: [
-    './src/**/*.{js,jsx,ts,tsx}',
-  ],
   plugins: [],
 };

@@ -84,12 +84,12 @@ function App() {
             path="update-tourist-itinerary"
             element={<UpdateTouristItinerary />}
           />
-            <Navbar />
-              <Route path="/" element={<ProductGrid />} />
-              <Route path="/product/:id" element={<ProductDetails />} />
-              <Route path="/product/form" element={<AdminProductForm />} />
-              <Route path="/product/adminGrid" element={<AdminProductGrid />} />
-              <Route path="/admin/edit-product/:productId" element={<EditProductForm />} />
+          {/*<Navbar />*/}
+          <Route path="/all-products" element={<ProductGrid />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/product/form" element={<AdminProductForm />} />
+          <Route path="/product/adminGrid" element={<AdminProductGrid />} />
+          <Route path="/admin/edit-product/:productId" element={<EditProductForm />} />
         </Routes>
         <Toaster />
       </Router>
