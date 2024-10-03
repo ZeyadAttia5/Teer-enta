@@ -40,6 +40,7 @@ const ItineraryScreen = () => {
     setLoading(true);
     try {
       const data = await getItineraries();
+      console.log(data);
       setItineraries(data);
     } catch (error) {
       message.error('Failed to fetch itineraries');
