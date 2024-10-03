@@ -9,7 +9,9 @@ import {
   InputNumber,
   Select,
   DatePicker,
+  TimePicker,
   message,
+  Space,
 } from 'antd';
 import {
   getItineraries,
@@ -17,13 +19,15 @@ import {
   updateItinerary,
   deleteItinerary,
 } from '../../api/itinerary.ts';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+
+import { getActivities } from '../../api/activities.ts';
+import { getPreferenceTags } from '../../api/preferenceTags.ts';
+
+import { PlusOutlined, EditOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import 'antd';
 import moment from 'moment';
 
-
 const { Option } = Select;
-const { RangePicker } = DatePicker;
 
 const ItineraryScreen = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -32,8 +36,14 @@ const ItineraryScreen = () => {
   const [editingItinerary, setEditingItinerary] = useState(null);
   const [form] = Form.useForm();
 
+  // **New State Variables**
+  const [activitiesList, setActivitiesList] = useState([]);
+  const [preferenceTagsList, setPreferenceTagsList] = useState([]);
+
   useEffect(() => {
     fetchItineraries();
+    fetchActivities();
+    fetchPreferenceTags();
   }, []);
 
   const fetchItineraries = async () => {
@@ -48,6 +58,25 @@ const ItineraryScreen = () => {
     setLoading(false);
   };
 
+  // **New Fetch Functions**
+  const fetchActivities = async () => {
+    try {
+      const data = await getActivities();
+      setActivitiesList(data);
+    } catch (error) {
+      message.error('Failed to fetch activities');
+    }
+  };
+
+  const fetchPreferenceTags = async () => {
+    try {
+      const data = await getPreferenceTags();
+      setPreferenceTagsList(data);
+    } catch (error) {
+      message.error('Failed to fetch preference tags');
+    }
+  };
+
   const showModal = (itinerary = null) => {
     setEditingItinerary(itinerary);
     setIsModalVisible(true);
@@ -58,6 +87,18 @@ const ItineraryScreen = () => {
           moment(date.Date),
           moment(date.Times, 'HH:mm'),
         ]),
+        // **Populate Activities and Timeline**
+        activities: itinerary.activities.map((act) => ({
+          activity: act.activity._id,
+          duration: act.duration,
+        })),
+        timeline: itinerary.timeline.map((tl) => ({
+          activity: tl.activity._id,
+          startTime: tl.startTime ? moment(tl.startTime, 'HH:mm') : null,
+          duration: tl.duration,
+        })),
+        // **Populate Preference Tags**
+        preferenceTags: itinerary.preferenceTags.map((tag) => tag.tag),
       });
     } else {
       form.resetFields();
@@ -91,16 +132,35 @@ const ItineraryScreen = () => {
         Date: date.format('YYYY-MM-DD'),
         Times: time.format('HH:mm'),
       })),
-      activities: values.activities || [],
-      locations: values.locations || [],
-      timeline: values.timeline || [],
+      activities: values.activities
+        ? values.activities.map((act) => ({
+            activity: act.activity,
+            duration: act.duration,
+          }))
+        : [],
+      locations: values.locations
+        ? values.locations.map((loc) => ({
+            name: loc.name,
+          }))
+        : [],
+      timeline: values.timeline
+        ? values.timeline.map((tl) => ({
+            activity: tl.activity,
+            startTime: tl.startTime ? tl.startTime.format('HH:mm') : null,
+            duration: tl.duration,
+          }))
+        : [],
+      preferenceTags: values.preferenceTags || [],
+      // **Exclude Ratings and Comments from Form Data**
     };
-
+    console.log(" Formatted Data: " +  formattedData);
     try {
       if (editingItinerary) {
+
         await updateItinerary(editingItinerary._id, formattedData);
         message.success('Itinerary updated successfully');
       } else {
+        
         await createItinerary(formattedData);
         message.success('Itinerary created successfully');
       }
@@ -213,6 +273,7 @@ const ItineraryScreen = () => {
             <Select placeholder="Select language">
               <Option value="English">English</Option>
               <Option value="Spanish">Spanish</Option>
+              <Option value="Arabic">Arabic</Option>
               {/* Add more languages as needed */}
             </Select>
           </Form.Item>
@@ -239,31 +300,220 @@ const ItineraryScreen = () => {
             <Input placeholder="Enter drop off location" />
           </Form.Item>
 
-          {/* Activities */}
-          {/* You can expand this section to dynamically add activities, locations, timelines, etc. */}
-          {/* For simplicity, it's omitted here */}
+          {/* **Activities Section** */}
+          <Form.List name="activities">
+            {(fields, { add, remove }) => (
+              <div>
+                <label className="font-semibold">Activities</label>
+                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                  <Space
+                    key={key}
+                    style={{ display: 'flex', marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'activity']}
+                      fieldKey={[fieldKey, 'activity']}
+                      rules={[{ required: true, message: 'Missing activity' }]}
+                    >
+                      <Select placeholder="Select activity" style={{ width: 200 }}>
+                        {activitiesList.map((activity) => (
+                          <Option key={activity._id} value={activity._id}>
+                            {activity.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'duration']}
+                      fieldKey={[fieldKey, 'duration']}
+                      rules={[{ required: true, message: 'Missing duration' }]}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder="Duration (minutes)"
+                        style={{ width: 200 }}
+                      />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                    style={{ backgroundColor: '#02735F', color: '#fff', borderColor: '#02735F' }}
+                  >
+                    Add Activity
+                  </Button>
+                </Form.Item>
+              </div>
+            )}
+          </Form.List>
 
-          {/* Available Dates */}
-          <Form.Item
-            name="availableDates"
-            label="Available Dates and Times"
-            rules={[{ required: true, message: 'Please select available dates and times' }]}
-          >
-            <RangePicker
-              showTime
-              format="YYYY-MM-DD HH:mm"
-              style={{ width: '100%' }}
-              placeholder={['Select start date', 'Select end date']}
-            />
-          </Form.Item>
+          {/* **Locations Section** */}
+          <Form.List name="locations">
+            {(fields, { add, remove }) => (
+              <div>
+                <label className="font-semibold">Locations</label>
+                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                  <Space
+                    key={key}
+                    style={{ display: 'flex', marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'name']}
+                      fieldKey={[fieldKey, 'name']}
+                      rules={[{ required: true, message: 'Missing location name' }]}
+                    >
+                      <Input placeholder="Location Name" />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                    style={{ backgroundColor: '#02735F', color: '#fff', borderColor: '#02735F' }}
+                  >
+                    Add Location
+                  </Button>
+                </Form.Item>
+              </div>
+            )}
+          </Form.List>
 
-          <Form.Item name="isActive" label="Active Status" valuePropName="checked">
-            <Select>
-              <Option value={true}>Active</Option>
-              <Option value={false}>Inactive</Option>
+          {/* **Timeline Section** */}
+          <Form.List name="timeline">
+            {(fields, { add, remove }) => (
+              <div>
+                <label className="font-semibold">Timeline</label>
+                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                  <Space
+                    key={key}
+                    style={{ display: 'flex', marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'activity']}
+                      fieldKey={[fieldKey, 'activity']}
+                      rules={[{ required: true, message: 'Missing activity' }]}
+                    >
+                      <Select placeholder="Select activity" style={{ width: 200 }}>
+                        {activitiesList.map((activity) => (
+                          <Option key={activity._id} value={activity._id}>
+                            {activity.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'startTime']}
+                      fieldKey={[fieldKey, 'startTime']}
+                      rules={[{ required: true, message: 'Missing start time' }]}
+                    >
+                      <TimePicker format="HH:mm" placeholder="Start Time" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'duration']}
+                      fieldKey={[fieldKey, 'duration']}
+                      rules={[{ required: true, message: 'Missing duration' }]}
+                    >
+                      <InputNumber
+                        min={1}
+                        placeholder="Duration (minutes)"
+                        style={{ width: 150 }}
+                      />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                    style={{ backgroundColor: '#02735F', color: '#fff', borderColor: '#02735F' }}
+                  >
+                    Add Timeline Entry
+                  </Button>
+                </Form.Item>
+              </div>
+            )}
+          </Form.List>
+
+          {/* **Available Dates Section** */}
+          <Form.List name="availableDates">
+            {(fields, { add, remove }) => (
+              <div>
+                <label className="font-semibold">Available Dates and Times</label>
+                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                  <Space
+                    key={key}
+                    style={{ display: 'flex', marginBottom: 8 }}
+                    align="baseline"
+                  >
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'Date']}
+                      fieldKey={[fieldKey, 'Date']}
+                      rules={[{ required: true, message: 'Missing date' }]}
+                    >
+                      <DatePicker format="YYYY-MM-DD" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'Times']}
+                      fieldKey={[fieldKey, 'Times']}
+                      rules={[{ required: true, message: 'Missing time' }]}
+                    >
+                      <TimePicker format="HH:mm" />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                    style={{ backgroundColor: '#02735F', color: '#fff', borderColor: '#02735F' }}
+                  >
+                    Add Available Date
+                  </Button>
+                </Form.Item>
+              </div>
+            )}
+          </Form.List>
+
+          {/* **Preference Tags Section** */}
+          <Form.Item name="preferenceTags" label="Preference Tags">
+            <Select
+              mode="multiple"
+              placeholder="Select preference tags"
+              allowClear
+            >
+              {preferenceTagsList.map((tag) => (
+                <Option key={tag._id} value={tag._id}>
+                  {tag.name}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
-
           <Form.Item>
             <Button
               type="primary"
