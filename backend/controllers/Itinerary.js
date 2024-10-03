@@ -4,11 +4,13 @@ const errorHandler = require("../Util/ErrorHandler/errorSender"); // Ensure mong
 
 exports.getItineraries = async (req, res, next) => {
     try {
-        const itineraries = await Itinerary.findOne({ _id: id, isActive: true });
+        const itineraries = await Itinerary.find()
+            .populate('activities.activity')
+            .populate('preferenceTags');
         if(itineraries.length === 0) {
             return res.status(404).json({ message: 'No itineraries found or Inactive' });
         }
-        res.status(200).json({ itineraries });
+        res.status(200).json(itineraries );
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -17,11 +19,12 @@ exports.getItineraries = async (req, res, next) => {
 exports.getItinerary = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const itinerary = await Itinerary.find({ _id: id, isActive: true });
+        const itinerary = await Itinerary.find({ _id: id, isActive: true })
+            .populate('activities.activity').populate('preferenceTage');
         if (!itinerary) {
             return res.status(404).json({ message: 'Itinerary not found' });
         }
-        res.status(200).json({ itinerary });
+        res.status(200).json( itinerary );
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -31,11 +34,12 @@ exports.getMyItineraries = async (req, res, next) => {
     try {
         // req.user = { _id: '66f6564440ed4375b2abcdfb' };
         const createdBy = req.user._id;
-        const itineraries = await Itinerary.find({ createdBy });
+        const itineraries = await Itinerary.find({ createdBy })
+            .populate('activities.activity').populate('preferenceTage');
         if(itineraries.length === 0) {
             return res.status(404).json({ message: 'No itineraries found' });
         }
-        res.status(200).json({ itineraries });
+        res.status(200).json(itineraries);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -50,12 +54,14 @@ exports.getUpcomingItineraries = async (req, res, next) => {
                 $elemMatch: { Date: { $gte: today } }
             },
             isActive: true
-        });
+        })
+            .populate('activities.activity')
+            .populate('preferenceTage');
         if (upcomingItineraries.length === 0) {
             return res.status(404).json({ message: 'No upcoming itineraries found' });
         }
 
-        res.status(200).json({upcomingItineraries});
+        res.status(200).json(upcomingItineraries);
     } catch (error) {
         errorHandler.SendError(res, err);
     }

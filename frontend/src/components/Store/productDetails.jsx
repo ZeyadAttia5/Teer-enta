@@ -1,7 +1,5 @@
-// ProductDetails.js
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import './productDetails.css';
 import image1 from './sampleImages/pic1.jpg';
 import image2 from './sampleImages/pic2.jpg';
 import image3 from './sampleImages/pic3.jpg';
@@ -18,27 +16,35 @@ const ProductDetails = () => {
 
   const product = products.find((p) => p.id === parseInt(id));
 
-  if (!product) return <h2>Product not found!</h2>;
+  if (!product) return <h2 className="text-center text-2xl font-bold">Product not found!</h2>;
 
   return (
-    <div className="product-details">
-      <div className="product-details-image">
-        <img src={product.image} alt={product.name} />
+    <div className="container mx-auto p-8 mt-16 flex flex-col lg:flex-row">
+      <div className="flex-shrink-0 mb-6 lg:mb-0">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-80 object-cover rounded-lg shadow-lg lg:h-96"
+        />
       </div>
-      <div className="product-details-info">
-        <h2>{product.name}</h2>
-        <p className="price">${product.price}</p>
-        <p className="description">{product.description}</p>
-        <p className="seller">Seller: {product.seller}</p>
-        <p className="ratings">Ratings: {product.ratings} / 5</p>
-        <h3>Reviews:</h3>
-        <ul>
+      <div className="lg:ml-8 mt-4 lg:mt-0">
+        <h2 className="text-4xl font-semibold">{product.name}</h2>
+        <p className="text-2xl text-green-600 mt-2">${product.price}</p>
+        <p className="text-lg text-gray-700 mt-2">{product.description}</p>
+        <p className="text-gray-600 mt-2">Seller: <span className="font-medium">{product.seller}</span></p>
+        <p className="text-gray-600 mt-1">Ratings: <span className="font-medium">{product.ratings} / 5</span></p>
+        
+        <h3 className="text-xl font-semibold mt-4">Reviews:</h3>
+        <ul className="list-disc ml-5 mt-2">
           {product.reviews.map((review, index) => (
-            <li key={index}>{review}</li>
+            <li key={index} className="text-gray-700 text-lg">{review}</li>
           ))}
         </ul>
-        <Link to="/">
-          <button className="back-button">Back to Products</button>
+
+        <Link to="/" className="inline-block mt-6">
+          <button className="bg-customGreen text-white px-6 py-3 rounded-md shadow-lg hover:bg-darkerGreen transition duration-300">
+            Back to Products
+          </button>
         </Link>
       </div>
     </div>

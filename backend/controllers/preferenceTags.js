@@ -8,7 +8,7 @@ exports.getPreferenceTags = async (req, res, next) => {
         if (preferenceTags.length === 0) {
             return res.status(404).json({ message: 'No Preference Tags found' });
         }
-        res.status(200).json({ preferenceTags });
+        res.status(200).json(preferenceTags);
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -22,7 +22,7 @@ exports.createPreferenceTag = async (req, res, next) => {
 
         const preferenceTag = await PreferenceTag.create(req.body);
 
-        res.status(201).json({ message: 'Preference Tag created successfully', preferenceTag });
+        res.status(201).json({message: 'Preference Tag created successfully', preferenceTag });
     } catch (err) {
         errorHandler.SendError(res, err);
     }

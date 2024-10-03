@@ -1,5 +1,5 @@
 const express = require("express");
-const activityCategoryController = require("../controllers/ActivityCategory");
+const activityCategoryController = require("../controllers/activityCategory");
 const router = express.Router();
 
 router.get("/", activityCategoryController.getActivityCategories);

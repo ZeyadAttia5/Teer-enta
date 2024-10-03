@@ -30,7 +30,7 @@ module.exports = async (req, res, next) => {
 
         req.user = {
             _id: decodedToken.userId,
-            email: decodedToken.userEmail,
+            hasProfile: decodedToken.hasProfile,
             role: decodedToken.userRole ,
             accessToken: token
         };

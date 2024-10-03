@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './adminProductForm.css'; // Custom styling for the form
 
 const AdminProductForm = () => {
   const [product, setProduct] = useState({
@@ -37,11 +36,11 @@ const AdminProductForm = () => {
   };
 
   return (
-    <div className="admin-product-form-container">
-      <h2>Add New Product</h2>
-      <form className="admin-product-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Product Name:</label>
+    <div className="flex flex-col items-center py-16 px-5 mt-20">
+      <h2 className="text-2xl font-bold text-customGreen mb-6">Add New Product</h2>
+      <form className="bg-white border-4 border-customGreen p-8 rounded-lg shadow-md w-full max-w-md" onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-lg text-customGreen mb-2">Product Name:</label>
           <input
             type="text"
             name="name"
@@ -49,11 +48,12 @@ const AdminProductForm = () => {
             onChange={handleChange}
             placeholder="Enter product name"
             required
+            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
           />
         </div>
 
-        <div className="form-group">
-          <label>Description:</label>
+        <div className="mb-4">
+          <label className="block text-lg text-customGreen mb-2">Description:</label>
           <textarea
             name="description"
             value={product.description}
@@ -61,11 +61,12 @@ const AdminProductForm = () => {
             placeholder="Enter product description"
             rows="4"
             required
+            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
           />
         </div>
 
-        <div className="form-group">
-          <label>Price:</label>
+        <div className="mb-4">
+          <label className="block text-lg text-customGreen mb-2">Price:</label>
           <input
             type="number"
             name="price"
@@ -73,11 +74,12 @@ const AdminProductForm = () => {
             onChange={handleChange}
             placeholder="Enter product price"
             required
+            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
           />
         </div>
 
-        <div className="form-group">
-          <label>Category:</label>
+        <div className="mb-4">
+          <label className="block text-lg text-customGreen mb-2">Category:</label>
           <input
             type="text"
             name="category"
@@ -85,11 +87,12 @@ const AdminProductForm = () => {
             onChange={handleChange}
             placeholder="Enter product category"
             required
+            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
           />
         </div>
 
-        <div className="form-group">
-          <label>Seller Name:</label>
+        <div className="mb-4">
+          <label className="block text-lg text-customGreen mb-2">Seller Name:</label>
           <input
             type="text"
             name="seller"
@@ -97,22 +100,24 @@ const AdminProductForm = () => {
             onChange={handleChange}
             placeholder="Enter seller name"
             required
+            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
           />
         </div>
 
-        <div className="form-group">
-          <label>Image URL:</label>
+        <div className="mb-4">
+          <label className="block text-lg text-customGreen mb-2">Image URL:</label>
           <input
             type="text"
             name="imageUrl"
             value={product.imageUrl}
             onChange={handleChange}
             placeholder="Enter image URL"
+            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
           />
         </div>
 
-        <div className="form-group">
-          <label>Available Quantity:</label>
+        <div className="mb-4">
+          <label className="block text-lg text-customGreen mb-2">Available Quantity:</label>
           <input
             type="number"
             name="quantity"
@@ -120,10 +125,13 @@ const AdminProductForm = () => {
             onChange={handleChange}
             placeholder="Enter available quantity"
             required
+            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
           />
         </div>
 
-        <button type="submit" className="submit-button">Submit Product</button>
+        <button type="submit" className="bg-customGreen text-white px-4 py-2 rounded-lg transition-colors duration-300 hover:bg-darkerGreen">
+          Submit Product
+        </button>
       </form>
     </div>
   );

@@ -7,7 +7,7 @@ exports.getActivityCategories = async (req, res, next) => {
         if(activityCategories.length ===0) {
             return res.status(404).json({ message: 'No Activity Categories found' });
         }
-        res.status(200).json({ activityCategories });
+        res.status(200).json( activityCategories );
     } catch (err) {
         errorHandler.SendError(res, err);
     }
