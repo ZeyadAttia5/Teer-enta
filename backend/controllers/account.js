@@ -105,6 +105,14 @@ exports.getAllUsers = async (req, res) => {
     }
 }
 exports.requestDeleteMyAccount = async (req,res) =>{
+    try{
+        const user = req.user ;
+        if(user.role === 'Tourist'){
+            const ifBookingItinerary = await BookingItinerary.find({touristId : user._id});
+        }
 
+    }catch (err) {
+        errorHandler.SendError
+    }
 }
 
