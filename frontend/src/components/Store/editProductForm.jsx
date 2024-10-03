@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {useParams} from "react-router-dom"; // Import axios
+import { useParams } from 'react-router-dom'; // Import axios
 
 const EditProductForm = () => {
   const { productId } = useParams();
@@ -8,12 +8,11 @@ const EditProductForm = () => {
     name: '',
     description: '',
     price: '',
-    category: '',
     seller: '',
     imageUrl: '',
     quantity: '', // Ensure you match this with your API response
   });
-  
+
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
   const [success, setSuccess] = useState(null); // Success message state
@@ -116,19 +115,6 @@ const EditProductForm = () => {
             value={product.price}
             onChange={handleChange}
             placeholder="Enter product price"
-            required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Category:</label>
-          <input
-            type="text"
-            name="category"
-            value={product.category}
-            onChange={handleChange}
-            placeholder="Enter product category"
             required
             className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
           />

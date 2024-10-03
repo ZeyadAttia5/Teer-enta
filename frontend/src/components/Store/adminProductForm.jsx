@@ -6,12 +6,11 @@ const AdminProductForm = () => {
     name: '',
     description: '',
     price: '',
-    category: '',
     seller: '',
     imageUrl: '',
     quantity: '',
   });
-  
+
   const [loading, setLoading] = useState(false); // Loading state
   const [error, setError] = useState(null); // Error state
   const [success, setSuccess] = useState(null); // Success message state
@@ -42,7 +41,6 @@ const AdminProductForm = () => {
         name: '',
         description: '',
         price: '',
-        category: '',
         seller: '',
         imageUrl: '',
         quantity: '',
@@ -58,7 +56,7 @@ const AdminProductForm = () => {
     <div className="flex flex-col items-center py-16 px-5 mt-20">
       <h2 className="text-2xl font-bold text-customGreen mb-6">Add New Product</h2>
       <form className="bg-white border-4 border-customGreen p-8 rounded-lg shadow-md w-full max-w-md" onSubmit={handleSubmit}>
-        
+
         {error && <div className="text-red-500 mb-4">{error}</div>}
         {success && <div className="text-green-500 mb-4">{success}</div>}
 
@@ -96,19 +94,6 @@ const AdminProductForm = () => {
             value={product.price}
             onChange={handleChange}
             placeholder="Enter product price"
-            required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Category:</label>
-          <input
-            type="text"
-            name="category"
-            value={product.category}
-            onChange={handleChange}
-            placeholder="Enter product category"
             required
             className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
           />

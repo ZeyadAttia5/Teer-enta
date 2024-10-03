@@ -4,7 +4,7 @@ import axios from 'axios';
 import FilterDropdown from './filterDropdown';
 
 const ProductGrid = () => {
-  const backURL = process.env.REACT_APP_BACKEND_URL ;
+  const backURL = process.env.REACT_APP_BACKEND_URL;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
