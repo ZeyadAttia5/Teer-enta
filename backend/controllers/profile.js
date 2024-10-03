@@ -106,4 +106,3 @@ exports.updateProfile = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
-
