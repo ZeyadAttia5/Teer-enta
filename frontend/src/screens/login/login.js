@@ -34,10 +34,11 @@ function Login() {
     e.preventDefault();
     if (!isValid()) return false;
     var user;
+    var accessToken;
     try {
       const response = await axios.post(`${URL}/auth/login`, details);
       user = response.data.user;
-
+      accessToken = response.data.accessToken;
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
@@ -45,7 +46,7 @@ function Login() {
     }
 
     navigate("/profile", {
-      state: { user: user },});
+      state: { user: user, accessToken: accessToken },});
   };
 
   function isValid() {
