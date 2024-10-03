@@ -12,11 +12,11 @@ import Signup from "./screens/signup/Signup.js";
 import Login from "./screens/login/login.js";
 import Profile from "./screens/profile/profile.js";
 import CreateActivity from "./components/CRUDactivity/createActivity.js";
-import ViewActivities from "./components/CRUDactivity/viewActivity.js";
+import ViewActivity from "./components/CRUDactivity/viewActivity.js";
 import UpdateActivity from "./components/CRUDactivity/updateActivity.js";
 import DeleteActivity from "./components/CRUDactivity/deleteActivity.js";
 import CreateTag from "./components/CRUDtag/createTag.js";
-import ViewTags from "./components/CRUDtag/viewTag.js";
+import ViewTag from "./components/CRUDtag/viewTag.js";
 import UpdateTag from "./components/CRUDtag/updateTag.js";
 import DeleteTag from "./components/CRUDtag/deleteTag.js";
 import CreateTouristItinerary from "./components/CRUDtouristItinerary/createTouristItinerary.js";
@@ -54,11 +54,11 @@ function App() {
             element={<UpdateActivityCategory />}
           />
           <Route path="/create-activity" element={<CreateActivity />} />
-          <Route path="/view-activities" element={<ViewActivities />} />
+          <Route path="/view-activity" element={<ViewActivity />} />
           <Route path="/update-activity" element={<UpdateActivity />} />
           <Route path="/delete-activity" element={<DeleteActivity />} />
           <Route path="/create-tag" element={<CreateTag />} />
-          <Route path="/view-tags" element={<ViewTags />} />
+          <Route path="/view-tag" element={<ViewTag />} />
           <Route path="/update-tag" element={<UpdateTag />} />
           <Route path="/delete-tag" element={<DeleteTag />} />
           <Route

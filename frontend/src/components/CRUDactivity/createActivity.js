@@ -41,8 +41,8 @@ const CreateActivity = () => {
                 <input type="date" name="date" value={activity.date} onChange={handleChange} placeholder="Date" required />
                 <input type="time" name="time" value={activity.time} onChange={handleChange} placeholder="Time" required />
                 <input type="text" name="location" value={activity.location} onChange={handleChange} placeholder="Location" required />
-                <input type="number" name="priceMin" value={activity.priceMin} onChange={handleChange} placeholder="Min Price" />
-                <input type="number" name="priceMax" value={activity.priceMax} onChange={handleChange} placeholder="Max Price" />
+                <input type="number" name="pricemin" value={activity.priceMin} onChange={handleChange} placeholder="Min Price" />
+                <input type="number" name="pricemax" value={activity.priceMax} onChange={handleChange} placeholder="Max Price" />
                 <input type="text" name="category" value={activity.category} onChange={handleChange} placeholder="Category ID" />
                 <input type="text" name="tags" value={activity.tags} onChange={handleChange} placeholder="Tags (comma separated)" />
                 <input type="checkbox" name="isBookingOpen" checked={activity.isBookingOpen} onChange={() => setActivity({ ...activity, isBookingOpen: !activity.isBookingOpen })} /> Booking Open
