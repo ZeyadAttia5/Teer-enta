@@ -1,5 +1,5 @@
 // frontend/screens/ItineraryScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Button,
@@ -12,24 +12,24 @@ import {
   Space,
   Divider,
   message,
-} from 'antd';
+} from "antd";
 import {
   MinusCircleOutlined,
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 import {
   getItineraries,
   createItinerary,
   updateItinerary,
   deleteItinerary,
-} from '../../api/itinerary.ts';
-import { getActivities } from '../../api/activities.ts';
-import { getPreferenceTags } from '../../api/preferenceTags.ts';
+} from "../../api/itinerary.ts";
+import { getActivities } from "../../api/activities.ts";
+import { getPreferenceTags } from "../../api/preferenceTags.ts";
 
-import moment from 'moment';
-import 'antd';
+import moment from "moment";
+import "antd";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -57,7 +57,7 @@ const ItineraryScreen = () => {
       const data = await getItineraries();
       setItineraries(data);
     } catch (error) {
-      message.error('Failed to fetch itineraries');
+      message.error("Failed to fetch itineraries");
     }
     setLoading(false);
   };
@@ -67,7 +67,7 @@ const ItineraryScreen = () => {
       const data = await getActivities();
       setActivitiesList(data);
     } catch (error) {
-      message.error('Failed to fetch activities');
+      message.error("Failed to fetch activities");
     }
   };
 
@@ -76,7 +76,7 @@ const ItineraryScreen = () => {
       const data = await getPreferenceTags();
       setPreferenceTagsList(data);
     } catch (error) {
-      message.error('Failed to fetch preference tags');
+      message.error("Failed to fetch preference tags");
     }
   };
 
@@ -87,13 +87,13 @@ const ItineraryScreen = () => {
       // Format availableDates for RangePicker
       const formattedAvailableDates = itinerary.availableDates.map((date) => [
         moment(date.Date),
-        moment(`${date.Date} ${date.Times}`, 'YYYY-MM-DD HH:mm'),
+        moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm"),
       ]);
 
       // Format timeline's startTime
       const formattedTimeline = itinerary.timeline.map((tl) => ({
         ...tl,
-        startTime: tl.startTime ? moment(tl.startTime, 'HH:mm') : null,
+        startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
 
       form.setFieldsValue({
@@ -115,13 +115,13 @@ const ItineraryScreen = () => {
   const handleDelete = async (id) => {
     try {
       await deleteItinerary(id);
-      message.success('Itinerary deleted successfully');
+      message.success("Itinerary deleted successfully");
       fetchItineraries();
     } catch (error) {
       message.error(
         error.response && error.response.status === 400
-          ? 'Cannot delete itinerary with existing bookings'
-          : 'Failed to delete itinerary'
+          ? "Cannot delete itinerary with existing bookings"
+          : "Failed to delete itinerary"
       );
     }
   };
@@ -129,10 +129,12 @@ const ItineraryScreen = () => {
   const onFinish = async (values) => {
     try {
       // Format availableDates
-      const formattedAvailableDates = values.availableDates.map(([start, end]) => ({
-        Date: start.format('YYYY-MM-DD'),
-        Times: end.format('HH:mm'),
-      }));
+      const formattedAvailableDates = values.availableDates.map(
+        ([start, end]) => ({
+          Date: start.format("YYYY-MM-DD"),
+          Times: end.format("HH:mm"),
+        })
+      );
 
       // Format activities
       const formattedActivities = values.activities
@@ -153,10 +155,16 @@ const ItineraryScreen = () => {
       const formattedTimeline = values.timeline
         ? values.timeline.map((tl) => ({
             activity: tl.activity,
-            startTime: tl.startTime ? tl.startTime.format('HH:mm') : null,
+            startTime: tl.startTime ? tl.startTime.format("HH:mm") : null,
             duration: tl.duration,
           }))
         : [];
+
+      // format prefrence tags
+      const formattedPreferenceTags = values.preferenceTags
+      ? values.preferenceTags.map((tagId) => tagId._id) // Only store ObjectIds (tag._id)
+      : [];
+      // const formattedPreferenceTags = values.preferenceTags || [];
 
       // Prepare final data
       const formattedData = {
@@ -165,73 +173,81 @@ const ItineraryScreen = () => {
         activities: formattedActivities,
         locations: formattedLocations,
         timeline: formattedTimeline,
-        preferenceTags: values.preferenceTags || [],
+        preferenceTags: formattedPreferenceTags,
         // Exclude Ratings and Comments from Form Data
       };
 
       if (editingItinerary) {
         await updateItinerary(editingItinerary._id, formattedData);
-        message.success('Itinerary updated successfully');
+        message.success("Itinerary updated successfully");
       } else {
         await createItinerary(formattedData);
-        message.success('Itinerary created successfully');
+        message.success("Itinerary created successfully");
       }
       handleCancel();
       fetchItineraries();
     } catch (error) {
-      message.error('Failed to save itinerary');
+      message.error("Failed to save itinerary");
     }
   };
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: 'Language',
-      dataIndex: 'language',
-      key: 'language',
+      title: "Language",
+      dataIndex: "language",
+      key: "language",
     },
     {
-      title: 'Price',
-      dataIndex: 'price',
-      key: 'price',
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
       render: (price) => `$${price}`,
     },
     {
-      title: 'Accessibility',
-      dataIndex: 'accessibility',
-      key: 'accessibility',
+      title: "Accessibility",
+      dataIndex: "accessibility",
+      key: "accessibility",
     },
     {
-      title: 'Pickup Location',
-      dataIndex: 'pickupLocation',
-      key: 'pickupLocation',
+      title: "Pickup Location",
+      dataIndex: "pickupLocation",
+      key: "pickupLocation",
     },
     {
-      title: 'Drop Off Location',
-      dataIndex: 'dropOffLocation',
-      key: 'dropOffLocation',
+      title: "Drop Off Location",
+      dataIndex: "dropOffLocation",
+      key: "dropOffLocation",
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (text, record) => (
         <>
           <Button
             icon={<EditOutlined />}
             onClick={() => showModal(record)}
             className="mr-2"
-            style={{ backgroundColor: '#02735F', color: '#fff', border: 'none' }}
+            style={{
+              backgroundColor: "#02735F",
+              color: "#fff",
+              border: "none",
+            }}
           >
             Edit
           </Button>
           <Button
             icon={<DeleteOutlined />}
             onClick={() => handleDelete(record._id)}
-            style={{ backgroundColor: '#02735F', color: '#fff', border: 'none' }}
+            style={{
+              backgroundColor: "#02735F",
+              color: "#fff",
+              border: "none",
+            }}
           >
             Delete
           </Button>
@@ -248,7 +264,7 @@ const ItineraryScreen = () => {
         icon={<PlusOutlined />}
         onClick={() => showModal()}
         className="mb-4"
-        style={{ backgroundColor: '#02735F', borderColor: '#02735F' }}
+        style={{ backgroundColor: "#02735F", borderColor: "#02735F" }}
       >
         Add Itinerary
       </Button>
@@ -261,7 +277,7 @@ const ItineraryScreen = () => {
       />
 
       <Modal
-        title={editingItinerary ? 'Edit Itinerary' : 'Add Itinerary'}
+        title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
         visible={isModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -277,13 +293,19 @@ const ItineraryScreen = () => {
           <Form.Item
             name="name"
             label="Itinerary Name"
-            rules={[{ required: true, message: 'Please enter the itinerary name' }]}
+            rules={[
+              { required: true, message: "Please enter the itinerary name" },
+            ]}
           >
             <Input placeholder="Enter itinerary name" />
           </Form.Item>
 
           {/* Language */}
-          <Form.Item name="language" label="Language" rules={[{ required: true }]}>
+          <Form.Item
+            name="language"
+            label="Language"
+            rules={[{ required: true }]}
+          >
             <Select placeholder="Select language">
               <Option value="English">English</Option>
               <Option value="Spanish">Spanish</Option>
@@ -295,9 +317,9 @@ const ItineraryScreen = () => {
           <Form.Item name="price" label="Price" rules={[{ required: true }]}>
             <InputNumber
               min={0}
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               formatter={(value) => `$ ${value}`}
-              parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
               placeholder="Enter price"
             />
           </Form.Item>
@@ -327,16 +349,19 @@ const ItineraryScreen = () => {
                 {fields.map(({ key, name, ...restField }) => (
                   <Space
                     key={key}
-                    style={{ display: 'flex', marginBottom: 8 }}
+                    style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
                     {/* Activity Dropdown */}
                     <Form.Item
                       {...restField}
-                      name={[name, 'activity']}
-                      rules={[{ required: true, message: 'Missing activity' }]}
+                      name={[name, "activity"]}
+                      rules={[{ required: true, message: "Missing activity" }]}
                     >
-                      <Select placeholder="Select activity" style={{ width: 200 }}>
+                      <Select
+                        placeholder="Select activity"
+                        style={{ width: 200 }}
+                      >
                         {activitiesList.map((activity) => (
                           <Option key={activity._id} value={activity._id}>
                             {activity.name}
@@ -348,13 +373,13 @@ const ItineraryScreen = () => {
                     {/* Duration */}
                     <Form.Item
                       {...restField}
-                      name={[name, 'duration']}
-                      rules={[{ required: true, message: 'Missing duration' }]}
+                      name={[name, "duration"]}
+                      rules={[{ required: true, message: "Missing duration" }]}
                     >
                       <InputNumber
                         min={1}
                         formatter={(value) => `${value} min`}
-                        parser={(value) => value.replace(' min', '')}
+                        parser={(value) => value.replace(" min", "")}
                         placeholder="Duration (min)"
                       />
                     </Form.Item>
@@ -370,7 +395,11 @@ const ItineraryScreen = () => {
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
-                    style={{ backgroundColor: '#02735F', borderColor: '#02735F', color: '#fff' }}
+                    style={{
+                      backgroundColor: "#02735F",
+                      borderColor: "#02735F",
+                      color: "#fff",
+                    }}
                   >
                     Add Activity
                   </Button>
@@ -389,14 +418,16 @@ const ItineraryScreen = () => {
                 {fields.map(({ key, name, ...restField }) => (
                   <Space
                     key={key}
-                    style={{ display: 'flex', marginBottom: 8 }}
+                    style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
                     {/* Location Name */}
                     <Form.Item
                       {...restField}
-                      name={[name, 'name']}
-                      rules={[{ required: true, message: 'Missing location name' }]}
+                      name={[name, "name"]}
+                      rules={[
+                        { required: true, message: "Missing location name" },
+                      ]}
                     >
                       <Input placeholder="Location Name" />
                     </Form.Item>
@@ -412,7 +443,11 @@ const ItineraryScreen = () => {
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
-                    style={{ backgroundColor: '#02735F', borderColor: '#02735F', color: '#fff' }}
+                    style={{
+                      backgroundColor: "#02735F",
+                      borderColor: "#02735F",
+                      color: "#fff",
+                    }}
                   >
                     Add Location
                   </Button>
@@ -431,16 +466,19 @@ const ItineraryScreen = () => {
                 {fields.map(({ key, name, ...restField }) => (
                   <Space
                     key={key}
-                    style={{ display: 'flex', marginBottom: 8 }}
+                    style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
                     {/* Activity Dropdown */}
                     <Form.Item
                       {...restField}
-                      name={[name, 'activity']}
-                      rules={[{ required: true, message: 'Missing activity' }]}
+                      name={[name, "activity"]}
+                      rules={[{ required: true, message: "Missing activity" }]}
                     >
-                      <Select placeholder="Select activity" style={{ width: 200 }}>
+                      <Select
+                        placeholder="Select activity"
+                        style={{ width: 200 }}
+                      >
                         {activitiesList.map((activity) => (
                           <Option key={activity._id} value={activity._id}>
                             {activity.name}
@@ -452,8 +490,10 @@ const ItineraryScreen = () => {
                     {/* Start Time */}
                     <Form.Item
                       {...restField}
-                      name={[name, 'startTime']}
-                      rules={[{ required: true, message: 'Missing start time' }]}
+                      name={[name, "startTime"]}
+                      rules={[
+                        { required: true, message: "Missing start time" },
+                      ]}
                     >
                       <DatePicker
                         showTime
@@ -466,13 +506,13 @@ const ItineraryScreen = () => {
                     {/* Duration */}
                     <Form.Item
                       {...restField}
-                      name={[name, 'duration']}
-                      rules={[{ required: true, message: 'Missing duration' }]}
+                      name={[name, "duration"]}
+                      rules={[{ required: true, message: "Missing duration" }]}
                     >
                       <InputNumber
                         min={1}
                         formatter={(value) => `${value} min`}
-                        parser={(value) => value.replace(' min', '')}
+                        parser={(value) => value.replace(" min", "")}
                         placeholder="Duration (min)"
                       />
                     </Form.Item>
@@ -488,7 +528,11 @@ const ItineraryScreen = () => {
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
-                    style={{ backgroundColor: '#02735F', borderColor: '#02735F', color: '#fff' }}
+                    style={{
+                      backgroundColor: "#02735F",
+                      borderColor: "#02735F",
+                      color: "#fff",
+                    }}
                   >
                     Add Timeline Entry
                   </Button>
@@ -503,24 +547,28 @@ const ItineraryScreen = () => {
           <Form.List name="availableDates">
             {(fields, { add, remove }) => (
               <>
-                <label className="block font-medium mb-2">Available Dates and Times</label>
+                <label className="block font-medium mb-2">
+                  Available Dates and Times
+                </label>
                 {fields.map(({ key, name, ...restField }) => (
                   <Space
                     key={key}
-                    style={{ display: 'flex', marginBottom: 8 }}
+                    style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
                     {/* RangePicker */}
                     <Form.Item
                       {...restField}
                       name={[name]}
-                      rules={[{ required: true, message: 'Missing date range' }]}
+                      rules={[
+                        { required: true, message: "Missing date range" },
+                      ]}
                     >
                       <RangePicker
                         showTime
                         format="YYYY-MM-DD HH:mm"
                         style={{ width: 300 }}
-                        placeholder={['Start Date', 'End Date']}
+                        placeholder={["Start Date", "End Date"]}
                       />
                     </Form.Item>
 
@@ -535,7 +583,11 @@ const ItineraryScreen = () => {
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
-                    style={{ backgroundColor: '#02735F', borderColor: '#02735F', color: '#fff' }}
+                    style={{
+                      backgroundColor: "#02735F",
+                      borderColor: "#02735F",
+                      color: "#fff",
+                    }}
                   >
                     Add Available Date
                   </Button>
@@ -566,9 +618,9 @@ const ItineraryScreen = () => {
             <Button
               type="primary"
               htmlType="submit"
-              style={{ backgroundColor: '#02735F', borderColor: '#02735F' }}
+              style={{ backgroundColor: "#02735F", borderColor: "#02735F" }}
             >
-              {editingItinerary ? 'Update' : 'Create'}
+              {editingItinerary ? "Update" : "Create"}
             </Button>
           </Form.Item>
         </Form>
