@@ -23,6 +23,7 @@ import CreateTouristItinerary from "./components/CRUDtouristItinerary/createTour
 import ReadTouristItinerary from "./components/CRUDtouristItinerary/readTouristItinerary.js";
 import ReadAllTouristItinerary from "./components/CRUDtouristItinerary/readAllTouristItinerary.js";
 import UpdateTouristItinerary from "./components/CRUDtouristItinerary/updateTouristItinerary.js";
+import TourGuideItinerary from "./screens/Itinerary/ItineraryScreen.jsx";
 function App() {
   return (
     <div className="App">
@@ -78,6 +79,8 @@ function App() {
             path="update-tourist-itinerary"
             element={<UpdateTouristItinerary />}
           />
+
+          <Route path="/tourguide-itinerary" element={<TourGuideItinerary />} />
         </Routes>
         <Toaster />
       </Router>
