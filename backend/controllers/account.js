@@ -61,3 +61,12 @@ exports.acceptRequest = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+
+exports.getAllUsers = async (req,res) =>{
+    try {
+        const Users = await User.find() ;
+        return res.status(200).json(Users) ;
+    }catch (err){
+        errorHandler.SendError(res, err);
+    }
+}
