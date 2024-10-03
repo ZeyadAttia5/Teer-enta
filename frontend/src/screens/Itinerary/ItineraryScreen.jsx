@@ -9,25 +9,30 @@ import {
   InputNumber,
   Select,
   DatePicker,
-  TimePicker,
-  message,
   Space,
+  Divider,
+  message,
 } from 'antd';
+import {
+  MinusCircleOutlined,
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
 import {
   getItineraries,
   createItinerary,
   updateItinerary,
   deleteItinerary,
 } from '../../api/itinerary.ts';
-
 import { getActivities } from '../../api/activities.ts';
 import { getPreferenceTags } from '../../api/preferenceTags.ts';
 
-import { PlusOutlined, EditOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import 'antd';
 import moment from 'moment';
+import 'antd';
 
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 const ItineraryScreen = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -36,7 +41,7 @@ const ItineraryScreen = () => {
   const [editingItinerary, setEditingItinerary] = useState(null);
   const [form] = Form.useForm();
 
-  // **New State Variables**
+  // New State Variables for Activities and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
 
@@ -50,7 +55,6 @@ const ItineraryScreen = () => {
     setLoading(true);
     try {
       const data = await getItineraries();
-      console.log(data);
       setItineraries(data);
     } catch (error) {
       message.error('Failed to fetch itineraries');
@@ -58,7 +62,6 @@ const ItineraryScreen = () => {
     setLoading(false);
   };
 
-  // **New Fetch Functions**
   const fetchActivities = async () => {
     try {
       const data = await getActivities();
@@ -81,24 +84,22 @@ const ItineraryScreen = () => {
     setEditingItinerary(itinerary);
     setIsModalVisible(true);
     if (itinerary) {
+      // Format availableDates for RangePicker
+      const formattedAvailableDates = itinerary.availableDates.map((date) => [
+        moment(date.Date),
+        moment(`${date.Date} ${date.Times}`, 'YYYY-MM-DD HH:mm'),
+      ]);
+
+      // Format timeline's startTime
+      const formattedTimeline = itinerary.timeline.map((tl) => ({
+        ...tl,
+        startTime: tl.startTime ? moment(tl.startTime, 'HH:mm') : null,
+      }));
+
       form.setFieldsValue({
         ...itinerary,
-        availableDates: itinerary.availableDates.map((date) => [
-          moment(date.Date),
-          moment(date.Times, 'HH:mm'),
-        ]),
-        // **Populate Activities and Timeline**
-        activities: itinerary.activities.map((act) => ({
-          activity: act.activity._id,
-          duration: act.duration,
-        })),
-        timeline: itinerary.timeline.map((tl) => ({
-          activity: tl.activity._id,
-          startTime: tl.startTime ? moment(tl.startTime, 'HH:mm') : null,
-          duration: tl.duration,
-        })),
-        // **Populate Preference Tags**
-        preferenceTags: itinerary.preferenceTags.map((tag) => tag.tag),
+        availableDates: formattedAvailableDates,
+        timeline: formattedTimeline,
       });
     } else {
       form.resetFields();
@@ -126,41 +127,52 @@ const ItineraryScreen = () => {
   };
 
   const onFinish = async (values) => {
-    const formattedData = {
-      ...values,
-      availableDates: values.availableDates.map(([date, time]) => ({
-        Date: date.format('YYYY-MM-DD'),
-        Times: time.format('HH:mm'),
-      })),
-      activities: values.activities
+    try {
+      // Format availableDates
+      const formattedAvailableDates = values.availableDates.map(([start, end]) => ({
+        Date: start.format('YYYY-MM-DD'),
+        Times: end.format('HH:mm'),
+      }));
+
+      // Format activities
+      const formattedActivities = values.activities
         ? values.activities.map((act) => ({
             activity: act.activity,
             duration: act.duration,
           }))
-        : [],
-      locations: values.locations
+        : [];
+
+      // Format locations
+      const formattedLocations = values.locations
         ? values.locations.map((loc) => ({
             name: loc.name,
           }))
-        : [],
-      timeline: values.timeline
+        : [];
+
+      // Format timeline
+      const formattedTimeline = values.timeline
         ? values.timeline.map((tl) => ({
             activity: tl.activity,
             startTime: tl.startTime ? tl.startTime.format('HH:mm') : null,
             duration: tl.duration,
           }))
-        : [],
-      preferenceTags: values.preferenceTags || [],
-      // **Exclude Ratings and Comments from Form Data**
-    };
-    console.log(" Formatted Data: " +  formattedData);
-    try {
-      if (editingItinerary) {
+        : [];
 
+      // Prepare final data
+      const formattedData = {
+        ...values,
+        availableDates: formattedAvailableDates,
+        activities: formattedActivities,
+        locations: formattedLocations,
+        timeline: formattedTimeline,
+        preferenceTags: values.preferenceTags || [],
+        // Exclude Ratings and Comments from Form Data
+      };
+
+      if (editingItinerary) {
         await updateItinerary(editingItinerary._id, formattedData);
         message.success('Itinerary updated successfully');
       } else {
-        
         await createItinerary(formattedData);
         message.success('Itinerary created successfully');
       }
@@ -253,7 +265,7 @@ const ItineraryScreen = () => {
         visible={isModalVisible}
         onCancel={handleCancel}
         footer={null}
-        width={800}
+        width={1000}
       >
         <Form
           form={form}
@@ -261,6 +273,7 @@ const ItineraryScreen = () => {
           onFinish={onFinish}
           initialValues={{ isActive: true }}
         >
+          {/* Itinerary Name */}
           <Form.Item
             name="name"
             label="Itinerary Name"
@@ -269,15 +282,16 @@ const ItineraryScreen = () => {
             <Input placeholder="Enter itinerary name" />
           </Form.Item>
 
+          {/* Language */}
           <Form.Item name="language" label="Language" rules={[{ required: true }]}>
             <Select placeholder="Select language">
               <Option value="English">English</Option>
               <Option value="Spanish">Spanish</Option>
-              <Option value="Arabic">Arabic</Option>
               {/* Add more languages as needed */}
             </Select>
           </Form.Item>
 
+          {/* Price */}
           <Form.Item name="price" label="Price" rules={[{ required: true }]}>
             <InputNumber
               min={0}
@@ -288,33 +302,38 @@ const ItineraryScreen = () => {
             />
           </Form.Item>
 
+          {/* Accessibility */}
           <Form.Item name="accessibility" label="Accessibility">
             <Input placeholder="Enter accessibility details" />
           </Form.Item>
 
+          {/* Pickup Location */}
           <Form.Item name="pickupLocation" label="Pickup Location">
             <Input placeholder="Enter pickup location" />
           </Form.Item>
 
+          {/* Drop Off Location */}
           <Form.Item name="dropOffLocation" label="Drop Off Location">
             <Input placeholder="Enter drop off location" />
           </Form.Item>
 
-          {/* **Activities Section** */}
+          <Divider />
+
+          {/* Activities */}
           <Form.List name="activities">
             {(fields, { add, remove }) => (
-              <div>
-                <label className="font-semibold">Activities</label>
-                {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <>
+                <label className="block font-medium mb-2">Activities</label>
+                {fields.map(({ key, name, ...restField }) => (
                   <Space
                     key={key}
                     style={{ display: 'flex', marginBottom: 8 }}
-                    align="baseline"
+                    align="start"
                   >
+                    {/* Activity Dropdown */}
                     <Form.Item
                       {...restField}
                       name={[name, 'activity']}
-                      fieldKey={[fieldKey, 'activity']}
                       rules={[{ required: true, message: 'Missing activity' }]}
                     >
                       <Select placeholder="Select activity" style={{ width: 200 }}>
@@ -325,88 +344,100 @@ const ItineraryScreen = () => {
                         ))}
                       </Select>
                     </Form.Item>
+
+                    {/* Duration */}
                     <Form.Item
                       {...restField}
                       name={[name, 'duration']}
-                      fieldKey={[fieldKey, 'duration']}
                       rules={[{ required: true, message: 'Missing duration' }]}
                     >
                       <InputNumber
                         min={1}
-                        placeholder="Duration (minutes)"
-                        style={{ width: 200 }}
+                        formatter={(value) => `${value} min`}
+                        parser={(value) => value.replace(' min', '')}
+                        placeholder="Duration (min)"
                       />
                     </Form.Item>
+
+                    {/* Remove Button */}
                     <MinusCircleOutlined onClick={() => remove(name)} />
                   </Space>
                 ))}
+
                 <Form.Item>
                   <Button
                     type="dashed"
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
-                    style={{ backgroundColor: '#02735F', color: '#fff', borderColor: '#02735F' }}
+                    style={{ backgroundColor: '#02735F', borderColor: '#02735F', color: '#fff' }}
                   >
                     Add Activity
                   </Button>
                 </Form.Item>
-              </div>
+              </>
             )}
           </Form.List>
 
-          {/* **Locations Section** */}
+          <Divider />
+
+          {/* Locations */}
           <Form.List name="locations">
             {(fields, { add, remove }) => (
-              <div>
-                <label className="font-semibold">Locations</label>
-                {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <>
+                <label className="block font-medium mb-2">Locations</label>
+                {fields.map(({ key, name, ...restField }) => (
                   <Space
                     key={key}
                     style={{ display: 'flex', marginBottom: 8 }}
-                    align="baseline"
+                    align="start"
                   >
+                    {/* Location Name */}
                     <Form.Item
                       {...restField}
                       name={[name, 'name']}
-                      fieldKey={[fieldKey, 'name']}
                       rules={[{ required: true, message: 'Missing location name' }]}
                     >
                       <Input placeholder="Location Name" />
                     </Form.Item>
+
+                    {/* Remove Button */}
                     <MinusCircleOutlined onClick={() => remove(name)} />
                   </Space>
                 ))}
+
                 <Form.Item>
                   <Button
                     type="dashed"
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
-                    style={{ backgroundColor: '#02735F', color: '#fff', borderColor: '#02735F' }}
+                    style={{ backgroundColor: '#02735F', borderColor: '#02735F', color: '#fff' }}
                   >
                     Add Location
                   </Button>
                 </Form.Item>
-              </div>
+              </>
             )}
           </Form.List>
 
-          {/* **Timeline Section** */}
+          <Divider />
+
+          {/* Timeline */}
           <Form.List name="timeline">
             {(fields, { add, remove }) => (
-              <div>
-                <label className="font-semibold">Timeline</label>
-                {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <>
+                <label className="block font-medium mb-2">Timeline</label>
+                {fields.map(({ key, name, ...restField }) => (
                   <Space
                     key={key}
                     style={{ display: 'flex', marginBottom: 8 }}
-                    align="baseline"
+                    align="start"
                   >
+                    {/* Activity Dropdown */}
                     <Form.Item
                       {...restField}
                       name={[name, 'activity']}
-                      fieldKey={[fieldKey, 'activity']}
                       rules={[{ required: true, message: 'Missing activity' }]}
                     >
                       <Select placeholder="Select activity" style={{ width: 200 }}>
@@ -417,90 +448,105 @@ const ItineraryScreen = () => {
                         ))}
                       </Select>
                     </Form.Item>
+
+                    {/* Start Time */}
                     <Form.Item
                       {...restField}
                       name={[name, 'startTime']}
-                      fieldKey={[fieldKey, 'startTime']}
                       rules={[{ required: true, message: 'Missing start time' }]}
                     >
-                      <TimePicker format="HH:mm" placeholder="Start Time" />
+                      <DatePicker
+                        showTime
+                        format="HH:mm"
+                        placeholder="Start Time"
+                        style={{ width: 150 }}
+                      />
                     </Form.Item>
+
+                    {/* Duration */}
                     <Form.Item
                       {...restField}
                       name={[name, 'duration']}
-                      fieldKey={[fieldKey, 'duration']}
                       rules={[{ required: true, message: 'Missing duration' }]}
                     >
                       <InputNumber
                         min={1}
-                        placeholder="Duration (minutes)"
-                        style={{ width: 150 }}
+                        formatter={(value) => `${value} min`}
+                        parser={(value) => value.replace(' min', '')}
+                        placeholder="Duration (min)"
                       />
                     </Form.Item>
+
+                    {/* Remove Button */}
                     <MinusCircleOutlined onClick={() => remove(name)} />
                   </Space>
                 ))}
+
                 <Form.Item>
                   <Button
                     type="dashed"
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
-                    style={{ backgroundColor: '#02735F', color: '#fff', borderColor: '#02735F' }}
+                    style={{ backgroundColor: '#02735F', borderColor: '#02735F', color: '#fff' }}
                   >
                     Add Timeline Entry
                   </Button>
                 </Form.Item>
-              </div>
+              </>
             )}
           </Form.List>
 
-          {/* **Available Dates Section** */}
+          <Divider />
+
+          {/* Available Dates */}
           <Form.List name="availableDates">
             {(fields, { add, remove }) => (
-              <div>
-                <label className="font-semibold">Available Dates and Times</label>
-                {fields.map(({ key, name, fieldKey, ...restField }) => (
+              <>
+                <label className="block font-medium mb-2">Available Dates and Times</label>
+                {fields.map(({ key, name, ...restField }) => (
                   <Space
                     key={key}
                     style={{ display: 'flex', marginBottom: 8 }}
-                    align="baseline"
+                    align="start"
                   >
+                    {/* RangePicker */}
                     <Form.Item
                       {...restField}
-                      name={[name, 'Date']}
-                      fieldKey={[fieldKey, 'Date']}
-                      rules={[{ required: true, message: 'Missing date' }]}
+                      name={[name]}
+                      rules={[{ required: true, message: 'Missing date range' }]}
                     >
-                      <DatePicker format="YYYY-MM-DD" />
+                      <RangePicker
+                        showTime
+                        format="YYYY-MM-DD HH:mm"
+                        style={{ width: 300 }}
+                        placeholder={['Start Date', 'End Date']}
+                      />
                     </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'Times']}
-                      fieldKey={[fieldKey, 'Times']}
-                      rules={[{ required: true, message: 'Missing time' }]}
-                    >
-                      <TimePicker format="HH:mm" />
-                    </Form.Item>
+
+                    {/* Remove Button */}
                     <MinusCircleOutlined onClick={() => remove(name)} />
                   </Space>
                 ))}
+
                 <Form.Item>
                   <Button
                     type="dashed"
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
-                    style={{ backgroundColor: '#02735F', color: '#fff', borderColor: '#02735F' }}
+                    style={{ backgroundColor: '#02735F', borderColor: '#02735F', color: '#fff' }}
                   >
                     Add Available Date
                   </Button>
                 </Form.Item>
-              </div>
+              </>
             )}
           </Form.List>
 
-          {/* **Preference Tags Section** */}
+          <Divider />
+
+          {/* Preference Tags */}
           <Form.Item name="preferenceTags" label="Preference Tags">
             <Select
               mode="multiple"
@@ -514,6 +560,18 @@ const ItineraryScreen = () => {
               ))}
             </Select>
           </Form.Item>
+
+          <Divider />
+
+          {/* Active Status */}
+          <Form.Item name="isActive" label="Active Status" valuePropName="checked">
+            <Select>
+              <Option value={true}>Active</Option>
+              <Option value={false}>Inactive</Option>
+            </Select>
+          </Form.Item>
+
+          {/* Submit Button */}
           <Form.Item>
             <Button
               type="primary"
