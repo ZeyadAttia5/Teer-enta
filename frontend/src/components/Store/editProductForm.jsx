@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
+import {useParams} from "react-router-dom"; // Import axios
 
-const EditProductForm = ({ productId }) => {
+const EditProductForm = () => {
+  const { productId } = useParams();
   const [product, setProduct] = useState({
     name: '',
     description: '',
@@ -21,7 +23,8 @@ const EditProductForm = ({ productId }) => {
     const fetchProductData = async () => {
       try {
         const backURL = process.env.REACT_APP_BACKEND_URL;
-        const response = await axios.get(`${backURL}/product/${id}`); // Adjust to your API endpoint
+        const response = await axios.get(`${backURL}/product/${productId}`); // Adjust to your API endpoint
+        console.log('Product Data:', response.data);
         setProduct(response.data);
       } catch (err) {
         setError('Failed to fetch product data');
