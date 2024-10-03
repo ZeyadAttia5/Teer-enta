@@ -1,5 +1,6 @@
 const User = require('../models/Users/User');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
+const bcrypt = require('bcryptjs')
 
 exports.deleteAccount = async (req, res) => {
     try {
@@ -7,11 +8,12 @@ exports.deleteAccount = async (req, res) => {
         if (!userId) {
             return res.status(400).json({message: 'Invalid user id'});
         }
-        const user = User.findByIdAndDelete(userId);
+        const user = await User.findByIdAndDelete(userId);
         if (!user) {
             return res.status(404).json({message: 'User not found'});
         }
         res.status(200).json({message: 'User deleted successfully'});
+
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -20,7 +22,19 @@ exports.deleteAccount = async (req, res) => {
 
 exports.createAccount = async (req, res) => {
     try {
-        await User.create(req.body);
+        const {username , userRole} = req.body ;
+
+        const foundUsername = await User.findOne({username:username}) ;
+        if (foundUsername){
+            return res.status(400).json({message:"username already exists"}) ;
+        }
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 12);
+        await User.create({
+            username:username ,
+            password:hashedPassword ,
+            userRole:userRole
+        });
         res.status(201).send({message: 'User created successfully.'});
     } catch (err) {
         errorHandler.SendError(res, err);
