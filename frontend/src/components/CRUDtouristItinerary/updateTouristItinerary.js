@@ -42,12 +42,14 @@ const UpdateTouristItinerary = () => {
 
     const fetchTags = async () => {
       try {
-        const response = await axios.get(URL + "/tag");
-        setTags(response.data.filter((tag) => tag.isActive));
+        const response = await axios.get(URL + "/preferenceTag/");
+        setTags(response.data);
+        console.log("Tags:", response.data);
       } catch (error) {
         console.error("Error fetching tags:", error);
       }
     };
+
     fetchActivities();
     fetchTags();
   }, []);
@@ -188,8 +190,8 @@ const UpdateTouristItinerary = () => {
                     <br />
                     <strong>Location:</strong> {activity?.location}
                     <br />
-                    <strong>Price:</strong> ${activity?.price.min} - $
-                    {activity?.price.max}
+                    <strong>Price:</strong> ${activity?.price?.min} - $
+                    {activity?.price?.max}
                   </div>
                 </div>
               ))}
@@ -198,7 +200,7 @@ const UpdateTouristItinerary = () => {
         </div>
         <div className="form-group">
           <label className="block mb-2 text-lg">Tags:</label>
-          {tags.length === 0 ? (
+          {tags.length <= 0 ? (
             <p>No tags available.</p>
           ) : (
             <div className="flex flex-wrap -mx-2">
@@ -215,11 +217,8 @@ const UpdateTouristItinerary = () => {
                     checked={selectedTags.some((t) => t._id === tag._id)}
                   />
                   <div className="inline-block">
-                    <strong>Name:</strong> {tag?.name}
+                    <strong>Tag:</strong> {tag?.tag}
                     <br />
-                    <strong>Type:</strong> {tag?.type}
-                    <br />
-                    <strong>Historical Period:</strong> {tag?.historicalPeriod}
                   </div>
                 </div>
               ))}
@@ -269,11 +268,8 @@ const UpdateTouristItinerary = () => {
               className="selected-tag mb-4 p-4 border rounded shadow-sm mx-2 w-1/3"
             >
               <div className="inline-block">
-                <strong>Name:</strong> {tag.name}
+                <strong>Tag:</strong> {tag.tag}
                 <br />
-                <strong>Type:</strong> {tag.type}
-                <br />
-                <strong>Historical Period:</strong> {tag.historicalPeriod}
               </div>
             </div>
           ))}
