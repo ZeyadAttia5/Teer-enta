@@ -54,13 +54,13 @@ function App() {
           <Route path="/view-activity" element={<ViewActivity />} />
           {/*<Route path="/update-activity/:id" element={<UpdateActivity />} />*/}
           {/*<Route path="/delete-activity/:id" element={<DeleteActivity />} />*/}
-          <Route path="/view-activities" element={<ViewActivity />} /> 
-          <Route path="/update-activity" element={<UpdateActivity />} />
-          <Route path="/delete-activity" element={<DeleteActivity />} />
+          {/*<Route path="/view-activities" element={<ViewActivity />} /> */}
+          {/*<Route path="/update-activity" element={<UpdateActivity />} />*/}
+          {/*<Route path="/delete-activity" element={<DeleteActivity />} />*/}
           <Route path="/create-tag" element={<CreateTag />} />
           <Route path="/view-tags" element={<ViewTag />} />
-          <Route path="/update-tag" element={<UpdateTag />} />
-          <Route path="/delete-tag" element={<DeleteTag />} />
+          {/*<Route path="/update-tag" element={<UpdateTag />} />*/}
+          {/*<Route path="/delete-tag" element={<DeleteTag />} />*/}
           <Route path="/create-tourist-itinerary" element={<CreateTouristItinerary />}/>
           <Route path="/read-tourist-itinerary" element={<ReadTouristItinerary />}/>
           <Route path="/read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
