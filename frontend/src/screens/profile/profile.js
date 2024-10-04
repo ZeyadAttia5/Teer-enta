@@ -222,9 +222,9 @@ function Profile() {
   
 
   const handleUpdate = async (updatedWorks) => {
+    if (!isValid()) return false;
     setIsReadOnly(true);
 
-    if (!isValid()) return false;
 
     var data;
 
@@ -755,7 +755,7 @@ function Profile() {
               <div className="mt-8">
                 <button
                   className="flex gap-2 items-center justify-center px-4 py-2 text-[#02735f] rounded-lg shadow-md hover:bg-[#02735f] focus:ring-0 hover:text-white transition duration-300"
-                  onClick={handleUpdate}
+                  onClick={() => handleUpdate(previousWorks)}
                 >
                   Confirm
                 </button>
