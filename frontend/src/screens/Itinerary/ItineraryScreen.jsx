@@ -101,18 +101,13 @@ const ItineraryScreen = () => {
       filterByDate(itin) &&
       (selectedLanguage ? itin.language === selectedLanguage : true) &&
       (selectedPreference
-        ? itin.preferenceTags
-            .map((tagObj) => tagObj.tag)
-            .includes(selectedPreference)
+        ? itin.preferenceTags.some((tag) => tag._id === selectedPreference)
         : true) &&
       ((itin.name &&
         itin.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        // (itin.category &&
-        //   itin.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (itin.preferenceTags.tag &&
-          itin.preferenceTags.tag
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())))
+        itin.preferenceTags.some((tag) =>
+          tag.tag.toLowerCase().includes(searchTerm.toLowerCase())
+        ))
   );
 
   const sortedItineraries = filteredItinerareis.sort((a, b) => {
