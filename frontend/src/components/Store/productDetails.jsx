@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import StarRating from './starRating'; // Import StarRating component
 
 const ProductDetails = () => {
   const { id } = useParams(); // Get the product ID from the URL parameters
@@ -54,8 +55,8 @@ const ProductDetails = () => {
       <p className="text-lg text-gray-700 mb-2">{product.description}</p>
       <p className="text-lg font-semibold text-customGreen mb-2">Price: ${product.price.toFixed(2)}</p>
       <p className="text-lg mb-2">Available Quantity: {product.quantity}</p>
-      {/* Display average rating */}
-      <p className="text-lg font-semibold text-yellow-500 mb-4">Average Rating: {averageRating.toFixed(1)} / 5</p>
+      {/* Display average rating using StarRating component */}
+      <StarRating rating={averageRating} /> {/* Display StarRating */}
       <button className="bg-customGreen text-white px-4 py-2 rounded-lg transition-colors duration-300 hover:bg-darkerGreen">
         Add to Cart
       </button>

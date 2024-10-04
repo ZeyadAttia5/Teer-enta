@@ -5,10 +5,12 @@ import FilterDropdown from './filterDropdown'; // Reusing FilterDropdown
 
 const AdminProductGrid = () => {
   const backURL = process.env.REACT_APP_BACKEND_URL; // Ensure consistent API URL
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     minPrice: 0,
-    maxPrice: 100,
+    maxPrice: 1000, // Adjust price range for filtering
+    sortBy: 'rating', // Default sorting by rating
   });
   const [products, setProducts] = useState([]); // State for fetched products
   const [loading, setLoading] = useState(true); // Loading state
@@ -30,6 +32,13 @@ const AdminProductGrid = () => {
     fetchProducts();
   }, [backURL]);
 
+  // Helper function to calculate average rating
+  const calculateAverageRating = (ratings) => {
+    if (ratings.length === 0) return 0;
+    const total = ratings.reduce((acc, rating) => acc + rating.rating, 0);
+    return total / ratings.length;
+  };
+
   // Handle loading state
   if (loading) {
     return <div className="text-center mt-24">Loading products...</div>;
@@ -41,14 +50,28 @@ const AdminProductGrid = () => {
   }
 
   // Filter products based on search term and price range
-  const filteredProducts = products.filter((product) => {
+  let filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesPrice = product.price >= filters.minPrice && product.price <= filters.maxPrice;
     return matchesSearch && matchesPrice;
   });
 
+  // Sorting the filtered products
+  filteredProducts = filteredProducts.sort((a, b) => {
+    if (filters.sortBy === 'rating') {
+      const avgRatingA = calculateAverageRating(a.ratings);
+      const avgRatingB = calculateAverageRating(b.ratings);
+      return avgRatingB - avgRatingA; // Sort by average rating (highest to lowest)
+    } else if (filters.sortBy === 'price') {
+      return b.price - a.price; // Sort by price (highest to lowest)
+    } else if (filters.sortBy === 'name') {
+      return a.name.localeCompare(b.name); // Sort alphabetically by name
+    }
+    return 0;
+  });
+
   const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
+    setFilters(newFilters); // Update filters state
   };
 
   return (
@@ -73,6 +96,8 @@ const AdminProductGrid = () => {
           <div key={product._id} className="border-4 border-customGreen rounded-lg text-center transition-transform transform hover:scale-105 hover:bg-green-100 shadow-lg flex flex-col justify-between w-64">
             <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-none" />
             <h3 className="text-customGreen mt-1 font-semibold text-lg">{product.name}</h3>
+            <p>Average Rating: {calculateAverageRating(product.ratings).toFixed(1)}</p>
+            <p>Price: ${product.price.toFixed(2)}</p>
             <div className="flex w-full mt-2">
               <Link to={`/admin/edit-product/${product._id}`} className="flex-1">
                 <button className="bg-customGreen text-white w-full py-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none">

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import FilterDropdown from './filterDropdown';
+import StarRating from './starRating'; // Import the StarRating component
 
 const ProductGrid = () => {
   const backURL = process.env.REACT_APP_BACKEND_URL;
@@ -96,7 +97,7 @@ const ProductGrid = () => {
           <div key={product._id} className="border-4 border-customGreen rounded-lg text-center transition-transform transform hover:scale-105 hover:bg-green-100 shadow-lg flex flex-col justify-between w-64">
             <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-none" />
             <h3 className="text-customGreen mt-1 font-semibold text-lg">{product.name}</h3>
-            <p>Average Rating: {calculateAverageRating(product.ratings).toFixed(1)}</p>
+            <StarRating rating={calculateAverageRating(product.ratings)} /> {/* Display StarRating */}
             <p>Price: ${product.price.toFixed(2)}</p>
             <Link to={`/product/${product._id}`}>
               <button className="bg-customGreen text-white w-full py-2 mt-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none">

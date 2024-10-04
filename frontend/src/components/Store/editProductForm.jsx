@@ -1,29 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom'; // Import axios
+import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const EditProductForm = () => {
   const { productId } = useParams();
+  const navigate = useNavigate(); // Initialize useNavigate
   const [product, setProduct] = useState({
     name: '',
     description: '',
     price: '',
     seller: '',
-    imageUrl: '',
-    quantity: '', // Ensure you match this with your API response
+    image: '', 
+    quantity: '', 
   });
 
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
-  const [success, setSuccess] = useState(null); // Success message state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); 
+  const [success, setSuccess] = useState(null); 
 
   useEffect(() => {
     // Fetch product data by ID
     const fetchProductData = async () => {
       try {
         const backURL = process.env.REACT_APP_BACKEND_URL;
-        const response = await axios.get(`${backURL}/product/${productId}`); // Adjust to your API endpoint
-        console.log('Product Data:', response.data);
+        const response = await axios.get(`${backURL}/product/${productId}`);
         setProduct(response.data);
       } catch (err) {
         setError('Failed to fetch product data');
@@ -51,11 +51,10 @@ const EditProductForm = () => {
 
     try {
       const backURL = process.env.REACT_APP_BACKEND_URL;
-      const response = await axios.put(`${backURL}/product/update/${productId}`, product); // Adjust to your API endpoint
-      console.log('Updated Product:', response.data);
+      await axios.put(`${backURL}/product/update/${productId}`, product); 
       setSuccess('Product successfully updated!');
-
-      // Optionally, you can redirect or reset form fields after successful update
+      // Navigate back to the admin grid after successful update
+      setTimeout(() => navigate('/product/adminGrid'), 1000); // Redirect after a short delay
     } catch (err) {
       setError('Failed to update product');
     } finally {
@@ -63,12 +62,10 @@ const EditProductForm = () => {
     }
   };
 
-  // Handle loading state
   if (loading) {
     return <div className="text-center mt-24">Loading product data...</div>;
   }
 
-  // Handle error state
   if (error) {
     return <div className="text-center mt-24">Error: {error}</div>;
   }
@@ -137,8 +134,8 @@ const EditProductForm = () => {
           <label className="block text-lg text-customGreen mb-2">Image URL:</label>
           <input
             type="text"
-            name="imageUrl"
-            value={product.imageUrl}
+            name="image"
+            value={product.image}  
             onChange={handleChange}
             placeholder="Enter image URL"
             className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
