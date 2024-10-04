@@ -154,6 +154,7 @@ const ItineraryScreen = () => {
     if (itinerary) {
       await fetchActivities();
       await fetchPreferenceTags();
+
       console.log("The Itinerary is: " + JSON.stringify(itinerary));
       // Format availableDates for RangePicker
       const formattedAvailableDates = itinerary.availableDates.map((date) => [
@@ -168,11 +169,14 @@ const ItineraryScreen = () => {
         startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
 
+      // console.log("The first Activity is: " + itinerary.activities[0].duration);
       const formattedActivities = itinerary.activities.map((act) => ({
         activity: act.activity ? act.activity.name : "Activity not found",
         duration: act.duration,
       }));
-      console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
+      console.log(
+        "The first Activity is: " + JSON.stringify(formattedActivities[0])
+      );
 
       const formattedPreferenceTags = itinerary.preferenceTags.map((tag) => tag.tag);
 
@@ -210,7 +214,6 @@ const ItineraryScreen = () => {
 
   const onFinish = async (values) => {
     try {
-
       console.log("The values are: " + JSON.stringify(values));
 
       // Format availableDates
@@ -353,9 +356,9 @@ const ItineraryScreen = () => {
       ),
     },
   ];
-
   return (
     <div className="p-6 bg-white min-h-screen">
+      {" "}
       <h1 className="text-2xl font-bold mb-4">Itineraries</h1>
       <Button
         type="primary"
@@ -366,7 +369,6 @@ const ItineraryScreen = () => {
       >
         Add Itinerary
       </Button>
-
       <div className="p-8 bg-gray-100">
         <div className="mb-6">
           <input
@@ -442,18 +444,17 @@ const ItineraryScreen = () => {
             <select
               id="preferenceFilter"
               value={selectedPreference}
-              onChange={(e) => setSelectedPreference(e.target.tag)}
+              onChange={(e) => setSelectedPreference(e.target.value)}
               className="p-2 border border-slate-700 rounded-md"
             >
               <option value="">All Preferences</option>
-              {preferenceTagsList.map((preference, index) => (
-                <option key={index} value={preference}>
+              {preferenceTagsList.map((preference) => (
+                <option key={preference._id} value={preference._id}>
                   {preference.tag}
                 </option>
               ))}
             </select>
           </div>
-
           <div className="flex flex-col">
             <label htmlFor="sortFilter" className="font-semibold mb-1">
               Sort by:
@@ -471,7 +472,6 @@ const ItineraryScreen = () => {
           </div>
         </div>
       </div>
-
       <Table
         dataSource={sortedItineraries}
         columns={columns}
@@ -479,7 +479,6 @@ const ItineraryScreen = () => {
         loading={loading}
         pagination={{ pageSize: 10 }}
       />
-
       <Modal
         title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
         visible={isModalVisible}
@@ -811,7 +810,7 @@ const ItineraryScreen = () => {
               allowClear
             >
               {preferenceTagsList.map((tag) => (
-                <Option key={tag._id} value={tag.tag}>
+                <Option key={tag._id} value={tag._id}>
                   {tag.tag}
                 </Option>
               ))}
