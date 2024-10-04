@@ -30,6 +30,13 @@ import { getPreferenceTags } from "../../api/preferenceTags.ts";
 
 import moment from "moment";
 import "antd";
+import {
+  isToday,
+  isThisWeek,
+  isThisMonth,
+  isThisYear,
+  parseISO,
+} from "date-fns";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -41,6 +48,18 @@ const ItineraryScreen = () => {
   const [editingItinerary, setEditingItinerary] = useState(null);
   const [form] = Form.useForm();
 
+  //states for filters
+  const [searchTerm, setSearchTerm] = useState(""); //search term
+  const [selectedBudget, setSelectedBudget] = useState(""); //filter
+  const [selectedDateFilter, setSelectedDateFilter] = useState(""); //filter
+  const [selectedLanguage, setSelectedLanguage] = useState(""); //filter fx
+  const [selectedPreference, setSelectedPreference] = useState(""); //filter fx
+  const [sortBy, setSortBy] = useState(""); //sort by price and rating
+
+  const budgets = [...new Set(itineraries.map((itin) => itin.price))];
+  const languages = [...new Set(itineraries.map((itin) => itin.language))];
+  const preferences = [...new Set(itineraries.map((itin) => itin.preferences))];
+
   // New State Variables for Activities and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
@@ -50,6 +69,58 @@ const ItineraryScreen = () => {
     fetchActivities();
     fetchPreferenceTags();
   }, []);
+
+  //filter fx
+
+  const filterByDate = (itin) => {
+    return itin.availableDates.some((availableDate) => {
+      const date = parseISO(availableDate.Date);
+
+      if (isNaN(date)) {
+        console.error("Invalid date format:", availableDate.Date);
+        return false;
+      }
+
+      if (selectedDateFilter === "today") {
+        return isToday(date);
+      } else if (selectedDateFilter === "thisWeek") {
+        return isThisWeek(date, { weekStartsOn: 1 });
+      } else if (selectedDateFilter === "thisMonth") {
+        return isThisMonth(date);
+      } else if (selectedDateFilter === "thisYear") {
+        return isThisYear(date);
+      }
+
+      return true;
+    });
+  };
+
+  const filteredItinerareis = itineraries.filter(
+    (itin) =>
+      (selectedBudget ? itin.price <= selectedBudget : true) &&
+      filterByDate(itin) &&
+      (selectedLanguage ? itin.language === selectedLanguage : true) &&
+      (selectedPreference
+        ? itin.preferenceTags?.tag === selectedPreference
+        : true) &&
+      ((itin.name &&
+        itin.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        // (itin.category &&
+        //   itin.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (itin.preferenceTags.tag &&
+          itin.preferenceTags.tag
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())))
+  );
+
+  const sortedItineraries = filteredItinerareis.sort((a, b) => {
+    if (sortBy === "pricing") {
+      return a.price - b.price;
+    } else if (sortBy === "rating") {
+      return a.rating - b.rating;
+    }
+    return 0;
+  });
 
   const fetchItineraries = async () => {
     setLoading(true);
@@ -162,8 +233,8 @@ const ItineraryScreen = () => {
 
       // format prefrence tags
       const formattedPreferenceTags = values.preferenceTags
-      ? values.preferenceTags.map((tagId) => tagId._id) // Only store ObjectIds (tag._id)
-      : [];
+        ? values.preferenceTags.map((tagId) => tagId._id) // Only store ObjectIds (tag._id)
+        : [];
       // const formattedPreferenceTags = values.preferenceTags || [];
 
       // Prepare final data
@@ -268,8 +339,114 @@ const ItineraryScreen = () => {
       >
         Add Itinerary
       </Button>
+
+      <div className="p-8 bg-gray-100">
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search by name, category, or tag..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="mb-4 p-2 border border-slate-700 rounded-md w-[600px] mx-auto block"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div className="flex flex-col">
+            <label htmlFor="budgetFilter" className="font-semibold mb-1">
+              Filter by Budget:
+            </label>
+            <select
+              id="budgetFilter"
+              value={selectedBudget}
+              onChange={(e) => setSelectedBudget(e.target.value)}
+              className="p-2 border border-slate-700 rounded-md"
+            >
+              <option value="">All Budgets</option>
+              {budgets.map((budget, index) => (
+                <option key={index} value={budget}>
+                  {budget}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="dateFilter" className="font-semibold mb-1">
+              Filter by Date:
+            </label>
+            <select
+              id="dateFilter"
+              value={selectedDateFilter}
+              onChange={(e) => setSelectedDateFilter(e.target.value)}
+              className="p-2 border border-slate-700 rounded-md"
+            >
+              <option value="">All Dates</option>
+              <option value="today">Today</option>
+              <option value="thisWeek">This Week</option>
+              <option value="thisMonth">This Month</option>
+              <option value="thisYear">This Year</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="languageFilter" className="font-semibold mb-1">
+              Filter by Language:
+            </label>
+            <select
+              id="languageFilter"
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+              className="p-2 border border-slate-700 rounded-md"
+            >
+              <option value="">All Languages</option>
+              {languages.map((language, index) => (
+                <option key={index} value={language}>
+                  {language}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="preferenceFilter" className="font-semibold mb-1">
+              Filter by Preference:
+            </label>
+            <select
+              id="preferenceFilter"
+              value={selectedPreference}
+              onChange={(e) => setSelectedPreference(e.target.value)}
+              className="p-2 border border-slate-700 rounded-md"
+            >
+              <option value="">All Preferences</option>
+              {preferences.map((preference, index) => (
+                <option key={index} value={preference}>
+                  {preference}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="sortFilter" className="font-semibold mb-1">
+              Sort by:
+            </label>
+            <select
+              id="sortFilter"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="p-2 border border-slate-700 rounded-md"
+            >
+              <option value="">None</option>
+              <option value="pricing">Price</option>
+              <option value="rating">Rating</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <Table
-        dataSource={itineraries}
+        dataSource={sortedItineraries}
         columns={columns}
         rowKey="_id"
         loading={loading}
