@@ -1,4 +1,5 @@
 require('dotenv').config();
+const morgan = require("morgan");
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
@@ -18,9 +19,8 @@ const accountRoutes = require('./routes/account');
 const productRoutes = require('./routes/product');
 const touristIteneraryRoutes = require('./routes/touristItenerary');
 
-
+app.use(morgan('dev'))
 app.use((req, res, next) => {
-    console.log(`Received ${req.method} request for ${req.url}`);
     res.setHeader("Content-Type", "application/json");
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
