@@ -4,6 +4,8 @@ import unknownImage from "./unknown.jpg";
 import axios from "axios";
 import { FaExclamationCircle } from "react-icons/fa";
 import SocialMediaIcons from "./SocialMediaIcons";
+import AddPreviousWork from "./AddPreviousWork";
+import PreviousWorksList from "./PreviousWorksList";
 
 // async function getProfileData() {
 //   try {
@@ -19,24 +21,32 @@ async function updateProfile(
   user,
   setUsername,
   setEmailInput,
-  setUserRole,
-  setMobileNumber,
   setEmail,
+  setUserRole,
   setDob,
-  setAge,
-  setNationality,
   setLinkInput,
   setHotlineInput,
   setCompanyProfileInput,
   setYearsOfExperienceInput,
-  setPreviousWorkInput,
   setDescriptionInput,
   setMessage,
   setNationalityInput,
-  setAgeInput,
-  setMobileNumberInput,
+  setWallet,
+  setPreviousWorks,
+  setNameInput,
+
+  setJobTitleInput,
   setJobTitle,
-  setWallet
+  setMobileNumberInput,
+  previousWorks,
+  setFacebook,
+  setInstagram,
+  setTwitter,
+  setLinkedin,
+  setLocationAddressInput,
+  setCity,
+  setCountry,
+  setCompanyName
 ) {
   try {
     console.log("user id is: " + user._id);
@@ -45,44 +55,65 @@ async function updateProfile(
     );
     const { data } = response;
     const tmpDate = new Date(data.dateOfBirth).toLocaleDateString("en-CA");
-    console.log("data is: " + tmpDate);
+
     switch (data.userRole) {
       case "Tourist":
         setUserRole("Tourist");
         setUsername(data.username);
         setMobileNumberInput(data.mobileNumber);
+
         setEmail(data.email);
         setEmailInput(data.email);
         setDob(tmpDate);
+        setJobTitleInput(data.occupation);
         setJobTitle(data.occupation);
+        setNameInput(data.name);
+
         setNationalityInput(data.nationality);
         setWallet(data.wallet);
         break;
       case "Advertiser":
         setUserRole("Advertiser");
         setUsername(data.username);
-        setMobileNumber(data.hotline);
+        setMobileNumberInput(data.hotline);
+        setFacebook(data.socialMediaLinks.facebook);
+        setInstagram(data.socialMediaLinks.instagram);
+        setTwitter(data.socialMediaLinks.twitter);
+        setLinkedin(data.socialMediaLinks.linkedin);
+        setCity(data.location.city);
+        setCountry(data.location.country);
+        setCompanyName(data.companyName);
+        setLocationAddressInput(data.location.address);
         setEmail(data.email);
         setEmailInput(data.email);
+        setNameInput(data.name);
         setLinkInput(data.website);
         setHotlineInput(data.hotline);
         setCompanyProfileInput(data.companyProfile);
         break;
       case "TourGuide":
         setUserRole("TourGuide");
-        setMobileNumber(data.mobileNumber);
+        setMobileNumberInput(data.mobileNumber);
+
         setUsername(data.username);
         setEmail(data.email);
         setEmailInput(data.email);
+        setNameInput(data.name);
+
         setYearsOfExperienceInput(data.yearsOfExperience);
-        setPreviousWorkInput(data.previousWork);
+        setPreviousWorks(data.previousWorks);
+
         break;
       case "Seller":
         setUserRole("Seller");
         setUsername(data.username);
+        console.log("Hey3 " + data.name);
+
+        setNameInput(data.name);
         setEmail(data.email);
         setEmailInput(data.email);
-        setMobileNumber(data.mobileNumber);
+        setMobileNumberInput(data.mobileNumber);
+
         setDescriptionInput(data.description);
         break;
       default:
@@ -96,17 +127,27 @@ async function updateProfile(
   }
 }
 
+const LoadingCircle = () => {
+  return (
+    <div className="flex items-start  justify-center h-screen pt-20">
+      <div className="w-32 h-32 border-4 border-blue-500 border-dotted rounded-full animate-spin"></div>
+    </div>
+  );
+};
+
 function Profile() {
   const location = useLocation();
-  const { user } = location.state || {}; // Destructure the user object passed
-
+  const { user, accessToken } = location.state || {}; // Destructure the user object passed
+  const [addWork, setAddWork] = useState(false);
   const [message, setMessage] = useState("");
   const [userRole, setUserRole] = useState("");
   const [username, setUsername] = useState("");
 
   const [email, setEmail] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
+
+  const [mobileNumberInput, setMobileNumberInput] = useState("");
   const [jobTitle, setJobTitle] = useState("");
+  const [jobTitleInput, setJobTitleInput] = useState(jobTitle);
   const [dob, setDob] = useState("");
   const [nationality, setNationality] = useState("");
   const [age, setAge] = useState("");
@@ -127,35 +168,49 @@ function Profile() {
   const [instagram, setInstagram] = useState("");
   const [twitter, setTwitter] = useState("");
   const [linkedin, setLinkedin] = useState("");
+  const [previousWorks, setPreviousWorks] = useState([]);
+  const [updatedData, setUpdatedData] = useState({});
+  const [locationAddressInput, setLocationAddressInput] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [nameInput, setNameInput] = useState("");
 
   if (username === "") {
     updateProfile(
       user,
       setUsername,
       setEmailInput,
-      setUserRole,
-      setMobileNumber,
       setEmail,
+      setUserRole,
       setDob,
-      setAge,
-      setNationality,
       setLinkInput,
       setHotlineInput,
       setCompanyProfileInput,
       setYearsOfExperienceInput,
-      setPreviousWorkInput,
       setDescriptionInput,
       setMessage,
       setNationalityInput,
-      setAgeInput,
-      setMobileNumber,
+      setWallet,
+      setPreviousWorks,
+      setNameInput,
+
+      setJobTitleInput,
       setJobTitle,
-      setWallet
+      setMobileNumberInput,
+      previousWorks,
+      setFacebook,
+      setInstagram,
+      setTwitter,
+      setLinkedin,
+      setLocationAddressInput,
+      setCity,
+      setCountry,
+      setCompanyName
     );
   }
 
   const [isReadOnly, setIsReadOnly] = useState(true);
-
   const handleEdit = () => {
     setIsReadOnly(!isReadOnly);
   };
@@ -173,7 +228,7 @@ function Profile() {
     const numericRegex = /^[0-9]*$/; // Regular expression to match only numeric characters
 
     if (numericRegex.test(value)) {
-      setMobileNumber(value); // Update the mobile number state if the value is numeric
+      setMobileNumberInput(value);
     }
   };
 
@@ -189,73 +244,98 @@ function Profile() {
     }
   };
 
-  const handleUpdate = async (e) => {
+  const handleNameChange = (e) => {
     e.preventDefault();
+    setNameInput(e.target.value);
+  };
+
+  const handleUpdate = async (updatedWorks) => {
+    if (!isValid()) return false;
     setIsReadOnly(true);
 
-    console.log("Hey1");
-    if (!isValid()) return false;
-    console.log("Hey2");
-    var updatedData = {};
-    console.log("user role is: " + userRole);
+    var data;
+
     switch (userRole) {
       case "Tourist":
-        updatedData = {
-          mobileNumber: mobileNumber,
+        console.log("hey1 " + nationalityInput);
+        data = {
+          mobileNumber: mobileNumberInput,
           nationality: nationalityInput,
           userRole: userRole,
           email: emailInput,
           dateOfBirth: dob,
           occupation: jobTitle,
         };
-        
-        console.log("email in updateData is: " + updatedData.email);
-        console.log("mobile is: " + updatedData.mobileNumber);
-        console.log("nationality is: " + updatedData.nationality);
-        console.log("dob is: " + updatedData.dateOfBirth);
-        console.log("job title is: " + updatedData.occupation);
+
         break;
       case "Advertiser":
-        updatedData = {
+        console.log("facebook is: " + facebook);
+        data = {
           website: linkInput,
-          hotline: mobileNumber,
+          hotline: mobileNumberInput,
           companyProfile: companyProfileInput,
           email: emailInput,
+          socialMediaLinks: {
+            facebook: facebook,
+            instagram: instagram,
+            twitter: twitter,
+            linkedin: linkedin,
+          },
+          location: {
+            city: city,
+            country: country,
+            address: locationAddressInput,
+          },
+          companyName: companyName,
         };
 
         break;
       case "TourGuide":
-        updatedData = {
-          mobileNumber: mobileNumber,
+        data = {
+          mobileNumber: mobileNumberInput,
           yearsOfExperience: yearsOfExperienceInput,
-          previousWork: previousWorkInput,
+          previousWorks: updatedWorks, // This will have the updated value
           email: emailInput,
         };
 
         break;
       case "Seller":
-        updatedData = {
-          mobileNumber: mobileNumber,
+        data = {
+          mobileNumber: mobileNumberInput,
           email: emailInput,
           description: descriptionInput,
+          name: nameInput,
         };
         break;
       default:
         return false;
     }
-    
+
+    // if(userRole === "TourGuide"){
+    //   try {
+    //     const response = await axios.put(
+    //       `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
+    //       updatedData
+    //     );
+
+    //     setMessage(response.data.message);
+    //   } catch (error) {
+    //     setMessage(error.response.data.message || "Updating profile failed");
+    //   }
+
+    // }else{
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
-        updatedData
+        data
       );
 
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response.data.message || "Updating profile failed");
     }
+    // }
 
-    setMobileNumber(mobileNumber);
     setAge(ageInput);
     setNationality(nationalityInput);
     setEmail(emailInput);
@@ -268,71 +348,150 @@ function Profile() {
     return isValidEmail;
   }
 
+  const handleAddWork = () => {
+    setAddWork(true);
+  };
+
+  const cancelWork = () => {
+    setAddWork(false);
+  };
+
+  const onAddWork = (work) => {
+    setPreviousWorks((prevWorks) => {
+      const updatedWorks = [...prevWorks, work];
+
+      handleUpdate(updatedWorks);
+
+      return updatedWorks;
+    });
+    setAddWork(false);
+  };
+
+  const handleJobTitleChange = (e) => {
+    setJobTitleInput(e.target.value);
+    setJobTitle(e.target.value);
+  };
+  const handleNationalityChange = (e) => {
+    setNationalityInput(e.target.value);
+  };
+
+  const onDelete = (index) => {
+    console.log("index is: " + index);
+    setPreviousWorks((prevWorks) => {
+      const updatedWorks = prevWorks.filter((work, i) => i !== index);
+
+      handleUpdate(updatedWorks);
+
+      return updatedWorks;
+    });
+  };
+
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    // Simulating a data fetch
+    setTimeout(() => {
+      setData("Fetched data from the database!");
+      setLoading(false);
+    }, 3000); // Simulate 3 seconds of loading
+  }, []);
+
   return (
     <div className="flex justify-center">
-      <div className="flex m-16 gap-16 w-[70%]">
-        <div className="flex flex-col">
-          <div className="border-2 border-[#02735f]">
-            <div className="border-2 border-white">
-              <img
-                width={200}
-                src={unknownImage}
-                alt={`user's profile`}
-                className="border-2 border-[#02735f]"
-              />
+      <div className="flex m-16 gap-16">
+        {!userRole && (
+          <div className="container mx-auto">
+            {loading ? (
+              <LoadingCircle />
+            ) : (
+              <div className="p-4 text-xl text-center">{data}</div>
+            )}
+          </div>
+        )}
+        {userRole && (
+          <div className="flex flex-col">
+            <div className="border-2 border-[#02735f]">
+              <div className="border-2 border-white">
+                <img
+                  width={200}
+                  src={unknownImage}
+                  alt={`user's profile`}
+                  className="border-2 border-[#02735f]"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col space-y-4 mt-4"></div>
+            <div className="flex flex-col space-y-4 mt-4">
+              <button
+                className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
+                onClick={handleEdit}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                  />
+                </svg>
+                Edit Profile
+              </button>
+
+              <button
+                className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
+                onClick={handleComplaint}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
+                  />
+                </svg>
+                Complaint
+              </button>
             </div>
           </div>
-          <div className="flex flex-col space-y-4 mt-4"></div>
-          <div className="flex flex-col space-y-4 mt-4">
-            <button
-              className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
-              onClick={handleEdit}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                />
-              </svg>
-              Edit Profile
-            </button>
-
-            <button
-              className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
-              onClick={handleComplaint}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
-                />
-              </svg>
-              Complaint
-            </button>
-          </div>
-        </div>
+        )}
         <div className="flex-col flex gap-32">
-          <div>
-            <h6 className="text-5xl font-medium text-[#02735f]">{username}</h6>
-            <p className="text-lg font-semibold text-[#02735f]">
-              {userRole === "TourGuide" ? "Tour Guide" : userRole}
-            </p>
+          <div className="flex justify-between">
+            <div>
+              <h6 className="text-5xl font-medium text-[#02735f]">
+                {username}
+              </h6>
+              <p className="text-lg font-semibold text-[#02735f]">
+                {userRole === "TourGuide" ? "Tour Guide" : userRole}
+              </p>
+            </div>
+            {userRole === "Advertiser" && (
+              <div className="">
+                <SocialMediaIcons
+                  facebook={facebook}
+                  instagram={instagram}
+                  twitter={twitter}
+                  linkedin={linkedin}
+                  setFacebook={setFacebook}
+                  setInstagram={setInstagram}
+                  setLinkedin={setLinkedin}
+                  setTwitter={setTwitter}
+                  isReadOnly={isReadOnly}
+                />
+              </div>
+            )}
           </div>
           <div>
             {userRole === "Tourist" && (
@@ -344,6 +503,7 @@ function Profile() {
                       type="text"
                       value={username}
                       readOnly
+                      placeholder={!isReadOnly ? "Enter your name" : ""}
                       className="border-2 block border-[#02735f] bg-gray-300 p-3"
                     />
                   </div>
@@ -351,7 +511,7 @@ function Profile() {
                     <span className="text-2xl text-[#02735f]">Phone</span>
                     <input
                       type="text"
-                      value={mobileNumber}
+                      value={mobileNumberInput}
                       readOnly={isReadOnly}
                       placeholder={!isReadOnly ? "Enter your email" : ""}
                       onChange={handleMobileNumberChange}
@@ -364,10 +524,10 @@ function Profile() {
                     <span className="text-2xl text-[#02735f]">Job Title</span>
                     <input
                       type="text"
-                      value={jobTitle}
+                      value={jobTitleInput}
                       readOnly={isReadOnly}
                       placeholder={!isReadOnly ? "Enter your email" : ""}
-                      onChange={(e) => setJobTitle(e.target.value)}
+                      onChange={handleJobTitleChange}
                       className="border-2 block border-[#02735f] bg-gray-300 p-3"
                     />
                   </div>
@@ -378,7 +538,7 @@ function Profile() {
                       value={nationalityInput}
                       readOnly={isReadOnly}
                       placeholder={!isReadOnly ? "Enter your email" : ""}
-                      onChange={(e) => setNationalityInput(e.target.value)}
+                      onChange={handleNationalityChange}
                       className="border-2 block border-[#02735f] bg-gray-300 p-3"
                     />
                   </div>
@@ -433,80 +593,136 @@ function Profile() {
               </div>
             )}
             {userRole === "Advertiser" && (
-              <div className="flex gap-8">
-                <div className="flex flex-col gap-8">
-                  <div>
-                    <span className="text-2xl text-[#02735f]">Name</span>
-                    <input
-                      type="text"
-                      value={username}
-                      readOnly
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-2xl text-[#02735f]">Hotline</span>
-                    <input
-                      type="text"
-                      value={mobileNumber}
-                      placeholder={!isReadOnly ? "Enter your hotline" : ""}
-                      readOnly={isReadOnly}
-                      onChange={handleMobileNumberChange}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-8">
-                  <div>
-                    <span className="text-2xl text-[#02735f]">
-                      Website Link
-                    </span>
-                    <input
-                      type="text"
-                      value={linkInput}
-                      placeholder={!isReadOnly ? "Enter your website link" : ""}
-                      readOnly={isReadOnly}
-                      onChange={(e) => setLinkInput(e.target.value)}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
-                  <div className="relative">
-                    <span className="text-2xl text-[#02735f]">Email</span>
-                    <input
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
-                      type="email"
-                      placeholder={!isReadOnly ? "Enter your email" : ""}
-                      required
-                      value={emailInput}
-                      readOnly={isReadOnly}
-                      onChange={handleEmailChange}
-                    />
-                    {!isValidEmail && (
-                      <FaExclamationCircle
-                        style={{
-                          position: "absolute",
-                          right: "10px",
-                          top: "50%",
-                          transform: "translateY(40%)",
-                          color: "red",
-                        }}
+              <div>
+                <div className="flex gap-8">
+                  <div className="flex flex-col gap-8">
+                    <div>
+                      <span className="text-2xl text-[#02735f]">Name</span>
+                      <input
+                        type="text"
+                        value={username}
+                        readOnly
+                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
                       />
-                    )}
+                    </div>
+                    <div>
+                      <span className="text-2xl text-[#02735f]">Hotline</span>
+                      <input
+                        type="text"
+                        value={mobileNumberInput}
+                        placeholder={!isReadOnly ? "Enter your hotline" : ""}
+                        readOnly={isReadOnly}
+                        onChange={handleMobileNumberChange}
+                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-8">
+                    <div>
+                      <span className="text-2xl text-[#02735f]">
+                        Website Link
+                      </span>
+                      <input
+                        type="text"
+                        value={linkInput}
+                        placeholder={
+                          !isReadOnly ? "Enter your website link" : ""
+                        }
+                        readOnly={isReadOnly}
+                        onChange={(e) => setLinkInput(e.target.value)}
+                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      />
+                    </div>
+                    <div className="relative">
+                      <span className="text-2xl text-[#02735f]">Email</span>
+                      <input
+                        className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                        type="email"
+                        placeholder={!isReadOnly ? "Enter your email" : ""}
+                        required
+                        value={emailInput}
+                        readOnly={isReadOnly}
+                        onChange={handleEmailChange}
+                      />
+                      {!isValidEmail && (
+                        <FaExclamationCircle
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(40%)",
+                            color: "red",
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-8">
+                    <div>
+                      <span className="text-2xl text-[#02735f]">
+                        Company Profile
+                      </span>
+                      <input
+                        type="text"
+                        value={companyProfileInput}
+                        placeholder={
+                          !isReadOnly ? "Enter your company profile" : ""
+                        }
+                        readOnly={isReadOnly}
+                        onChange={(e) => setCompanyProfileInput(e.target.value)}
+                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-2xl text-[#02735f]">
+                        Location address
+                      </span>
+                      <input
+                        type="text"
+                        value={locationAddressInput}
+                        placeholder={
+                          !isReadOnly ? "Enter your location address" : ""
+                        }
+                        readOnly={isReadOnly}
+                        onChange={(e) =>
+                          setLocationAddressInput(e.target.value)
+                        }
+                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-8">
+                <div className="flex mt-6 gap-8">
                   <div>
-                    <span className="text-2xl text-[#02735f]">
-                      Company Profile
-                    </span>
+                    <span className="text-2xl text-[#02735f]">City</span>
                     <input
                       type="text"
-                      value={companyProfileInput}
-                      placeholder={
-                        !isReadOnly ? "Enter your company profile" : ""
-                      }
+                      value={city}
+                      placeholder={!isReadOnly ? "Enter your city name" : ""}
                       readOnly={isReadOnly}
-                      onChange={(e) => setCompanyProfileInput(e.target.value)}
+                      onChange={(e) => setCity(e.target.value)}
+                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-2xl text-[#02735f]">Country</span>
+                    <input
+                      type="text"
+                      value={country}
+                      placeholder={!isReadOnly ? "Enter your country name" : ""}
+                      readOnly={isReadOnly}
+                      onChange={(e) => setCountry(e.target.value)}
+                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-2xl text-[#02735f]">Company Name</span>
+                    <input
+                      type="text"
+                      value={companyName}
+                      placeholder={!isReadOnly ? "Enter your company name" : ""}
+                      readOnly={isReadOnly}
+                      onChange={(e) => setCompanyName(e.target.value)}
                       className="border-2 block border-[#02735f] bg-gray-300 p-3"
                     />
                   </div>
@@ -514,89 +730,98 @@ function Profile() {
               </div>
             )}
             {userRole === "TourGuide" && (
-              <div className="flex gap-8">
-                <div className="flex flex-col gap-8">
-                  <div>
-                    <span className="text-2xl text-[#02735f]">Name</span>
-                    <input
-                      type="text"
-                      value={username}
-                      readOnly
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-2xl text-[#02735f]">Phone</span>
-                    <input
-                      type="text"
-                      value={mobileNumber}
-                      readOnly={isReadOnly}
-                      placeholder={!isReadOnly ? "Enter your phone number" : ""}
-                      onChange={handleMobileNumberChange}
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-8">
-                  <div>
-                    <span className="text-2xl text-[#02735f]">
-                      Years of Experience
-                    </span>
-                    <input
-                      type="text"
-                      value={yearsOfExperienceInput}
-                      readOnly={isReadOnly}
-                      placeholder={
-                        !isReadOnly ? "Enter your years of experience" : ""
-                      }
-                      onChange={(e) =>
-                        setYearsOfExperienceInput(e.target.value)
-                      }
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-2xl text-[#02735f]">
-                      Previous Work
-                    </span>
-                    <input
-                      type="text"
-                      value={previousWorkInput}
-                      readOnly={isReadOnly}
-                      placeholder={
-                        !isReadOnly ? "Enter your previous work" : ""
-                      }
-                      onChange={(e) => setPreviousWorkInput(e.target.value)}
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-8">
-                  <div className="relative">
-                    <span className="text-2xl text-[#02735f]">Email</span>
-                    <input
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
-                      type="email"
-                      placeholder={!isReadOnly ? "Enter your email" : ""}
-                      required
-                      value={emailInput}
-                      readOnly={isReadOnly}
-                      onChange={handleEmailChange}
-                    />
-                    {!isValidEmail && (
-                      <FaExclamationCircle
-                        style={{
-                          position: "absolute",
-                          right: "10px",
-                          top: "50%",
-                          transform: "translateY(40%)",
-                          color: "red",
-                        }}
+              <div>
+                <div className="flex gap-8">
+                  <div className="flex flex-col gap-8">
+                    <div>
+                      <span className="text-2xl text-[#02735f]">Name</span>
+                      <input
+                        type="text"
+                        value={username}
+                        readOnly
+                        className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
                       />
-                    )}
+                    </div>
+                    <div>
+                      <span className="text-2xl text-[#02735f]">Phone</span>
+                      <input
+                        type="text"
+                        value={mobileNumberInput}
+                        readOnly={isReadOnly}
+                        placeholder={
+                          !isReadOnly ? "Enter your phone number" : ""
+                        }
+                        onChange={handleMobileNumberChange}
+                        className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-8">
+                    <div>
+                      <span className="text-2xl text-[#02735f]">
+                        Years of Experience
+                      </span>
+                      <input
+                        type="text"
+                        value={yearsOfExperienceInput}
+                        readOnly={isReadOnly}
+                        placeholder={
+                          !isReadOnly ? "Enter your years of experience" : ""
+                        }
+                        onChange={(e) =>
+                          setYearsOfExperienceInput(e.target.value)
+                        }
+                        className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-8">
+                      <div className="relative">
+                        <span className="text-2xl text-[#02735f]">Email</span>
+                        <input
+                          className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                          type="email"
+                          placeholder={!isReadOnly ? "Enter your email" : ""}
+                          required
+                          value={emailInput}
+                          readOnly={isReadOnly}
+                          onChange={handleEmailChange}
+                        />
+                        {!isValidEmail && (
+                          <FaExclamationCircle
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(40%)",
+                              color: "red",
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-8"></div>
+                <div className="mt-8">
+                  <PreviousWorksList
+                    previousWorks={previousWorks}
+                    onDelete={onDelete}
+                  />
+                </div>
+                {addWork === true && (
+                  <AddPreviousWork
+                    onAddWork={onAddWork}
+                    cancelWork={cancelWork}
+                  />
+                )}
+                <div className="mt-8">
+                  <button
+                    className="flex gap-2 items-center justify-center px-4 py-2 text-[#02735f] rounded-lg shadow-md hover:bg-[#02735f] focus:ring-0 hover:text-white transition duration-300"
+                    onClick={handleAddWork}
+                  >
+                    <span className="font-bold">+</span> Add Work
+                  </button>
+                </div>
               </div>
             )}
             {userRole === "Seller" && (
@@ -606,8 +831,10 @@ function Profile() {
                     <span className="text-2xl text-[#02735f]">Name</span>
                     <input
                       type="text"
-                      value={username}
-                      readOnly
+                      value={nameInput}
+                      readOnly={isReadOnly}
+                      onChange={handleNameChange}
+                      placeholder={!isReadOnly ? "Enter your name" : ""}
                       className="border-2 block border-[#02735f] bg-gray-300 p-3"
                     />
                   </div>
@@ -616,7 +843,7 @@ function Profile() {
                     <input
                       type="text"
                       placeholder={!isReadOnly ? "Enter your phone number" : ""}
-                      value={mobileNumber}
+                      value={mobileNumberInput}
                       readOnly={isReadOnly}
                       onChange={handleMobileNumberChange}
                       className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
@@ -666,7 +893,7 @@ function Profile() {
               <div className="mt-8">
                 <button
                   className="flex gap-2 items-center justify-center px-4 py-2 text-[#02735f] rounded-lg shadow-md hover:bg-[#02735f] focus:ring-0 hover:text-white transition duration-300"
-                  onClick={handleUpdate}
+                  onClick={() => handleUpdate(previousWorks)}
                 >
                   Confirm
                 </button>
