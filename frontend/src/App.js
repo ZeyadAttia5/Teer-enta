@@ -30,19 +30,22 @@ import ReadHistoriaclPlaces from './components/historicalPlaces/readHistoriaclPl
 import CreateHistoricalPlaces from './components/historicalPlaces/createHistoricalPlaces.jsx';
 import UpdateHistoricalPlaces from './components/historicalPlaces/updateHistoriaclPlaces.jsx';
 import DeleteHistoricalPlaces from './components/historicalPlaces/deleteHistoriaclPlaces.jsx';
+import AllUsers from "./components/Users/viewUsers/viewAllUsers";
+import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
+import AddUser from "./components/Users/addUser/addUser";
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
-
-          <Route path="/" element={<Signup />} />
+          <Route path="/" element={<TouristWelcome/>}/> // t
+          <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/delete-user" element={<DeleteUser />} />
-          <Route path="/add-tourism-governor" element={<AddTourismGovernor />} />
-          <Route path="/add-admin" element={<AddAdmin />} />
+          {/*<Route path="/delete-user" element={<DeleteUser />} />*/}
+          {/*<Route path="/add-tourism-governor" element={<AddTourismGovernor />} />*/}
+          {/*<Route path="/add-admin" element={<AddAdmin />} />*/}
           <Route path="/create-activity-category" element={<CreateCategory />} />
           <Route path="/delete-activity-category" element={<DeleteActivityCategory />} />
           <Route path="/view-activity-categories" element={<ViewActivityCategories />} />
@@ -52,32 +55,21 @@ function App() {
           <Route path="/update-activity" element={<UpdateActivity />} />
           <Route path="/delete-activity" element={<DeleteActivity />} />
           <Route path="/create-tag" element={<CreateTag />} />
-          <Route path="/view-tags" element={<ViewTag />} /> 
+          <Route path="/view-tags" element={<ViewTag />} />
           <Route path="/update-tag" element={<UpdateTag />} />
           <Route path="/delete-tag" element={<DeleteTag />} />
-          <Route
-            path="/create-tourist-itinerary"
-            element={<CreateTouristItinerary />}
-          />
-          <Route
-            path="/read-tourist-itinerary"
-            element={<ReadTouristItinerary />}
-          />
-          <Route
-            path="/read-all-tourist-itinerary"
-            element={<ReadAllTouristItinerary />}
-          />
-          <Route
-            path="/update-tourist-itinerary"
-            element={<UpdateTouristItinerary />}
-          />
+          <Route path="/create-tourist-itinerary" element={<CreateTouristItinerary />}/>
+          <Route path="/read-tourist-itinerary" element={<ReadTouristItinerary />}/>
+          <Route path="/read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
+          <Route path="/update-tourist-itinerary" element={<UpdateTouristItinerary />}/>
           <Route path="/activity" element={<Activity />} />
-
-          <Route path="/historicalPlace" element={<ReadHistoriaclPlaces />} />
-          <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces />} />
-          <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces />} />
-          <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces />} />
-
+          <Route path="/historicalPlace" element={<ReadHistoriaclPlaces />} /> //tested
+          <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces />} /> //tested
+          <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces />} /> //tested
+          <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces />} /> //tested
+          <Route path="/allUsers" element={<AllUsers />} /> //tested
+          <Route path="/pendingUsers" element={<PendingUsers />} /> //tested
+          <Route path="/addUser" element={<AddUser />} /> //tested
         </Routes>
         <Toaster />
       </Router>
