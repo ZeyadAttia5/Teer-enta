@@ -22,14 +22,14 @@ const DeleteActivityCategory = () => {
 
   // Handle category selection
   const handleCategoryChange = (e) => {
-    const selectedCategory = categories.find(category => category.category === e.target.value);
+    const selectedCategory = categories.find(category => category._id === e.target.value);
     setSelectedCategoryId(selectedCategory._id); // Set the selected category's ID
   };
 
   // Handle delete action
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`http://localhost:8000/delete/${selectedCategoryId}`);
+      const response = await axios.delete(`http://localhost:8000/activityCategory/delete/${selectedCategoryId}`);
       setMessage(response.data.message); // Show success message
     } catch (error) {
       setMessage('Error deleting category: ' + error.response?.data?.message);
@@ -50,7 +50,6 @@ const DeleteActivityCategory = () => {
         </div>
       )}
 
-      
       <div className="mb-6">
         <label htmlFor="category" className="block text-gray-700 font-medium mb-2">
           Select Category to Delete
@@ -62,7 +61,7 @@ const DeleteActivityCategory = () => {
         >
           <option value="" disabled>Select a category</option>
           {categories.map((category) => (
-            <option key={category._id} value={category.category}>
+            <option key={category._id} value={category._id}>
               {category.category}
             </option>
           ))}
@@ -91,5 +90,3 @@ const DeleteActivityCategory = () => {
 };
 
 export default DeleteActivityCategory;
-
-

@@ -5,7 +5,7 @@ import AddTourismGovernor from "./components/addTourismGovernor.js";
 import AddAdmin from "./components/addAdmin.js";
 import CreateCategory from "./components/CRUDactivitycategory/addActivityCategory.js";
 import DeleteActivityCategory from "./components/CRUDactivitycategory/deleteActivityCategory.js";
-import ViewActivityCategories from "./components/CRUDactivitycategory/viewActivityCategory.js";
+import ViewActivityCategory from "./components/CRUDactivitycategory/viewActivityCategory.js";
 import UpdateActivityCategory from "./components/CRUDactivitycategory/updateActivityCategory.js";
 import { Toaster } from "react-hot-toast";
 import Signup from "./screens/signup/Signup.js";
@@ -46,8 +46,8 @@ function App() {
             element={<DeleteActivityCategory />}
           />
           <Route
-            path="/view-activity-categories"
-            element={<ViewActivityCategories />}
+            path="/view-activity-category"
+            element={<ViewActivityCategory />}
           />
           <Route
             path="/update-activity-category"
@@ -55,8 +55,8 @@ function App() {
           />
           <Route path="/create-activity" element={<CreateActivity />} />
           <Route path="/view-activity" element={<ViewActivity />} />
-          <Route path="/update-activity" element={<UpdateActivity />} />
-          <Route path="/delete-activity" element={<DeleteActivity />} />
+          <Route path="/update-activity/:id" element={<UpdateActivity />} />
+          <Route path="/delete-activity/:id" element={<DeleteActivity />} />
           <Route path="/create-tag" element={<CreateTag />} />
           <Route path="/view-tag" element={<ViewTag />} />
           <Route path="/update-tag" element={<UpdateTag />} />

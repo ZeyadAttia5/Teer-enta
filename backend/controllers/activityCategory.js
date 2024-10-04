@@ -81,9 +81,3 @@ exports.deleteActivityCategory = async (req, res, next) => {
 
 
 
-
-
-
-
-
-

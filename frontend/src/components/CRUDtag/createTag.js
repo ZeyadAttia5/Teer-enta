@@ -6,8 +6,6 @@ const CreateTag = () => {
         name: '',
         type: '',
         historicalPeriod: '',
-        isActive: true,
-        createdBy: ''
     });
     const [message, setMessage] = useState('');
 
@@ -25,8 +23,6 @@ const CreateTag = () => {
                 name: '',
                 type: '',
                 historicalPeriod: '',
-                isActive: true,
-                createdBy: ''
             });
         } catch (error) {
             setMessage('Error creating tag: ' + error.response?.data?.message);
@@ -77,16 +73,7 @@ const CreateTag = () => {
                         <option value="Modern">Modern</option>
                     </select>
 
-                    <label className="flex items-center mt-2">
-                        <input
-                            type="checkbox"
-                            name="isActive"
-                            checked={tag.isActive}
-                            onChange={() => setTag({ ...tag, isActive: !tag.isActive })}
-                            className="mr-2"
-                        />
-                        <span className="text-gray-700">Is Active</span>
-                    </label>
+                    
 
                     <input
                     type="text"
