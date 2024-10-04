@@ -134,6 +134,7 @@ const ItineraryScreen = () => {
     try {
       const data = await getActivities();
       setActivitiesList(data);
+      console.log("The first Activity is: " + JSON.stringify(data[0]));
     } catch (error) {
       message.error("Failed to fetch activities");
     }
@@ -164,14 +165,24 @@ const ItineraryScreen = () => {
       // Format timeline's startTime
       const formattedTimeline = itinerary.timeline.map((tl) => ({
         ...tl,
+        activity: tl.activity.name? tl.activity.name : tl.activity,
         startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
       
+      // console.log("The first Activity is: " + itinerary.activities[0].duration);
+      const formattedActivities = itinerary.activities.map((act) => ({
+        activity: act.activity,
+        duration: act.duration,
+      }));
+
+      const formattedPreferenceTags = preferenceTagsList.map((tag) => (tag.tag));
 
       form.setFieldsValue({
         ...itinerary,
+        activities: formattedActivities,
         availableDates: formattedAvailableDates,
-        timeline: formattedTimeline,
+        timeline: formattedTimeline,  
+        preferenceTags: formattedPreferenceTags,
       });
     } else {
       form.resetFields();
@@ -211,7 +222,7 @@ const ItineraryScreen = () => {
       // Format activities
       const formattedActivities = values.activities
         ? values.activities.map((act) => ({
-            activity: act.activity,
+            activity: act,
             duration: act.duration,
           }))
         : [];
@@ -234,8 +245,8 @@ const ItineraryScreen = () => {
 
       // format prefrence tags
       const formattedPreferenceTags = values.preferenceTags
-        ? values.preferenceTags.map((tagId) => tagId._id) // Only store ObjectIds (tag._id)
-        : [];
+      ? values.preferenceTags.map((tagId) => tagId) // Only store ObjectIds (tag._id)
+      : [];
       // const formattedPreferenceTags = values.preferenceTags || [];
 
       // Prepare final data
@@ -260,6 +271,7 @@ const ItineraryScreen = () => {
       fetchItineraries();
     } catch (error) {
       message.error("Failed to save itinerary");
+      console.error(error);
     }
   };
 
