@@ -10,7 +10,7 @@ const UpdateActivityCategory = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(`/edit-activity/${categoryId}`, {
+      const response = await axios.put(`http://localhost:8000/activityCategory/update/:id`, {
         category: categoryName,
         description,
         isActive,

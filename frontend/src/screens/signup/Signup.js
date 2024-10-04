@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./signup.css";
+import { images } from "../login/loadImage.js";
 import Select from "react-select";
 import Toggle from "../../components/signup/Toggle.js";
 import { useNavigate } from "react-router-dom";
 import { FaExclamationCircle } from "react-icons/fa";
-import axios from 'axios';
+import axios from "axios";
 function Signup() {
   const navigate = useNavigate();
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
   const handleUsernameChange = (event) => {
     setUsername(event.target.value); // Update the username state
@@ -39,7 +40,7 @@ function Signup() {
   const handleJobTitleChange = (event) => {
     setJobTitle(event.target.value); // Update the job title state
   };
-  
+
   const [dob, setDob] = useState("");
   const [isDobValid, setIsDobValid] = useState(true);
   const handleDobChange = (event) => {
@@ -47,23 +48,32 @@ function Signup() {
     setDob(date); // Update the date of birth state
     setIsDobValid(validateDate(date)); // Validate the date
   };
-  
-const validateDate = (date) => {
-  const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
-  if (!date.match(regex)) return false;
 
-  const parsedDate = new Date(date);
-  const timestamp = parsedDate.getTime();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 5000);
 
-  if (typeof timestamp !== 'number' || Number.isNaN(timestamp)) return false;
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, [images.length]);
 
-  const currentYear = new Date().getFullYear();
-  const inputYear = parsedDate.getFullYear();
+  const validateDate = (date) => {
+    const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
+    if (!date.match(regex)) return false;
 
-  if (inputYear > currentYear) return false;
+    const parsedDate = new Date(date);
+    const timestamp = parsedDate.getTime();
 
-  return parsedDate.toISOString().startsWith(date);
-};  
+    if (typeof timestamp !== "number" || Number.isNaN(timestamp)) return false;
+
+    const currentYear = new Date().getFullYear();
+    const inputYear = parsedDate.getFullYear();
+
+    if (inputYear > currentYear) return false;
+
+    return parsedDate.toISOString().startsWith(date);
+  };
   const [password, setPassword] = useState("");
   const handlePasswordChange = (event) => {
     setPassword(event.target.value); // Update the password state
@@ -90,8 +100,6 @@ const validateDate = (date) => {
   const handleRoleChange = (event) => {
     setSelectedRole(event);
   };
-
- 
 
   const options = [
     { value: "united-states", label: "United States" },
@@ -206,7 +214,10 @@ const validateDate = (date) => {
     { value: "rwanda", label: "Rwanda" },
     { value: "burundi", label: "Burundi" },
     { value: "congo", label: "Congo" },
-    { value: "democratic-republic-of-the-congo", label: "Democratic Republic of the Congo" },
+    {
+      value: "democratic-republic-of-the-congo",
+      label: "Democratic Republic of the Congo",
+    },
     { value: "gabon", label: "Gabon" },
     { value: "equatorial-guinea", label: "Equatorial Guinea" },
     { value: "sao-tome-and-principe", label: "Sao Tome and Principe" },
@@ -265,74 +276,72 @@ const validateDate = (date) => {
     if (!isValid()) {
       return false;
     }
-   
+
     try {
       var data;
-      
-      switch(selectedRole) {
-        case 'Tourist':
+
+      switch (selectedRole) {
+        case "Tourist":
           data = {
-              "email": email,
-              "username": username,
-              "password": password,
-              "userRole": selectedRole,
-              "mobileNumber": mobileNumber,
-              "nationality": selectedNationality.label,
-              "dateOfBirth": dob,
-              "occupation": jobTitle,
-            }
+            email: email,
+            username: username,
+            password: password,
+            userRole: selectedRole,
+            mobileNumber: mobileNumber,
+            nationality: selectedNationality.label,
+            dateOfBirth: dob,
+            occupation: jobTitle,
+          };
           break;
-        case 'TourGuide':
+        case "TourGuide":
           data = {
-              "email": email,
-              "username": username,
-              "password": password,
-              "userRole": selectedRole,
-            }
+            email: email,
+            username: username,
+            password: password,
+            userRole: selectedRole,
+          };
           break;
-        case 'Admin':
+        case "Admin":
           data = {
-              "email": email,
-              "username": username,
-              "password": password,
-              "userRole": selectedRole,
-            }
+            email: email,
+            username: username,
+            password: password,
+            userRole: selectedRole,
+          };
           break;
         default:
           data = {
-              "email": email,
-              "username": username,
-              "password": password,
-              "userRole": selectedRole,
-            }
+            email: email,
+            username: username,
+            password: password,
+            userRole: selectedRole,
+          };
           break;
       }
-      const response = await axios.post(`${URL}/auth/signup`, 
-        data
-      );
-      
+      const response = await axios.post(`${URL}/auth/signup`, data);
+
       setMessage(response.data.message);
       navigate("/login");
     } catch (error) {
-      setMessage(error.response.data.message || 'Signup failed');
+      setMessage(error.response.data.message || "Signup failed");
     }
   };
 
   function isValid() {
-    if(!isDobValid){
-      setMessage('Invalid date of birth');
+    if (!isDobValid) {
+      setMessage("Invalid date of birth");
       return false;
     }
     const nonNumericRegex = /\D/;
     if (
-      
       username === "" ||
       email === "" ||
       password === "" ||
       confirmPassword === "" ||
       isValidEmail === false ||
       (selectedRole === "Tourist" &&
-        (mobileNumber === "" || nonNumericRegex.test(mobileNumber) ||
+        (mobileNumber === "" ||
+          nonNumericRegex.test(mobileNumber) ||
           jobTitle === "" ||
           dob === "" ||
           selectedNationality === null))
@@ -347,15 +356,39 @@ const validateDate = (date) => {
   }
 
   return (
-    <div className="flex w-full items-center justify-center h-screen">
-      <div>
-        <p className="text-[rgba(88,87,87,0.822)] font-bold text-3xl">
+    <div className="flex h-screen">
+      <div className="relative w-[57%] h-screen overflow-hidden">
+        {images.map((image, index) => (
+          <img
+            key={index}
+            src={image}
+            alt={`Slide ${index + 1}`}
+            className={`absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ${
+              index === currentImageIndex ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
+        <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+          {images.map((_, index) => (
+            <span
+              key={index}
+              className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
+                currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
+              }`}
+              onClick={() => setCurrentImageIndex(index)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col justify-center items-center w-1/3">
+        <p className="text-[rgba(88,87,87,0.822)] font-bold text-1xl">
           Signup now and get full access to our app.
         </p>
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center">
           <form
             className="form w-full p-[10px] pt-[5px] flex flex-col gap-1.5 max-w-[350px] bg-white relative   outline-none border border-[rgba(105,105,105,0.397)] rounded-[10px]
-       left-[10px] top-[15px] text-gray-500 text-[0.9em] cursor-text transition ease-linear duration-300"
+       left-[10px] top-[15px] text-gray-500 text-[0.9em] cursor-text transition ease-linear duration-300 shadow-lg"
           >
             <Toggle selectedRole={handleRoleChange} />
 
@@ -465,9 +498,11 @@ const validateDate = (date) => {
               />
             </label>
 
-            <div className={`relative labelsignup ${
+            <div
+              className={`relative labelsignup ${
                 selectedRole !== "Tourist" ? "hidden" : ""
-              }`}>
+              }`}
+            >
               <label
                 className="block text-sm font-medium labelsignup text-gray-700"
                 for="dob"

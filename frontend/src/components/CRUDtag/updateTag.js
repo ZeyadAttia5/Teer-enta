@@ -1,141 +1,139 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEdit } from 'react-icons/fa'; // Importing edit icon from react-icons
+import { useParams } from 'react-router-dom';
 
 const UpdateTag = () => {
-    const [tags, setTags] = useState([]); // To hold the list of tags
-    const [selectedTag, setSelectedTag] = useState(null); // To hold the selected tag's data
+    const { id } = useParams(); // Get the tag ID from the URL
+    const [tag, setTag] = useState({
+        name: '',
+        type: '',
+        historicalPeriod: '',
+        isActive: true,
+        createdBy: '',
+    }); // State for the selected tag
     const [message, setMessage] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); // Loading state for async fetch
 
+    // Fetch tag details
     useEffect(() => {
-        // Fetch tags from the backend when the component is mounted
-        const fetchTags = async () => {
+        const fetchTag = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/tag/');
-                setTags(response.data);
+                const tagRes = await axios.get(`http://localhost:8000/tag/${id}`);
+                setTag(tagRes.data); // Set the selected tag
+                setLoading(false); // Done loading
             } catch (error) {
-                setMessage('Error fetching tags: ' + (error.response?.data?.message || error.message));
+                setMessage('Error fetching tag data: ' + error.message);
+                setLoading(false);
             }
         };
-        fetchTags();
-    }, []);
+        fetchTag();
+    }, [id]);
 
-    const handleTagSelect = (tag) => {
-        setSelectedTag(tag); // Populate form with selected tag
-    };
-
+    // Handle input changes
     const handleChange = (e) => {
-        setSelectedTag({ ...selectedTag, [e.target.name]: e.target.value });
+        const { name, value, type, checked } = e.target;
+
+        setTag({
+            ...tag,
+            [name]: type === 'checkbox' ? checked : value
+        });
     };
 
+    // Handle the tag update
     const handleUpdate = async (e) => {
         e.preventDefault();
-
-        if (!selectedTag?._id) {
-            setMessage('No tag selected.');
-            return;
-        }
-
-        setLoading(true);
-        setMessage('');
-
+    
         try {
-            await axios.put(`http://localhost:8000/tag/update/${selectedTag._id}`, selectedTag);
+            await axios.put(`http://localhost:8000/tag/update/${tag._id}`, tag);
             setMessage('Tag updated successfully!');
         } catch (error) {
-            setMessage('Error updating tag: ' + (error.response?.data?.message || error.message));
-        } finally {
-            setLoading(false);
+            const errorMsg = error.response ? error.response.data.message : error.message;
+            if (error.response?.status === 409) {
+                setMessage(`Error: ${errorMsg}`); // Display 'Tag name must be unique' if conflict
+            } else {
+                setMessage(`Error updating tag: ${errorMsg}`);
+            }
         }
     };
 
+    if (loading) return <div>Loading...</div>; // Loading indicator
+
     return (
-        <div className="max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg">
-            <h2 className="text-xl font-semibold mb-4">Update Tag</h2>
+        <div className="container mx-auto p-4">
+            <h2 className="text-2xl font-semibold mb-6">Edit Tag</h2>
 
-            {/* List of tags */}
-            <div className="mb-4">
-                <h3 className="font-medium">Select a Tag to Update:</h3>
-                <ul className="list-none">
-                    {tags.map((tag) => (
-                        <li
-                            key={tag._id}
-                            className="flex justify-between items-center mb-2 p-2 bg-gray-100 rounded cursor-pointer hover:bg-gray-200"
-                            onClick={() => handleTagSelect(tag)}
-                        >
-                            <span>{tag.name}</span>
-                            <FaEdit className="text-blue-500" />
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            {/* Form to update selected tag */}
-            {selectedTag && (
-                <form onSubmit={handleUpdate}>
-                    <input
-                        type="text"
-                        name="name"
-                        value={selectedTag.name}
-                        onChange={handleChange}
-                        placeholder="Tag Name"
-                        className="w-full p-2 mb-4 border border-gray-300 rounded"
-                    />
-
-                    <select
-                        name="type"
-                        value={selectedTag.type}
-                        onChange={handleChange}
-                        className="w-full p-2 mb-4 border border-gray-300 rounded"
-                    >
-                        <option value="" disabled>Select Type</option>
-                        <option value="Monuments">Monuments</option>
-                        <option value="Museums">Museums</option>
-                        <option value="Religious Sites">Religious Sites</option>
-                        <option value="Palaces">Palaces</option>
-                        <option value="Castles">Castles</option>
-                    </select>
-
-                    <select
-                        name="historicalPeriod"
-                        value={selectedTag.historicalPeriod}
-                        onChange={handleChange}
-                        className="w-full p-2 mb-4 border border-gray-300 rounded"
-                    >
-                        <option value="" disabled>Select Historical Period</option>
-                        <option value="Ancient">Ancient</option>
-                        <option value="Medieval">Medieval</option>
-                        <option value="Modern">Modern</option>
-                    </select>
-
-                    <label className="flex items-center mb-4">
-                        <input
-                            type="checkbox"
-                            name="isActive"
-                            checked={selectedTag.isActive}
-                            onChange={() => setSelectedTag({ ...selectedTag, isActive: !selectedTag.isActive })}
-                            className="mr-2"
-                        />
-                        Is Active
-                    </label>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={`w-full p-2 text-white rounded transition duration-200 ${
-                            loading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'
-                        }`}
-                    >
-                        {loading ? 'Updating...' : 'Update Tag'}
-                    </button>
-                </form>
+            {/* Message Display */}
+            {message && (
+                <div className={`mb-4 p-3 text-center rounded ${message.includes('successfully') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {message}
+                </div>
             )}
 
-            {/* Display feedback message */}
-            {message && <p className={`mt-4 ${message.includes('Error') ? 'text-red-500' : 'text-green-500'}`}>{message}</p>}
+            {/* Tag Update Form */}
+            <form onSubmit={handleUpdate} className="bg-white shadow-md p-6 rounded-lg max-w-lg mx-auto">
+                <input
+                    type="text"
+                    name="name"
+                    value={tag.name}
+                    onChange={handleChange}
+                    placeholder="Tag Name"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
+                />
+
+                {/* Tag Type Dropdown */}
+                <select
+                    name="type"
+                    value={tag.type}
+                    onChange={handleChange}
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
+                >
+                    <option value="">Select Type</option>
+                    <option value="Monuments">Monuments</option>
+                    <option value="Museums">Museums</option>
+                    <option value="Religious Sites">Religious Sites</option>
+                    <option value="Palaces">Palaces</option>
+                    <option value="Castles">Castles</option>
+                </select>
+
+                {/* Historical Period Dropdown */}
+                <select
+                    name="historicalPeriod"
+                    value={tag.historicalPeriod}
+                    onChange={handleChange}
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
+                >
+                    <option value="">Select Historical Period</option>
+                    <option value="Ancient">Ancient</option>
+                    <option value="Medieval">Medieval</option>
+                    <option value="Modern">Modern</option>
+                </select>
+
+                {/* Active Checkbox */}
+                <label className="flex items-center mb-4">
+                    <input
+                        type="checkbox"
+                        name="isActive"
+                        checked={tag.isActive}
+                        onChange={handleChange}
+                        className="mr-2"
+                    />
+                    Is Active
+                </label>
+
+            
+            
+
+                <button
+                    type="submit"
+                    className="w-full p-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                    Update Tag
+                </button>
+            </form>
         </div>
     );
 };
 
 export default UpdateTag;
+
+

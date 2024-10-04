@@ -75,11 +75,11 @@ const CreateTouristItinerary = () => {
       window.scrollTo(0, 0); // Scroll to top of the page
       return;
     }
-    if (selectedTags.length === 0) {
-      setError("Please select at least one tag.");
-      window.scrollTo(0, 0); // Scroll to top of the page
-      return;
-    }
+    // if (selectedTags.length === 0) {
+    //   setError("Please select at least one tag.");
+    //   window.scrollTo(0, 0); // Scroll to top of the page
+    //   return;
+    // }
 
     const itinerary = {
       name,

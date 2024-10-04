@@ -86,35 +86,44 @@ function ReadAllTouristItinerary() {
                     <strong>Time:</strong> {activity.time}
                   </p>
                   <p className="text-gray-700 mb-1">
-                    <strong>Category:</strong> {activity.category}
+                    <strong>Category:</strong> {activity?.category}
+                  </p>
+                  {/* should change later to category.name */}
+                  <p className="text-gray-700 mb-1">
+                    <strong>Price:</strong> ${activity?.price?.min} - $
+                    {activity?.price?.max}
                   </p>
                   <p className="text-gray-700 mb-1">
-                    <strong>Price:</strong> ${activity.price.min} - $
-                    {activity.price.max}
-                  </p>
-                  <p className="text-gray-700 mb-1">
-                    <strong>Tags:</strong> {activity.tags.join(", ")}
+                    <strong>Tags:</strong> {console.log("hello", activity.tags)}
+                    {activity.tags.map((tag) => tag.name).join(", ")}
+                    {/* should change later to tag.name */}
                   </p>
                   <p className="text-gray-700 mb-1">
                     <strong>Special Discounts:</strong>{" "}
-                    {activity.specialDiscounts
+                    {activity?.specialDiscounts
                       .map(
                         (discount) =>
-                          `${discount.Description} (${discount.discount}%)`
+                          `${discount?.Description} (${discount?.discount}%)`
                       )
                       .join(", ")}
                   </p>
+                  {/* what if no special discounts */}
                   <p className="text-gray-700 mb-1">
                     <strong>Rating:</strong>{" "}
-                    {activity.ratings
-                      .map((rating) => `${rating.rating}`)
-                      .join(", ")}
+                    {activity.ratings.length === 0
+                      ? "No ratings yet"
+                      : activity.ratings.reduce(
+                          (sum, rating) => sum + rating.rating,
+                          0
+                        ) / activity.ratings.length}
                   </p>
                   <p className="text-gray-700 mb-1">
                     <strong>Comment:</strong>{" "}
-                    {activity.comments
-                      .map((comment) => `${comment.comment}`)
-                      .join(", ")}
+                    {activity.comments.length === 0
+                      ? "No comments "
+                      : activity?.comments
+                          .map((comment) => `${comment?.comment}`)
+                          .join(", ")}
                   </p>
                 </li>
               ))}
@@ -126,7 +135,7 @@ function ReadAllTouristItinerary() {
           {itineraryItem?.tags.length > 0 ? (
             <p className="mt-4 p-4 border border-gray-200 shadow-sm rounded-lg bg-gray-50">
               <strong>Tag:</strong>
-              {itineraryItem.tags.map((tag) => " " + tag.tag)} <br />
+              {itineraryItem.tags.map((tag) => " " + tag?.tag)} <br />
             </p>
           ) : (
             <p className="mt-4 p-4 border border-gray-200 shadow-sm rounded-lg bg-gray-50">

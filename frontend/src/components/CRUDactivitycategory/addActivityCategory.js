@@ -11,7 +11,7 @@ const AddActivityCategory = () => {
         e.preventDefault(); 
         try {
           
-            const response = await axios.post("/add-activityCategory", {
+            const response = await axios.post('http://localhost:8000/activityCategory/create', {
                 category,
                 description,
                 isActive

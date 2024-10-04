@@ -18,4 +18,6 @@ router.put("/update/:id", itineraryController.updateItinerary);
 
 router.delete("/delete/:id", itineraryController.deleteItinerary);
 
+router.patch("/flagInappropriate/:id" , itineraryController.flagInappropriate)
+
 module.exports = router;
