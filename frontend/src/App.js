@@ -90,7 +90,7 @@ function App() {
           <Route path="/admin/product/form" element={<AdminProductForm />} />
           <Route path="/admin/products" element={<AdminProductGrid />} />
           <Route path="/admin/edit-product/:productId" element={<EditProductForm />} />
-            <Route path="/tourguide-itinerary" element={<TourGuideItinerary />} />
+          <Route path="/tourguide-itinerary" element={<TourGuideItinerary />} />
         </Routes>
         <Toaster />
       </Router>
