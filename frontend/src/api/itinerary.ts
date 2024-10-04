@@ -17,6 +17,7 @@ export const createItinerary = async (itinerary: Partial<TItinerary>): Promise<T
 };
 
 export const updateItinerary = async (id: string, itinerary: Partial<TItinerary>): Promise<TItinerary> => {
+    console.log("Itinerary", itinerary);
     const response = await axios.put(`${API_BASE_URL}/itinerary/update/${id}`, itinerary);
     return response.data;
 };

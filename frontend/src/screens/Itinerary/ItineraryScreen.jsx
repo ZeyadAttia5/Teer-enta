@@ -170,13 +170,10 @@ const ItineraryScreen = () => {
       }));
 
       // console.log("The first Activity is: " + itinerary.activities[0].duration);
-      const formattedActivities = itinerary.activities.map((act) => ({
-        activity: act.activity ? act.activity.name : "Activity not found",
+      const formattedActivities = itinerary.activities.map((act ) => ({
+        activity: act.activity ? act.activity._id : "Activity not found",
         duration: act.duration,
       }));
-      console.log(
-        "The first Activity is: " + JSON.stringify(formattedActivities[0])
-      );
 
       const formattedPreferenceTags = itinerary.preferenceTags.map((tag) => tag.tag);
 
@@ -235,15 +232,16 @@ const ItineraryScreen = () => {
       // get the activity from the activitiesList
       // get the duration from the values
       const formattedActivities = values.activities.map((act) => ({
-        activity: act._id,
+        activity: act.activity,
         duration: act.duration,
       }));
+      console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
 
       // formattedActivities.forEach((act, index) => { 
       //   act.activity = activitiesList.find((activity) => activity._id === values.activities[index].activity);
       // });
 
-      console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
+      // console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
 
       // Format locations
       const formattedLocations = values.locations
@@ -277,6 +275,7 @@ const ItineraryScreen = () => {
         preferenceTags: formattedPreferenceTags,
         // Exclude Ratings and Comments from Form Data
       };
+      console.log("The formatted data is: " + JSON.stringify(formattedData));
 
       if (editingItinerary) {
         await updateItinerary(editingItinerary._id, formattedData);
@@ -568,7 +567,7 @@ const ItineraryScreen = () => {
                         style={{ width: 200 }}
                       >
                         {activitiesList.map((activity) => (
-                          <Option key={activity} value={activity._id}>
+                          <Option key={activity.name} value={activity._id}>
                             {activity.name}
                           </Option>
                         ))}
