@@ -37,6 +37,7 @@ import {
   isThisYear,
   parseISO,
 } from "date-fns";
+// import { format } from "path";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -133,7 +134,6 @@ const ItineraryScreen = () => {
     try {
       const data = await getActivities();
       setActivitiesList(data);
-      console.log("The first Activity is: " + JSON.stringify(data[0]));
     } catch (error) {
       message.error("Failed to fetch activities");
     }
@@ -155,6 +155,7 @@ const ItineraryScreen = () => {
       await fetchActivities();
       await fetchPreferenceTags();
 
+      console.log("The Itinerary is: " + JSON.stringify(itinerary));
       // Format availableDates for RangePicker
       const formattedAvailableDates = itinerary.availableDates.map((date) => [
         moment(date.Date),
@@ -170,9 +171,12 @@ const ItineraryScreen = () => {
 
       // console.log("The first Activity is: " + itinerary.activities[0].duration);
       const formattedActivities = itinerary.activities.map((act) => ({
-        activity: act.activity,
+        activity: act.activity ? act.activity.name : "act.activity",
         duration: act.duration,
       }));
+      console.log(
+        "The first Activity is: " + JSON.stringify(formattedActivities[0])
+      );
 
       const formattedPreferenceTags = preferenceTagsList.map((tag) => tag.tag);
 
@@ -210,6 +214,8 @@ const ItineraryScreen = () => {
 
   const onFinish = async (values) => {
     try {
+      console.log("The values are: " + JSON.stringify(values));
+
       // Format availableDates
       const formattedAvailableDates = values.availableDates.map(
         ([start, end]) => ({
@@ -221,10 +227,13 @@ const ItineraryScreen = () => {
       // Format activities
       const formattedActivities = values.activities
         ? values.activities.map((act) => ({
-            activity: act,
+            ...act,
             duration: act.duration,
           }))
         : [];
+      console.log(
+        "The first Activity is: " + JSON.stringify(formattedActivities[0])
+      );
 
       // Format locations
       const formattedLocations = values.locations
