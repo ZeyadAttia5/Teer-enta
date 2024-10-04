@@ -80,10 +80,13 @@ const ItineraryScreen = () => {
     }
   };
 
-  const showModal = (itinerary = null) => {
+  const showModal = async(itinerary = null) => {
     setEditingItinerary(itinerary);
     setIsModalVisible(true);
     if (itinerary) {
+      await fetchActivities();
+      await fetchPreferenceTags();
+  
       // Format availableDates for RangePicker
       const formattedAvailableDates = itinerary.availableDates.map((date) => [
         moment(date.Date),
@@ -95,6 +98,7 @@ const ItineraryScreen = () => {
         ...tl,
         startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
+      
 
       form.setFieldsValue({
         ...itinerary,
@@ -309,6 +313,7 @@ const ItineraryScreen = () => {
             <Select placeholder="Select language">
               <Option value="English">English</Option>
               <Option value="Spanish">Spanish</Option>
+              <Option value="Arabic">Arabic</Option>
               {/* Add more languages as needed */}
             </Select>
           </Form.Item>
