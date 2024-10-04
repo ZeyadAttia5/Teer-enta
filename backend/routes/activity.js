@@ -7,7 +7,6 @@ const itineraryController = require("../controllers/Itinerary");
 
 router.get("/", activityController.getActivities);
 
-router.get("/:id", activityController.getActivity);
 
 router.get("/my", activityController.getMyActivities);
 
@@ -19,6 +18,10 @@ router.put("/update/:id", activityController.updateActivity);
 
 router.delete("/delete/:id", activityController.deleteActivity);
 
+
+router.get("/:id", activityController.getActivity);
+
 router.patch("/flagInappropriate/:id" , activityController.flagInappropriate)
+
 
 module.exports = router;
