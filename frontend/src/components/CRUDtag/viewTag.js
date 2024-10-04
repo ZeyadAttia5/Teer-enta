@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import axios from 'axios';
 
 const ViewTags = () => {
     const [tags, setTags] = useState([]);
     const [message, setMessage] = useState('');
-    const [showTags, setShowTags] = useState(false);
-    
+    const [showTags, setShowTags] = useState(true); // Default to show tags
+    const [showAddTagFields, setShowAddTagFields] = useState(false); // State for showing add tag fields
+
     // New tag state
     const [newName, setNewName] = useState('');
     const [newType, setNewType] = useState('');
     const [newHistoricalPeriod, setNewHistoricalPeriod] = useState('');
-    
+
     // State for editing a tag
     const [editTagId, setEditTagId] = useState(null);
     const [editName, setEditName] = useState('');
@@ -30,13 +31,9 @@ const ViewTags = () => {
         }
     };
 
-    // Handle visibility toggle of tags
-    const handleButtonClick = () => {
-        setShowTags(!showTags);
-        if (!showTags) {
-            fetchTags();
-        }
-    };
+    useEffect(() => {
+        fetchTags(); // Fetch tags when the component mounts
+    }, []);
 
     // Handle adding a new tag
     const handleAddTag = async () => {
@@ -51,7 +48,7 @@ const ViewTags = () => {
             setNewType('');
             setNewHistoricalPeriod('');
             setMessage('Tag added successfully!');
-            
+
             // Clear message after a short delay
             setTimeout(() => {
                 setMessage('');
@@ -80,7 +77,7 @@ const ViewTags = () => {
 
             // Refresh tags list from backend after successful update
             fetchTags();
-            
+
             setMessage('Tag updated successfully!');
             setEditTagId(null); // Close edit mode
         } catch (error) {
@@ -106,57 +103,58 @@ const ViewTags = () => {
             {/* Success or error messages */}
             {message && <p className="text-red-500">{message}</p>}
 
-            {/* Button to toggle view of tags */}
+            {/* Button to toggle view of add tag fields */}
             <button 
-                onClick={handleButtonClick} 
+                onClick={() => setShowAddTagFields(!showAddTagFields)} 
                 className="mb-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
             >
-                {showTags ? 'Hide Tags' : 'View Tags'}
+                {showAddTagFields ? 'Hide ' : 'Add Tag'}
             </button>
 
             {/* Form to add a new tag */}
-            <div className="mb-6">
-                <h3 className="text-lg font-semibold">Add New Tag</h3>
-                <input
-                    type="text"
-                    placeholder="Tag Name"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    className="border p-2 rounded mb-2 w-full"
-                />
-                
-                {/* Dropdown for Type */}
-                <select
-                    value={newType}
-                    onChange={(e) => setNewType(e.target.value)}
-                    className="border p-2 rounded mb-2 w-full"
-                >
-                    <option value="" disabled>Select Tag Type</option>
-                    {tagTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                    ))}
-                </select>
+            {showAddTagFields && (
+                <div className="mb-6">
+                    <h3 className="text-lg font-semibold">Add New Tag</h3>
+                    <input
+                        type="text"
+                        placeholder="Tag Name"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        className="border p-2 rounded mb-2 w-full"
+                    />
+                    
+                    {/* Dropdown for Type */}
+                    <select
+                        value={newType}
+                        onChange={(e) => setNewType(e.target.value)}
+                        className="border p-2 rounded mb-2 w-full"
+                    >
+                        <option value="" disabled>Select Tag Type</option>
+                        {tagTypes.map((type) => (
+                            <option key={type} value={type}>{type}</option>
+                        ))}
+                    </select>
 
-                {/* Dropdown for Historical Period */}
-                <select
-                    value={newHistoricalPeriod}
-                    onChange={(e) => setNewHistoricalPeriod(e.target.value)}
-                    className="border p-2 rounded mb-2 w-full"
-                >
-                    <option value="" disabled>Select Historical Period</option>
-                    {historicalPeriods.map((period) => (
-                        <option key={period} value={period}>{period}</option>
-                    ))}
-                </select>
+                    {/* Dropdown for Historical Period */}
+                    <select
+                        value={newHistoricalPeriod}
+                        onChange={(e) => setNewHistoricalPeriod(e.target.value)}
+                        className="border p-2 rounded mb-2 w-full"
+                    >
+                        <option value="" disabled>Select Historical Period</option>
+                        {historicalPeriods.map((period) => (
+                            <option key={period} value={period}>{period}</option>
+                        ))}
+                    </select>
 
-                
-                <button
-                    onClick={handleAddTag}
-                    className="bg-green-500 text-white p-2 rounded w-full"
-                >
-                    Add Tag
-                </button>
-            </div>
+                    <button
+                        onClick={handleAddTag}
+                        className="bg-green-500 text-white p-2 rounded w-full"
+                    >
+                        Add Tag
+                    </button>
+                </div>
+            )}
 
             {/* Display tags list with edit and delete buttons */}
             {showTags && (
@@ -212,7 +210,6 @@ const ViewTags = () => {
                                     <p><strong>Type:</strong> {tag.type}</p>
                                     <p><strong>Historical Period:</strong> {tag.historicalPeriod}</p>
                                     
-                                    
                                     <div className="mt-4 flex space-x-2">
                                         <button
                                             onClick={() => {
@@ -243,3 +240,4 @@ const ViewTags = () => {
 };
 
 export default ViewTags;
+

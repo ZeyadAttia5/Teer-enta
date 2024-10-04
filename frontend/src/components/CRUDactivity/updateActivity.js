@@ -1,36 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import DeleteTag from '../CRUDtag/deleteTag'; // Assuming you have a separate tag CRUD component
+import DeleteTag from '../CRUDtag/deleteTag';
 
 const UpdateActivity = () => {
-    const { id } = useParams(); // Get the activity ID from the URL
-    const [activity, setActivity] = useState(null); // State for the selected activity
-    const [categories, setCategories] = useState([]);  // List of categories
-    const [tags, setTags] = useState([]);              // List of tags
-    const [selectedTags, setSelectedTags] = useState([]); // State for selected tags
+    const { id } = useParams();
+    const [activity, setActivity] = useState(null);
+    const [categories, setCategories] = useState([]);
+    const [tags, setTags] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]);
     const [message, setMessage] = useState('');
-    const [tagToAdd, setTagToAdd] = useState(''); // Tag to be added
-    const [loading, setLoading] = useState(true); // Loading state for async fetch
+    const [tagToAdd, setTagToAdd] = useState('');
+    const [loading, setLoading] = useState(true);
 
-    // Fetch activity, categories, and tags
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch the activity details
                 const activityRes = await axios.get(`http://localhost:8000/activity/${id}`);
-                setActivity(activityRes.data); // Set the selected activity
-                setSelectedTags(activityRes.data.tags || []); // Initialize selected tags
-
-                // Fetch categories
+                setActivity(activityRes.data);
+                setSelectedTags(activityRes.data.tags || []);
+                
                 const categoryRes = await axios.get('http://localhost:8000/activityCategory');
                 setCategories(categoryRes.data);
 
-                // Fetch tags
                 const tagRes = await axios.get('http://localhost:8000/tag');
                 setTags(tagRes.data);
 
-                setLoading(false); // Done loading
+                setLoading(false);
             } catch (error) {
                 setMessage('Error fetching data: ' + error.message);
                 setLoading(false);
@@ -39,11 +35,9 @@ const UpdateActivity = () => {
         fetchData();
     }, [id]);
 
-    // Handle input changes for both text inputs and checkboxes
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
-        // Only allow numbers for price fields
         if ((name === 'price.min' || name === 'price.max') && !/^\d*$/.test(value)) {
             return; // Only numbers allowed
         }
@@ -64,7 +58,6 @@ const UpdateActivity = () => {
         }
     };
 
-    // Validate if min price is less than max price
     const validatePrice = () => {
         const minPrice = parseFloat(activity.price?.min);
         const maxPrice = parseFloat(activity.price?.max);
@@ -75,58 +68,52 @@ const UpdateActivity = () => {
         return true;
     };
 
-    // Handle the activity update
     const handleUpdate = async (e) => {
         e.preventDefault();
 
         if (!validatePrice()) return;
 
         try {
-            await axios.put(`http://localhost:8000/activity/update/${activity._id}`,
-                {
-                    ...activity,
-                    tags: selectedTags // Include the selected tags in the update request
-                });
+            await axios.put(`http://localhost:8000/activity/update/${activity._id}`, {
+                ...activity,
+                tags: selectedTags
+            });
             setMessage('Activity updated successfully!');
         } catch (error) {
             const errorMsg = error.response ? error.response.data : error.message;
             setMessage(`Error updating activity: ${errorMsg}`);
+            console.error(error); // Log error for debugging
         }
     };
 
-    // Add the selected tag to the list of selected tags, ensuring no duplicates
     const handleAddTag = () => {
         if (tagToAdd && !selectedTags.includes(tagToAdd)) {
-            setSelectedTags([...selectedTags, tagToAdd]);  // Add tag if it's not already selected
+            setSelectedTags([...selectedTags, tagToAdd]);
         }
-        setTagToAdd('');  // Reset dropdown selection
+        setTagToAdd('');
     };
 
-    // Remove a tag from the selected tags list
     const handleRemoveTag = (tagId) => {
-        setSelectedTags(selectedTags.filter(tag => tag._id !== tagId)); // Remove tag locally
+        setSelectedTags(selectedTags.filter(tag => tag._id !== tagId));
     };
 
-    // Format the date for the input field
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toISOString().split('T')[0]; // Format as 'YYYY-MM-DD'
+        return date.toISOString().split('T')[0];
     };
 
-    if (loading) return <div>Loading...</div>; // Loading indicator
+    if (loading) return <div>Loading...</div>;
 
     return (
         <div className="container mx-auto p-4">
             <h2 className="text-2xl font-semibold mb-6">Edit Activity</h2>
 
-            {/* Message Display */}
             {message && (
                 <div className={`mb-4 p-3 text-center rounded ${message.includes('successfully') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                     {message}
                 </div>
             )}
 
-            {/* Activity Update Form */}
             {activity && (
                 <form onSubmit={handleUpdate} className="bg-white shadow-md p-6 rounded-lg max-w-lg mx-auto">
                     <input
@@ -140,12 +127,12 @@ const UpdateActivity = () => {
                     <input
                         type="date"
                         name="date"
-                        value={formatDate(activity.date)} // Display date in proper format
+                        value={formatDate(activity.date)}
                         onChange={handleChange}
                         className="w-full p-2 mb-4 border border-gray-300 rounded"
                     />
                     <input
-                        type="time" // Changed from 'time' to 'text'
+                        type="time"
                         name="time"
                         value={activity.time}
                         onChange={handleChange}
@@ -177,7 +164,6 @@ const UpdateActivity = () => {
                         className="w-full p-2 mb-4 border border-gray-300 rounded"
                     />
 
-                    {/* Category Dropdown */}
                     <select
                         name="category"
                         value={activity.category}
@@ -192,8 +178,6 @@ const UpdateActivity = () => {
                         ))}
                     </select>
                     
-
-                    {/* Tags Dropdown (Multiple Select) */}
                     <div className="flex items-center mb-4">
                         <select
                             value={tagToAdd}
@@ -216,20 +200,13 @@ const UpdateActivity = () => {
                         </button>
                     </div>
 
-                    {/* Display Existing Tags with CRUD delete */}
                     <div className="flex flex-wrap gap-2 mb-4">
-                        {activity.tags?.map(tag => (
-                            <span
-                                key={tag._id}
-                                className="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full cursor-pointer"
-                            >
+                        {selectedTags.length > 0 ? selectedTags.map(tag => (
+                            <span key={tag._id} className="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full cursor-pointer">
                                 {tag.name}
-                                <DeleteTag
-                                    tagId={tag._id} // Pass the tag ID
-                                    onDelete={() => handleRemoveTag(tag._id)} // Remove the tag from selectedTags
-                                />
+                                <DeleteTag tagId={tag._id} onDelete={() => handleRemoveTag(tag._id)} />
                             </span>
-                        )) || 'No tags'}
+                        )) : 'No tags selected'}
                     </div>
 
                     <button

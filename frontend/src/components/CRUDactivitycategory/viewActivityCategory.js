@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const ViewActivityCategory = () => {
   const [categories, setCategories] = useState([]); // State for categories data
-  const [showCategories, setShowCategories] = useState(false); // State for controlling visibility of categories
+  const [newCategoryVisible, setNewCategoryVisible] = useState(false); // State for controlling visibility of new category fields
   const [newCategory, setNewCategory] = useState(''); // State for new category name
   const [newDescription, setNewDescription] = useState(''); // State for new category description
   const [message, setMessage] = useState(''); // State for displaying messages
@@ -22,15 +22,8 @@ const ViewActivityCategory = () => {
       }
     };
 
-    if (showCategories) { // Only fetch categories if showCategories is true
-      fetchCategories();
-    }
-  }, [showCategories]); // This effect depends on the showCategories state
-
-  // Function to toggle the visibility of the categories list
-  const handleShowCategories = () => {
-    setShowCategories(prevState => !prevState); // Toggle showCategories state
-  };
+    fetchCategories(); // Fetch categories on component mount
+  }, []); // Run once on mount
 
   // Function to handle adding a new category
   const handleAddCategory = async () => {
@@ -103,13 +96,13 @@ const ViewActivityCategory = () => {
         </div>
       )}
 
-      {/* Button to show or hide categories */}
-      <button onClick={handleShowCategories} className="bg-blue-500 text-white p-2 rounded mb-4">
-        {showCategories ? "Hide Categories" : "Show Categories"}
+      {/* Button to show the new category form */}
+      <button onClick={() => setNewCategoryVisible(prev => !prev)} className="bg-blue-500 text-white p-2 rounded mb-4">
+        {newCategoryVisible ? "Hide Create Category" : "Create Category"}
       </button>
 
       {/* Form to add a new category */}
-      {showCategories && (
+      {newCategoryVisible && (
         <div className="mb-4">
           <input
             type="text"
@@ -135,37 +128,35 @@ const ViewActivityCategory = () => {
       )}
 
       {/* Display categories with buttons for editing and deleting */}
-      {showCategories && (
-        <ul>
-          {categories.length > 0 ? (
-            categories.map((category) => (
-              <li key={category._id} className="mb-4">
-                <div className="flex items-center justify-between">
-                  <span>{category.category} - {category.description}</span>
-                  <div className="flex space-x-2">
-                    {/* Edit Button */}
-                    <button
-                      onClick={() => startEditing(category)}
-                      className="bg-yellow-500 text-white p-2 rounded"
-                    >
-                      Edit
-                    </button>
-                    {/* Delete Button */}
-                    <button
-                      onClick={() => handleDelete(category._id)}
-                      className="bg-red-500 text-white p-2 rounded"
-                    >
-                      Delete
-                    </button>
-                  </div>
+      <ul>
+        {categories.length > 0 ? (
+          categories.map((category) => (
+            <li key={category._id} className="mb-4">
+              <div className="flex items-center justify-between">
+                <span>{category.category} - {category.description}</span>
+                <div className="flex space-x-2">
+                  {/* Edit Button */}
+                  <button
+                    onClick={() => startEditing(category)}
+                    className="bg-yellow-500 text-white p-2 rounded"
+                  >
+                    Edit
+                  </button>
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => handleDelete(category._id)}
+                    className="bg-red-500 text-white p-2 rounded"
+                  >
+                    Delete
+                  </button>
                 </div>
-              </li>
-            ))
-          ) : (
-            <li>No categories available</li> // Show this if categories array is empty
-          )}
-        </ul>
-      )}
+              </div>
+            </li>
+          ))
+        ) : (
+          <li>No categories available</li> // Show this if categories array is empty
+        )}
+      </ul>
 
       {/* Edit category form */}
       {editCategoryId && (
@@ -198,3 +189,5 @@ const ViewActivityCategory = () => {
 };
 
 export default ViewActivityCategory;
+
+
