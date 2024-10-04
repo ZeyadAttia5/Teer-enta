@@ -219,74 +219,83 @@ function Profile() {
     setNameInput(e.target.value);
   };
 
-  useEffect(() => {
-    const updatedDataObj = {
-      mobileNumber: mobileNumberInput,
-      yearsOfExperience: yearsOfExperienceInput,
-      previousWorks: previousWorks, // This will have the updated value
-      email: emailInput,
-    };
+  
 
-    setUpdatedData(updatedDataObj); // Now you have the updated data available
-    console.log("Updated data: ", updatedDataObj);
-  }, [previousWorks, mobileNumberInput, yearsOfExperienceInput, emailInput]);
-
-
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (updatedWorks) => {
     setIsReadOnly(true);
 
     if (!isValid()) return false;
 
-    
+    var data;
 
     switch (userRole) {
       case "Tourist":
-        console.log("hey1 " + dob);
-        setUpdatedData({
+        console.log("hey1 " + nationalityInput);
+        data = {
           mobileNumber: mobileNumberInput,
           nationality: nationalityInput,
           userRole: userRole,
           email: emailInput,
           dateOfBirth: dob,
           occupation: jobTitle,
-        });
+        };
 
         break;
       case "Advertiser":
-        setUpdatedData({
+        data = {
           website: linkInput,
           hotline: mobileNumberInput,
           companyProfile: companyProfileInput,
           email: emailInput,
-        });
+        };
 
         break;
       case "TourGuide":
-        
+        data = {
+          mobileNumber: mobileNumberInput,
+          yearsOfExperience: yearsOfExperienceInput,
+          previousWorks: updatedWorks, // This will have the updated value
+          email: emailInput,
+        };
 
         break;
       case "Seller":
-        setUpdatedData({
+        data = {
           mobileNumber: mobileNumberInput,
           email: emailInput,
           description: descriptionInput,
           name: nameInput,
-        });
+        };
         break;
       default:
         return false;
     }
 
-    try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
-        updatedData
-      );
+    // if(userRole === "TourGuide"){
+    //   try {
+    //     const response = await axios.put(
+    //       `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
+    //       updatedData
+    //     );
+  
+    //     setMessage(response.data.message);
+    //   } catch (error) {
+    //     setMessage(error.response.data.message || "Updating profile failed");
+    //   }
+    
+    // }else{
+      try {
+        const response = await axios.put(
+          `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
+          data
+        );
+  
+        setMessage(response.data.message);
+      } catch (error) {
+        setMessage(error.response.data.message || "Updating profile failed");
+      }
+    // }
 
-      setMessage(response.data.message);
-    } catch (error) {
-      setMessage(error.response.data.message || "Updating profile failed");
-    }
 
     setAge(ageInput);
     setNationality(nationalityInput);
@@ -312,15 +321,12 @@ function Profile() {
     setPreviousWorks((prevWorks) => {
       const updatedWorks = [...prevWorks, work];
 
-      // Log the updated state here
-      updatedWorks.forEach((work, index) => {
-        console.log(`Work ${index}: ${work.jobTitle}`);
-      });
+      
+      handleUpdate(updatedWorks);
 
       return updatedWorks;
     });
     setAddWork(false);
-    handleUpdate();
   };
 
   const handleJobTitleChange = (e) => {
@@ -330,6 +336,17 @@ function Profile() {
   const handleNationalityChange = (e) => {
     setNationalityInput(e.target.value);
   };
+
+  const onDelete = (index) => {
+    console.log("index is: " + index);
+    setPreviousWorks((prevWorks) => {
+      const updatedWorks = prevWorks.filter((work, i) => i !== index);
+
+      handleUpdate(updatedWorks);
+
+      return updatedWorks;
+    });
+  }
 
   return (
     <div className="flex justify-center">
@@ -651,7 +668,7 @@ function Profile() {
                   </div>
                 </div>
                 <div className="mt-8">
-                  <PreviousWorksList previousWorks={previousWorks} />
+                  <PreviousWorksList previousWorks={previousWorks} onDelete={onDelete}/>
                 </div>
                 {addWork === true && (
                   <AddPreviousWork
