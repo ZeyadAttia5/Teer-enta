@@ -16,8 +16,8 @@ exports.getActivityCategories = async (req, res, next) => {
 exports.createActivityCategory = async (req, res, next) => {
     try {
         // req.user = { _id: '66f6564440ed4375b2abcdfb' };
-        const createdBy = req.user._id;
-        req.body.createdBy = createdBy;
+        // const createdBy = req.user._id;
+        // req.body.createdBy = createdBy;
         const activityCategory = await ActivityCategory.create(req.body);
         res.status(201).json({ message: 'Activity Category created successfully', activityCategory });
     } catch (err) {
