@@ -259,7 +259,7 @@ const ItineraryScreen = () => {
 
       // format prefrence tags
       const formattedPreferenceTags = values.preferenceTags
-        ? values.preferenceTags.map((tagId) => tagId) // Only store ObjectIds (tag._id)
+        ? values.preferenceTags.map((tagId) => tagId.tag) // Only store ObjectIds (tag._id)
         : [];
       // const formattedPreferenceTags = values.preferenceTags || [];
 
