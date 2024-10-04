@@ -62,7 +62,7 @@ function Login() {
   };
   return (
     <div className="flex">
-      <div className="relative w-2/3 h-screen overflow-hidden">
+      <div className="relative w-[66%] h-screen overflow-hidden">
         {images.map((image, index) => (
           <img
             key={index}
