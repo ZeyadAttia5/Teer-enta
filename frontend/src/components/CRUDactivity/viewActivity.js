@@ -54,7 +54,9 @@ const ViewActivity = () => {
         }
     };
 
+
     const handleEditClick = (activity) => {
+        console.log(activity);
         setEditingActivityId(activity._id);
         setFormData({
             name: activity.name,
@@ -65,7 +67,12 @@ const ViewActivity = () => {
             price: { min: activity.price.min, max: activity.price.max }, // Ensure this reflects the correct structure
             category: activity.category?._id || '',
             tags: activity.tags.map(tag => tag._id) || [], // Assuming tags are stored by ID
-            specialDiscounts: activity.specialDiscounts || []
+            specialDiscounts: activity.specialDiscounts
+                ? activity.specialDiscounts.map(dis => ({
+                    discount: dis.discount,
+                    Description: dis.description
+                }))
+                : []
         });
     };
 
@@ -196,7 +203,7 @@ const ViewActivity = () => {
                                 >
                                     <option value="">Select Category</option>
                                     {categories.map(cat => (
-                                        <option key={cat._id} value={cat._id}>{cat.name}</option>
+                                        <option key={cat._id} value={cat._id}>{cat.category}</option>
                                     ))}
                                 </select>
                                 <div className="mb-4">
@@ -277,7 +284,7 @@ const ViewActivity = () => {
                                 <p>Time: {activity.time}</p>
                                 <p>Location: {activity.location}</p>
                                 <p>Price: {activity.price.min} - {activity.price.max}</p>
-                                <p>Category: {activity.category?.name}</p>
+                                <p>Category: {activity.category?.category}</p>
                                 <p>Tags: {activity.tags.map(tag => tag.name).join(', ')}</p>
                                 <p>Discounts: {activity.specialDiscounts.map(discount => `${discount.discount}% ${discount.description}`).join(', ')}</p>
                                 <div className="flex mt-4">
