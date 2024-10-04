@@ -97,8 +97,10 @@ const ProductGrid = () => {
           <div key={product._id} className="border-4 border-customGreen rounded-lg text-center transition-transform transform hover:scale-105 hover:bg-green-100 shadow-lg flex flex-col justify-between w-64">
             <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-none" />
             <h3 className="text-customGreen mt-1 font-semibold text-lg">{product.name}</h3>
-            <StarRating rating={calculateAverageRating(product.ratings)} /> {/* Display StarRating */}
-            <p>Price: ${product.price.toFixed(2)}</p>
+            <div className="flex justify-between items-center w-full mt-1 mb-2">
+              <StarRating rating={calculateAverageRating(product.ratings)} /> {/* Display StarRating */}
+              <p className="font-semibold text-customGreen">${product.price.toFixed(2)}</p> {/* Price without label */}
+            </div>
             <Link to={`/product/${product._id}`}>
               <button className="bg-customGreen text-white w-full py-2 mt-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none">
                 View Details
