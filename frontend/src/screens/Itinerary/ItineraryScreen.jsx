@@ -169,12 +169,12 @@ const ItineraryScreen = () => {
       }));
 
       const formattedActivities = itinerary.activities.map((act) => ({
-        activity: act.activity ? act.activity.name : "act.activity",
+        activity: act.activity ? act.activity.name : "Activity not found",
         duration: act.duration,
       }));
       console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
 
-      const formattedPreferenceTags = preferenceTagsList.map((tag) => tag.tag);
+      const formattedPreferenceTags = itinerary.preferenceTags.map((tag) => tag.tag);
 
       form.setFieldsValue({
         ...itinerary,
@@ -259,7 +259,7 @@ const ItineraryScreen = () => {
 
       // format prefrence tags
       const formattedPreferenceTags = values.preferenceTags
-        ? values.preferenceTags.map((tagId) => tagId.tag) // Only store ObjectIds (tag._id)
+        ? values.preferenceTags.map((tag) => tag._id) // Only store ObjectIds (tag._id)
         : [];
       // const formattedPreferenceTags = values.preferenceTags || [];
 
