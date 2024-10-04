@@ -155,7 +155,7 @@ const ItineraryScreen = () => {
       await fetchActivities();
       await fetchPreferenceTags();
 
-      console.log("The Itinerary is: " + JSON.stringify(itinerary));
+      // console.log("The Itinerary is: " + JSON.stringify(itinerary));
       // Format availableDates for RangePicker
       const formattedAvailableDates = itinerary.availableDates.map((date) => [
         moment(date.Date),
@@ -175,7 +175,7 @@ const ItineraryScreen = () => {
         duration: act.duration,
       }));
 
-      const formattedPreferenceTags = itinerary.preferenceTags.map((tag) => tag.tag);
+      const formattedPreferenceTags = itinerary.preferenceTags.map((tag) => tag._id);
 
       form.setFieldsValue({
         ...itinerary,
@@ -211,7 +211,7 @@ const ItineraryScreen = () => {
 
   const onFinish = async (values) => {
     try {
-      console.log("The values are: " + JSON.stringify(values));
+      // console.log("The values are: " + JSON.stringify(values));
 
       // Format availableDates
       const formattedAvailableDates = values.availableDates.map(
@@ -235,7 +235,7 @@ const ItineraryScreen = () => {
         activity: act.activity,
         duration: act.duration,
       }));
-      console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
+      // console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
 
       // formattedActivities.forEach((act, index) => { 
       //   act.activity = activitiesList.find((activity) => activity._id === values.activities[index].activity);
@@ -260,9 +260,11 @@ const ItineraryScreen = () => {
         : [];
 
       // format prefrence tags
-      const formattedPreferenceTags = values.preferenceTags
-        ? values.preferenceTags.map((tag) => tag._id) // Only store ObjectIds (tag._id)
-        : [];
+      // console.log("The preference tags are: " + values.preferenceTags);
+
+      const formattedPreferenceTags =
+          values.preferenceTags ? values.preferenceTags.map((tag) => tag) : [];
+      // console.log("The formatted preference tags are: " + formattedPreferenceTags);
       // const formattedPreferenceTags = values.preferenceTags || [];
 
       // Prepare final data
@@ -275,7 +277,7 @@ const ItineraryScreen = () => {
         preferenceTags: formattedPreferenceTags,
         // Exclude Ratings and Comments from Form Data
       };
-      console.log("The formatted data is: " + JSON.stringify(formattedData));
+      // console.log("The formatted data is: " + JSON.stringify(formattedData));
 
       if (editingItinerary) {
         await updateItinerary(editingItinerary._id, formattedData);
