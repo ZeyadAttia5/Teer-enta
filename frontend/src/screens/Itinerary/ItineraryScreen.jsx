@@ -222,12 +222,23 @@ const ItineraryScreen = () => {
       );
 
       // Format activities
-      const formattedActivities = values.activities
-        ? values.activities.map((act) => ({
-            ...act,
-            duration: act.duration,
-          }))
-        : [];
+      // const formattedActivities = values.activities
+      //   ? values.activities.map((act) => ({
+      //       ...act,
+      //       duration: act.duration,
+      //     }))
+      //   : [];
+      
+      // get the activity from the activitiesList
+      // get the duration from the values
+      const formattedActivities = values.activities.map((act) => ({
+        duration: act.duration,
+      }));
+
+      formattedActivities.forEach((act, index) => { 
+        act.activity = activitiesList.find((activity) => activity._id === values.activities[index].activity);
+      });
+
       console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
 
       // Format locations
@@ -557,7 +568,7 @@ const ItineraryScreen = () => {
                         style={{ width: 200 }}
                       >
                         {activitiesList.map((activity) => (
-                          <Option key={activity._id} value={activity._id}>
+                          <Option key={activity} value={activity._id}>
                             {activity.name}
                           </Option>
                         ))}
