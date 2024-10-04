@@ -58,7 +58,6 @@ const ItineraryScreen = () => {
 
   const budgets = [...new Set(itineraries.map((itin) => itin.price))];
   const languages = [...new Set(itineraries.map((itin) => itin.language))];
-  const preferences = [...new Set(itineraries.map((itin) => itin.preferences))];
 
   // New State Variables for Activities and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
@@ -100,9 +99,7 @@ const ItineraryScreen = () => {
       (selectedBudget ? itin.price <= selectedBudget : true) &&
       filterByDate(itin) &&
       (selectedLanguage ? itin.language === selectedLanguage : true) &&
-      (selectedPreference
-        ? itin.preferenceTags?.tag === selectedPreference
-        : true) &&
+      (selectedPreference ? itin.preferenceTags.map(tagObj=>tagObj.tag).includes(selectedPreference): true) &&
       ((itin.name &&
         itin.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         // (itin.category &&
@@ -415,13 +412,13 @@ const ItineraryScreen = () => {
             <select
               id="preferenceFilter"
               value={selectedPreference}
-              onChange={(e) => setSelectedPreference(e.target.value)}
+              onChange={(e) => setSelectedPreference(e.target.tag)}
               className="p-2 border border-slate-700 rounded-md"
             >
               <option value="">All Preferences</option>
-              {preferences.map((preference, index) => (
+              {preferenceTagsList.map((preference, index) => (
                 <option key={index} value={preference}>
-                  {preference}
+                  {preference.tag}
                 </option>
               ))}
             </select>

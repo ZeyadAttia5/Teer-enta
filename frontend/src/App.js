@@ -66,7 +66,6 @@ function App() {
             path="create-tourist-itinerary"
             element={<CreateTouristItinerary />}
           />
-
           <Route
             path="read-tourist-itinerary"
             element={<ReadTouristItinerary />}
