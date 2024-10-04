@@ -235,12 +235,13 @@ const ItineraryScreen = () => {
       // get the activity from the activitiesList
       // get the duration from the values
       const formattedActivities = values.activities.map((act) => ({
+        activity: act._id,
         duration: act.duration,
       }));
 
-      formattedActivities.forEach((act, index) => { 
-        act.activity = activitiesList.find((activity) => activity._id === values.activities[index].activity);
-      });
+      // formattedActivities.forEach((act, index) => { 
+      //   act.activity = activitiesList.find((activity) => activity._id === values.activities[index].activity);
+      // });
 
       console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
 
