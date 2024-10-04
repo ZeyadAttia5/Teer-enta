@@ -1,4 +1,5 @@
 const Activity = require('../models/Activity/Activity');
+const mongoose = require('mongoose')
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 
 exports.getActivities = async (req, res, next) => {
@@ -123,3 +124,19 @@ exports.deleteActivity = async (req, res, next) => {
         errorHandler.SendError(res, err);
     }
 };
+
+exports.flagInappropriate = async (req, res) => {
+    try {
+        const id = req.params.id ;
+        if (!mongoose.Types.objectId.isValid(id)){
+            return res.status(400).json({message:"invalid object id "}) ;
+        }
+        const activity = await Activity.findByIdAndUpdate(id , {isActive: false} , {new:true});
+        if (!activity){
+            return res.status(404).json({message:"activity not found"}) ;
+        }
+        return res.status(200).json({message:"activity flagged inappropriate successfully"}) ;
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
