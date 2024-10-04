@@ -16,9 +16,9 @@ exports.getPreferenceTags = async (req, res, next) => {
 
 exports.createPreferenceTag = async (req, res, next) => {
     try {
-        req.user = { _id: '66f6564440ed4375b2abcdfb' };
-        const createdBy = req.user._id;
-        req.body.createdBy = createdBy;
+        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
+        // const createdBy = req.user._id;
+        // req.body.createdBy = createdBy;
 
         const preferenceTag = await PreferenceTag.create(req.body);
 

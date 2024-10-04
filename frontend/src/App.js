@@ -12,11 +12,11 @@ import Signup from "./screens/signup/Signup.js";
 import Login from "./screens/login/login.js";
 import Profile from "./screens/profile/profile.js";
 import CreateActivity from "./components/CRUDactivity/createActivity.js";
-import ViewActivity from "./components/CRUDactivity/viewActivity.js"; // Standardized name
+import ViewActivity from "./components/CRUDactivity/viewActivity.js";
 import UpdateActivity from "./components/CRUDactivity/updateActivity.js";
 import DeleteActivity from "./components/CRUDactivity/deleteActivity.js";
 import CreateTag from "./components/CRUDtag/createTag.js";
-import ViewTag from "./components/CRUDtag/viewTag.js"; // Standardized name
+import ViewTag from "./components/CRUDtag/viewTag.js";
 import UpdateTag from "./components/CRUDtag/updateTag.js";
 import DeleteTag from "./components/CRUDtag/deleteTag.js";
 import CreateTouristItinerary from "./components/CRUDtouristItinerary/createTouristItinerary.js";
@@ -34,6 +34,13 @@ import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 import AddUser from "./components/Users/addUser/addUser";
 
+import Navbar from "./components/Store/navbar";
+import ProductGrid from "./components/Store/productGrid";
+import ProductDetails from "./components/Store/productDetails";
+import AdminProductForm from "./components/Store/adminProductForm";
+import AdminProductGrid from "./components/Store/adminProductGrid";
+import EditProductForm from "./components/Store/editProductForm";
+import TourGuideItinerary from "./screens/Itinerary/ItineraryScreen.jsx";
 function App() {
   return (
     <div className="App">
@@ -73,6 +80,17 @@ function App() {
           <Route path="/allUsers" element={<AllUsers />} /> //tested
           <Route path="/pendingUsers" element={<PendingUsers />} /> //tested
           <Route path="/addUser" element={<AddUser />} /> //tested
+          <Route path="create-tourist-itinerary" element={<CreateTouristItinerary />}/>
+          <Route path="read-tourist-itinerary" element={<ReadTouristItinerary />}/>
+          <Route path="read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
+          <Route path="update-tourist-itinerary"element={<UpdateTouristItinerary />}/>
+          {/*<Navbar />*/}
+          <Route path="/products" element={<ProductGrid />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/admin/product/form" element={<AdminProductForm />} />
+          <Route path="/admin/products" element={<AdminProductGrid />} />
+          <Route path="/admin/edit-product/:productId" element={<EditProductForm />} />
+          <Route path="/tourguide-itinerary" element={<TourGuideItinerary />} />
         </Routes>
         <Toaster />
       </Router>
