@@ -2,6 +2,7 @@ const User = require('../models/Users/User');
 const Seller = require('../models/Users/Seller');
 const TourGuide = require('../models/Users/TourGuide');
 const Advertiser = require('../models/Users/Advertiser');
+const Tourist = require("../models/Users/Tourist")
 const mongoose = require("mongoose");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
@@ -87,6 +88,9 @@ exports.updateProfile = async (req, res) => {
             case 'Seller':
                 Model = Seller;
                 break;
+            case 'Tourist':
+                Model = Tourist ;
+                break ;
             default:
                 return res.status(400).json({ message: 'Invalid or unsupported user role' });
         }

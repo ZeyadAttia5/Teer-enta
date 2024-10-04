@@ -4,6 +4,7 @@ import axios from "axios";
 const URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
 const CreateTouristItinerary = () => {
+  const [name, setName] = useState("");
   const [activities, setActivities] = useState([]);
   const [tags, setTags] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
@@ -17,7 +18,6 @@ const CreateTouristItinerary = () => {
       try {
         const response = await axios.get(URL + "/activity/");
         setActivities(response.data.filter((activity) => activity.isActive));
-        console.log("Activities:", response.data);
       } catch (error) {
         console.error("Error fetching activities:", error);
       }
@@ -25,8 +25,9 @@ const CreateTouristItinerary = () => {
 
     const fetchTags = async () => {
       try {
-        const response = await axios.get(URL + "/tag");
-        setTags(response.data.filter((tag) => tag.isActive));
+        const response = await axios.get(URL + "/preferenceTag/");
+        setTags(response.data);
+        console.log("Tags:", response.data);
       } catch (error) {
         console.error("Error fetching tags:", error);
       }
@@ -37,13 +38,11 @@ const CreateTouristItinerary = () => {
 
   const handleActivityChange = (activity) => {
     setSelectedActivities((prev) =>
-      prev.includes(activity._id)
-        ? prev.filter((id) => id !== activity._id)
+      prev.some((t) => t._id === activity._id)
+        ? prev.filter((t) => t._id !== activity._id)
         : [...prev, activity]
     );
   };
-
-  console.log(selectedActivities);
 
   const handleTagChange = (tag) => {
     setSelectedTags((prev) =>
@@ -61,28 +60,66 @@ const CreateTouristItinerary = () => {
 
     if (start < currentDate) {
       setError("Start date must be after the current date.");
+      window.scrollTo(0, 0); // Scroll to top of the page
       return;
     }
 
     if (end < start) {
       setError("End date must be after the start date.");
+      window.scrollTo(0, 0); // Scroll to top of the page
       return;
     }
 
+    if (selectedActivities.length === 0) {
+      setError("Please select at least one activity.");
+      window.scrollTo(0, 0); // Scroll to top of the page
+      return;
+    }
+    // if (selectedTags.length === 0) {
+    //   setError("Please select at least one tag.");
+    //   window.scrollTo(0, 0); // Scroll to top of the page
+    //   return;
+    // }
+
     const itinerary = {
+      name,
       activities: selectedActivities.map((activity) => activity._id),
       startDate,
       endDate,
       tags: selectedTags.map((tag) => tag._id),
     };
 
+    //     {
+    //       "name": "Adventure in the Mountains",
+    //       "activities": [],
+    //       "startDate": "2024-10-01T00:00:00.000Z",
+    //       "endDate": "2024-10-05T00:00:00.000Z",
+    //       "tags": ["66f2ee3d7dc7a11684e3c0bf"]
+    // }
     axios
-      .post(URL + "/touristItenerary/create", itinerary)
+      .post(URL + "/touristItenerary/create", {
+        ...itinerary,
+      })
       .then((response) => {
         console.log("Itinerary created:", response.data);
+        setError(""); // Clear any previous errors
+        // Show success message
+        const successMessage = document.createElement("div");
+        successMessage.textContent = "Itinerary created successfully!";
+        successMessage.className = "text-green-500 mb-4";
+        document.querySelector(".container").prepend(successMessage);
+        window.scrollTo(0, 0); // Scroll to top of the page
+        // Redirect to read-all-tourist-itinerary
+        // setTimeout(() => {
+        //   window.location.href = "/read-all-tourist-itinerary";
+        // }, 5000);
       })
       .catch((error) => {
         console.error("There was an error creating the itinerary!", error);
+        setError(
+          "There was an error creating the itinerary. Please try again."
+        );
+        window.scrollTo(0, 0); // Scroll to top of the page
       });
   };
 
@@ -94,6 +131,16 @@ const CreateTouristItinerary = () => {
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="form-group">
+          <label className="block mb-2 text-lg">Name:</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="border p-2 w-full rounded"
+          />
+        </div>
+        <div className="form-group">
           <label className="block mb-2 text-lg">Start Date:</label>
           <input
             type="date"
@@ -103,6 +150,7 @@ const CreateTouristItinerary = () => {
             className="border p-2 w-full rounded"
           />
         </div>
+
         <div className="form-group">
           <label className="block mb-2 text-lg">End Date:</label>
           <input
@@ -139,8 +187,8 @@ const CreateTouristItinerary = () => {
                     <br />
                     <strong>Location:</strong> {activity?.location}
                     <br />
-                    <strong>Price:</strong> ${activity?.price.min} - $
-                    {activity?.price.max}
+                    <strong>Price:</strong> ${activity?.price?.min} - $
+                    {activity?.price?.max}
                   </div>
                 </div>
               ))}
@@ -165,11 +213,8 @@ const CreateTouristItinerary = () => {
                     className="mr-2"
                   />
                   <div className="inline-block">
-                    <strong>Name:</strong> {tag?.name}
+                    <strong>Tag:</strong> {tag?.tag}
                     <br />
-                    <strong>Type:</strong> {tag?.type}
-                    <br />
-                    <strong>Historical Period:</strong> {tag?.historicalPeriod}
                   </div>
                 </div>
               ))}
@@ -188,7 +233,6 @@ const CreateTouristItinerary = () => {
         <h2 className="text-2xl font-bold mb-4">Selected Activities:</h2>
         <div className="flex flex-wrap -mx-2">
           {selectedActivities.map((activity) => {
-            console.log(activity);
             // const activity = activities.find((act) => act.id === activityId);
 
             return (
@@ -222,11 +266,8 @@ const CreateTouristItinerary = () => {
               className="selected-tag mb-4 p-4 border rounded shadow-sm mx-2 w-1/3"
             >
               <div className="inline-block">
-                <strong>Name:</strong> {tag.name}
+                <strong>Tag:</strong> {tag.tag}
                 <br />
-                <strong>Type:</strong> {tag.type}
-                <br />
-                <strong>Historical Period:</strong> {tag.historicalPeriod}
               </div>
             </div>
           ))}
