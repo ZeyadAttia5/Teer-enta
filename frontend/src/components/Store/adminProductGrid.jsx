@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import FilterDropdown from './filterDropdown'; // Reusing FilterDropdown
+import StarRating from './starRating'; // Importing StarRating component
+import { Input, Row, Col } from 'antd';
+import { FaEdit } from 'react-icons/fa'; // Importing edit icon from react-icons
 
 const AdminProductGrid = () => {
   const backURL = process.env.REACT_APP_BACKEND_URL; // Ensure consistent API URL
@@ -75,44 +78,58 @@ const AdminProductGrid = () => {
   };
 
   return (
-    <div className="min-h-screen p-5 relative">
+    <div className="container mx-auto p-5 relative">
       {/* Search and Filter Container */}
-      <div className="flex justify-center items-center gap-4 mt-24 mb-5">
-        <div className="inline-block">
-          <input
-            type="text"
-            placeholder="Search for products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-72 p-2 border-2 border-customGreen rounded-full text-base focus:outline-none focus:border-customGreen transition-colors duration-300"
-          />
-        </div>
+      <div className="flex justify-start items-center gap-4 mt-24 mb-5">
+        <Input
+          placeholder="Search for products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-72 border-customGreen rounded-full border-2 focus:border-customGreen transition-colors duration-300" // Increased border thickness
+        />
         <FilterDropdown filters={filters} onFilterChange={handleFilterChange} /> {/* Reusing FilterDropdown */}
       </div>
 
       {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 justify-items-center mt-5 gap-4">
+      <Row gutter={[16, 16]} className="mt-5">
         {filteredProducts.map((product) => (
-          <div key={product._id} className="border-4 border-customGreen rounded-lg text-center transition-transform transform hover:scale-105 hover:bg-green-100 shadow-lg flex flex-col justify-between w-64">
-            <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-none" />
-            <h3 className="text-customGreen mt-1 font-semibold text-lg">{product.name}</h3>
-            <p>Average Rating: {calculateAverageRating(product.ratings).toFixed(1)}</p>
-            <p>Price: ${product.price.toFixed(2)}</p>
-            <div className="flex w-full mt-2">
-              <Link to={`/admin/edit-product/${product._id}`} className="flex-1">
-                <button className="bg-customGreen text-white w-full py-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none">
-                  Edit Product
-                </button>
-              </Link>
-              <Link to={`/product/${product._id}`} className="flex-1">
-                <button className="bg-customGreen text-white w-full py-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none">
-                  View Details
-                </button>
-              </Link>
+          <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
+            <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
+              <img
+                className="w-full h-48 object-cover"
+                src={product.image || 'defaultImageUrl.jpg'} // Use a default image if product.image is not available
+                alt={product.name}
+                loading="lazy"
+              />
+              <div className="p-6">
+                <h3 className="font-bold text-2xl mb-2 text-gray-800">{product.name}</h3>
+                <StarRating rating={calculateAverageRating(product.ratings)} /> {/* Display StarRating */}
+                <p className="font-semibold text-customGreen">${product.price.toFixed(2)}</p>
+                <div className="h-16 overflow-hidden"> {/* Fixed height for consistent box size */}
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                    {product.description && product.description.length > 100
+                      ? `${product.description.slice(0, 100)}...`
+                      : product.description || 'No description available.'}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Link to={`/admin/edit-product/${product._id}`} className="flex-1">
+                    <button className="bg-customGreen text-white w-full py-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none flex items-center justify-center">
+                      <FaEdit className="mr-2" /> {/* Edit Icon */}
+                      Edit Product
+                    </button>
+                  </Link>
+                  <Link to={`/product/${product._id}`} className="flex-1">
+                    <button className="bg-customGreen text-white w-full py-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none">
+                      View Details
+                    </button>
+                  </Link>
+                </div>
+              </div>
             </div>
-          </div>
+          </Col>
         ))}
-      </div>
+      </Row>
 
       {/* Add New Product Button */}
       <Link to="/product/form" className="absolute bottom-5 right-5">
