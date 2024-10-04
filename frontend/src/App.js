@@ -76,23 +76,10 @@ function App() {
           <Route path="/allUsers" element={<AllUsers />} /> //tested
           <Route path="/pendingUsers" element={<PendingUsers />} /> //tested
           <Route path="/addUser" element={<AddUser />} /> //tested
-          <Route
-            path="create-tourist-itinerary"
-            element={<CreateTouristItinerary />}
-          />
-
-          <Route
-            path="read-tourist-itinerary"
-            element={<ReadTouristItinerary />}
-          />
-          <Route
-            path="read-all-tourist-itinerary"
-            element={<ReadAllTouristItinerary />}
-          />
-          <Route
-            path="update-tourist-itinerary"
-            element={<UpdateTouristItinerary />}
-          />
+          <Route path="create-tourist-itinerary" element={<CreateTouristItinerary />}/>
+          <Route path="read-tourist-itinerary" element={<ReadTouristItinerary />}/>
+          <Route path="read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
+          <Route path="update-tourist-itinerary"element={<UpdateTouristItinerary />}/>
           {/*<Navbar />*/}
           <Route path="/product" element={<ProductGrid />} />
           <Route path="/product/:id" element={<ProductDetails />} />
