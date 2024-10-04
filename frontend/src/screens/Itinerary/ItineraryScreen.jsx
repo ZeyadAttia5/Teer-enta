@@ -148,13 +148,13 @@ const ItineraryScreen = () => {
     }
   };
 
-  const showModal = async(itinerary = null) => {
+  const showModal = async (itinerary = null) => {
     setEditingItinerary(itinerary);
     setIsModalVisible(true);
     if (itinerary) {
       await fetchActivities();
       await fetchPreferenceTags();
-  
+
       // Format availableDates for RangePicker
       const formattedAvailableDates = itinerary.availableDates.map((date) => [
         moment(date.Date),
@@ -164,23 +164,23 @@ const ItineraryScreen = () => {
       // Format timeline's startTime
       const formattedTimeline = itinerary.timeline.map((tl) => ({
         ...tl,
-        activity: tl.activity.name? tl.activity.name : tl.activity,
+        activity: tl.activity.name ? tl.activity.name : tl.activity,
         startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
-      
+
       // console.log("The first Activity is: " + itinerary.activities[0].duration);
       const formattedActivities = itinerary.activities.map((act) => ({
         activity: act.activity,
         duration: act.duration,
       }));
 
-      const formattedPreferenceTags = preferenceTagsList.map((tag) => (tag.tag));
+      const formattedPreferenceTags = preferenceTagsList.map((tag) => tag.tag);
 
       form.setFieldsValue({
         ...itinerary,
         activities: formattedActivities,
         availableDates: formattedAvailableDates,
-        timeline: formattedTimeline,  
+        timeline: formattedTimeline,
         preferenceTags: formattedPreferenceTags,
       });
     } else {
@@ -244,8 +244,8 @@ const ItineraryScreen = () => {
 
       // format prefrence tags
       const formattedPreferenceTags = values.preferenceTags
-      ? values.preferenceTags.map((tagId) => tagId) // Only store ObjectIds (tag._id)
-      : [];
+        ? values.preferenceTags.map((tagId) => tagId) // Only store ObjectIds (tag._id)
+        : [];
       // const formattedPreferenceTags = values.preferenceTags || [];
 
       // Prepare final data
@@ -338,9 +338,9 @@ const ItineraryScreen = () => {
       ),
     },
   ];
-
   return (
     <div className="p-6 bg-white min-h-screen">
+      {" "}
       <h1 className="text-2xl font-bold mb-4">Itineraries</h1>
       <Button
         type="primary"
@@ -351,7 +351,6 @@ const ItineraryScreen = () => {
       >
         Add Itinerary
       </Button>
-
       <div className="p-8 bg-gray-100">
         <div className="mb-6">
           <input
@@ -427,18 +426,17 @@ const ItineraryScreen = () => {
             <select
               id="preferenceFilter"
               value={selectedPreference}
-              onChange={(e) => setSelectedPreference(e.target.tag)}
+              onChange={(e) => setSelectedPreference(e.target.value)}
               className="p-2 border border-slate-700 rounded-md"
             >
               <option value="">All Preferences</option>
-              {preferenceTagsList.map((preference, index) => (
-                <option key={index} value={preference}>
+              {preferenceTagsList.map((preference) => (
+                <option key={preference._id} value={preference._id}>
                   {preference.tag}
                 </option>
               ))}
             </select>
           </div>
-
           <div className="flex flex-col">
             <label htmlFor="sortFilter" className="font-semibold mb-1">
               Sort by:
@@ -456,7 +454,6 @@ const ItineraryScreen = () => {
           </div>
         </div>
       </div>
-
       <Table
         dataSource={sortedItineraries}
         columns={columns}
@@ -464,7 +461,6 @@ const ItineraryScreen = () => {
         loading={loading}
         pagination={{ pageSize: 10 }}
       />
-
       <Modal
         title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
         visible={isModalVisible}
@@ -796,7 +792,7 @@ const ItineraryScreen = () => {
               allowClear
             >
               {preferenceTagsList.map((tag) => (
-                <Option key={tag._id} value={tag.tag}>
+                <Option key={tag._id} value={tag._id}>
                   {tag.tag}
                 </Option>
               ))}
