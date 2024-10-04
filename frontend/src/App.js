@@ -48,13 +48,13 @@ function App() {
           {/*<Route path="/add-admin" element={<AddAdmin />} />*/}
           <Route path="/create-activity-category" element={<CreateCategory />} />
           <Route path="/delete-activity-category" element={<DeleteActivityCategory />} />
-          <Route path="/view-activity-categories" element={<ViewActivityCategories />} />
+          <Route path="/view-activity-category" element={<ViewActivityCategory />} />
           <Route path="/update-activity-category" element={<UpdateActivityCategory />} />
           <Route path="/create-activity" element={<CreateActivity />} />
           <Route path="/view-activity" element={<ViewActivity />} />
           <Route path="/update-activity/:id" element={<UpdateActivity />} />
           <Route path="/delete-activity/:id" element={<DeleteActivity />} />
-          <Route path="/view-activities" element={<ViewActivity />} /> 
+          <Route path="/view-activity" element={<ViewActivity />} /> 
           <Route path="/update-activity" element={<UpdateActivity />} />
           <Route path="/delete-activity" element={<DeleteActivity />} />
           <Route path="/create-tag" element={<CreateTag />} />
