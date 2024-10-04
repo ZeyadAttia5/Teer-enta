@@ -37,6 +37,7 @@ import {
   isThisYear,
   parseISO,
 } from "date-fns";
+// import { format } from "path";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -99,7 +100,11 @@ const ItineraryScreen = () => {
       (selectedBudget ? itin.price <= selectedBudget : true) &&
       filterByDate(itin) &&
       (selectedLanguage ? itin.language === selectedLanguage : true) &&
-      (selectedPreference ? itin.preferenceTags.map(tagObj=>tagObj.tag).includes(selectedPreference): true) &&
+      (selectedPreference
+        ? itin.preferenceTags
+            .map((tagObj) => tagObj.tag)
+            .includes(selectedPreference)
+        : true) &&
       ((itin.name &&
         itin.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         // (itin.category &&
@@ -134,7 +139,6 @@ const ItineraryScreen = () => {
     try {
       const data = await getActivities();
       setActivitiesList(data);
-      console.log("The first Activity is: " + JSON.stringify(data[0]));
     } catch (error) {
       message.error("Failed to fetch activities");
     }
@@ -149,13 +153,13 @@ const ItineraryScreen = () => {
     }
   };
 
-  const showModal = async(itinerary = null) => {
+  const showModal = async (itinerary = null) => {
     setEditingItinerary(itinerary);
     setIsModalVisible(true);
     if (itinerary) {
       await fetchActivities();
       await fetchPreferenceTags();
-  
+      console.log("The Itinerary is: " + JSON.stringify(itinerary));
       // Format availableDates for RangePicker
       const formattedAvailableDates = itinerary.availableDates.map((date) => [
         moment(date.Date),
@@ -165,23 +169,23 @@ const ItineraryScreen = () => {
       // Format timeline's startTime
       const formattedTimeline = itinerary.timeline.map((tl) => ({
         ...tl,
-        activity: tl.activity.name? tl.activity.name : tl.activity,
+        activity: tl.activity.name ? tl.activity.name : tl.activity,
         startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
-      
-      // console.log("The first Activity is: " + itinerary.activities[0].duration);
+
       const formattedActivities = itinerary.activities.map((act) => ({
-        activity: act.activity,
+        activity: act.activity ? act.activity.name : "act.activity",
         duration: act.duration,
       }));
+      console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
 
-      const formattedPreferenceTags = preferenceTagsList.map((tag) => (tag.tag));
+      const formattedPreferenceTags = preferenceTagsList.map((tag) => tag.tag);
 
       form.setFieldsValue({
         ...itinerary,
         activities: formattedActivities,
         availableDates: formattedAvailableDates,
-        timeline: formattedTimeline,  
+        timeline: formattedTimeline,
         preferenceTags: formattedPreferenceTags,
       });
     } else {
@@ -211,6 +215,9 @@ const ItineraryScreen = () => {
 
   const onFinish = async (values) => {
     try {
+
+      console.log("The values are: " + JSON.stringify(values));
+
       // Format availableDates
       const formattedAvailableDates = values.availableDates.map(
         ([start, end]) => ({
@@ -222,10 +229,11 @@ const ItineraryScreen = () => {
       // Format activities
       const formattedActivities = values.activities
         ? values.activities.map((act) => ({
-            activity: act,
+            ...act,
             duration: act.duration,
           }))
         : [];
+      console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
 
       // Format locations
       const formattedLocations = values.locations
@@ -245,8 +253,8 @@ const ItineraryScreen = () => {
 
       // format prefrence tags
       const formattedPreferenceTags = values.preferenceTags
-      ? values.preferenceTags.map((tagId) => tagId) // Only store ObjectIds (tag._id)
-      : [];
+        ? values.preferenceTags.map((tagId) => tagId) // Only store ObjectIds (tag._id)
+        : [];
       // const formattedPreferenceTags = values.preferenceTags || [];
 
       // Prepare final data
