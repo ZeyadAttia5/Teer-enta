@@ -21,6 +21,9 @@ const ViewTags = () => {
     const tagTypes = ["Monuments", "Museums", "Religious Sites", "Palaces", "Castles"];
     const historicalPeriods = ["Ancient", "Medieval", "Modern"];
 
+    const user  = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
+
     // Fetch tags function
     const fetchTags = async () => {
         try {
@@ -42,6 +45,10 @@ const ViewTags = () => {
                 name: newName,
                 type: newType,
                 historicalPeriod: newHistoricalPeriod,
+            } ,{
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
             });
             setTags([...tags, response.data.tag]); // Update tags list with new tag
             setNewName('');
@@ -73,7 +80,12 @@ const ViewTags = () => {
                 name: editName,
                 type: editType,
                 historicalPeriod: editHistoricalPeriod,
-            });
+            } ,
+                {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+                });
 
             // Refresh tags list from backend after successful update
             fetchTags();
@@ -88,7 +100,11 @@ const ViewTags = () => {
     // Handle deleting a tag
     const handleDeleteTag = async (id) => {
         try {
-            await axios.delete(`http://localhost:8000/tag/delete/${id}`);
+            await axios.delete(`http://localhost:8000/tag/delete/${id}` ,{
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            });
             setTags(tags.filter(tag => tag._id !== id)); // Remove the deleted tag from the list
             setMessage('Tag deleted successfully!');
         } catch (error) {

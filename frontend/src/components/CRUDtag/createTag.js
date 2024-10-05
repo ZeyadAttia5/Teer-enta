@@ -8,6 +8,8 @@ const CreateTag = () => {
         historicalPeriod: '',
     });
     const [message, setMessage] = useState('');
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     const handleChange = (e) => {
         setTag({ ...tag, [e.target.name]: e.target.value });
@@ -16,7 +18,11 @@ const CreateTag = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8000/tags/create', tag);
+            await axios.post('http://localhost:8000/tags/create', tag ,
+                {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }});
             setMessage('Tag created successfully!');
             // Reset form
             setTag({

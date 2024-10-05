@@ -10,7 +10,8 @@ const ViewActivityCategory = () => {
   const [editCategoryId, setEditCategoryId] = useState(null); // State for the category being edited
   const [editCategory, setEditCategory] = useState(''); // State for editing category name
   const [editDescription, setEditDescription] = useState(''); // State for editing category description
-
+  const user = JSON.parse(localStorage.getItem('user')); // Get user data from local storage
+  const accessToken = localStorage.getItem('accessToken'); // Get access token from local storage
   // Fetch categories when the component mounts
   useEffect(() => {
     const fetchCategories = async () => {
@@ -31,6 +32,10 @@ const ViewActivityCategory = () => {
       const response = await axios.post('http://localhost:8000/activityCategory/create', {
         category: newCategory,
         description: newDescription,
+      } ,{
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
       if (response.data && response.data.activityCategory) {
         setCategories([...categories, response.data.activityCategory]); // Update category list
@@ -48,7 +53,11 @@ const ViewActivityCategory = () => {
   // Function to handle deleting a category
   const handleDelete = async (categoryId) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/activityCategory/delete/${categoryId}`);
+      const response = await axios.delete(`http://localhost:8000/activityCategory/delete/${categoryId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       setCategories(categories.filter(category => category._id !== categoryId)); // Remove deleted category from the list
       setMessage('Category deleted successfully'); // Display success message
     } catch (error) {
@@ -62,7 +71,12 @@ const ViewActivityCategory = () => {
       const response = await axios.put(`http://localhost:8000/activityCategory/update/${editCategoryId}`, {
         category: editCategory,
         description: editDescription,
-      });
+      } ,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
       setCategories(categories.map(category =>
         category._id === editCategoryId ? response.data.data : category
       )); // Update the category in the list

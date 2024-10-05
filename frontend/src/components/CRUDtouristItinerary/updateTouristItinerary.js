@@ -15,6 +15,8 @@ const UpdateTouristItinerary = () => {
     itineraryData.activities || []
   );
   const [selectedTags, setSelectedTags] = useState(itineraryData.tags || []);
+  const user = JSON.parse(localStorage.getItem("user"));
+    const accessToken = localStorage.getItem("accessToken");
   const formatDate = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -99,6 +101,10 @@ const UpdateTouristItinerary = () => {
     axios
       .put(URL + "/touristItenerary/update/" + itineraryData._id, {
         ...itinerary,
+      } ,{
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        }
       })
       .then((response) => {
         console.log("Itinerary updated:", response.data);

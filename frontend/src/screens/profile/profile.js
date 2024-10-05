@@ -50,9 +50,15 @@ async function updateProfile(
   setCompanySize
 ) {
   try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const accessToken = localStorage.getItem("accessToken");
     console.log("user id is: " + user._id);
     const response = await axios.get(
-      `${process.env.REACT_APP_BACKEND_URL}/profile/${user._id}`
+      `${process.env.REACT_APP_BACKEND_URL}/profile/${user._id}`,{
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        }
+        }
     );
     const { data } = response;
     const tmpDate = new Date(data.dateOfBirth).toLocaleDateString("en-CA");
@@ -329,7 +335,11 @@ function Profile() {
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
-        data
+        data ,{
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+          }
+      }
       );
 
       setMessage(response.data.message);

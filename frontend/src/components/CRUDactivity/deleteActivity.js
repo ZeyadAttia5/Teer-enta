@@ -5,6 +5,8 @@ import { DeleteOutlined } from '@ant-design/icons';
 const DeleteActivity = () => {
     const [activities, setActivities] = useState([]); // To hold the list of activities
     const [message, setMessage] = useState(''); // For displaying success/error messages
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     // Fetch activities on component load
     useEffect(() => {
@@ -23,7 +25,12 @@ const DeleteActivity = () => {
     // Handle delete activity
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:8000/activity/delete/${id}`);
+            await axios.delete(`http://localhost:8000/activity/delete/${id}` ,
+                {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             setMessage('Activity deleted successfully!');
             // Remove the deleted activity from the list
             setActivities(activities.filter(activity => activity._id !== id));

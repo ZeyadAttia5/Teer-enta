@@ -26,10 +26,10 @@ import UpdateTouristItinerary from "./components/CRUDtouristItinerary/updateTour
 import Activity from "./screens/Activity.tsx"; // From feat/activities
 
 import TouristWelcome from "./screens/TouristWelcome.jsx";
-import ReadHistoriaclPlaces from './components/historicalPlaces/readHistoriaclPlaces.jsx';
-import CreateHistoricalPlaces from './components/historicalPlaces/createHistoricalPlaces.jsx';
-import UpdateHistoricalPlaces from './components/historicalPlaces/updateHistoriaclPlaces.jsx';
-import DeleteHistoricalPlaces from './components/historicalPlaces/deleteHistoriaclPlaces.jsx';
+import ReadHistoriaclPlaces from "./components/historicalPlaces/readHistoriaclPlaces.jsx";
+import CreateHistoricalPlaces from "./components/historicalPlaces/createHistoricalPlaces.jsx";
+import UpdateHistoricalPlaces from "./components/historicalPlaces/updateHistoriaclPlaces.jsx";
+import DeleteHistoricalPlaces from "./components/historicalPlaces/deleteHistoriaclPlaces.jsx";
 import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 import AddUser from "./components/Users/addUser/addUser";
@@ -46,8 +46,8 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-        <Route path="/" element={<TouristWelcome/>}/> // t
-        <Route path="/signup" element={<Signup />} />
+          <Route path="/" element={<TouristWelcome />} /> // t
+          <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           {/*<Route path="/delete-user" element={<DeleteUser />} />*/}

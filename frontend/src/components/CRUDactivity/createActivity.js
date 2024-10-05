@@ -87,7 +87,7 @@ const [category, setCategory] = useState('');
                 'http://localhost:8000/activity/create',
                 newActivity ,
                 {
-                    headers: {
+                    headers:{
                         Authorization: `Bearer ${accessToken}`,
                     },
                 });

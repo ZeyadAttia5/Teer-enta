@@ -5,6 +5,8 @@ const DeleteActivityCategory = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [message, setMessage] = useState('');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const accessToken = localStorage.getItem('accessToken');
 
   // Fetch categories from the backend
   useEffect(() => {
@@ -16,7 +18,6 @@ const DeleteActivityCategory = () => {
         setMessage('Error fetching categories: ' + error.message);
       }
     };
-
     fetchCategories();
   }, []);
 
@@ -29,7 +30,14 @@ const DeleteActivityCategory = () => {
   // Handle delete action
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`http://localhost:8000/activityCategory/delete/${selectedCategoryId}`);
+      const response = await axios.delete(
+          `http://localhost:8000/activityCategory/delete/${selectedCategoryId}` ,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+          );
       setMessage(response.data.message); // Show success message
     } catch (error) {
       setMessage('Error deleting category: ' + error.response?.data?.message);

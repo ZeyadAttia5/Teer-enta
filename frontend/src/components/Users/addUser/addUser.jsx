@@ -7,6 +7,8 @@ const { Option } = Select;
 const AddUser = () => {
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     const Url = process.env.REACT_APP_BACKEND_URL ; // Replace with your backend URL
 
@@ -15,7 +17,12 @@ const AddUser = () => {
         setLoading(true);
         try {
             // Sending the form data to the backend endpoint
-            const response = await axios.post(`${Url}/account/create`, values);
+            const response = await axios.post(`${Url}/account/create`, values ,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    }
+                });
             message.success('User registered successfully');
             form.resetFields();
         } catch (error) {

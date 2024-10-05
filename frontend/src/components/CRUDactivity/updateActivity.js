@@ -12,6 +12,8 @@ const UpdateActivity = () => {
     const [message, setMessage] = useState('');
     const [tagToAdd, setTagToAdd] = useState('');
     const [loading, setLoading] = useState(true);
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -78,6 +80,10 @@ const UpdateActivity = () => {
             await axios.put(`http://localhost:8000/activity/update/${activity._id}`, {
                 ...activity,
                 tags: selectedTags
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
             });
             setMessage('Activity updated successfully!');
         } catch (error) {
