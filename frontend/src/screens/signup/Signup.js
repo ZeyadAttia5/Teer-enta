@@ -561,7 +561,7 @@ function Signup() {
               Already have an account?
               <a className=" text-[#02735f] hover:underline" href="/login">
                 {" "}
-                Signin
+                Sign in
               </a>
             </p>
             <p className="text-red">{message}</p>
