@@ -22,6 +22,7 @@ const UpdateActivity = () => {
                 
                 const categoryRes = await axios.get('http://localhost:8000/activityCategory');
                 setCategories(categoryRes.data);
+                console.log("dasd",categoryRes.data);
 
                 const tagRes = await axios.get('http://localhost:8000/tag');
                 setTags(tagRes.data);

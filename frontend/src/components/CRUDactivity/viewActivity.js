@@ -57,7 +57,9 @@ const ViewActivity = () => {
         }
     };
 
+
     const handleEditClick = (activity) => {
+        console.log(activity);
         setEditingActivityId(activity._id);
         setFormData({
             name: activity.name,
@@ -67,8 +69,13 @@ const ViewActivity = () => {
             isBookingOpen: activity.isBookingOpen,
             price: { min: activity.price.min, max: activity.price.max },
             category: activity.category?._id || '',
-            tags: activity.tags.map(tag => tag._id) || [],
-            specialDiscounts: activity.specialDiscounts || [],
+            tags: activity.tags.map(tag => tag._id) || [], // Assuming tags are stored by ID
+            specialDiscounts: activity.specialDiscounts
+                ? activity.specialDiscounts.map(dis => ({
+                    discount: dis.discount,
+                    Description: dis.description
+                }))
+                : []
         });
     };
 
@@ -122,123 +129,84 @@ const ViewActivity = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {activities.map(activity => (
-                    <Card
-                        key={activity._id}
-                        title={activity.name}
-                        className="hover:shadow-lg transition-shadow duration-200"
-                        extra={
-                            <div className="flex space-x-2">
-                                <Button
-                                    type="default"
-                                    icon={<EditOutlined />}
-                                    onClick={() => handleEditClick(activity)}
+                    <li key={activity._id} className="bg-white shadow-md p-4 rounded-lg">
+                        {editingActivityId === activity._id ? (
+                            // Render update form when editing
+                            <form onSubmit={(e) => { e.preventDefault(); handleUpdateSubmit(activity._id); }}>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleFormChange}
+                                    className="border rounded p-2 w-full mb-2"
+                                    required
                                 />
-                                <Button
-                                    type="default"
-                                    danger
-                                    icon={<DeleteOutlined />}
-                                    onClick={() => handleDelete(activity._id)}
+                                <input
+                                    type="date"
+                                    name="date"
+                                    value={new Date(formData.date).toISOString().split('T')[0]}
+                                    onChange={handleFormChange}
+                                    className="border rounded p-2 w-full mb-2"
+                                    required
                                 />
-                            </div>
-                        }
-                    >
-                        <p><strong>Date:</strong> {new Date(activity.date).toLocaleDateString()}</p>
-                        <p><strong>Time:</strong> {activity.time}</p>
-                        <p><strong>Location:</strong> {activity.location}</p>
-                        <p><strong>Price:</strong> ${activity.price.min} - ${activity.price.max}</p>
-                        <p><strong>Category:</strong> {activity.category?.name}</p>
-                        <p><strong>Tags:</strong> {activity.tags.map(tag => tag.name).join(', ')}</p>
-
-                        {/* Place the editing form directly under the tags */}
-                        {editingActivityId === activity._id && (
-                            <div className="mt-4 p-4 bg-gray-100 rounded-md shadow-md">
-                                <h3 className="text-2xl font-semibold">Edit Activity</h3>
-                                <Form
-                                    layout="vertical"
-                                    onFinish={() => handleUpdateSubmit(activity._id)}
-                                    className="space-y-4"
+                                <input
+                                    type="time"
+                                    name="time"
+                                    value={formData.time}
+                                    onChange={handleFormChange}
+                                    className="border rounded p-2 w-full mb-2"
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    name="location"
+                                    value={formData.location}
+                                    onChange={handleFormChange}
+                                    className="border rounded p-2 w-full mb-2"
+                                    required
+                                />
+                                <input
+                                    type="number"
+                                    name="price.min"
+                                    value={formData.price?.min || ''}
+                                    onChange={handleFormChange}
+                                    className="border rounded p-2 w-full mb-2"
+                                    placeholder="Min Price"
+                                    required
+                                />
+                                <input
+                                    type="number"
+                                    name="price.max"
+                                    value={formData.price?.max || ''}
+                                    onChange={handleFormChange}
+                                    className="border rounded p-2 w-full mb-2"
+                                    placeholder="Max Price"
+                                    required
+                                />
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="isBookingOpen"
+                                        checked={formData.isBookingOpen}
+                                        onChange={() => setFormData({ ...formData, isBookingOpen: !formData.isBookingOpen })}
+                                    />
+                                    Booking Open
+                                </label>
+                                <select
+                                    name="category"
+                                    value={formData.category}
+                                    onChange={handleFormChange}
+                                    className="border rounded p-2 w-full mb-2 text-black"
+                                    required
                                 >
-                                    <Form.Item label="Name" required>
-                                        <Input
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={(e) => handleFormChange('name', e.target.value)}
-                                            required
-                                            className="border border-gray-300 rounded-md"
-                                        />
-                                    </Form.Item>
-                                    <Form.Item label="Date" required>
-                                        <Input
-                                            type="date"
-                                            name="date"
-                                            value={new Date(formData.date).toISOString().split('T')[0]}
-                                            onChange={(e) => handleFormChange('date', e.target.value)}
-                                            required
-                                            className="border border-gray-300 rounded-md"
-                                        />
-                                    </Form.Item>
-                                    <Form.Item label="Time" required>
-                                        <Input
-                                            type="time"
-                                            name="time"
-                                            value={formData.time}
-                                            onChange={(e) => handleFormChange('time', e.target.value)}
-                                            required
-                                            className="border border-gray-300 rounded-md"
-                                        />
-                                    </Form.Item>
-                                    <Form.Item label="Location" required>
-                                        <Input
-                                            name="location"
-                                            value={formData.location}
-                                            onChange={(e) => handleFormChange('location', e.target.value)}
-                                            required
-                                            className="border border-gray-300 rounded-md"
-                                        />
-                                    </Form.Item>
-                                    <Form.Item label="Min Price" required>
-                                        <Input
-                                            type="number"
-                                            name="price.min"
-                                            value={formData.price?.min || ''}
-                                            onChange={(e) => handleFormChange('price.min', e.target.value)}
-                                            required
-                                            className="border border-gray-300 rounded-md"
-                                        />
-                                    </Form.Item>
-                                    <Form.Item label="Max Price" required>
-                                        <Input
-                                            type="number"
-                                            name="price.max"
-                                            value={formData.price?.max || ''}
-                                            onChange={(e) => handleFormChange('price.max', e.target.value)}
-                                            required
-                                            className="border border-gray-300 rounded-md"
-                                        />
-                                    </Form.Item>
-                                    <Form.Item>
-                                        <Checkbox
-                                            checked={formData.isBookingOpen}
-                                            onChange={() => setFormData({ ...formData, isBookingOpen: !formData.isBookingOpen })}
-                                        >
-                                            Booking Open
-                                        </Checkbox>
-                                    </Form.Item>
-                                    <Form.Item label="Category" required>
-                                        <Select
-                                            name="category"
-                                            value={formData.category}
-                                            onChange={(value) => handleFormChange('category', value)}
-                                            required
-                                            className="border border-gray-300 rounded-md"
-                                        >
-                                            <Option value="">Select Category</Option>
-                                            {categories.map(cat => (
-                                                <Option key={cat._id} value={cat._id}>{cat.name}</Option>
-                                            ))}
-                                        </Select>
-                                    </Form.Item>
-                                    <Form.Item label="Tags">
+                                    <option value="">Select Category</option>
+                                    {categories.map(cat => (
+                                        <option key={cat._id} value={cat._id}>{cat.category}</option>
+                                    ))}
+                                </select>
+                                <div className="mb-4">
+                                    <strong>Tags:</strong>
+                                    <div className="flex flex-wrap">
                                         {tags.map(tag => (
                                             <Checkbox
                                                 key={tag._id}
@@ -248,7 +216,7 @@ const ViewActivity = () => {
                                                 {tag.name}
                                             </Checkbox>
                                         ))}
-                                    </Form.Item>
+                                    </div>
                                     <Button type="primary" htmlType="submit" className="w-full">
                                         Update Activity
                                     </Button>
@@ -259,10 +227,29 @@ const ViewActivity = () => {
                                     >
                                         Cancel
                                     </Button>
-                                </Form>
+                                </div>
+                            </form>
+                        ) : (
+                            <div>
+                                <h3 className="text-xl">{activity.name}</h3>
+                                <p>Date: {new Date(activity.date).toLocaleDateString()}</p>
+                                <p>Time: {activity.time}</p>
+                                <p>Location: {activity.location}</p>
+                                <p>Price: {activity.price.min} - {activity.price.max}</p>
+                                <p>Category: {activity.category?.category}</p>
+                                <p>Tags: {activity.tags.map(tag => tag.name).join(', ')}</p>
+                                <p>Discounts: {activity.specialDiscounts.map(discount => `${discount.discount}% ${discount.description}`).join(', ')}</p>
+                                <div className="flex mt-4">
+                                    <button onClick={() => handleEditClick(activity)} className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2">
+                                        Edit
+                                    </button>
+                                    <button onClick={() => handleDelete(activity._id)} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
                         )}
-                    </Card>
+                    </li> 
                 ))}
             </div>
         </div>

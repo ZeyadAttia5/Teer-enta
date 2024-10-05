@@ -32,7 +32,16 @@ const [category, setCategory] = useState('');
                 console.error('Error fetching tags:', error);
             }
         };
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/activityCategory');
+                setCategories(response.data); // Assuming the response contains an array of categories
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
         fetchTags();
+        fetchCategories();
     }, []);
 
     const handleSubmit = async (e) => {
