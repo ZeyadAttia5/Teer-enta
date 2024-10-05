@@ -6,6 +6,7 @@ import { Switch, Table, Tag, Form, Input } from "antd";
 import { TActivityCategory } from "../types/Activity/ActivityCategory.ts";
 import { TTag } from "../types/Tag.ts";
 import Filter from "../components/Filter.jsx";
+import {Outlet} from "react-router-dom";
 
 // Tactivity keys are the dataIndex of each object in the data array
 const columns = [

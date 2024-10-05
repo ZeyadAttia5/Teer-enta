@@ -91,6 +91,9 @@ function App() {
           <Route path="/admin/products" element={<AdminProductGrid />} />
           <Route path="/admin/edit-product/:productId" element={<EditProductForm />} />
           <Route path="/tourguide-itinerary" element={<TourGuideItinerary />} />
+          <Route path="/activites" element={<Activity/>}/>
+          <Route path="/activites/create" element={<CreateActivity/>}/>
+          <Route path="activites/update" element={<UpdateActivity/>}/>
         </Routes>
         <Toaster />
       </Router>
