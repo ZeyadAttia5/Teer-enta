@@ -6,5 +6,6 @@ router.get('/', TouristItenerary.getAllItineraries);
 router.get('/:id', TouristItenerary.getItineraryById);
 router.post('/create',isAuth , TouristItenerary.createItinerary);
 router.put('/update/:id',isAuth , TouristItenerary.updateItinerary);
+router.delete('delete/:id' , TouristItenerary.deleteItenerary)
 
 module.exports = router ;

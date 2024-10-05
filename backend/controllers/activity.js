@@ -66,18 +66,15 @@ exports.getUpcomingActivities = async (req, res, next) => {
     }
 }
 
-exports.createActivity = async (req, res, next) => {
-    try {
-        // req.user = {_id: '66f92ee0e8036e924a7dec87'};
-        //
-        // const createdBy = req.user._id;
-        // req.body.createdBy = createdBy;
-        const activity = await Activity.create(req.body);
-        res.status(201).json({message: 'Activity created successfully', activity});
-    } catch (err) {
-        errorHandler.SendError(res, err);
-    }
-};
+    exports.createActivity = async (req, res, next) => {
+        try {
+
+            const activity = await Activity.create(req.body);
+            res.status(201).json({message: 'Activity created successfully', activity});
+        } catch (err) {
+            errorHandler.SendError(res, err);
+        }
+    };
 
 
 exports.updateActivity = async (req, res, next) => {

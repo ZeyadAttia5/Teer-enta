@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import DeleteTag from '../CRUDtag/deleteTag';
+import {GoogleMap, LoadScript, Marker} from "@react-google-maps/api";
 
 const UpdateActivity = () => {
     const { id } = useParams();
@@ -9,22 +10,27 @@ const UpdateActivity = () => {
     const [categories, setCategories] = useState([]);
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
+    const [location, setLocation] = useState({ lat: null, lng: null });
     const [message, setMessage] = useState('');
     const [tagToAdd, setTagToAdd] = useState('');
     const [loading, setLoading] = useState(true);
 
+    const Url = process.env.REACT_APP_BACKEND_URL;
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const activityRes = await axios.get(`http://localhost:8000/activity/${id}`);
+                // Fetch activity details by ID
+                const activityRes = await axios.get(`${Url}/activity/67018de429b48f5bfd655002`);
                 setActivity(activityRes.data);
-                setSelectedTags(activityRes.data.tags || []);
-                
-                const categoryRes = await axios.get('http://localhost:8000/activityCategory');
-                setCategories(categoryRes.data);
-                console.log("dasd",categoryRes.data);
+                setSelectedTags(activityRes.data.tags || []); // Pre-select the tags
 
-                const tagRes = await axios.get('http://localhost:8000/tag');
+                // Fetch categories
+                const categoryRes = await axios.get(`${Url}/activityCategory`);
+                setCategories(categoryRes.data);
+
+                // Fetch all available tags
+                const tagRes = await axios.get(`${Url}/preferenceTag`);
                 setTags(tagRes.data);
 
                 setLoading(false);
@@ -34,13 +40,13 @@ const UpdateActivity = () => {
             }
         };
         fetchData();
-    }, [id]);
+    }, [id, Url]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
         if ((name === 'price.min' || name === 'price.max') && !/^\d*$/.test(value)) {
-            return; // Only numbers allowed
+            return; // Only allow numbers for price fields
         }
 
         if (name === 'price.min' || name === 'price.max') {
@@ -48,6 +54,14 @@ const UpdateActivity = () => {
                 ...activity,
                 price: {
                     ...activity.price,
+                    [name.split('.')[1]]: value
+                }
+            });
+        } else if (name === 'location.lat' || name === 'location.lng') {
+            setActivity({
+                ...activity,
+                location: {
+                    ...activity.location,
                     [name.split('.')[1]]: value
                 }
             });
@@ -75,32 +89,51 @@ const UpdateActivity = () => {
         if (!validatePrice()) return;
 
         try {
-            await axios.put(`http://localhost:8000/activity/update/${activity._id}`, {
+            // Update the activity with the selected tags
+            await axios.put(`${Url}/activity/update/${activity._id}`, {
                 ...activity,
-                tags: selectedTags
+                tags: selectedTags.map(tag => tag._id)  // Send only tag IDs
             });
             setMessage('Activity updated successfully!');
         } catch (error) {
             const errorMsg = error.response ? error.response.data : error.message;
             setMessage(`Error updating activity: ${errorMsg}`);
-            console.error(error); // Log error for debugging
         }
     };
 
     const handleAddTag = () => {
-        if (tagToAdd && !selectedTags.includes(tagToAdd)) {
-            setSelectedTags([...selectedTags, tagToAdd]);
+        // Find the tag object by its ID and add it if it's not already selected
+        const tagObject = tags.find(tag => tag._id === tagToAdd);
+        if (tagObject && !selectedTags.some(tag => tag._id === tagObject._id)) {
+            setSelectedTags([...selectedTags, tagObject]);
         }
-        setTagToAdd('');
+        setTagToAdd(''); // Reset the tag select input
     };
 
     const handleRemoveTag = (tagId) => {
+        // Remove the tag from the selectedTags list
         setSelectedTags(selectedTags.filter(tag => tag._id !== tagId));
     };
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toISOString().split('T')[0];
+    };
+
+    // Google Maps configuration
+    const mapContainerStyle = {
+        height: "400px",
+        width: "100%"
+    };
+
+    const center = {
+        lat: location.lat || -34.397, // Default center
+        lng: location.lng || 150.644 // Default center
+    };
+
+    const handleMapClick = (event) => {
+        setLocation({ lat: event.latLng.lat(), lng: event.latLng.lng() });
+
     };
 
     if (loading) return <div>Loading...</div>;
@@ -140,14 +173,18 @@ const UpdateActivity = () => {
                         placeholder="Time (e.g., 10:00 AM)"
                         className="w-full p-2 mb-4 border border-gray-300 rounded"
                     />
-                    <input
-                        type="text"
-                        name="location"
-                        value={activity.location}
-                        onChange={handleChange}
-                        placeholder="Location"
-                        className="w-full p-2 mb-4 border border-gray-300 rounded"
-                    />
+                    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+                        <GoogleMap
+                            mapContainerStyle={mapContainerStyle}
+                            zoom={8}
+                            center={center}
+                            onClick={handleMapClick}
+                        >
+                            {location.lat && location.lng && (
+                                <Marker position={location} />
+                            )}
+                        </GoogleMap>
+                    </LoadScript>
                     <input
                         type="text"
                         name="price.min"
@@ -178,7 +215,7 @@ const UpdateActivity = () => {
                             </option>
                         ))}
                     </select>
-                    
+
                     <div className="flex items-center mb-4">
                         <select
                             value={tagToAdd}
@@ -188,7 +225,7 @@ const UpdateActivity = () => {
                             <option value="" disabled>Select Tag</option>
                             {tags.map(tag => (
                                 <option key={tag._id} value={tag._id}>
-                                    {tag.name}
+                                    {tag.tag}
                                 </option>
                             ))}
                         </select>
@@ -204,7 +241,7 @@ const UpdateActivity = () => {
                     <div className="flex flex-wrap gap-2 mb-4">
                         {selectedTags.length > 0 ? selectedTags.map(tag => (
                             <span key={tag._id} className="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full cursor-pointer">
-                                {tag.name}
+                                {tag.tag}
                                 <DeleteTag tagId={tag._id} onDelete={() => handleRemoveTag(tag._id)} />
                             </span>
                         )) : 'No tags selected'}

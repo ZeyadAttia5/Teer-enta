@@ -15,7 +15,7 @@ const ActivitySchema = new mongoose.Schema({
         max: Number
     },
     category: {type: mongoose.Schema.Types.ObjectId, ref: 'ActivityCategory'},
-    tags: [{type: mongoose.Schema.Types.ObjectId, ref: 'Tag'}],
+    tags: [{type: mongoose.Schema.Types.ObjectId, ref: 'PreferenceTags'}],
     specialDiscounts: [
         {
             discount: Number,

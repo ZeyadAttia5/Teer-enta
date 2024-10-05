@@ -7,13 +7,13 @@ const CreateActivity = () => {
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
-    const [location, setLocation] = useState({ lat: null, lng: null }); // Updated to store lat/lng
+    const [location, setLocation] = useState({ lat: null, lng: null });
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [isBookingOpen, setIsBookingOpen] = useState(true);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [category, setCategory] = useState('');
+    // Removed category state
     const [tags, setTags] = useState([]);
     const [selectedTag, setSelectedTag] = useState('');
     const [discounts, setDiscounts] = useState([{ discount: '', description: '' }]);
@@ -45,7 +45,7 @@ const CreateActivity = () => {
         };
         fetchTags();
         fetchCategories();
-    }, []);
+    }, [Url]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -56,10 +56,24 @@ const CreateActivity = () => {
         }
 
         for (const discount of discounts) {
-            if (discount.discount < 0 || discount.discount > 100) {
+            if (discount.discount === '' || discount.description === '') {
+                setError('All discount fields must be filled.');
+                return;
+            }
+            if (parseFloat(discount.discount) < 0 || parseFloat(discount.discount) > 100) {
                 setError('Discount must be between 0 and 100.');
                 return;
             }
+        }
+
+        if (!selectedCategory) {
+            setError('Please select a category.');
+            return;
+        }
+
+        if (!location.lat || !location.lng) {
+            setError('Please select a location on the map.');
+            return;
         }
 
         setError('');
@@ -75,9 +89,9 @@ const CreateActivity = () => {
                     max: parseFloat(maxPrice),
                 },
                 isBookingOpen,
-                category,
+                category: selectedCategory,
                 tags,
-                specialDiscounts: discounts.filter(d => d.discount && d.description),
+                specialDiscounts: discounts.filter(d => d.discount !== '' && d.description !== ''),
                 createdBy: user._id,
             };
 
@@ -91,12 +105,15 @@ const CreateActivity = () => {
                 }
             );
             setMessage('Activity created successfully!');
-
             setTimeout(() => {
                 navigate('/view-activities');
             }, 2000);
         } catch (error) {
-            setMessage('Error creating activity: ' + error.response?.data?.message);
+            if (error.response && error.response.data && error.response.data.message) {
+                setError('Error creating activity: ' + error.response.data.message);
+            } else {
+                setError('Error creating activity: ' + error.message);
+            }
         }
     };
 
@@ -147,7 +164,6 @@ const CreateActivity = () => {
             {message && <p className="text-green-500">{message}</p>}
             {error && <p className="text-red-500">{error}</p>}
             <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Other input fields remain unchanged */}
                 <input
                     type="text"
                     placeholder="Activity Name"
@@ -186,11 +202,12 @@ const CreateActivity = () => {
                     className="border rounded p-2 w-full"
                     required
                 />
-                <label>
+                <label className="flex items-center">
                     <input
                         type="checkbox"
                         checked={isBookingOpen}
                         onChange={() => setIsBookingOpen(!isBookingOpen)}
+                        className="mr-2"
                     />
                     Booking Open
                 </label>
@@ -209,7 +226,7 @@ const CreateActivity = () => {
                     </GoogleMap>
                 </LoadScript>
 
-                {/* Categories and Tags inputs remain unchanged */}
+                {/* Category Selection */}
                 <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
@@ -224,6 +241,7 @@ const CreateActivity = () => {
                     ))}
                 </select>
 
+                {/* Tags Selection */}
                 <div>
                     <select
                         value={selectedTag}
@@ -247,7 +265,7 @@ const CreateActivity = () => {
                     <div className="mt-2">
                         {tags.map(tag => (
                             <div key={tag} className="inline-block mr-2">
-                                <span>{availableTags.find(t => t._id === tag)?.name || tag}</span>
+                                <span>{availableTags.find(t => t._id === tag)?.tag || tag}</span>
                                 <button
                                     type="button"
                                     onClick={() => handleRemoveTag(tag)}
@@ -260,6 +278,7 @@ const CreateActivity = () => {
                     </div>
                 </div>
 
+                {/* Special Discounts */}
                 {discounts.map((discount, index) => (
                     <div key={index} className="flex items-center space-x-4">
                         <input
@@ -269,6 +288,8 @@ const CreateActivity = () => {
                             onChange={(e) => handleDiscountChange(index, 'discount', e.target.value)}
                             className="border rounded p-2 w-full"
                             required
+                            min="0"
+                            max="100"
                         />
                         <input
                             type="text"
@@ -295,6 +316,7 @@ const CreateActivity = () => {
                     Add Discount
                 </button>
 
+                {/* Submit Button */}
                 <button
                     type="submit"
                     className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"

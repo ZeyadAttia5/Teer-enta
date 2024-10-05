@@ -97,7 +97,7 @@ const columns = [
           let color = index % 2 ? "geekblue" : "green";
           return (
             <Tag color={color} key={tag._id}>
-              {tag.name.toUpperCase()}
+              {tag.tag.toUpperCase()}
             </Tag>
           );
         })}
