@@ -62,7 +62,7 @@ function Login() {
       return false;
     }
 
-    navigate("/profile");
+    navigate("/");
   };
 
   function isValid() {
