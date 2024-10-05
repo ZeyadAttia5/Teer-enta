@@ -142,7 +142,7 @@ const ItineraryScreen = () => {
   const fetchPreferenceTags = async () => {
     try {
       const data = await getPreferenceTags();
-      setPreferenceTagsList(data);
+      setPreferenceTagsList(data.data);
     } catch (error) {
       message.error("Failed to fetch preference tags");
     }
