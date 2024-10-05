@@ -1,9 +1,10 @@
 const router = require('express').Router();
 const TouristItenerary = require('../controllers/touristItenerary');
+const isAuth = require("../middlewares/isAuth");
 
 router.get('/', TouristItenerary.getAllItineraries);
 router.get('/:id', TouristItenerary.getItineraryById);
-router.post('/create', TouristItenerary.createItinerary);
-router.put('/update/:id', TouristItenerary.updateItinerary);
+router.post('/create',isAuth , TouristItenerary.createItinerary);
+router.put('/update/:id',isAuth , TouristItenerary.updateItinerary);
 
 module.exports = router ;

@@ -21,13 +21,30 @@ function Login() {
   };
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false); // State to track if the slideshow is paused
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000);
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+      }, 5000);
 
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, [images.length]);
+      return () => clearInterval(interval); // Cleanup interval on unmount
+    }
+  }, [images.length, isPaused]);
+
+  // Function to handle mouse down (click and hold)
+  const handleMouseDown = () => {
+    setIsPaused(true); // Pause the slider when mouse is down
+  };
+
+  // Function to handle mouse up (release click)
+  const handleMouseUp = () => {
+    setIsPaused(false); // Resume the slider when mouse is up
+  };
+
+  const handleImageClick = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
 
   const URL = `${process.env.REACT_APP_BACKEND_URL}`;
   const handleLoginSubmission = async (e) => {
@@ -40,13 +57,15 @@ function Login() {
       user = response.data.user;
       accessToken = response.data.accessToken;
       setMessage(response.data.message);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("accessToken", accessToken);
+      navigate("/");
+      
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
       return false;
     }
 
-    navigate("/profile", {
-      state: { user: user, accessToken: accessToken },});
   };
 
   function isValid() {
@@ -68,22 +87,29 @@ function Login() {
             key={index}
             src={image}
             alt={`Slide ${index + 1}`}
-            className={`absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ${
+            className={`absolute top-0 cursor-pointer left-0 w-full h-full transition-opacity duration-1000 ${
               index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
+            onMouseDown={handleMouseDown} // Pause when clicked and held
+            onMouseUp={handleMouseUp} // Resume when released
+            onClick={handleImageClick} // Change image on click
           />
         ))}
-        <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-          {images.map((_, index) => (
-            <span
-              key={index}
-              className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
-                currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
-              }`}
-              onClick={() => setCurrentImageIndex(index)}
-            />
-          ))}
-        </div>
+
+        {/* Dots indicator */}
+        {!isPaused && (
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+            {images.map((_, index) => (
+              <span
+                key={index}
+                className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
+                  currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
+                }`}
+                onClick={() => setCurrentImageIndex(index)} // Click on dot to go to a specific image
+              />
+            ))}
+          </div>
+        )}
       </div>
       <div className="w-1/2 flex justify-center items-center">
         <form class="formlogin bg-white block p-4 max-w-[500px] rounded-lg shadow-md">
@@ -154,7 +180,7 @@ function Login() {
 
           <p class="text-xs text-center">
             No account?
-            <a href="/" className="text-[#474bca] hover:underline">
+            <a href="/signup" className="text-[#474bca] hover:underline">
               {" "}
               Sign up
             </a>

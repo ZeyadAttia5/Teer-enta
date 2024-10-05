@@ -46,8 +46,8 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<TouristWelcome/>}/> // t
-          <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<TouristWelcome/>}/> // t
+        <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           {/*<Route path="/delete-user" element={<DeleteUser />} />*/}
@@ -73,13 +73,13 @@ function App() {
           <Route path="/read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
           <Route path="/update-tourist-itinerary" element={<UpdateTouristItinerary />}/>
           <Route path="/activity" element={<Activity />} />
-          <Route path="/historicalPlace" element={<ReadHistoriaclPlaces />} /> //tested
-          <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces />} /> //tested
-          <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces />} /> //tested
-          <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces />} /> //tested
-          <Route path="/allUsers" element={<AllUsers />} /> //tested
-          <Route path="/pendingUsers" element={<PendingUsers />} /> //tested
-          <Route path="/addUser" element={<AddUser />} /> //tested
+          <Route path="/historicalPlace" element={<ReadHistoriaclPlaces />} /> {/*tested*/}
+          <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces />} /> {/*tested*/}
+          <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces />} /> {/*tested*/}
+          <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces />} /> {/*tested*/}
+          <Route path="/allUsers" element={<AllUsers />} /> {/*tested*/}
+          <Route path="/pendingUsers" element={<PendingUsers />} /> {/*tested*/}
+          <Route path="/addUser" element={<AddUser />} /> {/*tested*/}
           <Route path="create-tourist-itinerary" element={<CreateTouristItinerary />}/>
           <Route path="read-tourist-itinerary" element={<ReadTouristItinerary />}/>
           <Route path="read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>

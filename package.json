@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "unirest": "^0.6.0",
     "yarn": "^1.22.22"
   },
   "devDependencies": {

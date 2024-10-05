@@ -22,7 +22,7 @@ const ViewActivity = () => {
             message.error('Error fetching activities: ' + error.response?.data?.message);
         }
     };
-
+    //df
     const fetchCategories = async () => {
         try {
             const response = await axios.get('http://localhost:8000/activityCategory');

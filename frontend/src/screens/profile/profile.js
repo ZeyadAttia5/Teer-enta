@@ -46,7 +46,8 @@ async function updateProfile(
   setLocationAddressInput,
   setCity,
   setCountry,
-  setCompanyName
+  setCompanyName,
+  setCompanySize
 ) {
   try {
     console.log("user id is: " + user._id);
@@ -61,9 +62,10 @@ async function updateProfile(
         setUserRole("Tourist");
         setUsername(data.username);
         setMobileNumberInput(data.mobileNumber);
-
+              
         setEmail(data.email);
         setEmailInput(data.email);
+        
         setDob(tmpDate);
         setJobTitleInput(data.occupation);
         setJobTitle(data.occupation);
@@ -75,6 +77,7 @@ async function updateProfile(
       case "Advertiser":
         setUserRole("Advertiser");
         setUsername(data.username);
+        setCompanySize(data.companySize);
         setMobileNumberInput(data.hotline);
         setFacebook(data.socialMediaLinks.facebook);
         setInstagram(data.socialMediaLinks.instagram);
@@ -107,7 +110,7 @@ async function updateProfile(
       case "Seller":
         setUserRole("Seller");
         setUsername(data.username);
-        console.log("Hey3 " + data.name);
+        
 
         setNameInput(data.name);
         setEmail(data.email);
@@ -122,7 +125,7 @@ async function updateProfile(
 
     setMessage(response.data.message);
   } catch (error) {
-    console.log("Hello 2");
+    
     setMessage(error.response.data.message || "Updating profile failed");
   }
 }
@@ -136,8 +139,17 @@ const LoadingCircle = () => {
 };
 
 function Profile() {
-  const location = useLocation();
-  const { user, accessToken } = location.state || {}; // Destructure the user object passed
+  // const location = useLocation();
+  // const { user, accessToken } = location.state || {}; // Destructure the user object passed
+  
+  const storedUser = localStorage.getItem("user");
+  const storedAccessToken = localStorage.getItem("accessToken");
+
+  // Parse the user object
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const accessToken = storedAccessToken || null;
+
+  
   const [addWork, setAddWork] = useState(false);
   const [message, setMessage] = useState("");
   const [userRole, setUserRole] = useState("");
@@ -151,7 +163,7 @@ function Profile() {
   const [dob, setDob] = useState("");
   const [nationality, setNationality] = useState("");
   const [age, setAge] = useState("");
-  const [wallet, setWallet] = useState("");
+  const [wallet, setWallet] = useState(1400);
   const [complaints, setComplaints] = useState("");
   const [ageInput, setAgeInput] = useState(age);
   const [nationalityInput, setNationalityInput] = useState(nationality);
@@ -175,6 +187,7 @@ function Profile() {
   const [country, setCountry] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [nameInput, setNameInput] = useState("");
+  const [companySize, setCompanySize] = useState("");
 
   if (username === "") {
     updateProfile(
@@ -206,7 +219,8 @@ function Profile() {
       setLocationAddressInput,
       setCity,
       setCountry,
-      setCompanyName
+      setCompanyName,
+      setCompanySize
     );
   }
 
@@ -263,13 +277,13 @@ function Profile() {
           nationality: nationalityInput,
           userRole: userRole,
           email: emailInput,
-          dateOfBirth: dob,
+          wallet: wallet,
           occupation: jobTitle,
         };
 
         break;
       case "Advertiser":
-        console.log("facebook is: " + facebook);
+        console.log("size is: " + companySize);
         data = {
           website: linkInput,
           hotline: mobileNumberInput,
@@ -287,6 +301,7 @@ function Profile() {
             address: locationAddressInput,
           },
           companyName: companyName,
+          companySize: companySize,
         };
 
         break;
@@ -311,19 +326,6 @@ function Profile() {
         return false;
     }
 
-    // if(userRole === "TourGuide"){
-    //   try {
-    //     const response = await axios.put(
-    //       `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
-    //       updatedData
-    //     );
-
-    //     setMessage(response.data.message);
-    //   } catch (error) {
-    //     setMessage(error.response.data.message || "Updating profile failed");
-    //   }
-
-    // }else{
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
@@ -334,14 +336,10 @@ function Profile() {
     } catch (error) {
       setMessage(error.response.data.message || "Updating profile failed");
     }
-    // }
 
     setAge(ageInput);
     setNationality(nationalityInput);
     setEmail(emailInput);
-
-    console.log("email is: " + email);
-    // navigate("/profile", { state: { userData: details } });
   };
 
   function isValid() {
@@ -444,7 +442,7 @@ function Profile() {
                 Edit Profile
               </button>
 
-              <button
+              {/* <button
                 className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
                 onClick={handleComplaint}
               >
@@ -463,7 +461,19 @@ function Profile() {
                   />
                 </svg>
                 Complaint
-              </button>
+              </button> */}
+              {userRole === "Tourist" && (<div className="max-w-sm mx-auto mt-10">
+                <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+                  <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                    My Wallet
+                  </h2>
+                  <div className="text-gray-600 text-lg">Available Credit</div>
+                  <div className="text-4xl font-bold text-[#02735f] mt-2">
+                    ${wallet}
+                  </div>
+                  
+                </div>
+              </div>)}
             </div>
           </div>
         )}
@@ -497,7 +507,7 @@ function Profile() {
             {userRole === "Tourist" && (
               <div className="flex gap-8">
                 <div className="flex flex-col gap-8">
-                  <div>
+                  {/* <div>
                     <span className="text-2xl text-[#02735f]">Name</span>
                     <input
                       type="text"
@@ -506,7 +516,7 @@ function Profile() {
                       placeholder={!isReadOnly ? "Enter your name" : ""}
                       className="border-2 block border-[#02735f] bg-gray-300 p-3"
                     />
-                  </div>
+                  </div> */}
                   <div>
                     <span className="text-2xl text-[#02735f]">Phone</span>
                     <input
@@ -567,28 +577,6 @@ function Profile() {
                       />
                     )}
                   </div>
-                  <div>
-                    <span className="text-2xl text-[#02735f]">
-                      Date of Birth
-                    </span>
-                    <input
-                      type="text"
-                      value={dob}
-                      readOnly
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-8">
-                  <div>
-                    <span className="text-2xl text-[#02735f]">Wallet</span>
-                    <input
-                      type="text"
-                      value={wallet}
-                      readOnly
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
                 </div>
               </div>
             )}
@@ -596,15 +584,6 @@ function Profile() {
               <div>
                 <div className="flex gap-8">
                   <div className="flex flex-col gap-8">
-                    <div>
-                      <span className="text-2xl text-[#02735f]">Name</span>
-                      <input
-                        type="text"
-                        value={username}
-                        readOnly
-                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
-                      />
-                    </div>
                     <div>
                       <span className="text-2xl text-[#02735f]">Hotline</span>
                       <input
@@ -716,7 +695,9 @@ function Profile() {
                     />
                   </div>
                   <div>
-                    <span className="text-2xl text-[#02735f]">Company Name</span>
+                    <span className="text-2xl text-[#02735f]">
+                      Company Name
+                    </span>
                     <input
                       type="text"
                       value={companyName}
@@ -726,6 +707,26 @@ function Profile() {
                       className="border-2 block border-[#02735f] bg-gray-300 p-3"
                     />
                   </div>
+                </div>
+                <div className="mt-4">
+                  <span className="text-2xl text-[#02735f]">Company Size</span>
+                  <select
+                    value={companySize}
+                    onChange={(e) => setCompanySize(e.target.value)}
+                    disabled={isReadOnly}
+                    className="border-2 block border-[#02735f] bg-gray-300 p-3 w-fit" // Add w-full or a fixed width
+                    style={{ minWidth: "200px" }} // Optionally, set a minimum width with inline style
+                  >
+                    <option value="" disabled>
+                      {!isReadOnly ? "Select company size" : ""}
+                    </option>
+                    <option value="1-10">1-10</option>
+                    <option value="11-50">11-50</option>
+                    <option value="51-200">51-200</option>
+                    <option value="201-500">201-500</option>
+                    <option value="501-1000">501-1000</option>
+                    <option value="1001+">1001+</option>
+                  </select>
                 </div>
               </div>
             )}
@@ -836,17 +837,6 @@ function Profile() {
                       onChange={handleNameChange}
                       placeholder={!isReadOnly ? "Enter your name" : ""}
                       className="border-2 block border-[#02735f] bg-gray-300 p-3"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-2xl text-[#02735f]">Phone</span>
-                    <input
-                      type="text"
-                      placeholder={!isReadOnly ? "Enter your phone number" : ""}
-                      value={mobileNumberInput}
-                      readOnly={isReadOnly}
-                      onChange={handleMobileNumberChange}
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
                     />
                   </div>
                 </div>
