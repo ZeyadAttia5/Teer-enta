@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const ViewActivityCategory = () => {
   const [categories, setCategories] = useState([]); // State for categories data
-  const [newCategoryVisible, setNewCategoryVisible] = useState(false); // State for controlling visibility of new category fields
+  const [showCategories, setShowCategories] = useState(false); // State for controlling visibility of categories
   const [newCategory, setNewCategory] = useState(''); // State for new category name
   const [newDescription, setNewDescription] = useState(''); // State for new category description
   const [message, setMessage] = useState(''); // State for displaying messages
@@ -22,8 +22,15 @@ const ViewActivityCategory = () => {
       }
     };
 
-    fetchCategories(); // Fetch categories on component mount
-  }, []); // Run once on mount
+    if (showCategories) { // Only fetch categories if showCategories is true
+      fetchCategories();
+    }
+  }, [showCategories]); // This effect depends on the showCategories state
+
+  // Function to toggle the visibility of the categories list
+  const handleShowCategories = () => {
+    setShowCategories(prevState => !prevState); // Toggle showCategories state
+  };
 
   // Function to handle adding a new category
   const handleAddCategory = async () => {
@@ -96,67 +103,71 @@ const ViewActivityCategory = () => {
         </div>
       )}
 
-      {/* Button to show the new category form */}
-      <button onClick={() => setNewCategoryVisible(prev => !prev)} className="bg-blue-500 text-white p-2 rounded mb-4">
-        {newCategoryVisible ? "Hide Create Category" : "Create Category"}
+      {/* Button to show or hide categories */}
+      <button onClick={handleShowCategories} className="bg-blue-500 text-white p-2 rounded mb-4">
+        {showCategories ? "Hide Categories" : "Show Categories"}
       </button>
 
       {/* Form to add a new category */}
-      {newCategoryVisible && (
+      {showCategories && (
         <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Category Name"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            className="border p-2 rounded w-full mb-2"
-          />
-          <input
-            type="text"
-            placeholder="Description"
-            value={newDescription}
-            onChange={(e) => setNewDescription(e.target.value)}
-            className="border p-2 rounded w-full mb-4"
-          />
           <button
             onClick={handleAddCategory}
-            className="bg-green-500 text-white p-2 rounded w-full"
+            className="bg-green-500 text-white p-2 rounded w-full mb-2"
           >
             Add New Category
           </button>
+          <div className="flex flex-col">
+            <input
+              type="text"
+              placeholder="Category Name"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              className="border p-2 rounded w-full mb-2"
+            />
+            <input
+              type="text"
+              placeholder="Description"
+              value={newDescription}
+              onChange={(e) => setNewDescription(e.target.value)}
+              className="border p-2 rounded w-full mb-4"
+            />
+          </div>
         </div>
       )}
 
       {/* Display categories with buttons for editing and deleting */}
-      <ul>
-        {categories.length > 0 ? (
-          categories.map((category) => (
-            <li key={category._id} className="mb-4">
-              <div className="flex items-center justify-between">
-                <span>{category.category} - {category.description}</span>
-                <div className="flex space-x-2">
-                  {/* Edit Button */}
-                  <button
-                    onClick={() => startEditing(category)}
-                    className="bg-yellow-500 text-white p-2 rounded"
-                  >
-                    Edit
-                  </button>
-                  {/* Delete Button */}
-                  <button
-                    onClick={() => handleDelete(category._id)}
-                    className="bg-red-500 text-white p-2 rounded"
-                  >
-                    Delete
-                  </button>
+      {showCategories && (
+        <ul>
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <li key={category._id} className="mb-4">
+                <div className="flex items-center justify-between">
+                  <span>{category.category} - {category.description}</span>
+                  <div className="flex space-x-2">
+                    {/* Edit Button */}
+                    <button
+                      onClick={() => startEditing(category)}
+                      className="bg-yellow-500 text-white p-2 rounded"
+                    >
+                      Edit
+                    </button>
+                    {/* Delete Button */}
+                    <button
+                      onClick={() => handleDelete(category._id)}
+                      className="bg-red-500 text-white p-2 rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </li>
-          ))
-        ) : (
-          <li>No categories available</li> // Show this if categories array is empty
-        )}
-      </ul>
+              </li>
+            ))
+          ) : (
+            <li>No categories available</li> // Show this if categories array is empty
+          )}
+        </ul>
+      )}
 
       {/* Edit category form */}
       {editCategoryId && (
@@ -189,5 +200,4 @@ const ViewActivityCategory = () => {
 };
 
 export default ViewActivityCategory;
-
 
