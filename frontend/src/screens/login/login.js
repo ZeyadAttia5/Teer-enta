@@ -57,13 +57,14 @@ function Login() {
       user = response.data.user;
       accessToken = response.data.accessToken;
       setMessage(response.data.message);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("accessToken", accessToken);
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
       return false;
     }
 
-    navigate("/profile", {
-      state: { user: user, accessToken: accessToken },});
+    navigate("/profile");
   };
 
   function isValid() {
@@ -80,33 +81,35 @@ function Login() {
   return (
     <div className="flex">
       <div className="relative w-[66%] h-screen overflow-hidden">
-      {images.map((image, index) => (
-        <img
-          key={index}
-          src={image}
-          alt={`Slide ${index + 1}`}
-          className={`absolute top-0 cursor-pointer left-0 w-full h-full transition-opacity duration-1000 ${
-            index === currentImageIndex ? "opacity-100" : "opacity-0"
-          }`}
-          onMouseDown={handleMouseDown} // Pause when clicked and held
-          onMouseUp={handleMouseUp}     // Resume when released
-          onClick={handleImageClick}    // Change image on click
-        />
-      ))}
-
-      {/* Dots indicator */}
-      {!isPaused && (<div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-        {images.map((_, index) => (
-          <span
+        {images.map((image, index) => (
+          <img
             key={index}
-            className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
-              currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
+            src={image}
+            alt={`Slide ${index + 1}`}
+            className={`absolute top-0 cursor-pointer left-0 w-full h-full transition-opacity duration-1000 ${
+              index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
-            onClick={() => setCurrentImageIndex(index)} // Click on dot to go to a specific image
+            onMouseDown={handleMouseDown} // Pause when clicked and held
+            onMouseUp={handleMouseUp} // Resume when released
+            onClick={handleImageClick} // Change image on click
           />
         ))}
-      </div>)}
-    </div>
+
+        {/* Dots indicator */}
+        {!isPaused && (
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+            {images.map((_, index) => (
+              <span
+                key={index}
+                className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
+                  currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
+                }`}
+                onClick={() => setCurrentImageIndex(index)} // Click on dot to go to a specific image
+              />
+            ))}
+          </div>
+        )}
+      </div>
       <div className="w-1/2 flex justify-center items-center">
         <form class="formlogin bg-white block p-4 max-w-[500px] rounded-lg shadow-md">
           <p className="text-4xl font-bold my-4">Login now</p>

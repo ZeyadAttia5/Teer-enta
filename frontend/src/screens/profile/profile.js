@@ -139,8 +139,17 @@ const LoadingCircle = () => {
 };
 
 function Profile() {
-  const location = useLocation();
-  const { user, accessToken } = location.state || {}; // Destructure the user object passed
+  // const location = useLocation();
+  // const { user, accessToken } = location.state || {}; // Destructure the user object passed
+  
+  const storedUser = localStorage.getItem("user");
+  const storedAccessToken = localStorage.getItem("accessToken");
+
+  // Parse the user object
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const accessToken = storedAccessToken || null;
+
+  
   const [addWork, setAddWork] = useState(false);
   const [message, setMessage] = useState("");
   const [userRole, setUserRole] = useState("");
