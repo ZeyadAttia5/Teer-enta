@@ -6,11 +6,17 @@ const PendingUsers = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const Url = process.env.REACT_APP_BACKEND_URL;
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`${Url}/account/pending`);
+                const response = await axios.get(`${Url}/account/pending`,{
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
                 console.log(response.data); // Log the API response
                 if (Array.isArray(response.data)) {
                     setUsers(response.data);
@@ -30,7 +36,12 @@ const PendingUsers = () => {
 
     const acceptUser = async (id) => {
         try {
-            await axios.patch(`${Url}/account/accept/${id}`);
+            await axios.patch(`${Url}/account/accept/${id}` ,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
             message.success('User accepted successfully');
             setUsers(prevUsers => prevUsers.filter(user => user._id !== id));
         } catch (error) {
@@ -41,7 +52,11 @@ const PendingUsers = () => {
 
     const rejectUser = async (id) => {
         try {
-            await axios.patch(`${Url}/account/reject/${id}`);
+            await axios.patch(`${Url}/account/reject/${id}`,{
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            });
             message.success('User rejected successfully');
             setUsers(prevUsers => prevUsers.filter(user => user._id !== id));
         } catch (error) {

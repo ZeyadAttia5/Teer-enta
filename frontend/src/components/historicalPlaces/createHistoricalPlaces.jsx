@@ -18,6 +18,8 @@ const CreateHistoricalPlaces = () => {
   const [nativePrice, setNativePrice] = useState(0);
   const [tags, setTags] = useState([]); 
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -55,7 +57,14 @@ const CreateHistoricalPlaces = () => {
     };
 
     try {
-      const response = await axios.post(`${PORT}/historicalPlace/create`, data);
+
+      const response = await axios.post(`${PORT}/historicalPlace/create`, data ,
+          {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            }
+          });
+
       if (response.status === 201) {
         toast.success('Historical place created successfully!');
         navigate('/historicalPlace');

@@ -9,12 +9,20 @@ const PORT = process.env.REACT_APP_BACKEND_URL;
 const DeleteHistoricalPlaces = () => {
   const navigate = useNavigate();
 
-  const { id } = useParams(); 
+  const { id } = useParams();
+  const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
   const handleDeleteHistoricalPlace = async () => {
     try {
-      const response = await axios.delete(`${PORT}/historicalPlace/delete/${id}`);
-      
+
+      const response = await axios.delete(`http://localhost:${PORT}/historicalPlace/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          }
+        });
+
       if (response.status === 200) {
         toast.success('Historical place deleted successfully!');
         navigate('/historicalPlace');
