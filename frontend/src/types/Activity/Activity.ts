@@ -15,7 +15,7 @@ export type TActivity = {
         min?: number;
         max?: number;
     };
-    category: TActivityCategory; // ObjectId referencing 'ActivityCategory'
+    category: TActivityCategory; // ObjectId referencing 'ActivityCategories'
     tags: TTag[]; // Array of ObjectIds referencing 'Tag'
     specialDiscounts: {
         discount: number;

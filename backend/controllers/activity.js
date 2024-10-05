@@ -8,7 +8,7 @@ exports.getActivities = async (req, res, next) => {
             .populate('category')
             .populate('tags');
         if (activities.length === 0) {
-            return res.status(404).json({message: 'No Activities found'});
+            return res.status(404).json({message: 'No Activity found'});
         }
         res.status(200).json(activities);
     } catch (err) {
@@ -39,7 +39,7 @@ exports.getMyActivities = async (req, res, next) => {
             .populate('category')
             .populate('tags');
         if (activities.length === 0) {
-            return res.status(404).json({message: 'No Activities found'});
+            return res.status(404).json({message: 'No Activity found'});
         }
         res.status(200).json(activities);
     } catch (err) {
@@ -58,7 +58,7 @@ exports.getUpcomingActivities = async (req, res, next) => {
             .populate('category')
             .populate('tags');
         if (activities.length === 0) {
-            return res.status(404).json({message: 'No upcoming Activities found'});
+            return res.status(404).json({message: 'No upcoming Activity found'});
         }
         res.status(200).json(activities);
     } catch (err) {

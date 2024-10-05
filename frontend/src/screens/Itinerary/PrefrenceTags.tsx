@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Switch, notification, Popconfirm } from 'antd';
-import { getPreferenceTags, createPreferenceTag, updatePreferenceTag, deletePreferenceTag } from '../api/preferenceTags.ts';
+import { getPreferenceTags, createPreferenceTag, updatePreferenceTag, deletePreferenceTag } from '../../api/preferenceTags.ts';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { Item } = Form;
@@ -78,7 +78,7 @@ const PreferenceTags = () => {
 
   const columns = [
     { title: 'Tag', dataIndex: 'tag', key: 'tag' },
-    // { title: 'Active', dataIndex: 'isActive', key: 'isActive', render: (text, record) => <Switch checked={record.isActive} disabled /> },
+    { title: 'Active', dataIndex: 'isActive', key: 'isActive', render: (text, record) => <Switch checked={record.isActive} disabled /> },
     // { title: 'Created At', dataIndex: 'createdAt', key: 'createdAt' },
     {
       title: 'Actions',
@@ -121,9 +121,9 @@ const PreferenceTags = () => {
             <Item label="Tag" name="tag" rules={[{ required: true, message: 'Please input the tag name!' }]}>
               <Input />
             </Item>
-            {/*<Item label="Active" name="isActive" valuePropName="checked">*/}
-            {/*  <Switch />*/}
-            {/*</Item>*/}
+            <Item label="Active" name="isActive" valuePropName="checked">
+              <Switch />
+            </Item>
             <div className="flex justify-end">
               <Button onClick={() => setIsModalVisible(false)} className="mr-2">
                 Cancel

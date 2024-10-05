@@ -54,7 +54,7 @@ const DeleteActivity = () => {
                 </div>
             )}
 
-            {/* Activities List */}
+            {/* Activity List */}
             <ul className="space-y-4">
                 {activities.map(activity => (
                     <li key={activity._id} className="flex items-center justify-between bg-white shadow-md p-4 rounded-lg">
