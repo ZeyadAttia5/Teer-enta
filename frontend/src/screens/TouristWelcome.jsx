@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import TouristInstructionCard from "../components/TouristInstructionCard";
 import TouristNavBar from "../components/TouristNavBar";
-import Sidebar from "../components/Sidebar";
+
 import airplaneImage from "../assets/airplane.png";
 import bedroom from "../assets/bedroom.png";
 import banat from "../assets/banat.png";
 import { Fade } from "react-awesome-reveal";
-import { Button } from "antd";
+
 
 const cards = [
   {
@@ -33,27 +33,11 @@ const cards = [
 ];
 
 const TouristWelcome = () => {
-  const [drawerVisible, setDrawerVisible] = useState(false);
-
-  const showDrawer = () => {
-    setDrawerVisible(true);
-  };
-
-  const onClose = () => {
-    setDrawerVisible(false);
-  };
+ 
 
   return (
     <div className="relative">
       <div className='relative bg-[#075B4C] z-10 overflow-scroll size-full flex flex-col items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
-        <div className="absolute top-24 left-4 z-20">
-          {/* Floating Button */}
-          <Button type="primary" onClick={showDrawer}>
-            Show 
-          </Button>
-
-          <Sidebar visible={drawerVisible} onClose={onClose} />
-        </div>
         
         <TouristNavBar />
         <Fade

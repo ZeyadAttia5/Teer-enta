@@ -1,9 +1,10 @@
 import "./index.css";
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import DeleteUser from "./components/deleteUser.js";
 import AddTourismGovernor from "./components/addTourismGovernor.js";
 import AddAdmin from "./components/addAdmin.js";
-import {Toaster} from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import Signup from "./screens/signup/Signup.js";
 import Login from "./screens/login/login.js";
 import Profile from "./screens/profile/profile.js";
@@ -36,49 +37,95 @@ import TourGuideItinerary from "./screens/Itinerary/ItineraryScreen.jsx";
 import PreferenceTags from "./screens/Itinerary/PrefrenceTags.tsx";
 import ActivityCategories from "./screens/Activity/ActivityCategories.tsx";
 import Tags from "./screens/Tags.tsx";
+import DrawerBar from "./components/Drawer.js";
+import TouristNavBar from "./components/TouristNavBar.jsx";
 
 function App() {
-    return (
-        <div className="App">
-            <Router>
-                <Routes>
-                    <Route path="/" element={<TouristWelcome/>}/> // t
-                    <Route path="/signup" element={<Signup/>}/>
-                    <Route path="/login" element={<Login/>}/>
-                    <Route path="/profile" element={<Profile/>}/>
-                    <Route path="/create-activity" element={<CreateActivity/>}/>
-                    <Route path="/view-activity" element={<ViewActivity/>}/>
-                    {/*<Route path="/update-activity/:id" element={<UpdateActivity />} />*/}
-                    {/*<Route path="/delete-activity/:id" element={<DeleteActivity />} />*/}
-                    {/*<Route path="/view-activities" element={<ViewActivity />} /> */}
-                    {/*<Route path="/update-activity" element={<UpdateActivity />} />*/}
-                    {/*<Route path="/delete-activity" element={<DeleteActivity />} />*/}
-                    <Route path="/preference-tags" element={<PreferenceTags/>}/>
-                    <Route path="/activity-categories" element={<ActivityCategories/>}/>
-                    <Route path="/tags" element={<Tags/>}/>
-                    <Route path="/touristItinerary/create" element={<CreateTouristItinerary/>}/>
-                    <Route path="/touristItinerary/view" element={<ReadTouristItinerary/>}/>
-                    <Route path="/touristItinerary" element={<ReadAllTouristItinerary/>}/>
-                    <Route path="/touristItinerary/update" element={<UpdateTouristItinerary/>}/>
-                    <Route path="/activity" element={<Activity/>}/>
-                    <Route path="/historicalPlace" element={<ReadHistoriaclPlaces/>}/>
-                    <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces/>}/>
-                    <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces/>}/>
-                    <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces/>}/>
-                    <Route path="/allUsers" element={<AllUsers/>}/>
-                    <Route path="/pendingUsers" element={<PendingUsers/>}/>
-                    <Route path="/addUser" element={<AddUser/>}/>
-                    <Route path="/products" element={<ProductGrid/>}/>
-                    <Route path="/product/:id" element={<ProductDetails/>}/>
-                    <Route path="/admin/product/form" element={<AdminProductForm/>}/>
-                    <Route path="/admin/products" element={<AdminProductGrid/>}/>
-                    <Route path="/admin/edit-product/:productId" element={<EditProductForm/>}/>
-                    <Route path="/tourguide-itinerary" element={<TourGuideItinerary/>}/>
-                </Routes>
-                <Toaster/>
-            </Router>
-        </div>
-    );
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  const showDrawer = () => {
+    setDrawerVisible(true);
+  };
+
+  const onClose = () => {
+    setDrawerVisible(false);
+  };
+
+  const [flag, setFlag] = useState(false);
+
+  return (
+    <div className="App relative">
+      <Router>
+        {!flag && (
+          <DrawerBar
+            showDrawer={showDrawer}
+            drawerVisible={drawerVisible}
+            onClose={onClose}
+          />
+        )}
+        {/* {!flag && <TouristNavBar />} */}
+        <Routes>
+          <Route path="/" element={<TouristWelcome />} /> // t
+          <Route path="/signup" element={<Signup setFlag={setFlag} />} />
+          <Route path="/login" element={<Login setFlag={setFlag} />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/create-activity" element={<CreateActivity />} />
+          <Route path="/view-activity" element={<ViewActivity />} />
+          {/*<Route path="/update-activity/:id" element={<UpdateActivity />} />*/}
+          {/*<Route path="/delete-activity/:id" element={<DeleteActivity />} />*/}
+          {/*<Route path="/view-activities" element={<ViewActivity />} /> */}
+          {/*<Route path="/update-activity" element={<UpdateActivity />} />*/}
+          {/*<Route path="/delete-activity" element={<DeleteActivity />} />*/}
+          <Route path="/preference-tags" element={<PreferenceTags />} />
+          <Route path="/activity-categories" element={<ActivityCategories />} />
+          <Route path="/tags" element={<Tags />} />
+          <Route
+            path="/touristItinerary/create"
+            element={<CreateTouristItinerary />}
+          />
+          <Route
+            path="/touristItinerary/view"
+            element={<ReadTouristItinerary />}
+          />
+          <Route
+            path="/touristItinerary"
+            element={<ReadAllTouristItinerary />}
+          />
+          <Route
+            path="/touristItinerary/update"
+            element={<UpdateTouristItinerary />}
+          />
+          <Route path="/activity" element={<Activity />} />
+          <Route path="/historicalPlace" element={<ReadHistoriaclPlaces />} />
+          <Route
+            path="/historicalPlace/create"
+            element={<CreateHistoricalPlaces />}
+          />
+          <Route
+            path="/historicalPlace/update/:id"
+            element={<UpdateHistoricalPlaces />}
+          />
+          <Route
+            path="/historicalPlace/delete/:id"
+            element={<DeleteHistoricalPlaces />}
+          />
+          <Route path="/allUsers" element={<AllUsers />} />
+          <Route path="/pendingUsers" element={<PendingUsers />} />
+          <Route path="/addUser" element={<AddUser />} />
+          <Route path="/products" element={<ProductGrid />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/admin/product/form" element={<AdminProductForm />} />
+          <Route path="/admin/products" element={<AdminProductGrid />} />
+          <Route
+            path="/admin/edit-product/:productId"
+            element={<EditProductForm />}
+          />
+          <Route path="/tourguide-itinerary" element={<TourGuideItinerary />} />
+        </Routes>
+        <Toaster />
+      </Router>
+    </div>
+  );
 }
 
 export default App;
