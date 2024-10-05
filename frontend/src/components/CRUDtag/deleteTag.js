@@ -3,11 +3,17 @@ import axios from 'axios';
 
 const DeleteTag = ({ tagId, onDelete }) => {
     const [message, setMessage] = useState('');
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     // Deleting the tag by its ID
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost:8000/tag/delete/${tagId}`);
+            await axios.delete(`http://localhost:8000/tag/delete/${tagId}`,{
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             setMessage('Tag deleted successfully!');
             onDelete(tagId); // Notify parent component to remove the tag from the list
         } catch (error) {

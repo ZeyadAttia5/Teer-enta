@@ -59,12 +59,11 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
       setMessage(response.data.message);
+      navigate("/");
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
       return false;
     }
-
-    navigate("/");
   };
 
   function isValid() {

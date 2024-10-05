@@ -16,7 +16,9 @@ const EditProductForm = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); 
-  const [success, setSuccess] = useState(null); 
+  const [success, setSuccess] = useState(null);
+  const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     // Fetch product data by ID
@@ -51,7 +53,11 @@ const EditProductForm = () => {
 
     try {
       const backURL = process.env.REACT_APP_BACKEND_URL;
-      await axios.put(`${backURL}/product/update/${productId}`, product); 
+      await axios.put(`${backURL}/product/update/${productId}`, product ,{
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       setSuccess('Product successfully updated!');
       // Navigate back to the admin grid after successful update
       setTimeout(() => navigate('/product/adminGrid'), 1000); // Redirect after a short delay

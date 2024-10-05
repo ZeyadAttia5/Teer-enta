@@ -13,6 +13,8 @@ const UpdateTag = () => {
     }); // State for the selected tag
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(true); // Loading state for async fetch
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     // Fetch tag details
     useEffect(() => {
@@ -44,7 +46,12 @@ const UpdateTag = () => {
         e.preventDefault();
     
         try {
-            await axios.put(`http://localhost:8000/tag/update/${tag._id}`, tag);
+            await axios.put(`http://localhost:8000/tag/update/${tag._id}`, tag ,
+                {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             setMessage('Tag updated successfully!');
         } catch (error) {
             const errorMsg = error.response ? error.response.data.message : error.message;

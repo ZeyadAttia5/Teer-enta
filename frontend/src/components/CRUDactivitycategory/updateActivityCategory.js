@@ -7,6 +7,8 @@ const UpdateActivityCategory = () => {
   const [description, setDescription] = useState('');
   const [isActive, setIsActive] = useState(true);
   const [message, setMessage] = useState('');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const accessToken = localStorage.getItem('accessToken');
 
   const handleUpdate = async () => {
     try {
@@ -14,6 +16,10 @@ const UpdateActivityCategory = () => {
         category: categoryName,
         description,
         isActive,
+      } ,{
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        }
       });
       setMessage(response.data.message);
     } catch (error) {

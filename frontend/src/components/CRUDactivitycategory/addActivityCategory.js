@@ -5,7 +5,9 @@ const AddActivityCategory = () => {
     const [category, setCategory] = useState(''); 
     const [description, setDescription] = useState(''); 
     const [isActive, setIsActive] = useState(true); 
-    const [message, setMessage] = useState(''); 
+    const [message, setMessage] = useState('');
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     const handleSubmit = async (e) => {
         e.preventDefault(); 
@@ -15,6 +17,11 @@ const AddActivityCategory = () => {
                 category,
                 description,
                 isActive
+            } ,
+                {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
             });
 
             setMessage(response.data.message);
