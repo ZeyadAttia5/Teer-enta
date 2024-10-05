@@ -12,6 +12,8 @@ const CreateTouristItinerary = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [error, setError] = useState("");
+  const user  = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -99,6 +101,10 @@ const CreateTouristItinerary = () => {
     axios
       .post(URL + "/touristItenerary/create", {
         ...itinerary,
+        }, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        }
       })
       .then((response) => {
         console.log("Itinerary created:", response.data);

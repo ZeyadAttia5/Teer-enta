@@ -75,21 +75,28 @@ const UpdateActivity = () => {
         if (!validatePrice()) return;
 
         try {
-            await axios.put(`http://localhost:8000/activity/update/${activity._id}`, {
+            // Update the activity with the selected tags
+            await axios.put(`${Url}/activity/update/${activity._id}`, {
                 ...activity,
                 tags: selectedTags
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                } ,
+                tags: selectedTags.map(tag => tag._id)  // Send only tag IDs
             });
             setMessage('Activity updated successfully!');
         } catch (error) {
             const errorMsg = error.response ? error.response.data : error.message;
             setMessage(`Error updating activity: ${errorMsg}`);
-            console.error(error); // Log error for debugging
         }
     };
 
     const handleAddTag = () => {
-        if (tagToAdd && !selectedTags.includes(tagToAdd)) {
-            setSelectedTags([...selectedTags, tagToAdd]);
+        // Find the tag object by its ID and add it if it's not already selected
+        const tagObject = tags.find(tag => tag._id === tagToAdd);
+        if (tagObject && !selectedTags.some(tag => tag._id === tagObject._id)) {
+            setSelectedTags([...selectedTags, tagObject]);
         }
         setTagToAdd('');
     };
@@ -101,6 +108,22 @@ const UpdateActivity = () => {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toISOString().split('T')[0];
+    };
+
+    // Google Maps configuration
+    const mapContainerStyle = {
+        height: "400px",
+        width: "100%"
+    };
+
+    const center = {
+        lat: location.lat || -34.397, // Default center
+        lng: location.lng || 150.644 // Default center
+    };
+
+    const handleMapClick = (event) => {
+        setLocation({ lat: event.latLng.lat(), lng: event.latLng.lng() });
+
     };
 
     if (loading) return <div>Loading...</div>;
@@ -140,14 +163,18 @@ const UpdateActivity = () => {
                         placeholder="Time (e.g., 10:00 AM)"
                         className="w-full p-2 mb-4 border border-gray-300 rounded"
                     />
-                    <input
-                        type="text"
-                        name="location"
-                        value={activity.location}
-                        onChange={handleChange}
-                        placeholder="Location"
-                        className="w-full p-2 mb-4 border border-gray-300 rounded"
-                    />
+                    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+                        <GoogleMap
+                            mapContainerStyle={mapContainerStyle}
+                            zoom={8}
+                            center={center}
+                            onClick={handleMapClick}
+                        >
+                            {location.lat && location.lng && (
+                                <Marker position={location} />
+                            )}
+                        </GoogleMap>
+                    </LoadScript>
                     <input
                         type="text"
                         name="price.min"
@@ -188,7 +215,7 @@ const UpdateActivity = () => {
                             <option value="" disabled>Select Tag</option>
                             {tags.map(tag => (
                                 <option key={tag._id} value={tag._id}>
-                                    {tag.name}
+                                    {tag.tag}
                                 </option>
                             ))}
                         </select>
@@ -204,7 +231,7 @@ const UpdateActivity = () => {
                     <div className="flex flex-wrap gap-2 mb-4">
                         {selectedTags.length > 0 ? selectedTags.map(tag => (
                             <span key={tag._id} className="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full cursor-pointer">
-                                {tag.name}
+                                {tag.tag}
                                 <DeleteTag tagId={tag._id} onDelete={() => handleRemoveTag(tag._id)} />
                             </span>
                         )) : 'No tags selected'}

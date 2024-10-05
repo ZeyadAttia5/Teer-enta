@@ -1,6 +1,9 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+
+const URL = process.env.REACT_APP_BACKEND_URL;
 
 function ReadTouristItinerary() {
   const [itinerary, setItinerary] = useState([]);
@@ -8,6 +11,18 @@ function ReadTouristItinerary() {
   const navigate = useNavigate();
 
   const location = useLocation();
+
+  const [isAdmin, setIsAdmin] = useState("");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem("accessToken");
+  const userRole = user.userRole;
+
+  useEffect(() => {
+    if (userRole === "Admin") {
+      setIsAdmin(true);
+    }
+  }, [userRole]); // Add userRole as a dependency
+
   useEffect(() => {
     if (location.state && location.state.itinerary) {
       setItinerary(location.state.itinerary);
@@ -17,13 +32,18 @@ function ReadTouristItinerary() {
 
   const handleDelete = async () => {
     try {
-      // Replace with your API endpoint
-      const response = await fetch(URL + `/touristItenerary/${itinerary.id}`, {
-        method: "DELETE",
-      });
+      const response = await axios.delete(
+        `${URL}/touristItenerary/delete/${itinerary._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-      if (response.ok) {
+      if (response.status === 200) {
         setItinerary(null); // Clear the itinerary from the state
+        navigate("/touristItinerary");
       } else {
         console.error("Failed to delete the itinerary");
       }
@@ -33,7 +53,7 @@ function ReadTouristItinerary() {
   };
 
   const handleEdit = () => {
-    navigate("/update-tourist-itinerary", { state: { itinerary } });
+    navigate("/touristItinerary/update", { state: { itinerary } });
   };
 
   if (isEmpty) {
@@ -135,20 +155,22 @@ function ReadTouristItinerary() {
               <strong>No Tags Available</strong>
             </p>
           )}
-          <div className="flex space-x-4 mt-4">
-            <button
-              onClick={handleEdit}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
-            >
-              Edit Itinerary
-            </button>
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300"
-            >
-              Delete Itinerary
-            </button>
-          </div>
+          {isAdmin && (
+            <div className="flex space-x-4 mt-4">
+              <button
+                onClick={handleEdit}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+              >
+                Edit Itinerary
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300"
+              >
+                Delete Itinerary
+              </button>
+            </div>
+          )}
         </>
       ) : (
         <p className="text-lg text-gray-500 text-center my-4">

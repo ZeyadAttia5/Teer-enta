@@ -56,16 +56,14 @@ function Login() {
       const response = await axios.post(`${URL}/auth/login`, details);
       user = response.data.user;
       accessToken = response.data.accessToken;
-      setMessage(response.data.message);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
+      setMessage(response.data.message);
       navigate("/");
-      
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
       return false;
     }
-
   };
 
   function isValid() {

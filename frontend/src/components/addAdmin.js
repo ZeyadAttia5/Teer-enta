@@ -5,12 +5,18 @@ const AddAdmin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const accessToken = localStorage.getItem('accessToken');
 
   const handleAddAdmin = async (e) => {
     e.preventDefault(); // Prevent the default form submission
 
     try {
-      const response = await axios.post('http://localhost:8000/account/create', { username, password });
+      const response = await axios.post('http://localhost:8000/account/create', { username, password },{
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        }
+      });
       setMessage(response.data.message);
       setUsername('');
       setPassword('');

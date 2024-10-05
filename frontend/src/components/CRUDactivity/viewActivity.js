@@ -13,6 +13,8 @@ const ViewActivity = () => {
     const [categories, setCategories] = useState([]);
     const [tags, setTags] = useState([]);
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     const fetchActivities = async () => {
         try {
@@ -49,7 +51,11 @@ const ViewActivity = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:8000/activity/delete/${id}`);
+            await axios.delete(`http://localhost:8000/activity/delete/${id}` ,{
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             message.success('Activity deleted successfully!');
             fetchActivities();
         } catch (error) {
@@ -105,7 +111,12 @@ const ViewActivity = () => {
 
     const handleUpdateSubmit = async (id) => {
         try {
-            await axios.put(`http://localhost:8000/activity/update/${id}`, formData);
+            await axios.put(`http://localhost:8000/activity/update/${id}`, formData ,{
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+
+            });
             message.success('Activity updated successfully!');
             setEditingActivityId(null);
             fetchActivities();

@@ -25,7 +25,7 @@ import {
   updateItinerary,
   deleteItinerary,
 } from "../../api/itinerary.ts";
-import { getActivities } from "../../api/activities.ts";
+import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
 
 import moment from "moment";
@@ -60,7 +60,7 @@ const ItineraryScreen = () => {
   const budgets = [...new Set(itineraries.map((itin) => itin.price))];
   const languages = [...new Set(itineraries.map((itin) => itin.language))];
 
-  // New State Variables for Activities and Preference Tags
+  // New State Variables for Activity and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
 
@@ -133,7 +133,7 @@ const ItineraryScreen = () => {
   const fetchActivities = async () => {
     try {
       const data = await getActivities();
-      setActivitiesList(data);
+      setActivitiesList(data.data);
     } catch (error) {
       message.error("Failed to fetch activities");
     }
@@ -142,7 +142,7 @@ const ItineraryScreen = () => {
   const fetchPreferenceTags = async () => {
     try {
       const data = await getPreferenceTags();
-      setPreferenceTagsList(data);
+      setPreferenceTagsList(data.data);
     } catch (error) {
       message.error("Failed to fetch preference tags");
     }
@@ -547,7 +547,7 @@ const ItineraryScreen = () => {
 
           <Divider />
 
-          {/* Activities */}
+          {/* Activity */}
           <Form.List name="activities">
             {(fields, { add, remove }) => (
               <>

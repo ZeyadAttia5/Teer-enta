@@ -15,6 +15,8 @@ const UpdateTouristItinerary = () => {
     itineraryData.activities || []
   );
   const [selectedTags, setSelectedTags] = useState(itineraryData.tags || []);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem("accessToken");
   const formatDate = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -76,11 +78,11 @@ const UpdateTouristItinerary = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    if (start < currentDate) {
-      setError("Start date must be after the current date.");
-      window.scrollTo(0, 0); // Scroll to top of the page
-      return;
-    }
+    // if (start < currentDate) {
+    //   setError("Start date must be after the current date.");
+    //   window.scrollTo(0, 0); // Scroll to top of the page
+    //   return;
+    // }
 
     if (end < start) {
       setError("End date must be after the start date.");
@@ -97,9 +99,17 @@ const UpdateTouristItinerary = () => {
     };
 
     axios
-      .put(URL + "/touristItenerary/update/" + itineraryData._id, {
-        ...itinerary,
-      })
+      .put(
+        URL + "/touristItenerary/update/" + itineraryData._id,
+        {
+          ...itinerary,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
       .then((response) => {
         console.log("Itinerary updated:", response.data);
         setError(""); // Clear any previous errors
@@ -110,9 +120,9 @@ const UpdateTouristItinerary = () => {
         document.querySelector(".container").prepend(successMessage);
         window.scrollTo(0, 0); // Scroll to top of the page
         // Redirect to read-all-tourist-itinerary
-        // setTimeout(() => {
-        //   window.location.href = "/read-all-tourist-itinerary";
-        // }, 5000);
+        setTimeout(() => {
+          window.location.href = "/touristItinerary";
+        }, 3000);
       })
       .catch((error) => {
         console.error("There was an error creating the itinerary!", error);

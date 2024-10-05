@@ -1,67 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
 const CreateActivity = () => {
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
-    const [location, setLocation] = useState('');
+    const [location, setLocation] = useState({ lat: null, lng: null });
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [isBookingOpen, setIsBookingOpen] = useState(true);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-const [category, setCategory] = useState('');
-    const [tags, setTags] = useState([]); // For tags
-    const [selectedTag, setSelectedTag] = useState(''); // For current tag input
-    const [discounts, setDiscounts] = useState([{ discount: '', description: '' }]); // For discounts
-    const [categories, setCategories] = useState([]); // Categories list
+    // Removed category state
+    const [tags, setTags] = useState([]);
+    const [selectedTag, setSelectedTag] = useState('');
+    const [discounts, setDiscounts] = useState([{ discount: '', description: '' }]);
+    const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const navigate = useNavigate();
+    const [availableTags, setAvailableTags] = useState([]);
 
+    const Url = process.env.REACT_APP_BACKEND_URL;
+    const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
     const accessToken = localStorage.getItem('accessToken');
-
-    // Fetch available tags (assuming you have a route for this)
-    const [availableTags, setAvailableTags] = useState([]);
 
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/tag');
-                setAvailableTags(response.data); // Assuming the response contains an array of tags
+                const response = await axios.get(`${Url}/preferenceTag`);
+                setAvailableTags(response.data);
             } catch (error) {
                 console.error('Error fetching tags:', error);
             }
         };
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/activityCategory');
-                setCategories(response.data); // Assuming the response contains an array of categories
+                const response = await axios.get(`${Url}/activityCategory`);
+                setCategories(response.data);
             } catch (error) {
                 console.error('Error fetching categories:', error);
             }
-        }
+        };
         fetchTags();
         fetchCategories();
-    }, []);
+    }, [Url]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validation for min and max price
         if (parseFloat(minPrice) > parseFloat(maxPrice)) {
             setError('Minimum price cannot be greater than maximum price.');
             return;
         }
 
-        // Validation for discount
         for (const discount of discounts) {
-            if (discount.discount < 0 || discount.discount > 100) {
+            if (discount.discount === '' || discount.description === '') {
+                setError('All discount fields must be filled.');
+                return;
+            }
+            if (parseFloat(discount.discount) < 0 || parseFloat(discount.discount) > 100) {
                 setError('Discount must be between 0 and 100.');
                 return;
             }
+        }
+
+        if (!selectedCategory) {
+            setError('Please select a category.');
+            return;
+        }
+
+        if (!location.lat || !location.lng) {
+            setError('Please select a location on the map.');
+            return;
         }
 
         setError('');
@@ -77,31 +89,34 @@ const [category, setCategory] = useState('');
                     max: parseFloat(maxPrice),
                 },
                 isBookingOpen,
-                category,
+                category: selectedCategory,
                 tags,
-                specialDiscounts: discounts.filter(d => d.discount && d.description),
+                specialDiscounts: discounts.filter(d => d.discount !== '' && d.description !== ''),
                 createdBy: user._id,
             };
 
             await axios.post(
-                'http://localhost:8000/activity/create',
-                newActivity ,
+                `${Url}/activity/create`,
+                newActivity,
                 {
-                    headers: {
+                    headers:{
                         Authorization: `Bearer ${accessToken}`,
                     },
-                });
+                }
+            );
             setMessage('Activity created successfully!');
-
             setTimeout(() => {
                 navigate('/view-activities');
             }, 2000);
         } catch (error) {
-            setMessage('Error creating activity: ' + error.response?.data?.message);
+            if (error.response && error.response.data && error.response.data.message) {
+                setError('Error creating activity: ' + error.response.data.message);
+            } else {
+                setError('Error creating activity: ' + error.message);
+            }
         }
     };
 
-    // Tag management
     const handleAddTag = () => {
         if (selectedTag && !tags.includes(selectedTag)) {
             setTags([...tags, selectedTag]);
@@ -113,7 +128,6 @@ const [category, setCategory] = useState('');
         setTags(tags.filter(tag => tag !== tagToRemove));
     };
 
-    // Discount management
     const handleDiscountChange = (index, field, value) => {
         const updatedDiscounts = discounts.map((discount, i) => (
             i === index ? { ...discount, [field]: value } : discount
@@ -127,6 +141,21 @@ const [category, setCategory] = useState('');
 
     const removeDiscount = (index) => {
         setDiscounts(discounts.filter((_, i) => i !== index));
+    };
+
+    // Google Maps configuration
+    const mapContainerStyle = {
+        height: "400px",
+        width: "100%"
+    };
+
+    const center = {
+        lat: location.lat || -34.397, // Default center
+        lng: location.lng || 150.644 // Default center
+    };
+
+    const handleMapClick = (event) => {
+        setLocation({ lat: event.latLng.lat(), lng: event.latLng.lng() });
     };
 
     return (
@@ -158,14 +187,6 @@ const [category, setCategory] = useState('');
                     required
                 />
                 <input
-                    type="text"
-                    placeholder="Location"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="border rounded p-2 w-full"
-                    required
-                />
-                <input
                     type="number"
                     placeholder="Min Price"
                     value={minPrice}
@@ -181,16 +202,31 @@ const [category, setCategory] = useState('');
                     className="border rounded p-2 w-full"
                     required
                 />
-                <label>
+                <label className="flex items-center">
                     <input
                         type="checkbox"
                         checked={isBookingOpen}
                         onChange={() => setIsBookingOpen(!isBookingOpen)}
+                        className="mr-2"
                     />
                     Booking Open
                 </label>
 
-                {/* Category input */}
+                {/* Google Map for location selection */}
+                <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+                    <GoogleMap
+                        mapContainerStyle={mapContainerStyle}
+                        zoom={8}
+                        center={center}
+                        onClick={handleMapClick}
+                    >
+                        {location.lat && location.lng && (
+                            <Marker position={location} />
+                        )}
+                    </GoogleMap>
+                </LoadScript>
+
+                {/* Category Selection */}
                 <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
@@ -205,7 +241,7 @@ const [category, setCategory] = useState('');
                     ))}
                 </select>
 
-                {/* Tags input */}
+                {/* Tags Selection */}
                 <div>
                     <select
                         value={selectedTag}
@@ -215,7 +251,7 @@ const [category, setCategory] = useState('');
                         <option value="">Select Tag</option>
                         {availableTags.map(tag => (
                             <option key={tag._id} value={tag._id}>
-                                {tag.name}
+                                {tag.tag}
                             </option>
                         ))}
                     </select>
@@ -229,7 +265,7 @@ const [category, setCategory] = useState('');
                     <div className="mt-2">
                         {tags.map(tag => (
                             <div key={tag} className="inline-block mr-2">
-                                <span>{availableTags.find(t => t._id === tag)?.name || tag}</span>
+                                <span>{availableTags.find(t => t._id === tag)?.tag || tag}</span>
                                 <button
                                     type="button"
                                     onClick={() => handleRemoveTag(tag)}
@@ -242,7 +278,7 @@ const [category, setCategory] = useState('');
                     </div>
                 </div>
 
-                {/* Discounts input */}
+                {/* Special Discounts */}
                 {discounts.map((discount, index) => (
                     <div key={index} className="flex items-center space-x-4">
                         <input
@@ -252,6 +288,8 @@ const [category, setCategory] = useState('');
                             onChange={(e) => handleDiscountChange(index, 'discount', e.target.value)}
                             className="border rounded p-2 w-full"
                             required
+                            min="0"
+                            max="100"
                         />
                         <input
                             type="text"
@@ -278,6 +316,7 @@ const [category, setCategory] = useState('');
                     Add Discount
                 </button>
 
+                {/* Submit Button */}
                 <button
                     type="submit"
                     className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
@@ -290,5 +329,3 @@ const [category, setCategory] = useState('');
 };
 
 export default CreateActivity;
-
-
