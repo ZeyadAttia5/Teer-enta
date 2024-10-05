@@ -60,7 +60,7 @@ const ItineraryScreen = () => {
   const budgets = [...new Set(itineraries.map((itin) => itin.price))];
   const languages = [...new Set(itineraries.map((itin) => itin.language))];
 
-  // New State Variables for Activity and Preference Tags
+  // New State Variables for ActivityList and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
 
@@ -169,9 +169,9 @@ const ItineraryScreen = () => {
         startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
 
-      // console.log("The first Activity is: " + itinerary.activities[0].duration);
+      // console.log("The first ActivityList is: " + itinerary.activities[0].duration);
       const formattedActivities = itinerary.activities.map((act ) => ({
-        activity: act.activity ? act.activity._id : "Activity not found",
+        activity: act.activity ? act.activity._id : "ActivityList not found",
         duration: act.duration,
       }));
 
@@ -235,13 +235,13 @@ const ItineraryScreen = () => {
         activity: act.activity,
         duration: act.duration,
       }));
-      // console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
+      // console.log("The first ActivityList is: " + JSON.stringify(formattedActivities[0]));
 
       // formattedActivities.forEach((act, index) => { 
       //   act.activity = activitiesList.find((activity) => activity._id === values.activities[index].activity);
       // });
 
-      // console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
+      // console.log("The first ActivityList is: " + JSON.stringify(formattedActivities[0]));
 
       // Format locations
       const formattedLocations = values.locations
@@ -547,7 +547,7 @@ const ItineraryScreen = () => {
 
           <Divider />
 
-          {/* Activity */}
+          {/* ActivityList */}
           <Form.List name="activities">
             {(fields, { add, remove }) => (
               <>
@@ -558,7 +558,7 @@ const ItineraryScreen = () => {
                     style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
-                    {/* Activity Dropdown */}
+                    {/* ActivityList Dropdown */}
                     <Form.Item
                       {...restField}
                       name={[name, "activity"]}
@@ -675,7 +675,7 @@ const ItineraryScreen = () => {
                     style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
-                    {/* Activity Dropdown */}
+                    {/* ActivityList Dropdown */}
                     <Form.Item
                       {...restField}
                       name={[name, "activity"]}

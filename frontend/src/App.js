@@ -12,7 +12,7 @@ import CreateTouristItinerary from "./components/CRUDtouristItinerary/createTour
 import ReadTouristItinerary from "./components/CRUDtouristItinerary/readTouristItinerary.js";
 import ReadAllTouristItinerary from "./components/CRUDtouristItinerary/readAllTouristItinerary.js";
 import UpdateTouristItinerary from "./components/CRUDtouristItinerary/updateTouristItinerary.js";
-import Activity from "./screens/Activity/Activity.tsx"; // From feat/activities
+import ActivityList from "./screens/Activity/ActivityList.tsx"; // From feat/activities
 
 import TouristWelcome from "./screens/TouristWelcome.jsx";
 import ReadHistoriaclPlaces from "./components/historicalPlaces/readHistoriaclPlaces.jsx";
@@ -33,9 +33,9 @@ import TourGuideItinerary from "./screens/Itinerary/ItineraryScreen.jsx";
 import PreferenceTags from "./screens/Itinerary/PrefrenceTags.tsx";
 import ActivityCategories from "./screens/Activity/ActivityCategories.tsx";
 import Tags from "./screens/Tags.tsx";
-import Activities from "./screens/Activities.tsx";
 import DrawerBar from "./components/Drawer.js";
 import TouristNavBar from "./components/TouristNavBar.jsx";
+import AllActivitiesCRUD from "./screens/AllActivitiesCRUD.tsx";
 
 function App() {
     return (
@@ -46,20 +46,15 @@ function App() {
                     <Route path="/signup" element={<Signup/>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/profile" element={<Profile/>}/>
-                    
-                    {/*<Route path="/update-activity/:id" element={<UpdateActivity />} />*/}
-                    {/*<Route path="/delete-activity/:id" element={<DeleteActivity />} />*/}
-                    {/*<Route path="/view-activities" element={<ViewActivity />} /> */}
-                    {/*<Route path="/update-activity" element={<UpdateActivity />} />*/}
-                    {/*<Route path="/delete-activity" element={<DeleteActivity />} />*/}
                     <Route path="/preference-tags" element={<PreferenceTags/>}/>
+                    <Route path="/activities" element={<AllActivitiesCRUD/>}/>
                     <Route path="/activity-categories" element={<ActivityCategories/>}/>
                     <Route path="/tags" element={<Tags/>}/>
                     <Route path="/touristItinerary/create" element={<CreateTouristItinerary/>}/>
                     <Route path="/touristItinerary/view" element={<ReadTouristItinerary/>}/>
                     <Route path="/touristItinerary" element={<ReadAllTouristItinerary/>}/>
                     <Route path="/touristItinerary/update" element={<UpdateTouristItinerary/>}/>
-                    <Route path="/activity" element={<Activity/>}/>
+                    <Route path="/activity" element={<ActivityList/>}/>
                     <Route path="/historicalPlace" element={<ReadHistoriaclPlaces/>}/>
                     <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces/>}/>
                     <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces/>}/>

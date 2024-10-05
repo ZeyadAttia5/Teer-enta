@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, DatePicker, TimePicker, Switch, Select, notification, Popconfirm, InputNumber } from 'antd';
+import { Table, Button, Modal, Form, Input, DatePicker, TimePicker, Switch, Select, notification, Popconfirm, InputNumber, Row, Col, Card } from 'antd';
 import { getActivities, createActivity, updateActivity, deleteActivity } from '../api/activity.ts'; // Replace with actual API path
 import { getActivityCategories } from '../api/activityCategory.ts';
-import { getTags } from '../api/tags.ts';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import 'tailwindcss/tailwind.css';
 import moment from 'moment';
-import {GoogleMap, LoadScript, Marker} from "@react-google-maps/api";
-import {getPreferenceTags} from "../api/preferenceTags.ts";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { getPreferenceTags } from "../api/preferenceTags.ts";
 
 const { Item } = Form;
 const { Option } = Select;
 
-const Activities = () => {
+const AllActivitiesCRUD = () => {
     const [activities, setActivities] = useState([]);
     const [categories, setCategories] = useState([]);
     const [preferenceTags, setPreferenceTags] = useState([]);
@@ -79,6 +78,7 @@ const Activities = () => {
             priceMax: activity.price?.max,
             preferenceTags: activity.preferenceTags.map(tag => tag._id),
             category: activity.category?._id,
+            specialDiscounts: activity.specialDiscounts,
         });
         setLocation(activity.location);
         setIsModalVisible(true);
@@ -95,7 +95,6 @@ const Activities = () => {
     };
 
     const handleFormSubmit = async (values) => {
-        // console.log(values);
         const activityData = {
             ...values,
             date: values.date.toISOString(),
@@ -111,11 +110,9 @@ const Activities = () => {
 
         try {
             if (isEditing && currentActivity) {
-                // console.log("here",activityData);
                 await updateActivity(activityData, currentActivity._id);
                 notification.success({ message: 'Activity updated successfully' });
             } else {
-                // console.log("here",activityData);
                 await createActivity(activityData);
                 notification.success({ message: 'Activity created successfully' });
             }
@@ -125,6 +122,7 @@ const Activities = () => {
             notification.error({ message: 'Error submitting activity' });
         }
     };
+
     const mapContainerStyle = {
         height: "400px",
         width: "100%"
@@ -137,7 +135,6 @@ const Activities = () => {
 
     const handleMapClick = (event) => {
         setLocation({ lat: event.latLng.lat(), lng: event.latLng.lng() });
-
     };
 
     const columns = [
@@ -170,28 +167,47 @@ const Activities = () => {
             render: (category) => category?.category || 'N/A',
         },
         {
-            title: 'PreferenceTags',
+            title: 'Preference Tags',
             dataIndex: 'preferenceTags',
             key: 'preferenceTags',
             render: (preferenceTags) => preferenceTags.map(tag => tag.tag).join(', '),
+        },
+        {
+            title: 'Special Discounts',
+            dataIndex: 'specialDiscounts',
+            key: 'specialDiscounts',
+            render: (discounts) => (
+                <Row gutter={16}>
+                    {discounts.map((discount, index) => (
+                        <Col span={8} key={index}>
+                            <Card title={`${discount.discount}%`} style={{ marginBottom: 16 }}>
+                                <p>{discount.Description}</p>
+                                <p>
+                                    <strong>Status:</strong> {discount.isAvailable ? 'Available' : 'Not Available'}
+                                </p>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            ),
         },
         {
             title: 'Actions',
             key: 'actions',
             render: (record) => (
                 <span>
-          <Button
-              icon={<EditOutlined />}
-              onClick={() => handleEditActivity(record)}
-              className="mr-2"
-          />
-          <Popconfirm
-              title="Are you sure you want to delete this activity?"
-              onConfirm={() => handleDeleteActivity(record._id)}
-          >
-            <Button icon={<DeleteOutlined />} danger />
-          </Popconfirm>
-        </span>
+                    <Button
+                        icon={<EditOutlined />}
+                        onClick={() => handleEditActivity(record)}
+                        className="mr-2"
+                    />
+                    <Popconfirm
+                        title="Are you sure you want to delete this activity?"
+                        onConfirm={() => handleDeleteActivity(record._id)}
+                    >
+                        <Button icon={<DeleteOutlined />} danger />
+                    </Popconfirm>
+                </span>
             ),
         },
     ];
@@ -264,7 +280,7 @@ const Activities = () => {
                             ))}
                         </Select>
                     </Item>
-                    <Item label="PreferenceTags" name="preferenceTags">
+                    <Item label="Preference Tags" name="preferenceTags">
                         <Select mode="multiple" placeholder="Select Tags">
                             {preferenceTags.map((tag) => (
                                 <Option key={tag._id} value={tag._id}>
@@ -273,6 +289,56 @@ const Activities = () => {
                             ))}
                         </Select>
                     </Item>
+
+                    {/* Special Discounts Section */}
+                    <Item label="Special Discounts">
+                        <Form.List name="specialDiscounts">
+                            {(fields, { add, remove }) => (
+                                <>
+                                    {fields.map(({ key, name, fieldKey, ...restField }) => (
+                                        <div key={key} style={{ display: 'flex', marginBottom: 8 }}>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'discount']}
+                                                fieldKey={[fieldKey, 'discount']}
+                                                rules={[{ required: true, message: 'Missing discount' }]}
+                                                style={{ flex: 1 }}
+                                            >
+                                                <InputNumber placeholder="Discount (%)" />
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'Description']}
+                                                fieldKey={[fieldKey, 'Description']}
+                                                rules={[{ required: true, message: 'Missing description' }]}
+                                                style={{ flex: 2, marginLeft: 8 }}
+                                            >
+                                                <Input placeholder="Description" />
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'isAvailable']}
+                                                fieldKey={[fieldKey, 'isAvailable']}
+                                                valuePropName="checked"
+                                                style={{ marginLeft: 8 }}
+                                            >
+                                                <Switch />
+                                            </Form.Item>
+                                            <Button type="link" onClick={() => remove(name)} style={{ marginLeft: 8 }}>
+                                                Remove
+                                            </Button>
+                                        </div>
+                                    ))}
+                                    <Form.Item>
+                                        <Button type="dashed" onClick={() => add()} block>
+                                            Add Discount
+                                        </Button>
+                                    </Form.Item>
+                                </>
+                            )}
+                        </Form.List>
+                    </Item>
+
                     <Button type="primary" htmlType="submit" className="bg-green-600">
                         {isEditing ? 'Update' : 'Create'}
                     </Button>
@@ -282,4 +348,4 @@ const Activities = () => {
     );
 };
 
-export default Activities;
+export default AllActivitiesCRUD;

@@ -8,7 +8,7 @@ exports.getActivities = async (req, res, next) => {
             .populate('category')
             .populate('preferenceTags');
         if (activities.length === 0) {
-            return res.status(404).json({message: 'No Activity found'});
+            return res.status(404).json({message: 'No ActivityList found'});
         }
         res.status(200).json(activities);
     } catch (err) {
@@ -23,7 +23,7 @@ exports.getActivity = async (req, res, next) => {
             .populate('category')
             .populate('preferenceTags');
         if (!activity) {
-            return res.status(404).json({message: 'Activity not found or Inactive'});
+            return res.status(404).json({message: 'ActivityList not found or Inactive'});
         }
         res.status(200).json(activity);
     } catch (err) {
@@ -38,7 +38,7 @@ exports.getMyActivities = async (req, res, next) => {
             .populate('category')
             .populate('preferenceTags');
         if (activities.length === 0) {
-            return res.status(404).json({message: 'No Activity found'});
+            return res.status(404).json({message: 'No ActivityList found'});
         }
         res.status(200).json(activities);
     } catch (err) {
@@ -57,7 +57,7 @@ exports.getUpcomingActivities = async (req, res, next) => {
             .populate('category')
             .populate('preferenceTags');
         if (activities.length === 0) {
-            return res.status(404).json({message: 'No upcoming Activity found'});
+            return res.status(404).json({message: 'No upcoming ActivityList found'});
         }
         res.status(200).json(activities);
     } catch (err) {
@@ -67,9 +67,8 @@ exports.getUpcomingActivities = async (req, res, next) => {
 
     exports.createActivity = async (req, res, next) => {
         try {
-            console.log(req.body);
             const activity = await Activity.create(req.body);
-            res.status(201).json({message: 'Activity created successfully', activity});
+            res.status(201).json({message: 'ActivityList created successfully', activity});
         } catch (err) {
             errorHandler.SendError(res, err);
         }
@@ -90,11 +89,11 @@ exports.updateActivity = async (req, res, next) => {
         );
 
         if (!updatedActivity) {
-            return res.status(404).json({message: 'Activity not found or inactive'});
+            return res.status(404).json({message: 'ActivityList not found or inactive'});
         }
 
         res.status(200).json({
-            message: 'Activity updated successfully',
+            message: 'ActivityList updated successfully',
             data: updatedActivity,
         });
     } catch (err) {
@@ -108,12 +107,12 @@ exports.deleteActivity = async (req, res, next) => {
 
         const activity = await Activity.findById(id);
         if (!activity) {
-            return res.status(404).json({message: 'Activity not found'});
+            return res.status(404).json({message: 'ActivityList not found'});
         }
 
         await Activity.findByIdAndDelete(id);
         res.status(200).json({
-            message: 'Activity deleted successfully',
+            message: 'ActivityList deleted successfully',
             data: activity
         });
     } catch (err) {
