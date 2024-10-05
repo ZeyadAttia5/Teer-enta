@@ -20,6 +20,9 @@ const [category, setCategory] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const navigate = useNavigate();
 
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
+
     // Fetch available tags (assuming you have a route for this)
     const [availableTags, setAvailableTags] = useState([]);
 
@@ -77,10 +80,17 @@ const [category, setCategory] = useState('');
                 category,
                 tags,
                 specialDiscounts: discounts.filter(d => d.discount && d.description),
-                createdBy: localStorage.getItem('userId'),
+                createdBy: user._id,
             };
 
-            await axios.post('http://localhost:8000/activity/create', newActivity);
+            await axios.post(
+                'http://localhost:8000/activity/create',
+                newActivity ,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
             setMessage('Activity created successfully!');
 
             setTimeout(() => {

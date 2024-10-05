@@ -40,6 +40,8 @@ function Login() {
       user = response.data.user;
       accessToken = response.data.accessToken;
       setMessage(response.data.message);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("user", JSON.stringify(user));
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
       return false;
