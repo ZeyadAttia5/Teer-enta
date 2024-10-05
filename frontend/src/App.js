@@ -7,10 +7,6 @@ import {Toaster} from "react-hot-toast";
 import Signup from "./screens/signup/Signup.js";
 import Login from "./screens/login/login.js";
 import Profile from "./screens/profile/profile.js";
-import CreateActivity from "./components/CRUDactivity/createActivity.js";
-import ViewActivity from "./components/CRUDactivity/viewActivity.js";
-import UpdateActivity from "./components/CRUDactivity/updateActivity.js";
-import DeleteActivity from "./components/CRUDactivity/deleteActivity.js";
 import CreateTouristItinerary from "./components/CRUDtouristItinerary/createTouristItinerary.js";
 import ReadTouristItinerary from "./components/CRUDtouristItinerary/readTouristItinerary.js";
 import ReadAllTouristItinerary from "./components/CRUDtouristItinerary/readAllTouristItinerary.js";
@@ -47,13 +43,6 @@ function App() {
                     <Route path="/signup" element={<Signup/>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/profile" element={<Profile/>}/>
-                    <Route path="/create-activity" element={<CreateActivity/>}/>
-                    <Route path="/view-activity" element={<ViewActivity/>}/>
-                    {/*<Route path="/update-activity/:id" element={<UpdateActivity />} />*/}
-                    {/*<Route path="/delete-activity/:id" element={<DeleteActivity />} />*/}
-                    {/*<Route path="/view-activities" element={<ViewActivity />} /> */}
-                    {/*<Route path="/update-activity" element={<UpdateActivity />} />*/}
-                    {/*<Route path="/delete-activity" element={<DeleteActivity />} />*/}
                     <Route path="/preference-tags" element={<PreferenceTags/>}/>
                     <Route path="/activities" element={<Activities/>}/>
                     <Route path="/activity-categories" element={<ActivityCategories/>}/>
