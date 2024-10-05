@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import DeleteTag from '../CRUDtag/deleteTag';
+// import DeleteTag from '../CRUDtag/deleteTag';
 
 const UpdateActivity = () => {
     const { id } = useParams();
@@ -232,7 +232,7 @@ const UpdateActivity = () => {
                         {selectedTags.length > 0 ? selectedTags.map(tag => (
                             <span key={tag._id} className="inline-block bg-gray-200 text-gray-700 px-3 py-1 rounded-full cursor-pointer">
                                 {tag.tag}
-                                <DeleteTag tagId={tag._id} onDelete={() => handleRemoveTag(tag._id)} />
+                                {/*<DeleteTag tagId={tag._id} onDelete={() => handleRemoveTag(tag._id)} />*/}
                             </span>
                         )) : 'No tags selected'}
                     </div>
