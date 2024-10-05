@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import DeleteTag from '../CRUDtag/deleteTag';
-import {GoogleMap, LoadScript, Marker} from "@react-google-maps/api";
 
 const UpdateActivity = () => {
     const { id } = useParams();
@@ -10,27 +9,22 @@ const UpdateActivity = () => {
     const [categories, setCategories] = useState([]);
     const [tags, setTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
-    const [location, setLocation] = useState({ lat: null, lng: null });
     const [message, setMessage] = useState('');
     const [tagToAdd, setTagToAdd] = useState('');
     const [loading, setLoading] = useState(true);
 
-    const Url = process.env.REACT_APP_BACKEND_URL;
-
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch activity details by ID
-                const activityRes = await axios.get(`${Url}/activity/67018de429b48f5bfd655002`);
+                const activityRes = await axios.get(`http://localhost:8000/activity/${id}`);
                 setActivity(activityRes.data);
-                setSelectedTags(activityRes.data.tags || []); // Pre-select the tags
-
-                // Fetch categories
-                const categoryRes = await axios.get(`${Url}/activityCategory`);
+                setSelectedTags(activityRes.data.tags || []);
+                
+                const categoryRes = await axios.get('http://localhost:8000/activityCategory');
                 setCategories(categoryRes.data);
+                console.log("dasd",categoryRes.data);
 
-                // Fetch all available tags
-                const tagRes = await axios.get(`${Url}/preferenceTag`);
+                const tagRes = await axios.get('http://localhost:8000/tag');
                 setTags(tagRes.data);
 
                 setLoading(false);
@@ -40,13 +34,13 @@ const UpdateActivity = () => {
             }
         };
         fetchData();
-    }, [id, Url]);
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
 
         if ((name === 'price.min' || name === 'price.max') && !/^\d*$/.test(value)) {
-            return; // Only allow numbers for price fields
+            return; // Only numbers allowed
         }
 
         if (name === 'price.min' || name === 'price.max') {
@@ -54,14 +48,6 @@ const UpdateActivity = () => {
                 ...activity,
                 price: {
                     ...activity.price,
-                    [name.split('.')[1]]: value
-                }
-            });
-        } else if (name === 'location.lat' || name === 'location.lng') {
-            setActivity({
-                ...activity,
-                location: {
-                    ...activity.location,
                     [name.split('.')[1]]: value
                 }
             });
@@ -92,6 +78,11 @@ const UpdateActivity = () => {
             // Update the activity with the selected tags
             await axios.put(`${Url}/activity/update/${activity._id}`, {
                 ...activity,
+                tags: selectedTags
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
                 tags: selectedTags.map(tag => tag._id)  // Send only tag IDs
             });
             setMessage('Activity updated successfully!');
@@ -107,11 +98,10 @@ const UpdateActivity = () => {
         if (tagObject && !selectedTags.some(tag => tag._id === tagObject._id)) {
             setSelectedTags([...selectedTags, tagObject]);
         }
-        setTagToAdd(''); // Reset the tag select input
+        setTagToAdd('');
     };
 
     const handleRemoveTag = (tagId) => {
-        // Remove the tag from the selectedTags list
         setSelectedTags(selectedTags.filter(tag => tag._id !== tagId));
     };
 
@@ -215,7 +205,7 @@ const UpdateActivity = () => {
                             </option>
                         ))}
                     </select>
-
+                    
                     <div className="flex items-center mb-4">
                         <select
                             value={tagToAdd}

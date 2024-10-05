@@ -99,7 +99,7 @@ const CreateActivity = () => {
                 `${Url}/activity/create`,
                 newActivity,
                 {
-                    headers: {
+                    headers:{
                         Authorization: `Bearer ${accessToken}`,
                     },
                 }

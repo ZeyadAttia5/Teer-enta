@@ -11,6 +11,8 @@ const AdminProductForm = () => {
     quantity: '',
   });
 
+  const user  = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
   const [loading, setLoading] = useState(false); // Loading state
   const [error, setError] = useState(null); // Error state
   const [success, setSuccess] = useState(null); // Success message state
@@ -32,7 +34,11 @@ const AdminProductForm = () => {
     try {
       const backURL = process.env.REACT_APP_BACKEND_URL;
       // Replace with your API endpoint
-      const response = await axios.post(`${backURL}/product/create`, product);
+      const response = await axios.post(`${backURL}/product/create`, product ,{
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       console.log('Product submitted:', response.data);
       setSuccess('Product successfully created!');
 
