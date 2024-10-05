@@ -8,8 +8,17 @@ const token = localStorage.getItem("accessToken");
 
 const getActivities = async () =>
     await axios.get<TActivity[]>(`${API_BASE_URL}/activity`);
+
+const getMyActivities = async () => {
+   return  await axios.get<TActivity[]>(`${API_BASE_URL}/activity/my`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+}
 const getUpcomingActivities = async () =>
    await axios.get<TActivity[]>(`${API_BASE_URL}/activity/upcoming`);
+
 const createActivity = async (activity: TActivity) =>
     // console.log(activity)
   await axios.post<TActivity>(`${API_BASE_URL}/activity/create`, activity ,{
@@ -17,6 +26,7 @@ const createActivity = async (activity: TActivity) =>
       Authorization: `Bearer ${token}`,
     },
   });
+
 const updateActivity = async (
   activity: TActivity,
   activityId: string | Number
@@ -26,6 +36,7 @@ const updateActivity = async (
       Authorization: `Bearer ${token}`,
     },
 });
+
 const deleteActivity = async (activityId: string | Number) =>
   await axios.delete<TActivity>(`${API_BASE_URL}/activity/delete/${activityId}`,{
     headers: {
@@ -39,4 +50,5 @@ export {
   updateActivity,
   deleteActivity,
   getUpcomingActivities,
+    getMyActivities
 };

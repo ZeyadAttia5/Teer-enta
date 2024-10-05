@@ -20,7 +20,7 @@ router.put("/update/:id" , isAuth  ,activityController.updateActivity);
 
 router.delete("/delete/:id",isAuth , activityController.deleteActivity);
 
-router.get("/:id", activityController.getActivity);
+router.get("/one/:id", activityController.getActivity);
 
 router.patch("/flagInappropriate/:id" ,isAuth , activityController.flagInappropriate)
 

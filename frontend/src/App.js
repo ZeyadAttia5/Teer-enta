@@ -35,7 +35,7 @@ import ActivityCategories from "./screens/Activity/ActivityCategories.tsx";
 import Tags from "./screens/Tags.tsx";
 import DrawerBar from "./components/Drawer.js";
 import TouristNavBar from "./components/TouristNavBar.jsx";
-import AllActivitiesCRUD from "./screens/AllActivitiesCRUD.tsx";
+import AllActivitiesCRUD from "./screens/Activity/AllActivitiesCRUD.tsx";
 
 function App() {
     const [flag, setFlag] = useState(false);
@@ -66,6 +66,7 @@ function App() {
                     <Route path="/profile" element={<Profile/>}/>
                     <Route path="/preference-tags" element={<PreferenceTags/>}/>
                     <Route path="/activities" element={<AllActivitiesCRUD/>}/>
+                    <Route path="/activities/my" element={<AllActivitiesCRUD/>}/>
                     <Route path="/activity-categories" element={<ActivityCategories/>}/>
                     <Route path="/tags" element={<Tags/>}/>
                     <Route path="/touristItinerary/create" element={<CreateTouristItinerary/>}/>

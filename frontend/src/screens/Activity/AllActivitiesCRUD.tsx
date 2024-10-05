@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, DatePicker, TimePicker, Switch, Select, notification, Popconfirm, InputNumber, Row, Col, Card } from 'antd';
-import { getActivities, createActivity, updateActivity, deleteActivity } from '../api/activity.ts'; // Replace with actual API path
-import { getActivityCategories } from '../api/activityCategory.ts';
+import {getActivities, createActivity, updateActivity, deleteActivity, getMyActivities} from '../../api/activity.ts'; // Replace with actual API path
+import { getActivityCategories } from '../../api/activityCategory.ts';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import 'tailwindcss/tailwind.css';
 import moment from 'moment';
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import { getPreferenceTags } from "../api/preferenceTags.ts";
+import { getPreferenceTags } from "../../api/preferenceTags.ts";
+import { useLocation } from 'react-router-dom';
 
 const { Item } = Form;
 const { Option } = Select;
@@ -22,13 +23,20 @@ const AllActivitiesCRUD = () => {
     const [currentActivity, setCurrentActivity] = useState(null);
     const [location, setLocation] = useState({ lat: 0, lng: 0 }); // Default location
     const [form] = Form.useForm();
+    const locationn = useLocation();
 
     // Fetch activities, categories, and tags on component load
     useEffect(() => {
-        fetchActivities();
+        if (locationn.pathname === '/activities/my') {
+            console.log('My Activities');
+            getMActivities();
+        } else {
+            console.log('All Activities');
+            fetchActivities(); // Assuming fetchActivities is your function to get all activities
+        }
         fetchCategories();
         fetchPreferenceTags();
-    }, []);
+    }, [locationn.pathname]);
 
     const fetchActivities = async () => {
         setLoading(true);
@@ -41,7 +49,17 @@ const AllActivitiesCRUD = () => {
             setLoading(false);
         }
     };
-
+    const getMActivities = async () => {
+        setLoading(true);
+        try {
+            const response = await getMyActivities();
+            setActivities(response.data);
+        } catch (error) {
+            notification.error({ message: 'Error fetching activities' });
+        } finally {
+            setLoading(false);
+        }
+    };
     const fetchCategories = async () => {
         try {
             const response = await getActivityCategories();
