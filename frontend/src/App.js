@@ -87,6 +87,7 @@ function App() {
                     <Route path="/admin/products" element={<AdminProductGrid/>}/>
                     <Route path="/admin/edit-product/:productId" element={<EditProductForm/>}/>
                     <Route path="/itinerary" element={<TourGuideItinerary/>}/>
+                    <Route path="/itinerary/my" element={<TourGuideItinerary/>}/>
                 </Routes>
                 <Toaster/>
             </Router>

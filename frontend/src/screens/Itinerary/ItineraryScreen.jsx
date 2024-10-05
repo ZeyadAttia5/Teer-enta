@@ -23,7 +23,7 @@ import {
   getItineraries,
   createItinerary,
   updateItinerary,
-  deleteItinerary,
+  deleteItinerary, getMyItineraries,
 } from "../../api/itinerary.ts";
 import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
@@ -37,6 +37,7 @@ import {
   isThisYear,
   parseISO,
 } from "date-fns";
+import {useLocation} from "react-router-dom";
 // import { format } from "path";
 
 const { Option } = Select;
@@ -63,9 +64,14 @@ const ItineraryScreen = () => {
   // New State Variables for ActivityList and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
-
+  const location = useLocation()  ;
   useEffect(() => {
-    fetchItineraries();
+    if(location.pathname === "/itinerary/my"){
+      fetchMyIternaries();
+    }else{
+      fetchItineraries();
+
+    }
     fetchActivities();
     fetchPreferenceTags();
   }, []);
@@ -129,6 +135,16 @@ const ItineraryScreen = () => {
     }
     setLoading(false);
   };
+  const fetchMyIternaries = async () => {
+    setLoading(true);
+    try {
+      const data = await getMyItineraries();
+      setItineraries(data);
+    } catch (error) {
+      message.error("Failed to fetch itineraries");
+    }
+    setLoading(false);
+  }
 
   const fetchActivities = async () => {
     try {
