@@ -24,7 +24,7 @@ const CreateHistoricalPlaces = () => {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await axios.get(`http://localhost:${PORT}/tag`);
+        const response = await axios.get(`${PORT}/tag`);
         setTags(response.data); 
       } catch (error) {
         console.error('Error fetching tags:', error);
@@ -57,12 +57,14 @@ const CreateHistoricalPlaces = () => {
     };
 
     try {
-      const response = await axios.post(`http://localhost:${PORT}/historicalPlace/create`, data ,
+
+      const response = await axios.post(`${PORT}/historicalPlace/create`, data ,
           {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             }
           });
+
       if (response.status === 201) {
         toast.success('Historical place created successfully!');
         navigate('/historicalPlace');

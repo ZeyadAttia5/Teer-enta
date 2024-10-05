@@ -8,5 +8,5 @@ const importAll = (r) => {
   };
   
   // Update the regex to include .jpeg extension
-  export const images = importAll(require.context('../../assets/Welcome Photos', false, /\.(png|jpe?g|svg)$/));
+  export const images = importAll(require.context('../../assets/WelcomePhotos', false, /\.(png|jpe?g|svg)$/));
   

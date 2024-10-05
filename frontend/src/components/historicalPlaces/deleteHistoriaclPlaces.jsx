@@ -15,13 +15,14 @@ const DeleteHistoricalPlaces = () => {
 
   const handleDeleteHistoricalPlace = async () => {
     try {
+
       const response = await axios.delete(`http://localhost:${PORT}/historicalPlace/delete/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            }
-          });
-      
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          }
+        });
+
       if (response.status === 200) {
         toast.success('Historical place deleted successfully!');
         navigate('/historicalPlace');

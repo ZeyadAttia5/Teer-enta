@@ -24,7 +24,7 @@ const UpdateHistoricalPlaces = () => {
   useEffect(() => {
     const fetchPlace = async () => {
       try {
-        const response = await axios.get(`http://localhost:${PORT}/historicalPlace/${id}`);
+        const response = await axios.get(`${PORT}/historicalPlace/${id}`);
         const place = response.data;
 
         setName(place.name || '');
@@ -48,7 +48,7 @@ const UpdateHistoricalPlaces = () => {
 
     const fetchTags = async () => {
       try {
-        const response = await axios.get(`http://localhost:${PORT}/tag`);
+        const response = await axios.get(`${PORT}/tag`);
         setTags(response.data); 
       } catch (error) {
         console.error('Error fetching tags:', error);
@@ -82,12 +82,11 @@ const UpdateHistoricalPlaces = () => {
 
     try {
       const response = await axios.put(`http://localhost:${PORT}/historicalPlace/update/${id}`, data ,
-          {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            }
-          });
-      if (response.status === 200) {
+        {
+          headers: {
+              Authorization: `Bearer ${accessToken}`,
+          }
+        });      if (response.status === 200) {
         toast.success('Historical place updated successfully!');
         navigate('/historicalPlace');
       } else {
