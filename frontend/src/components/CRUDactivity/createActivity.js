@@ -1,38 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
 const CreateActivity = () => {
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
-    const [location, setLocation] = useState('');
+    const [location, setLocation] = useState({ lat: null, lng: null }); // Updated to store lat/lng
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [isBookingOpen, setIsBookingOpen] = useState(true);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-const [category, setCategory] = useState('');
-    const [tags, setTags] = useState([]); // For tags
-    const [selectedTag, setSelectedTag] = useState(''); // For current tag input
-    const [discounts, setDiscounts] = useState([{ discount: '', description: '' }]); // For discounts
-    const [categories, setCategories] = useState([]); // Categories list
+    const [category, setCategory] = useState('');
+    const [tags, setTags] = useState([]);
+    const [selectedTag, setSelectedTag] = useState('');
+    const [discounts, setDiscounts] = useState([{ discount: '', description: '' }]);
+    const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const navigate = useNavigate();
-
-    const user = JSON.parse(localStorage.getItem('user'));
-    const accessToken = localStorage.getItem('accessToken');
-
-    // Fetch available tags (assuming you have a route for this)
     const [availableTags, setAvailableTags] = useState([]);
 
-    const Url = process.env.REACT_APP_BACKEND_URL ;
+    const Url = process.env.REACT_APP_BACKEND_URL;
+    const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     useEffect(() => {
         const fetchTags = async () => {
             try {
                 const response = await axios.get(`${Url}/preferenceTag`);
-                setAvailableTags(response.data); // Assuming the response contains an array of tags
+                setAvailableTags(response.data);
             } catch (error) {
                 console.error('Error fetching tags:', error);
             }
@@ -40,11 +38,11 @@ const [category, setCategory] = useState('');
         const fetchCategories = async () => {
             try {
                 const response = await axios.get(`${Url}/activityCategory`);
-                setCategories(response.data); // Assuming the response contains an array of categories
+                setCategories(response.data);
             } catch (error) {
                 console.error('Error fetching categories:', error);
             }
-        }
+        };
         fetchTags();
         fetchCategories();
     }, []);
@@ -52,13 +50,11 @@ const [category, setCategory] = useState('');
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validation for min and max price
         if (parseFloat(minPrice) > parseFloat(maxPrice)) {
             setError('Minimum price cannot be greater than maximum price.');
             return;
         }
 
-        // Validation for discount
         for (const discount of discounts) {
             if (discount.discount < 0 || discount.discount > 100) {
                 setError('Discount must be between 0 and 100.');
@@ -87,12 +83,13 @@ const [category, setCategory] = useState('');
 
             await axios.post(
                 `${Url}/activity/create`,
-                newActivity ,
+                newActivity,
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                     },
-                });
+                }
+            );
             setMessage('Activity created successfully!');
 
             setTimeout(() => {
@@ -103,7 +100,6 @@ const [category, setCategory] = useState('');
         }
     };
 
-    // Tag management
     const handleAddTag = () => {
         if (selectedTag && !tags.includes(selectedTag)) {
             setTags([...tags, selectedTag]);
@@ -115,7 +111,6 @@ const [category, setCategory] = useState('');
         setTags(tags.filter(tag => tag !== tagToRemove));
     };
 
-    // Discount management
     const handleDiscountChange = (index, field, value) => {
         const updatedDiscounts = discounts.map((discount, i) => (
             i === index ? { ...discount, [field]: value } : discount
@@ -131,12 +126,28 @@ const [category, setCategory] = useState('');
         setDiscounts(discounts.filter((_, i) => i !== index));
     };
 
+    // Google Maps configuration
+    const mapContainerStyle = {
+        height: "400px",
+        width: "100%"
+    };
+
+    const center = {
+        lat: location.lat || -34.397, // Default center
+        lng: location.lng || 150.644 // Default center
+    };
+
+    const handleMapClick = (event) => {
+        setLocation({ lat: event.latLng.lat(), lng: event.latLng.lng() });
+    };
+
     return (
         <div className="container mx-auto px-4 py-6">
             <h2 className="text-3xl font-bold mb-6">Create Activity</h2>
             {message && <p className="text-green-500">{message}</p>}
             {error && <p className="text-red-500">{error}</p>}
             <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Other input fields remain unchanged */}
                 <input
                     type="text"
                     placeholder="Activity Name"
@@ -156,14 +167,6 @@ const [category, setCategory] = useState('');
                     type="time"
                     value={time}
                     onChange={(e) => setTime(e.target.value)}
-                    className="border rounded p-2 w-full"
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Location"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
                     className="border rounded p-2 w-full"
                     required
                 />
@@ -192,7 +195,21 @@ const [category, setCategory] = useState('');
                     Booking Open
                 </label>
 
-                {/* Category input */}
+                {/* Google Map for location selection */}
+                <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+                    <GoogleMap
+                        mapContainerStyle={mapContainerStyle}
+                        zoom={8}
+                        center={center}
+                        onClick={handleMapClick}
+                    >
+                        {location.lat && location.lng && (
+                            <Marker position={location} />
+                        )}
+                    </GoogleMap>
+                </LoadScript>
+
+                {/* Categories and Tags inputs remain unchanged */}
                 <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
@@ -207,7 +224,6 @@ const [category, setCategory] = useState('');
                     ))}
                 </select>
 
-                {/* Tags input */}
                 <div>
                     <select
                         value={selectedTag}
@@ -244,7 +260,6 @@ const [category, setCategory] = useState('');
                     </div>
                 </div>
 
-                {/* Discounts input */}
                 {discounts.map((discount, index) => (
                     <div key={index} className="flex items-center space-x-4">
                         <input
@@ -292,5 +307,3 @@ const [category, setCategory] = useState('');
 };
 
 export default CreateActivity;
-
-
