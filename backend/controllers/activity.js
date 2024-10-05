@@ -6,7 +6,7 @@ exports.getActivities = async (req, res, next) => {
     try {
         const activities = await Activity.find({isActive: true})
             .populate('category')
-            .populate('tags');
+            .populate('preferenceTags');
         if (activities.length === 0) {
             return res.status(404).json({message: 'No Activity found'});
         }
@@ -21,7 +21,7 @@ exports.getActivity = async (req, res, next) => {
         const {id} = req.params;
         const activity = await Activity.findOne({_id: id, isActive: true})
             .populate('category')
-            .populate('tags');
+            .populate('preferenceTags');
         if (!activity) {
             return res.status(404).json({message: 'Activity not found or Inactive'});
         }
@@ -37,7 +37,7 @@ exports.getMyActivities = async (req, res, next) => {
         const createdBy = req.user._id;
         const activities = await Activity.find({createdBy})
             .populate('category')
-            .populate('tags');
+            .populate('preferenceTags');
         if (activities.length === 0) {
             return res.status(404).json({message: 'No Activity found'});
         }
@@ -56,7 +56,7 @@ exports.getUpcomingActivities = async (req, res, next) => {
                 isActive: true
             })
             .populate('category')
-            .populate('tags');
+            .populate('preferenceTags');
         if (activities.length === 0) {
             return res.status(404).json({message: 'No upcoming Activity found'});
         }
@@ -68,7 +68,7 @@ exports.getUpcomingActivities = async (req, res, next) => {
 
     exports.createActivity = async (req, res, next) => {
         try {
-
+            console.log(req.body);
             const activity = await Activity.create(req.body);
             res.status(201).json({message: 'Activity created successfully', activity});
         } catch (err) {

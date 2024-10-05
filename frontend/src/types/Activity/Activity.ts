@@ -2,6 +2,7 @@ import {TTag} from "../Tag";
 import {TActivityCategory} from "./ActivityCategory";
 import {TTourist} from "../Users/Tourist";
 import {TAdvertiser} from "../Users/Advertiser";
+import {TPreferenceTag} from "../Itinerary/PreferenceTag";
 
 export type TActivity = {
     _id: string;
@@ -9,14 +10,17 @@ export type TActivity = {
     date: string; // ISO date string
     time: string;
     isBookingOpen: boolean;
-    location: string;
+    location: {
+        lat: number;
+        lng: number;
+    };
     isActive: boolean;
     price: {
         min?: number;
         max?: number;
     };
     category: TActivityCategory; // ObjectId referencing 'ActivityCategories'
-    tags: TTag[]; // Array of ObjectIds referencing 'Tag'
+    preferenceTags: TPreferenceTag[]; // Array of ObjectIds referencing 'Tag'
     specialDiscounts: {
         discount: number;
         description: string;
