@@ -41,6 +41,7 @@ import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
 import EditProductForm from "./components/Store/editProductForm";
 import TourGuideItinerary from "./screens/Itinerary/ItineraryScreen.jsx";
+import PreferenceTags from "./screens/PrefrenceTags.tsx";
 function App() {
   return (
     <div className="App">
@@ -68,6 +69,7 @@ function App() {
           <Route path="/view-tags" element={<ViewTag />} />
           {/*<Route path="/update-tag" element={<UpdateTag />} />*/}
           {/*<Route path="/delete-tag" element={<DeleteTag />} />*/}
+          <Route path="/preference-tags" element={<PreferenceTags /> }/>
           <Route path="/create-tourist-itinerary" element={<CreateTouristItinerary />}/>
           <Route path="/read-tourist-itinerary" element={<ReadTouristItinerary />}/>
           <Route path="/read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
