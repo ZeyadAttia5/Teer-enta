@@ -53,9 +53,15 @@ function App() {
           {/*<Route path="/delete-user" element={<DeleteUser />} />*/}
           {/*<Route path="/add-tourism-governor" element={<AddTourismGovernor />} />*/}
           {/*<Route path="/add-admin" element={<AddAdmin />} />*/}
-          <Route path="/create-activity-category" element={<CreateCategory />} />
+          <Route
+            path="/create-activity-category"
+            element={<CreateCategory />}
+          />
           {/*<Route path="/delete-activity-category" element={<DeleteActivityCategory />} />*/}
-          <Route path="/view-activity-categories" element={<ViewActivityCategory />} />
+          <Route
+            path="/view-activity-categories"
+            element={<ViewActivityCategory />}
+          />
           {/*<Route path="/update-activity-category" element={<UpdateActivityCategory />} />*/}
           <Route path="/create-activity" element={<CreateActivity />} />
           <Route path="/view-activity" element={<ViewActivity />} />
@@ -68,28 +74,55 @@ function App() {
           <Route path="/view-tags" element={<ViewTag />} />
           {/*<Route path="/update-tag" element={<UpdateTag />} />*/}
           {/*<Route path="/delete-tag" element={<DeleteTag />} />*/}
-          <Route path="/create-tourist-itinerary" element={<CreateTouristItinerary />}/>
-          <Route path="/read-tourist-itinerary" element={<ReadTouristItinerary />}/>
-          <Route path="/read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
-          <Route path="/update-tourist-itinerary" element={<UpdateTouristItinerary />}/>
+          <Route
+            path="/touristItinerary/create"
+            element={<CreateTouristItinerary />}
+          />
+          <Route
+            path="/touristItinerary/view"
+            element={<ReadTouristItinerary />}
+          />
+          <Route
+            path="/touristItinerary"
+            element={<ReadAllTouristItinerary />}
+          />
+          <Route
+            path="/touristItinerary/update"
+            element={<UpdateTouristItinerary />}
+          />
           <Route path="/activity" element={<Activity />} />
-          <Route path="/historicalPlace" element={<ReadHistoriaclPlaces />} /> {/*tested*/}
-          <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces />} /> {/*tested*/}
-          <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces />} /> {/*tested*/}
-          <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces />} /> {/*tested*/}
+          <Route
+            path="/historicalPlace"
+            element={<ReadHistoriaclPlaces />}
+          />{" "}
+          {/*tested*/}
+          <Route
+            path="/historicalPlace/create"
+            element={<CreateHistoricalPlaces />}
+          />{" "}
+          {/*tested*/}
+          <Route
+            path="/historicalPlace/update/:id"
+            element={<UpdateHistoricalPlaces />}
+          />{" "}
+          {/*tested*/}
+          <Route
+            path="/historicalPlace/delete/:id"
+            element={<DeleteHistoricalPlaces />}
+          />{" "}
+          {/*tested*/}
           <Route path="/allUsers" element={<AllUsers />} /> {/*tested*/}
           <Route path="/pendingUsers" element={<PendingUsers />} /> {/*tested*/}
           <Route path="/addUser" element={<AddUser />} /> {/*tested*/}
-          <Route path="create-tourist-itinerary" element={<CreateTouristItinerary />}/>
-          <Route path="read-tourist-itinerary" element={<ReadTouristItinerary />}/>
-          <Route path="read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
-          <Route path="update-tourist-itinerary"element={<UpdateTouristItinerary />}/>
           {/*<Navbar />*/}
           <Route path="/products" element={<ProductGrid />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/admin/product/form" element={<AdminProductForm />} />
           <Route path="/admin/products" element={<AdminProductGrid />} />
-          <Route path="/admin/edit-product/:productId" element={<EditProductForm />} />
+          <Route
+            path="/admin/edit-product/:productId"
+            element={<EditProductForm />}
+          />
           <Route path="/tourguide-itinerary" element={<TourGuideItinerary />} />
         </Routes>
         <Toaster />

@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -5,17 +6,17 @@ function ReadAllTouristItinerary() {
   const [itinerary, setItinerary] = useState([]);
   const [isEmpty, setIsEmpty] = useState(true);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchItineraries = async () => {
       try {
-        // Replace with your actual API endpoint
-        const response = await fetch(
+        const response = await axios.get(
           process.env.REACT_APP_BACKEND_URL + "/touristItenerary/"
         );
 
-        if (response.ok) {
-          const data = await response.json();
+        if (response.status === 200) {
+          const data = response.data;
           if (data.length === 0) {
             setIsEmpty(true);
           } else {
@@ -30,14 +31,25 @@ function ReadAllTouristItinerary() {
       } catch (error) {
         console.error("Error:", error);
         setIsEmpty(true);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchItineraries();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="font-sans p-5 bg-white text-black flex flex-col items-center justify-center min-h-screen">
+        <div className="loader ease-linear rounded-full border-8 border-t-8 border-green-200 h-32 w-32 mb-4 animate-spin"></div>
+        <h2 className="text-2xl font-bold mb-4">Loading...</h2>
+      </div>
+    );
+  }
+
   const handleNavigate = (itineraryItem) => {
-    navigate("/read-tourist-itinerary", {
+    navigate("/touristItinerary/view", {
       state: { itinerary: itineraryItem },
     });
   };
