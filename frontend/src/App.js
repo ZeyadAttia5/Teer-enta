@@ -38,9 +38,27 @@ import TouristNavBar from "./components/TouristNavBar.jsx";
 import AllActivitiesCRUD from "./screens/AllActivitiesCRUD.tsx";
 
 function App() {
+    const [flag, setFlag] = useState(false);
+
+    const [visible, setVisible] = useState(false);
+
+    const showDrawer = () => {
+        setVisible(true);
+    };
+
+    const onClose = () => {
+        setVisible(false);
+    };
     return (
         <div className="App">
             <Router>
+                {!flag && (
+                    <DrawerBar
+                        onClose={onClose}
+                        showDrawer={showDrawer}
+                        drawerVisible={visible}
+                    />
+                )}
                 <Routes>
                     <Route path="/" element={<TouristWelcome/>}/> // t
                     <Route path="/signup" element={<Signup/>}/>
