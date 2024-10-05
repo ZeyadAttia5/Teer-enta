@@ -11,7 +11,8 @@ const getActivities = async () =>
 const getUpcomingActivities = async () =>
    await axios.get<TActivity[]>(`${API_BASE_URL}/activity/upcoming`);
 const createActivity = async (activity: TActivity) =>
-  await axios.post<TActivity>(`${API_BASE_URL}/activity`, activity ,{
+    // console.log(activity)
+  await axios.post<TActivity>(`${API_BASE_URL}/activity/create`, activity ,{
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -19,14 +20,14 @@ const createActivity = async (activity: TActivity) =>
 const updateActivity = async (
   activity: TActivity,
   activityId: string | Number
-) => await axios.put<TActivity>(`${API_BASE_URL}/activity/${activityId}`, activity,{
+) => await axios.put<TActivity>(`${API_BASE_URL}/activity/update/${activityId}`, activity,{
     headers:
     {
       Authorization: `Bearer ${token}`,
     },
 });
 const deleteActivity = async (activityId: string | Number) =>
-  await axios.delete<TActivity>(`${API_BASE_URL}/activity/${activityId}`,{
+  await axios.delete<TActivity>(`${API_BASE_URL}/activity/delete/${activityId}`,{
     headers: {
       Authorization: `Bearer ${token}`,
     },

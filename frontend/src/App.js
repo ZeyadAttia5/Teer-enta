@@ -36,6 +36,7 @@ import TourGuideItinerary from "./screens/Itinerary/ItineraryScreen.jsx";
 import PreferenceTags from "./screens/Itinerary/PrefrenceTags.tsx";
 import ActivityCategories from "./screens/Activity/ActivityCategories.tsx";
 import Tags from "./screens/Tags.tsx";
+import Activities from "./screens/Activities.tsx";
 
 function App() {
     return (
@@ -54,6 +55,7 @@ function App() {
                     {/*<Route path="/update-activity" element={<UpdateActivity />} />*/}
                     {/*<Route path="/delete-activity" element={<DeleteActivity />} />*/}
                     <Route path="/preference-tags" element={<PreferenceTags/>}/>
+                    <Route path="/activities" element={<Activities/>}/>
                     <Route path="/activity-categories" element={<ActivityCategories/>}/>
                     <Route path="/tags" element={<Tags/>}/>
                     <Route path="/touristItinerary/create" element={<CreateTouristItinerary/>}/>
