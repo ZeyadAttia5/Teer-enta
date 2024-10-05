@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Button, Input, Select, Checkbox, Form, message, Card } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+
+const { Option } = Select;
 
 const ViewActivity = () => {
     const [activities, setActivities] = useState([]);
-    const [message, setMessage] = useState('');
-    const [editingActivityId, setEditingActivityId] = useState(null); // For tracking which activity is being edited
-    const [formData, setFormData] = useState({}); // Stores form data for the activity being edited
-    const [categories, setCategories] = useState([]); // To store categories
-    const [tags, setTags] = useState([]); // To store tags
+    const [editingActivityId, setEditingActivityId] = useState(null);
+    const [formData, setFormData] = useState({});
+    const [categories, setCategories] = useState([]);
+    const [tags, setTags] = useState([]);
     const navigate = useNavigate();
 
     const fetchActivities = async () => {
@@ -16,41 +19,41 @@ const ViewActivity = () => {
             const response = await axios.get('http://localhost:8000/activity');
             setActivities(response.data);
         } catch (error) {
-            setMessage('Error fetching activities: ' + error.response?.data?.message);
+            message.error('Error fetching activities: ' + error.response?.data?.message);
         }
     };
     //df
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/activityCategory'); // Adjust to your categories endpoint
+            const response = await axios.get('http://localhost:8000/activityCategory');
             setCategories(response.data);
         } catch (error) {
-            setMessage('Error fetching categories: ' + error.response?.data?.message);
+            message.error('Error fetching categories: ' + error.response?.data?.message);
         }
     };
 
     const fetchTags = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/tag'); // Adjust to your tags endpoint
+            const response = await axios.get('http://localhost:8000/tag');
             setTags(response.data);
         } catch (error) {
-            setMessage('Error fetching tags: ' + error.response?.data?.message);
+            message.error('Error fetching tags: ' + error.response?.data?.message);
         }
     };
 
     useEffect(() => {
-        fetchActivities(); // Automatically fetch activities when the page loads
-        fetchCategories(); // Fetch categories
-        fetchTags(); // Fetch tags
+        fetchActivities();
+        fetchCategories();
+        fetchTags();
     }, []);
 
     const handleDelete = async (id) => {
         try {
             await axios.delete(`http://localhost:8000/activity/delete/${id}`);
-            setMessage('Activity deleted successfully!');
-            fetchActivities(); // Refresh the list after deletion
+            message.success('Activity deleted successfully!');
+            fetchActivities();
         } catch (error) {
-            setMessage('Error deleting activity: ' + error.response?.data?.message);
+            message.error('Error deleting activity: ' + error.response?.data?.message);
         }
     };
 
@@ -64,7 +67,7 @@ const ViewActivity = () => {
             time: activity.time,
             location: activity.location,
             isBookingOpen: activity.isBookingOpen,
-            price: { min: activity.price.min, max: activity.price.max }, // Ensure this reflects the correct structure
+            price: { min: activity.price.min, max: activity.price.max },
             category: activity.category?._id || '',
             tags: activity.tags.map(tag => tag._id) || [], // Assuming tags are stored by ID
             specialDiscounts: activity.specialDiscounts
@@ -76,18 +79,15 @@ const ViewActivity = () => {
         });
     };
 
-    const handleFormChange = (e) => {
-        const { name, value } = e.target;
-
-        // Handle price updates separately
+    const handleFormChange = (name, value) => {
         if (name === 'price.min' || name === 'price.max') {
-            const key = name.split('.')[1]; // Get 'min' or 'max'
+            const key = name.split('.')[1];
             setFormData(prev => ({
                 ...prev,
                 price: {
                     ...prev.price,
-                    [key]: value
-                }
+                    [key]: value,
+                },
             }));
         } else {
             setFormData({ ...formData, [name]: value });
@@ -106,30 +106,28 @@ const ViewActivity = () => {
     const handleUpdateSubmit = async (id) => {
         try {
             await axios.put(`http://localhost:8000/activity/update/${id}`, formData);
-            setMessage('Activity updated successfully!');
+            message.success('Activity updated successfully!');
             setEditingActivityId(null);
-            fetchActivities(); // Refresh the list after updating
+            fetchActivities();
         } catch (error) {
-            setMessage('Error updating activity: ' + error.response?.data?.message);
+            message.error('Error updating activity: ' + error.response?.data?.message);
         }
     };
 
     return (
         <div className="container mx-auto px-4 py-6">
-    <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Activities</h2>
-        <button
-    onClick={() => navigate('/create-activity')}
-    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200"
->
-    Create New Activity
-</button>
-    </div>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-4xl font-bold text-gray-800">Activities</h2>
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={() => navigate('/create-activity')}
+                >
+                    Create New Activity
+                </Button>
+            </div>
 
-
-            {message && <p className="text-red-500">{message}</p>}
-
-            <ul className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {activities.map(activity => (
                     <li key={activity._id} className="bg-white shadow-md p-4 rounded-lg">
                         {editingActivityId === activity._id ? (
@@ -210,71 +208,25 @@ const ViewActivity = () => {
                                     <strong>Tags:</strong>
                                     <div className="flex flex-wrap">
                                         {tags.map(tag => (
-                                            <label key={tag._id} className="flex items-center mr-4 text-black">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={formData.tags.includes(tag._id)}
-                                                    onChange={() => handleTagChange(tag._id)}
-                                                    className="mr-2"
-                                                />
+                                            <Checkbox
+                                                key={tag._id}
+                                                checked={formData.tags.includes(tag._id)}
+                                                onChange={() => handleTagChange(tag._id)}
+                                            >
                                                 {tag.name}
-                                            </label>
+                                            </Checkbox>
                                         ))}
                                     </div>
-                                </div>
-                                <div>
-                                    <strong>Special Discounts:</strong>
-                                    {formData.specialDiscounts.map((discount, index) => (
-                                        <div key={index} className="flex mb-2">
-                                            <input
-                                                type="number"
-                                                placeholder="Discount (%)"
-                                                value={discount.discount}
-                                                onChange={(e) => {
-                                                    const newDiscounts = [...formData.specialDiscounts];
-                                                    newDiscounts[index].discount = e.target.value;
-                                                    setFormData({ ...formData, specialDiscounts: newDiscounts });
-                                                }}
-                                                className="border rounded p-2 w-1/4 mr-2"
-                                                required
-                                            />
-                                            <input
-                                                type="text"
-                                                placeholder="Description"
-                                                value={discount.description}
-                                                onChange={(e) => {
-                                                    const newDiscounts = [...formData.specialDiscounts];
-                                                    newDiscounts[index].description = e.target.value;
-                                                    setFormData({ ...formData, specialDiscounts: newDiscounts });
-                                                }}
-                                                className="border rounded p-2 w-3/4"
-                                            />
-                                        </div>
-                                    ))}
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setFormData(prev => ({
-                                                ...prev,
-                                                specialDiscounts: [...prev.specialDiscounts, { discount: '', description: '' }]
-                                            }));
-                                        }}
-                                        className="px-2 py-1 bg-blue-500 text-white rounded"
-                                    >
-                                        Add Discount
-                                    </button>
-                                </div>
-                                <div className="flex justify-between mt-4">
-                                    <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                    <Button type="primary" htmlType="submit" className="w-full">
                                         Update Activity
-                                    </button>
-                                    <button
-                                        type="button"
+                                    </Button>
+                                    <Button
                                         onClick={() => setEditingActivityId(null)}
-                                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                                        type="default"
+                                        className="mt-2 w-full"
                                     >
                                         Cancel
-                                    </button>
+                                    </Button>
                                 </div>
                             </form>
                         ) : (
@@ -297,13 +249,14 @@ const ViewActivity = () => {
                                 </div>
                             </div>
                         )}
-                    </li>
+                    </li> 
                 ))}
-            </ul>
+            </div>
         </div>
     );
 };
 
 export default ViewActivity;
+
 
 

@@ -4,7 +4,7 @@ import { MdOutlineAddBox } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.REACT_APP_BACKEND_URL;
 
 const ReadHistoriaclPlaces = () => {
   const [searchTerm, setSearchTerm] = useState('');

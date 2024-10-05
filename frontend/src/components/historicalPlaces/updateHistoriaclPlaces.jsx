@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.REACT_APP_BACKEND_URL;
 
 const UpdateHistoricalPlaces = () => {
   const navigate = useNavigate();
