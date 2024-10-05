@@ -1,17 +1,20 @@
 import { TActivity } from "../types/Activity/Activity";
 import http from "./http";
+import axios from "axios";
 
-const getActivities = async () => await http.get<TActivity[]>("/activity");
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+const getActivities = async () => await axios.get<TActivity[]>(`${API_BASE_URL}/activity`);
 const getUpcomingActivities = async () =>
-  await http.get<TActivity[]>("/activity/upcoming");
+  await axios.get<TActivity[]>(`${API_BASE_URL}/activity/upcoming`);
 const createActivity = async (activity: TActivity) =>
-  await http.post<TActivity>("/activity", activity);
+  await axios.post<TActivity>(`${API_BASE_URL}/activity`, activity);
 const updateActivity = async (
   activity: TActivity,
   activityId: string | Number
-) => await http.put<TActivity>(`/activity/${activityId}`, activity);
+) => await axios.put<TActivity>(`${API_BASE_URL}/activity/${activityId}`, activity);
 const deleteActivity = async (activityId: string | Number) =>
-  await http.delete<TActivity>(`/activity/${activityId}`);
+  await axios.delete<TActivity>(`${API_BASE_URL}/activity/${activityId}`);
 
 export {
   getActivities,
