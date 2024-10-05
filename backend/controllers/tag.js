@@ -1,70 +1,73 @@
-const Tag = require("../models/Tag")
-const mongoose = require('mongoose');
+const Tag = require('../models/Tag');
+const errorHandler = require("../Util/ErrorHandler/errorSender");
 
-exports.getTags = async (req, res) => {
+exports.getTags = async (req, res, next) => {
     try {
         const tags = await Tag.find();
-        if (!tags) {
-            return res.status(404).send({message: "No tags found"});
+        if(tags.length === 0) {
+            return res.status(404).json({ message: 'No tags found' });
         }
-        return res.status(200).send(tags);
+        res.status(200).json(tags);
     } catch (err) {
-        return res.status(500).send({message: err.message});
+        errorHandler.SendError(res, err);
     }
 }
 
-exports.getTag = async (req, res) => {
+exports.createTag = async (req, res, next) => {
     try {
-        const tagId = req.params.id;
-        if (!mongoose.Types.ObjectId.isValid(tagId)) {
-            return res.status(400).send({message: "Invalid tag id"});
-        }
-        const tag = await Tag.findById(tagId);
-        if (!tag) {
-            return res.status(404).send({message: "Tag not found"});
-        }
-        return res.status(200).send(tag);
+        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
+        // const createdBy = req.user._id;
+        // req.body.createdBy = createdBy
+
+        const tag = await Tag.create(req.body);
+        res.status(201).json({ message: 'Tag created successfully', tag });
     } catch (err) {
-        return res.status(500).send({message: err.message});
+        errorHandler.SendError(res, err);
     }
 }
 
-exports.createTag = async (req, res) => {
+exports.updateTag = async (req, res, next) => {
     try {
-        const tag = new Tag(req.body);
-        await tag.save();
-        return res.status(201).send({message: "Tage updated successfully", tag});
+        const {id} = req.params;
+
+        const updates = req.body;
+
+        const updatedTag = await Tag.findByIdAndUpdate(
+            id,
+            updates,
+            {new: true, runValidators: true, overwrite: false}
+        );
+
+        if(!updatedTag) {
+            return res.status(404).json({ message: 'Tag not found' });
+        }
+
+        res.status(200).json({
+            message: 'Tag updated successfully',
+            data: updatedTag
+        });
+
     } catch (err) {
-        return res.status(500).send({message: err.message});
+        errorHandler.SendError(res, err);
     }
 }
 
-exports.updateTag = async (req, res) => {
+exports.deleteTag = async (req, res, next) => {
     try {
-        const tagId = req.params.id;
-        const updatedTag = await Tag.findByIdAndUpdate(tagId, req.body);
-        if (!updatedTag){
-            return res.status(404).send({message: "Tag not found"});
-        }
-        return res.status(200).send({message: "Tag updated successfully", updatedTag});
-    } catch (err) {
-        return res.status(500).send({error: err});
-    }
-}
+        const {id} = req.params;
 
+        const tag = await Tag.findById(id);
+        if(!tag) {
+            return res.status(404).json({ message: 'Tag not found' });
+        }
 
-exports.deleteTag = async (req, res) => {
-    try {
-        const tagId = req.params.id;
-        if (!mongoose.Types.ObjectId.isValid(tagId)) {
-            return res.status(400).send({message: "Invalid tag id"});
-        }
-        const tag = await Tag.findByIdAndDelete(tagId);
-        if (!tag) {
-            return res.status(404).send({message: "Tag not found"});
-        }
-        return res.status(200).send({message: "Tag deleted successfully"});
+        await Tag.findByIdAndDelete(id);
+        res.status(200).json({
+            message: 'Tag deleted successfully',
+            data: tag
+        });
+
     } catch (err) {
-        return res.status(500).send({message: err.message});
+        errorHandler.SendError(res, err);
     }
 }

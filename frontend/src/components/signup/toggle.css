@@ -1,0 +1,54 @@
+/* From Uiverse.io by Pradeepsaranbishnoi */ 
+:focus {
+    outline: 0;
+    border-color: #02735f;
+    box-shadow: 0 0 0 4px #b5c9fc;
+  }
+  
+  .mydict div {
+    display: flex;
+    
+    margin-top: 0.5rem;
+    
+    justify-content: center;
+  }
+  
+  .mydict input[type="radio"] {
+    clip: rect(0 0 0 0);
+    clip-path: inset(100%);
+    height: 0.5px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 0.5px;
+  }
+  
+  .mydict input[type="radio"]:checked + span {
+    box-shadow: 0 0 0 0.0625em #02735f;
+    background-color: #dee7ff;
+    z-index: 1;
+    color: #02735f;
+  }
+  
+  .alllabels span {
+    display: block;
+    cursor: pointer;
+    background-color: #fff;
+    padding: 0.375em .75em;
+    position: relative;
+    margin-left: .05em;
+    box-shadow: 0 0 0 0.0625em #b5bfd9;
+    letter-spacing: .05em;
+    color: #3e4963;
+    text-align: center;
+    transition: background-color .5s ease;
+  }
+  
+  .alllabels:first-child span {
+    border-radius: .375em 0 0 .375em;
+  }
+  
+  .alllabels:last-child span {
+    border-radius: 0 .375em .375em 0;
+  }
+  
