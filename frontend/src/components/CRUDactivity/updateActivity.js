@@ -82,7 +82,7 @@ const UpdateActivity = () => {
             }, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
-                }
+                } ,
                 tags: selectedTags.map(tag => tag._id)  // Send only tag IDs
             });
             setMessage('Activity updated successfully!');
