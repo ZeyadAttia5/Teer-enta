@@ -3,6 +3,7 @@ import AccountButton from "./AccountButton";
 import useMediaQuery from "use-media-antd-query";
 import { Drawer } from "antd";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const SideBar = ({ children, classNames }) => {
   const size = useMediaQuery();
@@ -50,7 +51,9 @@ const TouristNavBar = () => {
             </span>
           ))}
         </div>
-        <AccountButton extra_tw={"justify-end lg:flex-1 mt-2"} />
+          <Link to="/login" className="justify-end lg:flex-1 mt-2">
+            <AccountButton extra_tw={"justify-end lg:flex-1 mt-2"}/>
+          </Link>
       </SideBar>
     </header>
   );

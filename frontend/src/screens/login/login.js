@@ -57,8 +57,6 @@ function Login() {
       user = response.data.user;
       accessToken = response.data.accessToken;
       setMessage(response.data.message);
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("accessToken", accessToken);
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
       return false;
@@ -179,7 +177,7 @@ function Login() {
 
           <p class="text-xs text-center">
             No account?
-            <a href="/" className="text-[#474bca] hover:underline">
+            <a href="/signup" className="text-[#474bca] hover:underline">
               {" "}
               Sign up
             </a>
