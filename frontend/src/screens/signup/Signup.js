@@ -14,7 +14,7 @@ function Signup() {
     setUsername(event.target.value); // Update the username state
   };
   const [email, setEmail] = useState("");
-  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(false);
 
   const handleEmailChange = (e) => {
     const inputEmail = e.target.value;
@@ -41,8 +41,8 @@ function Signup() {
     setJobTitle(event.target.value); // Update the job title state
   };
 
-  const [dob, setDob] = useState("");
-  const [isDobValid, setIsDobValid] = useState(true);
+  const [dob, setDob] = useState();
+  const [isDobValid, setIsDobValid] = useState(false);
   const handleDobChange = (event) => {
     const date = event.target.value;
     setDob(date); // Update the date of birth state
@@ -50,13 +50,30 @@ function Signup() {
   };
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false); // State to track if the slideshow is paused
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000);
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+      }, 5000);
 
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, [images.length]);
+      return () => clearInterval(interval); // Cleanup interval on unmount
+    }
+  }, [images.length, isPaused]);
+
+  // Function to handle mouse down (click and hold)
+  const handleMouseDown = () => {
+    setIsPaused(true); // Pause the slider when mouse is down
+  };
+
+  // Function to handle mouse up (release click)
+  const handleMouseUp = () => {
+    setIsPaused(false); // Resume the slider when mouse is up
+  };
+
+  const handleImageClick = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
 
   const validateDate = (date) => {
     const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
@@ -70,7 +87,7 @@ function Signup() {
     const currentYear = new Date().getFullYear();
     const inputYear = parsedDate.getFullYear();
 
-    if (inputYear > currentYear) return false;
+    if (inputYear > currentYear || inputYear < 1930) return false;
 
     return parsedDate.toISOString().startsWith(date);
   };
@@ -94,6 +111,7 @@ function Signup() {
   };
   const [selectedNationality, setSelectedNationality] = useState(null);
   const [selectedRole, setSelectedRole] = useState("Tourist");
+  const [isFormSubmitted, setFormSubmitted] = useState(false);
   const handleNationalityChange = (selectedNationality) => {
     setSelectedNationality(selectedNationality);
   };
@@ -273,6 +291,7 @@ function Signup() {
   const URL = `${process.env.REACT_APP_BACKEND_URL}`;
   const handleButtonClick = async (e) => {
     e.preventDefault();
+    setFormSubmitted(true);
     if (!isValid()) {
       return false;
     }
@@ -328,6 +347,7 @@ function Signup() {
   };
 
   function isValid() {
+    setMessage("");
     if (!isDobValid) {
       setMessage("Invalid date of birth");
       return false;
@@ -357,29 +377,34 @@ function Signup() {
 
   return (
     <div className="flex h-screen">
-      <div className="relative w-[57%] h-screen overflow-hidden">
-        {images.map((image, index) => (
-          <img
+      <div className="relative w-[66%] h-screen overflow-hidden">
+      {images.map((image, index) => (
+        <img
+          key={index}
+          src={image}
+          alt={`Slide ${index + 1}`}
+          className={`absolute top-0 cursor-pointer left-0 w-full h-full transition-opacity duration-1000 ${
+            index === currentImageIndex ? "opacity-100" : "opacity-0"
+          }`}
+          onMouseDown={handleMouseDown} // Pause when clicked and held
+          onMouseUp={handleMouseUp}     // Resume when released
+          onClick={handleImageClick}    // Change image on click
+        />
+      ))}
+
+      {/* Dots indicator */}
+      {!isPaused && (<div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+        {images.map((_, index) => (
+          <span
             key={index}
-            src={image}
-            alt={`Slide ${index + 1}`}
-            className={`absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ${
-              index === currentImageIndex ? "opacity-100" : "opacity-0"
+            className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
+              currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
             }`}
+            onClick={() => setCurrentImageIndex(index)} // Click on dot to go to a specific image
           />
         ))}
-        <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-          {images.map((_, index) => (
-            <span
-              key={index}
-              className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
-                currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
-              }`}
-              onClick={() => setCurrentImageIndex(index)}
-            />
-          ))}
-        </div>
-      </div>
+      </div>)}
+    </div>
 
       <div className="flex flex-col justify-center items-center w-1/3">
         <p className="text-[rgba(88,87,87,0.822)] font-bold text-1xl">
@@ -392,7 +417,14 @@ function Signup() {
           >
             <Toggle selectedRole={handleRoleChange} />
 
-            <h6 className="text-sm font-medium text-gray-700">Username</h6>
+            <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
+              <span>Username</span>
+              {isFormSubmitted && !username && (
+                <span className="text-red-500 font-normal text-xs">
+                  This field is required
+                </span>
+              )}
+            </h6>
             <label className="relative labelsignup">
               <input
                 className="inputsignup"
@@ -405,11 +437,16 @@ function Signup() {
             </label>
 
             <h6
-              className={`text-sm font-medium text-gray-700 ${
+              className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
                 selectedRole !== "Tourist" ? "hidden" : ""
               }`}
             >
-              Nationality
+              <span>Nationality</span>
+              {isFormSubmitted && !selectedNationality && (
+                <span className="text-red-500 font-normal text-xs">
+                  This field is required
+                </span>
+              )}
             </h6>
 
             <div
@@ -426,11 +463,17 @@ function Signup() {
                   isSearchable={true} // Enable search functionality
                   placeholder="Select a country"
                   styles={customStyles} // Applying the custom styles
-                  required
                 />
               </div>
             </div>
-            <h6 className="text-sm font-medium text-gray-700">Email</h6>
+            <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
+              <span>Email</span>
+              {isFormSubmitted && !email && !isValidEmail && (
+                <span className="text-red-500 font-normal text-xs">
+                  This field is required
+                </span>
+              )}
+            </h6>
 
             <label className="relative labelsignup">
               <input
@@ -441,7 +484,7 @@ function Signup() {
                 value={email}
                 onChange={handleEmailChange}
               />
-              {!isValidEmail && (
+              {!isValidEmail && email.length > 0 && (
                 <FaExclamationCircle
                   style={{
                     position: "absolute",
@@ -455,11 +498,16 @@ function Signup() {
             </label>
 
             <h6
-              className={`text-sm font-medium text-gray-700 ${
+              className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
                 selectedRole !== "Tourist" ? "hidden" : ""
               }`}
             >
-              Mobile Number
+              <span>Mobile Number</span>
+              {isFormSubmitted && !mobileNumber && (
+                <span className="text-red-500 font-normal text-xs">
+                  This field is required
+                </span>
+              )}
             </h6>
             <label
               className={`relative labelsignup ${
@@ -476,11 +524,16 @@ function Signup() {
               />
             </label>
             <h6
-              className={`text-sm font-medium text-gray-700 ${
+              className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
                 selectedRole !== "Tourist" ? "hidden" : ""
               }`}
             >
-              Job Title
+              <span>Job Title</span>
+              {isFormSubmitted && (!jobTitle || jobTitle === "") && (
+                <span className="text-red-500 font-normal text-xs">
+                  This field is required
+                </span>
+              )}
             </h6>
 
             <label
@@ -503,12 +556,18 @@ function Signup() {
                 selectedRole !== "Tourist" ? "hidden" : ""
               }`}
             >
-              <label
-                className="block text-sm font-medium labelsignup text-gray-700"
-                for="dob"
+              <h6
+                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                  selectedRole !== "Tourist" ? "hidden" : ""
+                }`}
               >
-                Date of Birth
-              </label>
+                <span>Date of Birth</span>
+                {isFormSubmitted && !dob && !isDobValid && (
+                  <span className="text-red-500 font-normal text-xs">
+                    This field is required
+                  </span>
+                )}
+              </h6>
               <div className="mt-1">
                 <input
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -520,7 +579,14 @@ function Signup() {
                 />
               </div>
             </div>
-            <h6 className="text-sm font-medium text-gray-700">Password</h6>
+            <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
+              <span>Password</span>
+              {isFormSubmitted && !password && (
+                <span className="text-red-500 font-normal text-xs">
+                  This field is required
+                </span>
+              )}
+            </h6>
 
             <label className="relative labelsignup">
               <input
@@ -564,7 +630,7 @@ function Signup() {
                 Sign in
               </a>
             </p>
-            <p className="text-red">{message}</p>
+            <p className="text-red-500">{message}</p>
           </form>
         </div>
       </div>

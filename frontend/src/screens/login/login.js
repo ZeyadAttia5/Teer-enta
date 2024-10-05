@@ -21,13 +21,30 @@ function Login() {
   };
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false); // State to track if the slideshow is paused
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000);
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+      }, 5000);
 
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, [images.length]);
+      return () => clearInterval(interval); // Cleanup interval on unmount
+    }
+  }, [images.length, isPaused]);
+
+  // Function to handle mouse down (click and hold)
+  const handleMouseDown = () => {
+    setIsPaused(true); // Pause the slider when mouse is down
+  };
+
+  // Function to handle mouse up (release click)
+  const handleMouseUp = () => {
+    setIsPaused(false); // Resume the slider when mouse is up
+  };
+
+  const handleImageClick = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
 
   const URL = `${process.env.REACT_APP_BACKEND_URL}`;
   const handleLoginSubmission = async (e) => {
@@ -63,28 +80,33 @@ function Login() {
   return (
     <div className="flex">
       <div className="relative w-[66%] h-screen overflow-hidden">
-        {images.map((image, index) => (
-          <img
+      {images.map((image, index) => (
+        <img
+          key={index}
+          src={image}
+          alt={`Slide ${index + 1}`}
+          className={`absolute top-0 cursor-pointer left-0 w-full h-full transition-opacity duration-1000 ${
+            index === currentImageIndex ? "opacity-100" : "opacity-0"
+          }`}
+          onMouseDown={handleMouseDown} // Pause when clicked and held
+          onMouseUp={handleMouseUp}     // Resume when released
+          onClick={handleImageClick}    // Change image on click
+        />
+      ))}
+
+      {/* Dots indicator */}
+      {!isPaused && (<div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+        {images.map((_, index) => (
+          <span
             key={index}
-            src={image}
-            alt={`Slide ${index + 1}`}
-            className={`absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ${
-              index === currentImageIndex ? "opacity-100" : "opacity-0"
+            className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
+              currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
             }`}
+            onClick={() => setCurrentImageIndex(index)} // Click on dot to go to a specific image
           />
         ))}
-        <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-          {images.map((_, index) => (
-            <span
-              key={index}
-              className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
-                currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
-              }`}
-              onClick={() => setCurrentImageIndex(index)}
-            />
-          ))}
-        </div>
-      </div>
+      </div>)}
+    </div>
       <div className="w-1/2 flex justify-center items-center">
         <form class="formlogin bg-white block p-4 max-w-[500px] rounded-lg shadow-md">
           <p className="text-4xl font-bold my-4">Login now</p>
