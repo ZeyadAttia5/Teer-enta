@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.REACT_APP_BACKEND_URL;
 
 const UpdateHistoricalPlaces = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const UpdateHistoricalPlaces = () => {
   useEffect(() => {
     const fetchPlace = async () => {
       try {
-        const response = await axios.get(`http://localhost:${PORT}/historicalPlace/${id}`);
+        const response = await axios.get(`${PORT}/historicalPlace/${id}`);
         const place = response.data;
 
         setName(place.name || '');
@@ -46,7 +46,7 @@ const UpdateHistoricalPlaces = () => {
 
     const fetchTags = async () => {
       try {
-        const response = await axios.get(`http://localhost:${PORT}/tag`);
+        const response = await axios.get(`${PORT}/tag`);
         setTags(response.data); 
       } catch (error) {
         console.error('Error fetching tags:', error);
@@ -79,7 +79,7 @@ const UpdateHistoricalPlaces = () => {
     };
 
     try {
-      const response = await axios.put(`http://localhost:${PORT}/historicalPlace/update/${id}`, data);
+      const response = await axios.put(`${PORT}/historicalPlace/update/${id}`, data);
       if (response.status === 200) {
         toast.success('Historical place updated successfully!');
         navigate('/historicalPlace');

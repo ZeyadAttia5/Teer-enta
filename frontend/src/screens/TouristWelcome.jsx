@@ -1,9 +1,12 @@
+import React, { useState } from "react";
 import TouristInstructionCard from "../components/TouristInstructionCard";
 import TouristNavBar from "../components/TouristNavBar";
+import Sidebar from "../components/Sidebar";
 import airplaneImage from "../assets/airplane.png";
-import bedroom from '../assets/bedroom.png'
-import banat from '../assets/banat.png'
+import bedroom from "../assets/bedroom.png";
+import banat from "../assets/banat.png";
 import { Fade } from "react-awesome-reveal";
+import { Button } from "antd";
 
 const cards = [
   {
@@ -30,35 +33,56 @@ const cards = [
 ];
 
 const TouristWelcome = () => {
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  const showDrawer = () => {
+    setDrawerVisible(true);
+  };
+
+  const onClose = () => {
+    setDrawerVisible(false);
+  };
+
   return (
-    <div className='relative bg-[#075B4C] z-10 overflow-scroll  size-full flex flex-col  items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
-      <TouristNavBar />
-      <Fade
-        className="text-white left-[100px] top-[20%] absolute"
-        direction="up"
-        cascade
-      >
-        <h1 className=" lg:text-[88px] text-xl leading-10 sm:text-[50px] sm:leading-[50px] font-semibold lg:leading-[100px] ">
-          Prepare To See The <br />
-          World!
-        </h1>
-      </Fade>
-      <Fade
-        className="text-white left-[100px] top-[40%] absolute"
-        direction="up"
-        cascade
-      >
-        <span>Scroll down</span>
-      </Fade>
-      <main className="w-[80%] h-full mt-[100vh]  gap-20 justify-center flex flex-col  m-0">
-        {cards.map((card, index) => (
-          <TouristInstructionCard
-            key={index}
-            {...card}
-            leftToRight={index % 2 === 0}
-          />
-        ))}
-      </main>
+    <div className="relative">
+      <div className='relative bg-[#075B4C] z-10 overflow-scroll size-full flex flex-col items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
+        <div className="absolute top-24 left-4 z-20">
+          {/* Floating Button */}
+          <Button type="primary" onClick={showDrawer}>
+            Show 
+          </Button>
+
+          <Sidebar visible={drawerVisible} onClose={onClose} />
+        </div>
+        
+        <TouristNavBar />
+        <Fade
+          className="text-white left-[100px] top-[20%] absolute"
+          direction="up"
+          cascade
+        >
+          <h1 className="lg:text-[88px] text-xl leading-10 sm:text-[50px] sm:leading-[50px] font-semibold lg:leading-[100px] ">
+            Prepare To See The <br />
+            World!
+          </h1>
+        </Fade>
+        <Fade
+          className="text-white left-[100px] top-[40%] absolute"
+          direction="up"
+          cascade
+        >
+          
+        </Fade>
+        <main className="w-[80%] h-full mt-[100vh] gap-20 justify-center flex flex-col m-0">
+          {cards.map((card, index) => (
+            <TouristInstructionCard
+              key={index}
+              {...card}
+              leftToRight={index % 2 === 0}
+            />
+          ))}
+        </main>
+      </div>
     </div>
   );
 };
