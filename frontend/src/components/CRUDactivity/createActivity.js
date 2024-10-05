@@ -26,10 +26,12 @@ const [category, setCategory] = useState('');
     // Fetch available tags (assuming you have a route for this)
     const [availableTags, setAvailableTags] = useState([]);
 
+    const Url = process.env.REACT_APP_BACKEND_URL ;
+
     useEffect(() => {
         const fetchTags = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/tag');
+                const response = await axios.get(`${Url}/preferenceTag`);
                 setAvailableTags(response.data); // Assuming the response contains an array of tags
             } catch (error) {
                 console.error('Error fetching tags:', error);
@@ -37,7 +39,7 @@ const [category, setCategory] = useState('');
         };
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/activityCategory');
+                const response = await axios.get(`${Url}/activityCategory`);
                 setCategories(response.data); // Assuming the response contains an array of categories
             } catch (error) {
                 console.error('Error fetching categories:', error);
@@ -84,7 +86,7 @@ const [category, setCategory] = useState('');
             };
 
             await axios.post(
-                'http://localhost:8000/activity/create',
+                `${Url}/activity/create`,
                 newActivity ,
                 {
                     headers: {
@@ -215,7 +217,7 @@ const [category, setCategory] = useState('');
                         <option value="">Select Tag</option>
                         {availableTags.map(tag => (
                             <option key={tag._id} value={tag._id}>
-                                {tag.name}
+                                {tag.tag}
                             </option>
                         ))}
                     </select>
