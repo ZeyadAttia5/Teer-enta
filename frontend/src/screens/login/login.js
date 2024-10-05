@@ -57,6 +57,8 @@ function Login() {
       user = response.data.user;
       accessToken = response.data.accessToken;
       setMessage(response.data.message);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("accessToken", accessToken);
       navigate("/");
       
     } catch (error) {
