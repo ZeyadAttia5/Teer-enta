@@ -33,7 +33,6 @@ exports.getActivity = async (req, res, next) => {
 
 exports.getMyActivities = async (req, res, next) => {
     try {
-        // req.user = { _id: '66f59e1617ed32dc57a4ca2f' };
         const createdBy = req.user._id;
         const activities = await Activity.find({createdBy})
             .populate('category')
