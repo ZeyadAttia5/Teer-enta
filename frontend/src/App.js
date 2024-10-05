@@ -46,8 +46,7 @@ function App() {
                     <Route path="/signup" element={<Signup/>}/>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/profile" element={<Profile/>}/>
-                    <Route path="/create-activity" element={<CreateActivity/>}/>
-                    <Route path="/view-activity" element={<ViewActivity/>}/>
+                    
                     {/*<Route path="/update-activity/:id" element={<UpdateActivity />} />*/}
                     {/*<Route path="/delete-activity/:id" element={<DeleteActivity />} />*/}
                     {/*<Route path="/view-activities" element={<ViewActivity />} /> */}
