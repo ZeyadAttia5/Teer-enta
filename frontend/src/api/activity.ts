@@ -1,5 +1,5 @@
 import { TActivity } from "../types/Activity/Activity";
-import http from "./http.ts";
+import http from "./http";
 
 const getActivities = async () => await http.get<TActivity[]>("/activity");
 const getUpcomingActivities = async () =>
