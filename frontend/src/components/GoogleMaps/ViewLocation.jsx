@@ -11,7 +11,7 @@ import { GoogleMap, LoadScript, MarkerF } from "@react-google-maps/api";
  * @returns {Element}
  * @constructor
  */
-const MapContainer = ({latitude = 1, longitude = 1}) => {
+const StaticMap = ({latitude = 1, longitude = 1}) => {
     const mapStyles = {
         height: "400px",
         width: "100%",
@@ -38,4 +38,4 @@ const MapContainer = ({latitude = 1, longitude = 1}) => {
     );
 };
 
-export default MapContainer;
+export default StaticMap;
