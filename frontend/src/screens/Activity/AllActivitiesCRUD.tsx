@@ -163,48 +163,109 @@ const AllActivitiesCRUD = ({setFlag}) => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+            render: (name) => (
+                <span style={{ fontWeight: 'bold', color: '#389e0d' }}>{name}</span>
+            ),
         },
         {
             title: 'Date',
             dataIndex: 'date',
             key: 'date',
-            render: (date) => moment(date).format('YYYY-MM-DD'),
+            render: (date) => (
+                <span style={{ color: '#52c41a' }}>{moment(date).format('YYYY-MM-DD')}</span>
+            ),
         },
         {
             title: 'Time',
             dataIndex: 'time',
             key: 'time',
+            render: (time) => (
+                <span style={{ color: '#73d13d' }}>{time}</span>
+            ),
         },
         {
             title: 'Location',
             dataIndex: 'location',
             key: 'location',
-            render: (loc) => `(${loc.lat}, ${loc.lng})`,
+            render: (loc) => (
+                <span style={{ color: '#52c41a' }}>
+                ({loc.lat}, {loc.lng})
+            </span>
+            ),
         },
         {
             title: 'Category',
             dataIndex: 'category',
             key: 'category',
-            render: (category) => category?.category || 'N/A',
+            render: (category) => (
+                <span style={{ color: '#52c41a', fontWeight: 'bold' }}>
+                {category?.category || 'N/A'}
+            </span>
+            ),
         },
         {
             title: 'Preference Tags',
             dataIndex: 'preferenceTags',
             key: 'preferenceTags',
-            render: (preferenceTags) => preferenceTags.map(tag => tag.tag).join(', '),
+            render: (preferenceTags) => (
+                <span style={{ color: '#73d13d' }}>
+                {preferenceTags.map(tag => tag.tag).join(', ')}
+            </span>
+            ),
         },
         {
             title: 'Special Discounts',
             dataIndex: 'specialDiscounts',
             key: 'specialDiscounts',
             render: (discounts) => (
-                <Row gutter={16}>
+                <Row gutter={[16, 24]} justify="center" style={{ padding: '20px' }}>
                     {discounts.map((discount, index) => (
-                        <Col span={8} key={index}>
-                            <Card title={`${discount.discount}%`} style={{ marginBottom: 16 }}>
-                                <p>{discount.Description}</p>
+                        <Col
+                            key={index}
+                            xs={24} sm={12} md={8} lg={6}
+                            style={{ display: 'flex', justifyContent: 'center' }}
+                        >
+                            <Card
+                                hoverable
+                                title={`${discount.discount}% Off`}
+                                bordered={false}
+                                style={{
+                                    width: '100%',
+                                    maxWidth: '280px',
+                                    textAlign: 'center',
+                                    borderRadius: '12px',
+                                    backgroundColor: '#f6ffed',
+                                    boxShadow: '0 6px 10px rgba(0, 0, 0, 0.1)',
+                                    transition: 'transform 0.3s ease',
+                                }}
+                                bodyStyle={{ padding: '16px' }}
+                                headStyle={{
+                                    backgroundColor: '#52c41a',
+                                    color: 'white',
+                                    borderRadius: '12px 12px 0 0',
+                                    fontSize: '16px',
+                                    padding: '12px',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1.05)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1)';
+                                }}
+                            >
+                                <p style={{ fontSize: '14px', color: '#666' }}>
+                                    {discount.Description}
+                                </p>
                                 <p>
-                                    <strong>Status:</strong> {discount.isAvailable ? 'Available' : 'Not Available'}
+                                    <strong>Status:</strong>{' '}
+                                    <span
+                                        style={{
+                                            color: discount.isAvailable ? '#52c41a' : '#ff4d4f',
+                                            fontWeight: 'bold',
+                                        }}
+                                    >
+                                    {discount.isAvailable ? 'Available' : 'Not Available'}
+                                </span>
                                 </p>
                             </Card>
                         </Col>
@@ -213,29 +274,43 @@ const AllActivitiesCRUD = ({setFlag}) => {
             ),
         },
         {
-            title: user && (user.userRole === "Admin" || user.userRole === "Advertiser") ? 'Actions' : "",
+            title: user ? 'Actions' : "",
             key: 'actions',
             render: (record) => (
                 <span>
-                {user && (user.userRole === "Admin" || user.userRole === "Advertiser") && (
+                {user && (user.userRole === "Advertiser" && user._id === record.createdBy) && (
                     <div>
-                    <Button
-                        icon={<EditOutlined />}
-                        onClick={() => handleEditActivity(record)}
-                        className="mr-2"
-                    />
-                    <Popconfirm
-                        title="Are you sure you want to delete this activity?"
-                        onConfirm={() => handleDeleteActivity(record._id)}
-                    >
-                        <Button icon={<DeleteOutlined />} danger />
-                    </Popconfirm>
+                        <Button
+                            icon={<EditOutlined />}
+                            onClick={() => handleEditActivity(record)}
+                            style={{
+                                backgroundColor: '#52c41a',
+                                color: 'white',
+                                border: 'none',
+                                marginRight: '10px',
+                            }}
+                        />
+                        <Popconfirm
+                            title="Are you sure you want to delete this activity?"
+                            onConfirm={() => handleDeleteActivity(record._id)}
+                        >
+                            <Button
+                                icon={<DeleteOutlined />}
+                                danger
+                                style={{
+                                    backgroundColor: '#ff4d4f',
+                                    color: 'white',
+                                    border: 'none',
+                                }}
+                            />
+                        </Popconfirm>
                     </div>
-                )},
-                </span>
+                )}
+            </span>
             ),
-        },
+        }
     ];
+
 
     return (
         <div className="container mx-auto p-4">

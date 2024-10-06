@@ -101,11 +101,11 @@ const AddPreviousWork = ({ onAddWork, cancelWork }) => {
           className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
           onClick={handleSubmit}
         >
-          Add Work
+          Confirm
         </button>
         <button
           type=""
-          className="w-full bg-gray-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+          className="w-full bg-gray-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring focus:ring-red-300"
           onClick={cancelWork}
         >
           Cancel

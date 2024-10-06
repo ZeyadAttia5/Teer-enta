@@ -49,7 +49,7 @@ const Sidebar = ({ visible, onClose }) => {
             <Menu.Item key="3" onClick={() => handleClick("/historicalPlace")}>
               Historical Places
             </Menu.Item>
-            {user && user.userRole === "TourismGovernor" && (
+            {user && (user.userRole === "TourismGovernor" || user.userRole === "Admin") && (
               <Menu.Item
                 key="12"
                 onClick={() => handleClick("/historicalPlace/my")}
@@ -59,7 +59,7 @@ const Sidebar = ({ visible, onClose }) => {
             )}
           </Menu.SubMenu>
         )}
-        {(user === null || (user && user.userRole !== "Seller")) && (
+        {(user === null || (user && user.userRole === "TourGuide")) && (
           <Menu.SubMenu key="sub1" title="Itinerary">
             <Menu.Item key="4" onClick={() => handleClick("/itinerary")}>
               Itinerary
@@ -77,7 +77,7 @@ const Sidebar = ({ visible, onClose }) => {
             </Menu.Item>
           </Menu.SubMenu>
         )}
-        {(user === null || (user && user.userRole !== "Seller")) && (
+        {(user === null || (user && user.userRole === "Advertiser")) && (
           <Menu.SubMenu key="sub3" title="Activities">
             {user && user.userRole === "Admin" && (
               <Menu.Item
@@ -87,11 +87,10 @@ const Sidebar = ({ visible, onClose }) => {
                 Activity Categories
               </Menu.Item>
             )}
-
             <Menu.Item key="7" onClick={() => handleClick("/activities")}>
               Activities
             </Menu.Item>
-            {user && (user.userRole === "Advertiser" || user.userRole === "Admin") && (
+            {user && (user.userRole === "Advertiser") && (
               <Menu.Item key="8" onClick={() => handleClick("/activities/my")}>
                 My Activities
               </Menu.Item>

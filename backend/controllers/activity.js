@@ -37,6 +37,7 @@ exports.getMyActivities = async (req, res, next) => {
         const activities = await Activity.find({createdBy})
             .populate('category')
             .populate('preferenceTags');
+        console.log(activities);
         if (activities.length === 0) {
             return res.status(404).json({message: 'No ActivityList found'});
         }
