@@ -357,7 +357,7 @@ const ItineraryScreen = ({ setFlag }) => {
 
     {
       title:
-        user && (user.userRole === "Admin" || user.userRole === "TourGuide")
+        user && ( user.userRole === "TourGuide")
           ? "Actions"
           : "",
       key: "actions",
@@ -398,7 +398,7 @@ const ItineraryScreen = ({ setFlag }) => {
     <div className="p-6 bg-white min-h-screen">
       {" "}
       <h1 className="text-2xl font-bold mb-4">Itineraries</h1>
-      {user && user.userRole === "Admin" && (
+      {user && user.userRole === "TourGuide" && (
         <Button
           type="primary"
           icon={<PlusOutlined />}
