@@ -23,9 +23,9 @@ import {
   getItineraries,
   createItinerary,
   updateItinerary,
-  deleteItinerary,
+  deleteItinerary, getMyItineraries,
 } from "../../api/itinerary.ts";
-import { getActivities } from "../../api/activities.ts";
+import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
 
 import moment from "moment";
@@ -37,12 +37,14 @@ import {
   isThisYear,
   parseISO,
 } from "date-fns";
+import {useLocation} from "react-router-dom";
 // import { format } from "path";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const ItineraryScreen = () => {
+const ItineraryScreen = ({setFlag}) => {
+  setFlag(false);
   const [itineraries, setItineraries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -60,15 +62,20 @@ const ItineraryScreen = () => {
   const budgets = [...new Set(itineraries.map((itin) => itin.price))];
   const languages = [...new Set(itineraries.map((itin) => itin.language))];
 
-  // New State Variables for Activities and Preference Tags
+  // New State Variables for ActivityList and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
-
+  const location = useLocation()  ;
   useEffect(() => {
-    fetchItineraries();
+    if(location.pathname === "/itinerary/my"){
+      fetchMyIternaries();
+    }else{
+      fetchItineraries();
+
+    }
     fetchActivities();
     fetchPreferenceTags();
-  }, []);
+  }, [location.pathname]);
 
   //filter fx
 
@@ -129,11 +136,21 @@ const ItineraryScreen = () => {
     }
     setLoading(false);
   };
+  const fetchMyIternaries = async () => {
+    setLoading(true);
+    try {
+      const data = await getMyItineraries();
+      setItineraries(data);
+    } catch (error) {
+      message.error("Failed to fetch itineraries");
+    }
+    setLoading(false);
+  }
 
   const fetchActivities = async () => {
     try {
       const data = await getActivities();
-      setActivitiesList(data);
+      setActivitiesList(data.data);
     } catch (error) {
       message.error("Failed to fetch activities");
     }
@@ -142,7 +159,7 @@ const ItineraryScreen = () => {
   const fetchPreferenceTags = async () => {
     try {
       const data = await getPreferenceTags();
-      setPreferenceTagsList(data);
+      setPreferenceTagsList(data.data);
     } catch (error) {
       message.error("Failed to fetch preference tags");
     }
@@ -169,9 +186,9 @@ const ItineraryScreen = () => {
         startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
 
-      // console.log("The first Activity is: " + itinerary.activities[0].duration);
+      // console.log("The first ActivityList is: " + itinerary.activities[0].duration);
       const formattedActivities = itinerary.activities.map((act ) => ({
-        activity: act.activity ? act.activity._id : "Activity not found",
+        activity: act.activity ? act.activity._id : "ActivityList not found",
         duration: act.duration,
       }));
 
@@ -235,13 +252,13 @@ const ItineraryScreen = () => {
         activity: act.activity,
         duration: act.duration,
       }));
-      // console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
+      // console.log("The first ActivityList is: " + JSON.stringify(formattedActivities[0]));
 
       // formattedActivities.forEach((act, index) => { 
       //   act.activity = activitiesList.find((activity) => activity._id === values.activities[index].activity);
       // });
 
-      // console.log("The first Activity is: " + JSON.stringify(formattedActivities[0]));
+      // console.log("The first ActivityList is: " + JSON.stringify(formattedActivities[0]));
 
       // Format locations
       const formattedLocations = values.locations
@@ -547,7 +564,7 @@ const ItineraryScreen = () => {
 
           <Divider />
 
-          {/* Activities */}
+          {/* ActivityList */}
           <Form.List name="activities">
             {(fields, { add, remove }) => (
               <>
@@ -558,7 +575,7 @@ const ItineraryScreen = () => {
                     style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
-                    {/* Activity Dropdown */}
+                    {/* ActivityList Dropdown */}
                     <Form.Item
                       {...restField}
                       name={[name, "activity"]}
@@ -675,7 +692,7 @@ const ItineraryScreen = () => {
                     style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
-                    {/* Activity Dropdown */}
+                    {/* ActivityList Dropdown */}
                     <Form.Item
                       {...restField}
                       name={[name, "activity"]}

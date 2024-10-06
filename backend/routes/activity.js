@@ -16,7 +16,7 @@ router.get("/upcoming", activityController.getUpcomingActivities);
 
 router.post("/create",isAuth , activityController.createActivity);
 
-router.put("/update/:id", isAuth ,activityController.updateActivity);
+router.put("/update/:id" , isAuth  ,activityController.updateActivity);
 
 router.delete("/delete/:id",isAuth , activityController.deleteActivity);
 

@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Table, Spin, message, Button, Popconfirm } from 'antd';
 import axios from 'axios';
 
-const AllUsers = () => {
+const AllUsers = (setFlag) => {
+    setFlag(false);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     const Url = process.env.REACT_APP_BACKEND_URL;
 
@@ -12,7 +15,11 @@ const AllUsers = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`${Url}/account/all`);
+                const response = await axios.get(`${Url}/account/all`,{
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    }
+                });
                 setUsers(response.data);
             } catch (error) {
                 message.error('Failed to fetch users');
@@ -27,7 +34,11 @@ const AllUsers = () => {
     // Function to delete a user
     const deleteUser = async (id) => {
         try {
-            await axios.delete(`${Url}/account/delete/${id}`);
+            await axios.delete(`${Url}/account/delete/${id}`,{
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+            });
             message.success('User deleted successfully');
             setUsers(users.filter(user => user._id !== id));
         } catch (error) {

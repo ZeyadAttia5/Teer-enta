@@ -5,7 +5,7 @@ exports.getActivityCategories = async (req, res, next) => {
     try {
         const activityCategories = await ActivityCategory.find();
         if(activityCategories.length ===0) {
-            return res.status(404).json({ message: 'No Activity Categories found' });
+            return res.status(404).json({ message: 'No ActivityList Categories found' });
         }
         res.status(200).json( activityCategories );
     } catch (err) {
@@ -19,7 +19,7 @@ exports.createActivityCategory = async (req, res, next) => {
         // const createdBy = req.user._id;
         // req.body.createdBy = createdBy;
         const activityCategory = await ActivityCategory.create(req.body);
-        res.status(201).json({ message: 'Activity Category created successfully', activityCategory });
+        res.status(201).json({ message: 'ActivityList Category created successfully', activityCategory });
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -39,11 +39,11 @@ exports.updateActivityCategory = async (req, res, next) => {
         );
 
         if (!updatedActivityCategory) {
-            return res.status(404).json({ message: 'Activity Category not found or inactive' });
+            return res.status(404).json({ message: 'ActivityList Category not found or inactive' });
         }
 
         res.status(200).json({
-            message: 'Activity Category updated successfully',
+            message: 'ActivityList Category updated successfully',
             data: updatedActivityCategory,
         });
 
@@ -58,12 +58,12 @@ exports.deleteActivityCategory = async (req, res, next) => {
 
         const activityCategory = await ActivityCategory.findById(id);
         if (!activityCategory) {
-            return res.status(404).json({ message: 'Activity Category not found' });
+            return res.status(404).json({ message: 'ActivityList Category not found' });
         }
 
         await ActivityCategory.findByIdAndDelete(id);
 
-        res.status(200).json({ message: 'Activity Category deleted successfully' ,data : activityCategory });
+        res.status(200).json({ message: 'ActivityList Category deleted successfully' ,data : activityCategory });
     } catch (err) {
         errorHandler.SendError(res, err);
     }

@@ -34,6 +34,7 @@ module.exports = async (req, res, next) => {
             role: decodedToken.userRole ,
             accessToken: token
         };
+        req.body.createdBy = req.user._id ;
         next();
 
     } catch (err) {

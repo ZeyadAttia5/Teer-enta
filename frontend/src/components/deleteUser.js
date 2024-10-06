@@ -4,10 +4,16 @@ const axios = require('axios');
 
 const DeleteUser = () => {
   const [userId, setUserId] = useState('');
+  const user= JSON.parse(localStorage.getItem('user'));
+  const accessToken = localStorage.getItem
 
   const handleDelete = async () => {
     try {
-        const response = await axios.delete(`/deleteUser/${userId}`);
+        const response = await axios.delete(`/deleteUser/${userId}` ,{
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            }
+        });
         alert(response.data.message);
     } catch (error) {
         console.error(error); // Log the entire error object

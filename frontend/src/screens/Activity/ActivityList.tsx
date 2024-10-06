@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { TActivity } from "../types/Activity/Activity.ts";
-import { getActivities, getUpcomingActivities } from "../api/activity.ts";
+import { TActivity } from "../../types/Activity/Activity.ts";
+import { getActivities, getUpcomingActivities } from "../../api/activity.ts";
 import React from "react";
 import { Switch, Table, Tag, Form, Input } from "antd";
-import { TActivityCategory } from "../types/Activity/ActivityCategory.ts";
-import { TTag } from "../types/Tag.ts";
-import Filter from "../components/Filter.jsx";
+import { TActivityCategory } from "../../types/Activity/ActivityCategory.ts";
+import { TTag } from "../../types/Tag.ts";
+import Filter from "../../components/Filter.jsx";
+import {TPreferenceTag} from "../../types/Itinerary/PreferenceTag";
 
 // Tactivity keys are the dataIndex of each object in the data array
 const columns = [
@@ -85,18 +86,18 @@ const columns = [
     render: (value: TActivityCategory) => value?.category,
   },
   {
-    title: "tags",
-    dataIndex: "tags",
-    key: "tags",
+    title: "preferenceTags",
+    dataIndex: "preferenceTags",
+    key: "preferenceTags",
     filters: [],
     onFilter: (value, record) => record.tags?.some((tag) => tag._id === value),
-    render: (tags: TTag[]) => (
+    render: (preferenceTags: TPreferenceTag[]) => (
       <>
-        {tags.map((tag, index) => {
+        {preferenceTags.map((tag, index) => {
           let color = index % 2 ? "geekblue" : "green";
           return (
             <Tag color={color} key={tag._id}>
-              {tag.name.toUpperCase()}
+              {tag.tag.toUpperCase()}
             </Tag>
           );
         })}
@@ -175,7 +176,8 @@ const columns = [
   },
 ];
 
-const Activity = () => {
+const ActivityList = ({setFlag}) => {
+  setFlag(false);
   const [activities, setActivities] = useState<TActivity[]>([]);
   const [upcoming, setUpcoming] = useState(false);
   useEffect(() => {
@@ -191,11 +193,11 @@ const Activity = () => {
 
   useEffect(() => {
     columns.forEach((column) => {
-      if (column.key === "tags")
+      if (column.key === "preferenceTags")
         column["filters"] = activities
-          .map((activity) => activity.tags)
+          .map((activity) => activity.preferenceTags)
           .flat()
-          .map((tag) => ({ text: tag.name, value: tag._id }));
+          .map((tag) => ({ text: tag.tag, value: tag._id }));
     });
   }, [activities]);
 
@@ -217,4 +219,4 @@ const Activity = () => {
   );
 };
 
-export default Activity;
+export default ActivityList;

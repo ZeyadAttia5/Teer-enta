@@ -14,14 +14,14 @@ export type TItinerary = {
     isActive: boolean;
     createdBy: TTourGuide; // ObjectId referencing 'User'
     activities: {
-        activity: TActivity; // ObjectId referencing 'Activity'
+        activity: TActivity; // ObjectId referencing 'ActivityList'
         duration: number;
     }[];
     locations: {
         name: string;
     }[];
     timeline: {
-        activity: TActivity; // ObjectId referencing 'Activity'
+        activity: TActivity; // ObjectId referencing 'ActivityList'
         startTime?: string;
         duration?: number; // in minutes
     }[];

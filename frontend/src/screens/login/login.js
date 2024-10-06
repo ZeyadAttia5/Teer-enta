@@ -4,7 +4,9 @@ import { images } from "./loadImage.js";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Example icons from react-icons
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-function Login() {
+import { set } from "date-fns";
+function Login({setFlag}) {
+  setFlag(true);
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
@@ -56,16 +58,16 @@ function Login() {
       const response = await axios.post(`${URL}/auth/login`, details);
       user = response.data.user;
       accessToken = response.data.accessToken;
-      setMessage(response.data.message);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("isAuthenticated" , "ture")
+      setMessage(response.data.message);
       navigate("/");
-      
+      setFlag(false);
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
       return false;
     }
-
   };
 
   function isValid() {
