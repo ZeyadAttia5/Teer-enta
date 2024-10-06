@@ -24,7 +24,7 @@ const UpdateHistoricalPlaces = () => {
   useEffect(() => {
     const fetchPlace = async () => {
       try {
-        const response = await axios.get(`${PORT}/historicalPlace/${id}`);
+        const response = await axios.get(`${PORT}/historicalPlace/one/${id}`);
         const place = response.data;
 
         setName(place.name || '');

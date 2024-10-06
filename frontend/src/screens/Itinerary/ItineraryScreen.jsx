@@ -74,7 +74,7 @@ const ItineraryScreen = () => {
     }
     fetchActivities();
     fetchPreferenceTags();
-  }, []);
+  }, [location.pathname]);
 
   //filter fx
 

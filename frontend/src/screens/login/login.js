@@ -5,8 +5,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa"; // Example icons from react-
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { set } from "date-fns";
-function Login({setFlag}) {
-  setFlag(true);
+function Login() {
+  // setFlag(true);
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
@@ -62,7 +62,7 @@ function Login({setFlag}) {
       localStorage.setItem("accessToken", accessToken);
       setMessage(response.data.message);
       navigate("/");
-      setFlag(false);
+      // setFlag(false);
     } catch (error) {
       setMessage(error.response.data.message || "Login failed");
       return false;

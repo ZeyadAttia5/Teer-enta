@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import HistoricalPlaceSingleCard from "./historicalPlaceSingleCard";
 import { MdOutlineAddBox } from "react-icons/md";
-import { Link } from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import axios from "axios";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
@@ -12,22 +12,40 @@ const ReadHistoriaclPlaces = () => {
   const [historicalPlacesData, setHistoricalPlacesData] = useState([]);
   const [tags, setTags] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem("accessToken");
   const userRole = user?.userRole;
-
+  const location = useLocation();
   useEffect(() => {
-    const fetchHistoricalPlaces = async () => {
-      try {
-        const response = await axios.get(
-          `${PORT}/historicalPlace`
-        );
-        setHistoricalPlacesData(response.data);
-      } catch (error) {
-        console.error("Error fetching historical places:", error);
+    if(location.pathname === "/historicalPlace/my"){
+      const fetchMyHistoricalPlaces = async () => {
+        try {
+          const response = await axios.get(
+              `${PORT}/historicalPlace/my` , {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                }
+              }
+          );
+          setHistoricalPlacesData(response.data);
+        } catch (error) {
+          console.error("Error fetching historical places:", error);
+        }
       }
-    };
-
-    fetchHistoricalPlaces();
-  }, []);
+      fetchMyHistoricalPlaces();
+    }else{
+      const fetchHistoricalPlaces = async () => {
+        try {
+          const response = await axios.get(
+              `${PORT}/historicalPlace`
+          );
+          setHistoricalPlacesData(response.data);
+        } catch (error) {
+          console.error("Error fetching historical places:", error);
+        }
+      };
+      fetchHistoricalPlaces();
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchTags = async () => {

@@ -75,6 +75,7 @@ function App() {
                     <Route path="/touristItinerary/update" element={<UpdateTouristItinerary/>}/>
                     <Route path="/activity" element={<ActivityList/>}/>
                     <Route path="/historicalPlace" element={<ReadHistoriaclPlaces/>}/>
+                    <Route path="/historicalPlace/my" element={<ReadHistoriaclPlaces/>}/>
                     <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces/>}/>
                     <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces/>}/>
                     <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces/>}/>
