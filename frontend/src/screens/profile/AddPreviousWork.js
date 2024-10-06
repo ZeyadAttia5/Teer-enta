@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 const AddPreviousWork = ({ onAddWork, cancelWork }) => {
   const [jobTitle, setJobTitle] = useState("");
@@ -6,9 +7,19 @@ const AddPreviousWork = ({ onAddWork, cancelWork }) => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
 
+  const valid = () => {
+    if ( jobTitle === "" || jobDescription === "" || new Date(startTime) > new Date(endTime)) {
+      setModalOpen(true);
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    if(!valid()){
+      return false;
+    }
     const newWork = {
       jobTitle,
       jobDescription,
@@ -28,12 +39,15 @@ const AddPreviousWork = ({ onAddWork, cancelWork }) => {
     setStartTime("");
     setEndTime("");
   };
-
+  const [isModalOpen, setModalOpen] = useState(false);
   return (
-    <form
-      
-      className="max-w-lg mx-auto bg-white shadow-md p-6 rounded-lg"
-    >
+    <form className="max-w-lg mx-auto bg-white shadow-md p-6 rounded-lg">
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        
+        message={`Enter valid values`}
+      />
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">
           Job Title:
@@ -85,7 +99,7 @@ const AddPreviousWork = ({ onAddWork, cancelWork }) => {
         <button
           type="submit"
           className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-            onClick={handleSubmit}
+          onClick={handleSubmit}
         >
           Add Work
         </button>

@@ -13,7 +13,6 @@ import ReadTouristItinerary from "./components/CRUDtouristItinerary/readTouristI
 import ReadAllTouristItinerary from "./components/CRUDtouristItinerary/readAllTouristItinerary.js";
 import UpdateTouristItinerary from "./components/CRUDtouristItinerary/updateTouristItinerary.js";
 import ActivityList from "./screens/Activity/ActivityList.tsx"; // From feat/activities
-import { useLocation } from "react-router-dom";
 import TouristWelcome from "./screens/TouristWelcome.jsx";
 import ReadHistoriaclPlaces from "./components/historicalPlaces/readHistoriaclPlaces.jsx";
 import CreateHistoricalPlaces from "./components/historicalPlaces/createHistoricalPlaces.jsx";
@@ -72,7 +71,7 @@ function App() {
           />
         )}
         {!flag && (
-          <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  before:content-[''] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background">
+          <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  ">
             <TouristNavBar setModalOpen={setModalOpen} isNavigate={isNavigate} setIsNavigate={setIsNavigate}/>
           </div>
         )}

@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 
 const URL = process.env.REACT_APP_BACKEND_URL;
 
-function ReadTouristItinerary(setFlag) {
+function ReadTouristItinerary({setFlag}) {
   setFlag(false);
   const [itinerary, setItinerary] = useState([]);
   const [isEmpty, setIsEmpty] = useState(true);
@@ -16,7 +16,7 @@ function ReadTouristItinerary(setFlag) {
   const [isAdmin, setIsAdmin] = useState("");
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem("accessToken");
-  const userRole = user.userRole;
+  const userRole = user?.userRole;
 
   useEffect(() => {
     if (userRole === "Admin") {

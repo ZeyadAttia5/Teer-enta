@@ -350,7 +350,7 @@ function Signup({setFlag}) {
 
   function isValid() {
     setMessage("");
-    if (!isDobValid) {
+    if (selectedRole === "Tourist" && !isDobValid) {
       setMessage("Invalid date of birth");
       return false;
     }

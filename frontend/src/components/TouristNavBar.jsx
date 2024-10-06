@@ -80,6 +80,7 @@ const TouristNavBar = ({setModalOpen, isNavigate, setIsNavigate}) => {
           ))}
         </div>
         <div className="justify-end lg:flex-1 mt-2 mr-4">
+          
           <AccountButton
             extra_tw={"justify-end lg:flex-1 mt-2"}
             onClick={onAccountClick}

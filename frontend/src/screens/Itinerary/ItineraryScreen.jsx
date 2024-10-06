@@ -350,11 +350,11 @@ const ItineraryScreen = ({ setFlag }) => {
     },
 
     {
-      title: user && user.userRole === "Admin" ? "Actions" : "",
+      title: user && (user.userRole === "Admin" || user.userRole === "TourGuide") ? "Actions" : "",
       key: "actions",
       render: (text, record) => (
         <>
-          {user && user.userRole === "Admin" && (
+          {user && (user.userRole === "Admin" || user.userRole === "TourGuide") && (
             <div>
               <Button
                 icon={<EditOutlined />}

@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Switch, notification, Popconfirm } from 'antd';
 import { getActivityCategories, createActivityCategory, updateActivityCategory, deleteActivityCategory } from '../../api/activityCategory.ts'; // Update this path based on your actual file structure
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import 'tailwindcss/tailwind.css';
+
 
 const { Item } = Form;
 
 const ActivityCategories = ({setFlag}) => {
     setFlag(false);
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userRole = user?.userRole;
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -84,14 +86,18 @@ const ActivityCategories = ({setFlag}) => {
         { title: 'Active', dataIndex: 'isActive', key: 'isActive', render: (text, record) => <Switch checked={record.isActive} disabled /> },
         // { title: 'Created At', dataIndex: 'createdAt', key: 'createdAt' },
         {
-            title: 'Actions',
+            title: userRole === "Admin" ? 'Actions' : "",
             key: 'actions',
             render: (text, record) => (
                 <>
-                    <Button type="link" icon={<EditOutlined />} onClick={() => handleEditCategory(record)} />
-                    <Popconfirm title="Are you sure?" onConfirm={() => handleDeleteCategory(record._id)}>
-                        <Button type="link" icon={<DeleteOutlined />} />
-                    </Popconfirm>
+                    {userRole === "Admin" &&
+                        <div>
+                            <Button type="link" icon={<EditOutlined />} onClick={() => handleEditCategory(record)} />
+                            <Popconfirm title="Are you sure?" onConfirm={() => handleDeleteCategory(record._id)}>
+                                <Button type="link" icon={<DeleteOutlined />} />
+                            </Popconfirm>
+                        </div>
+                    }
                 </>
             )
         }
@@ -101,9 +107,11 @@ const ActivityCategories = ({setFlag}) => {
         <div className="p-8 bg-gray-100 min-h-screen">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold text-green-600">Activity Categories</h1>
+                {userRole === "Admin" &&(   
                 <Button type="primary" icon={<PlusOutlined />} className="bg-green-600" onClick={handleCreateCategory}>
                     Create Category
                 </Button>
+                )}
             </div>
 
             <Table

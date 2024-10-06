@@ -4,7 +4,7 @@ import {getActivities, createActivity, updateActivity, deleteActivity, getMyActi
 import { getActivityCategories } from '../../api/activityCategory.ts';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-import 'tailwindcss/tailwind.css';
+
 import moment from 'moment';
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
@@ -15,6 +15,8 @@ const { Option } = Select;
 
 const AllActivitiesCRUD = ({setFlag}) => {
     setFlag(false);
+    const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem("accessToken");
     const [activities, setActivities] = useState([]);
     const [categories, setCategories] = useState([]);
     const [preferenceTags, setPreferenceTags] = useState([]);
@@ -211,10 +213,12 @@ const AllActivitiesCRUD = ({setFlag}) => {
             ),
         },
         {
-            title: 'Actions',
+            title: user && (user.userRole === "Admin" || user.userRole === "Advertiser") ? 'Actions' : "",
             key: 'actions',
             render: (record) => (
                 <span>
+                {user && (user.userRole === "Admin" || user.userRole === "Advertiser") && (
+                    <div>
                     <Button
                         icon={<EditOutlined />}
                         onClick={() => handleEditActivity(record)}
@@ -226,6 +230,8 @@ const AllActivitiesCRUD = ({setFlag}) => {
                     >
                         <Button icon={<DeleteOutlined />} danger />
                     </Popconfirm>
+                    </div>
+                )},
                 </span>
             ),
         },
@@ -233,6 +239,7 @@ const AllActivitiesCRUD = ({setFlag}) => {
 
     return (
         <div className="container mx-auto p-4">
+            {user && (user.userRole === "Admin" || user.userRole === "Advertiser") && (
             <Button
                 icon={<PlusOutlined />}
                 type="primary"
@@ -241,6 +248,7 @@ const AllActivitiesCRUD = ({setFlag}) => {
             >
                 Create Activity
             </Button>
+            )}
             <Table
                 columns={columns}
                 dataSource={activities}

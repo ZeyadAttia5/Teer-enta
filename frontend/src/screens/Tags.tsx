@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Select, Switch, notification, Popconfirm } from 'antd';
 import { getTags, createTag, updateTag, deleteTag } from '../api/tags.ts'; // Update this path based on your actual file structure
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import 'tailwindcss/tailwind.css';
+
 
 const { Item } = Form;
 const { Option } = Select;

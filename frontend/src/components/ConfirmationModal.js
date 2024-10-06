@@ -15,12 +15,14 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, message }) {
           >
             Cancel
           </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none"
-          >
-            Confirm
-          </button>
+          {onConfirm && (
+            <button
+              onClick={onConfirm}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none"
+            >
+              Confirm
+            </button>
+          )}
         </div>
       </div>
     </div>

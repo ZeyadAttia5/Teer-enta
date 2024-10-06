@@ -1,46 +1,19 @@
 // DrawerMenu.js
 import React from "react";
-import { Drawer, Button } from "antd";
+import { Drawer, Button, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
-import { on } from "events";
 
 const Sidebar = ({ visible, onClose }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem("accessToken");
 
   const navigate = useNavigate();
-  const clickOptionOne = () => {
+
+  const handleClick = (path) => {
     onClose();
-    navigate("/preference-tags");
+    navigate(path);
   };
-  const clickOptionTwo = () => {
-    onClose();
-    navigate("/tags");
-  };
-  const clickOptionThree = () => {
-    onClose();
-    navigate("/historicalPlace");
-  };
-  const clickOptionFour = () => {
-    onClose();
-    navigate("/itinerary");
-  };
-  const clickOptionFive = () => {
-    onClose();
-    navigate("/touristItinerary");
-  };
-  const clickOptionSix = () => {
-    onClose();
-    navigate("/activity-categories");
-  };
-  const clickOptionSeven = () => {
-    onClose();
-    navigate("/allUsers");
-  };
-  const clickOptionEight = () => {
-    onClose();
-    navigate("/products");
-  };
+
   return (
     <Drawer
       title="Menu"
@@ -49,34 +22,115 @@ const Sidebar = ({ visible, onClose }) => {
       onClose={onClose}
       visible={visible}
     >
-      <div className="flex flex-col">
-        <Button className="mb-2" type="text" onClick={clickOptionOne}>
-          Preference Tags
-        </Button>
-        <Button className="mb-2" type="text" onClick={clickOptionTwo}>
-          Historical Tags
-        </Button>
-        <Button className="mb-2" type="text" onClick={clickOptionThree}>
-          Historical Places
-        </Button>
-        <Button className="mb-2" type="text" onClick={clickOptionFour}>
-          Itinerary
-        </Button>
-        <Button className="mb-2" type="text" onClick={clickOptionFive}>
-          Tourist Itinerary
-        </Button>
-        <Button className="mb-2" type="text" onClick={clickOptionSix}>
-          Activity Category
-        </Button>
-        <Button className="mb-2" type="text" onClick={clickOptionEight}>
-          Products
-        </Button>
-        {user && user.userRole === "Admin" && (
-          <Button className="mb-2" type="text" onClick={clickOptionSeven}>
-            Users
-          </Button>
+      <Menu mode="inline" defaultSelectedKeys={[]}>
+        {user &&
+          (user.userRole === "Admin" ||
+            user.userRole === "TourismGovernor") && (
+            <Menu.SubMenu key="sub5" title="Tags">
+              {user && user.userRole === "Admin" && (
+                <Menu.Item
+                  key="1"
+                  onClick={() => handleClick("/preference-tags")}
+                >
+                  Preference Tags
+                </Menu.Item>
+              )}
+              {user &&
+                (user.userRole === "Admin" ||
+                  user.userRole === "TourismGovernor") && (
+                  <Menu.Item key="2" onClick={() => handleClick("/tags")}>
+                    Tags
+                  </Menu.Item>
+                )}
+            </Menu.SubMenu>
+          )}
+        {(user === null || (user && user.userRole !== "Seller")) && (
+          <Menu.SubMenu key="sub4" title="Historical Places">
+            <Menu.Item key="3" onClick={() => handleClick("/historicalPlace")}>
+              Historical Places
+            </Menu.Item>
+            {user && user.userRole === "TourismGovernor" && (
+              <Menu.Item
+                key="12"
+                onClick={() => handleClick("/historicalPlace/my")}
+              >
+                My Historical Places
+              </Menu.Item>
+            )}
+          </Menu.SubMenu>
         )}
-      </div>
+        {(user === null || (user && user.userRole !== "Seller")) && (
+          <Menu.SubMenu key="sub1" title="Itinerary">
+            <Menu.Item key="4" onClick={() => handleClick("/itinerary")}>
+              Itinerary
+            </Menu.Item>
+            {user && user.userRole === "TourGuide" && (
+            <Menu.Item key="5" onClick={() => handleClick("/itinerary/my")}>
+              My Itinerary
+            </Menu.Item>
+            )}
+            <Menu.Item
+              key="15"
+              onClick={() => handleClick("/touristItinerary")}
+            >
+              Tourist Itinerary
+            </Menu.Item>
+          </Menu.SubMenu>
+        )}
+        {(user === null || (user && user.userRole !== "Seller")) && (
+          <Menu.SubMenu key="sub3" title="Activities">
+            {user && user.userRole === "Admin" && (
+              <Menu.Item
+                key="6"
+                onClick={() => handleClick("/activity-categories")}
+              >
+                Activity Categories
+              </Menu.Item>
+            )}
+
+            <Menu.Item key="7" onClick={() => handleClick("/activities")}>
+              Activities
+            </Menu.Item>
+            {user && (user.userRole === "Advertiser" || user.userRole === "Admin") && (
+              <Menu.Item key="8" onClick={() => handleClick("/activities/my")}>
+                My Activities
+              </Menu.Item>
+            )}
+          </Menu.SubMenu>
+        )}
+        {user &&
+          (user.userRole === "Seller" ||
+            user.userRole === "Admin" ||
+            user.userRole === "Tourist") && (
+            <Menu.SubMenu key="sub6" title="Products">
+              <Menu.Item key="13" onClick={() => handleClick("/products")}>
+                All Products
+              </Menu.Item>
+              {(user.userRole === "Seller" || user.userRole === "Admin") && (
+                <Menu.Item
+                  key="14"
+                  onClick={() => handleClick("/products/create")}
+                >
+                  Add Product
+                </Menu.Item>
+              )}
+            </Menu.SubMenu>
+          )}
+        {user && user.userRole === "Admin" && (
+          <Menu.SubMenu key="sub2" title="Users">
+            <Menu.Item key="9" onClick={() => handleClick("/allUsers")}>
+              Show Users
+            </Menu.Item>
+            <Menu.Item key="10" onClick={() => handleClick("/addUser")}>
+              Add User
+            </Menu.Item>
+            <Menu.Item key="11" onClick={() => handleClick("/pendingUsers")}>
+              Pending Users
+            </Menu.Item>
+            {/* Add more admin options here if needed */}
+          </Menu.SubMenu>
+        )}
+      </Menu>
     </Drawer>
   );
 };

@@ -99,7 +99,7 @@ const AdminProductGrid = ({ setFlag }) => {
             onFilterChange={handleFilterChange}
           />
         </div>
-        {user && user.userRole === "Admin" && (
+        {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
         <Link to="/products/create">
           <Button
             type="primary"
@@ -141,7 +141,7 @@ const AdminProductGrid = ({ setFlag }) => {
                   </p>
                 </div>
                 <div className="flex gap-2 mt-3">
-                  {user && user.userRole === "Admin" && (
+                  {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
                   <Link
                     to={`/admin/edit-product/${product._id}`}
                     className="flex-1"
