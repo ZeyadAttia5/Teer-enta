@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
 
-const EditProductForm = (setFlag) => {
+const EditProductForm = ({setFlag}) => {
   setFlag(false);
   const { productId } = useParams();
   const navigate = useNavigate(); // Initialize useNavigate
