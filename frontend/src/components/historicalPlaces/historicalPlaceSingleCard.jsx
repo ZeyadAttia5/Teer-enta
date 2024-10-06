@@ -2,10 +2,41 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { AiOutlineEdit } from "react-icons/ai";
 import { MdOutlineDelete } from "react-icons/md";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+
+const PORT = process.env.REACT_APP_BACKEND_URL;
 
 const HistoricalPlaceSingleCard = ({ places }) => {
   const user = JSON.parse(localStorage.getItem("user"));
-  const userRole = user?.userRole;
+
+
+  const id  = places._id;
+
+    const accessToken = localStorage.getItem('accessToken');
+
+  const handleDeleteHistoricalPlace = async () => {
+    try {
+
+      const response = await axios.delete(`${PORT}/historicalPlace/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          }
+        });
+
+      if (response.status === 200) {
+        toast.success('Historical place deleted successfully!');
+        window.location.reload();
+      } else {
+        toast.error('Failed to delete the historical place.');
+      }
+    } catch (error) {
+      console.error('Error deleting historical place:', error);
+      toast.error('An error occurred while deleting the historical place.');
+    }
+  };
+
 
   return (
     <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
@@ -68,12 +99,12 @@ const HistoricalPlaceSingleCard = ({ places }) => {
               title="Edit"
             />
           </Link>
-          <Link to={`/historicalPlace/delete/${places._id}`}>
+          <button onClick={handleDeleteHistoricalPlace}>
             <MdOutlineDelete
               className="text-red-600 text-2xl hover:text-black hover:scale-105 hover:shadow-lg transition duration-300 ease-in-out"
               title="Delete"
             />
-          </Link>
+          </button>
         </div>
       )}
     </div>

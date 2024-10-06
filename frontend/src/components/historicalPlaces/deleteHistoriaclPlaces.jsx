@@ -12,7 +12,7 @@ const DeleteHistoricalPlaces = ({setFlag}) => {
 
   const { id } = useParams();
   const user = JSON.parse(localStorage.getItem('user'));
-    const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
 
   const handleDeleteHistoricalPlace = async () => {
     try {
