@@ -122,9 +122,13 @@ const ItineraryScreen = ({ setFlag }) => {
   );
 
   const sortedItineraries = filteredItinerareis.sort((a, b) => {
-    if (sortBy === "pricing") {
+    if (sortBy === "pricingHighToLow") {
+      return b.price - a.price;
+    } else if (sortBy === "pricingLowToHigh") {
       return a.price - b.price;
-    } else if (sortBy === "rating") {
+    } else if (sortBy === "ratingHighToLow") {
+      return b.rating - a.rating;
+    } else if (sortBy === "ratingLowToHigh") {
       return a.rating - b.rating;
     }
     return 0;
@@ -504,8 +508,10 @@ const ItineraryScreen = ({ setFlag }) => {
               className="p-2 border border-slate-700 rounded-md"
             >
               <option value="">None</option>
-              <option value="pricing">Price</option>
-              <option value="rating">Rating</option>
+              <option value="pricingHighToLow">Price (High to Low)</option>
+              <option value="pricingLowToHigh">Price (Low to High)</option>
+              <option value="ratingHighToLow">Rating (High to Low)</option>
+              <option value="ratingLowToHigh">Rating (Low to High)</option>
             </select>
           </div>
         </div>
