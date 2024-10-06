@@ -98,6 +98,8 @@ const ItineraryScreen = ({ setFlag }) => {
         return isThisMonth(date);
       } else if (selectedDateFilter === "thisYear") {
         return isThisYear(date);
+      } else if (selectedDateFilter === "allUpcoming") {
+        return date >= new Date();
       }
 
       return true;
@@ -350,37 +352,41 @@ const ItineraryScreen = ({ setFlag }) => {
     },
 
     {
-      title: user && (user.userRole === "Admin" || user.userRole === "TourGuide") ? "Actions" : "",
+      title:
+        user && (user.userRole === "Admin" || user.userRole === "TourGuide")
+          ? "Actions"
+          : "",
       key: "actions",
       render: (text, record) => (
         <>
-          {user && (user.userRole === "Admin" || user.userRole === "TourGuide") && (
-            <div>
-              <Button
-                icon={<EditOutlined />}
-                onClick={() => showModal(record)}
-                className="mr-2"
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
-              >
-                Edit
-              </Button>
-              <Button
-                icon={<DeleteOutlined />}
-                onClick={() => handleDelete(record._id)}
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
-              >
-                Delete
-              </Button>
-            </div>
-          )}
+          {user &&
+            (user.userRole === "Admin" || user.userRole === "TourGuide") && (
+              <div>
+                <Button
+                  icon={<EditOutlined />}
+                  onClick={() => showModal(record)}
+                  className="mr-2"
+                  style={{
+                    backgroundColor: "#02735F",
+                    color: "#fff",
+                    border: "none",
+                  }}
+                >
+                  Edit
+                </Button>
+                <Button
+                  icon={<DeleteOutlined />}
+                  onClick={() => handleDelete(record._id)}
+                  style={{
+                    backgroundColor: "#02735F",
+                    color: "#fff",
+                    border: "none",
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+            )}
         </>
       ),
     },
@@ -446,6 +452,7 @@ const ItineraryScreen = ({ setFlag }) => {
               <option value="thisWeek">This Week</option>
               <option value="thisMonth">This Month</option>
               <option value="thisYear">This Year</option>
+              <option value="allUpcoming">All Upcoming</option>
             </select>
           </div>
 
