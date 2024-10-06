@@ -123,13 +123,13 @@ const ItineraryScreen = ({ setFlag }) => {
 
   const sortedItineraries = filteredItinerareis.sort((a, b) => {
     if (sortBy === "pricingHighToLow") {
-      return b.price - a.price;
-    } else if (sortBy === "pricingLowToHigh") {
       return a.price - b.price;
-    } else if (sortBy === "ratingHighToLow") {
+    } else if (sortBy === "pricingLowToHigh") {
       return b.rating - a.rating;
-    } else if (sortBy === "ratingLowToHigh") {
+    } else if (sortBy === "ratingHighToLow") {
       return a.rating - b.rating;
+    } else if (sortBy === "ratingLowToHigh") {
+      return b.rating - a.rating;
     }
     return 0;
   });
@@ -363,34 +363,33 @@ const ItineraryScreen = ({ setFlag }) => {
       key: "actions",
       render: (text, record) => (
         <>
-          {user &&
-            (user.userRole === "Admin" || user.userRole === "TourGuide") && (
-              <div>
-                <Button
-                  icon={<EditOutlined />}
-                  onClick={() => showModal(record)}
-                  className="mr-2"
-                  style={{
-                    backgroundColor: "#02735F",
-                    color: "#fff",
-                    border: "none",
-                  }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  icon={<DeleteOutlined />}
-                  onClick={() => handleDelete(record._id)}
-                  style={{
-                    backgroundColor: "#02735F",
-                    color: "#fff",
-                    border: "none",
-                  }}
-                >
-                  Delete
-                </Button>
-              </div>
-            )}
+          {user && user._id === record.createdBy && (
+            <div>
+              <Button
+                icon={<EditOutlined />}
+                onClick={() => showModal(record)}
+                className="mr-2"
+                style={{
+                  backgroundColor: "#02735F",
+                  color: "#fff",
+                  border: "none",
+                }}
+              >
+                Edit
+              </Button>
+              <Button
+                icon={<DeleteOutlined />}
+                onClick={() => handleDelete(record._id)}
+                style={{
+                  backgroundColor: "#02735F",
+                  color: "#fff",
+                  border: "none",
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          )}
         </>
       ),
     },
