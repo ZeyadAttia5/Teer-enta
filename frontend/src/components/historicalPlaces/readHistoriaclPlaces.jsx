@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import HistoricalPlaceSingleCard from "./historicalPlaceSingleCard";
 import { MdOutlineAddBox } from "react-icons/md";
-import {Link, useLocation} from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
-const ReadHistoriaclPlaces = ({setFlag}) => {
+const ReadHistoriaclPlaces = ({ setFlag }) => {
   setFlag(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
@@ -17,28 +17,24 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
   const userRole = user?.userRole;
   const location = useLocation();
   useEffect(() => {
-    if(location.pathname === "/historicalPlace/my"){
+    if (location.pathname === "/historicalPlace/my") {
       const fetchMyHistoricalPlaces = async () => {
         try {
-          const response = await axios.get(
-              `${PORT}/historicalPlace/my` , {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                }
-              }
-          );
+          const response = await axios.get(`${PORT}/historicalPlace/my`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
           setHistoricalPlacesData(response.data);
         } catch (error) {
           console.error("Error fetching historical places:", error);
         }
-      }
+      };
       fetchMyHistoricalPlaces();
-    }else{
+    } else {
       const fetchHistoricalPlaces = async () => {
         try {
-          const response = await axios.get(
-              `${PORT}/historicalPlace`
-          );
+          const response = await axios.get(`${PORT}/historicalPlace`);
           setHistoricalPlacesData(response.data);
         } catch (error) {
           console.error("Error fetching historical places:", error);
@@ -107,7 +103,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
           ))}
         </select>
       </div>
-      {(userRole === "TourismGovernor" || userRole === "Admin") && (
+      {userRole === "TourismGovernor" && (
         <div className="flex justify-end p-4 w-full">
           <Link to="/historicalPlace/create">
             <button className="flex items-center px-4 py-2 bg-sky-800 text-white rounded-lg shadow hover:bg-sky-700 hover:scale-105 transition-all duration-300 ease-in-out">

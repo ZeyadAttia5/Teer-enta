@@ -7,7 +7,6 @@ const HistoricalPlaceSingleCard = ({ places }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const userRole = user?.userRole;
 
-
   return (
     <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
       <img
@@ -61,7 +60,7 @@ const HistoricalPlaceSingleCard = ({ places }) => {
             </div>
           ))}
       </div>
-      {(userRole === "TourismGovernor" || userRole === "Admin") && (
+      {user._id === places.createdBy && (
         <div className="flex justify-center items-center gap-10 mt-4 p-4">
           <Link to={`/historicalPlace/update/${places._id}`}>
             <AiOutlineEdit
