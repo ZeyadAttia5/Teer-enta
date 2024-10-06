@@ -11,7 +11,7 @@ import { GoogleMap, LoadScript, MarkerF } from "@react-google-maps/api";
  * @returns {Element}
  * @constructor
  */
-const MapContainer = ({latitude = 1, longitude = 1, outputLocation}) => {
+const MapContainer = ({latitude = 1, longitude = 1}) => {
     const mapStyles = {
         height: "400px",
         width: "100%",
@@ -21,21 +21,6 @@ const MapContainer = ({latitude = 1, longitude = 1, outputLocation}) => {
         lat: latitude,
         lng: longitude
     }
-
-    const [markerPosition, setMarkerPosition] = useState(initialPosition);
-
-    const handleMapClick = (event) => {
-        const newLat = event.latLng.lat();
-        const newLng = event.latLng.lng();
-
-        console.log("New Latitude and Longitude: " + newLat + ", " + newLng);
-        outputLocation(newLat, newLng);
-        // Update the marker position based on user click location
-        setMarkerPosition({
-            lat: newLat,
-            lng: newLng,
-        });
-    };
     const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
     const mapId = process.env.REACT_APP_GOOGLE_MAPS_MAP;
 
@@ -45,10 +30,9 @@ const MapContainer = ({latitude = 1, longitude = 1, outputLocation}) => {
             <GoogleMap
                 mapContainerStyle={mapStyles}
                 zoom={13}
-                center={markerPosition}
-                onClick={handleMapClick}
+                center={initialPosition}
             >
-                <MarkerF position={markerPosition} draggable={true} onDrag={handleMapClick}/>
+                <MarkerF position={initialPosition}/>
             </GoogleMap>
         </LoadScript>
     );
