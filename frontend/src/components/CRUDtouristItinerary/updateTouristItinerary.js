@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import MapContainer from "../GoogleMapsTemp/GoogleMaps";
+import MapContainer from "../GoogleMaps/GoogleMaps";
 
 const URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
