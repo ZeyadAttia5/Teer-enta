@@ -17,7 +17,7 @@ const DeleteHistoricalPlaces = ({setFlag}) => {
   const handleDeleteHistoricalPlace = async () => {
     try {
 
-      const response = await axios.delete(`http://localhost:${PORT}/historicalPlace/delete/${id}`,
+      const response = await axios.delete(`${PORT}/historicalPlace/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

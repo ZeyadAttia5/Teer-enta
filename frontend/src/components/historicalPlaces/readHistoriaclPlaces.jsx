@@ -107,7 +107,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
           ))}
         </select>
       </div>
-      {userRole === "Admin" && (
+      {userRole === "TourismGovernor" && (
         <div className="flex justify-end p-4 w-full">
           <Link to="/historicalPlace/create">
             <button className="flex items-center px-4 py-2 bg-sky-800 text-white rounded-lg shadow hover:bg-sky-700 hover:scale-105 transition-all duration-300 ease-in-out">

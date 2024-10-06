@@ -11,7 +11,7 @@ module.exports = {
         "tourist-background-keyframe": {
           "0%": {
             // "background-image":
-            //     'linear-gradient(to bottom,rgba(7, 91, 76, 0) 70%,rgba(7, 91, 76, 1) 100%),url("assets/WelcomePhotos/mosque3.jpeg")',
+            //     'linear-gradient(to bottom,rgba(7, 91, 76, 0) 70%,rgba(7, 91, 76, 1) 100%),url("assets/mosque3.jpeg")',
           },
           '25%': { 'opacity': '0.8' },
 

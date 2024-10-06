@@ -1,43 +1,46 @@
 // DrawerMenu.js
-import React from 'react';
-import { Drawer, Button } from 'antd';
+import React from "react";
+import { Drawer, Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import { on } from 'events';
+import { on } from "events";
 
 const Sidebar = ({ visible, onClose }) => {
-    const navigate = useNavigate();
-    const clickOptionOne = () => {
-        onClose();
-        navigate('/preference-tags');
-    }
-    const clickOptionTwo = () => {
-        onClose();
-        navigate('/tags');
-    }
-    const clickOptionThree = () => {
-        onClose();
-        navigate('/historicalPlace');
-    }
-    const clickOptionFour = () => {
-        onClose();
-        navigate('/itinerary');
-    }
-    const clickOptionFive = () => {
-        onClose();
-        navigate('/touristItinerary');
-    }
-    const clickOptionSix = () => {
-        onClose();
-        navigate('/activity-categories');
-    }
-    const clickOptionSeven = () => {
-        onClose();
-        navigate('/allUsers');
-    }
-    const clickOptionEight = () => {
-        onClose();
-        navigate('/products');
-    }
+  const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem("accessToken");
+
+  const navigate = useNavigate();
+  const clickOptionOne = () => {
+    onClose();
+    navigate("/preference-tags");
+  };
+  const clickOptionTwo = () => {
+    onClose();
+    navigate("/tags");
+  };
+  const clickOptionThree = () => {
+    onClose();
+    navigate("/historicalPlace");
+  };
+  const clickOptionFour = () => {
+    onClose();
+    navigate("/itinerary");
+  };
+  const clickOptionFive = () => {
+    onClose();
+    navigate("/touristItinerary");
+  };
+  const clickOptionSix = () => {
+    onClose();
+    navigate("/activity-categories");
+  };
+  const clickOptionSeven = () => {
+    onClose();
+    navigate("/allUsers");
+  };
+  const clickOptionEight = () => {
+    onClose();
+    navigate("/products");
+  };
   return (
     <Drawer
       title="Menu"
@@ -51,28 +54,28 @@ const Sidebar = ({ visible, onClose }) => {
           Preference Tags
         </Button>
         <Button className="mb-2" type="text" onClick={clickOptionTwo}>
-            Historical Tags
+          Historical Tags
         </Button>
         <Button className="mb-2" type="text" onClick={clickOptionThree}>
-            Historical Places
+          Historical Places
         </Button>
         <Button className="mb-2" type="text" onClick={clickOptionFour}>
-            Itinerary
+          Itinerary
         </Button>
         <Button className="mb-2" type="text" onClick={clickOptionFive}>
-            Tourist Itinerary
+          Tourist Itinerary
         </Button>
         <Button className="mb-2" type="text" onClick={clickOptionSix}>
-            Activity Category
-        </Button>
-        <Button className="mb-2" type="text" onClick={clickOptionSeven}>
-            Users
+          Activity Category
         </Button>
         <Button className="mb-2" type="text" onClick={clickOptionEight}>
-            Products
+          Products
         </Button>
-
-
+        {user && user.userRole === "Admin" && (
+          <Button className="mb-2" type="text" onClick={clickOptionSeven}>
+            Users
+          </Button>
+        )}
       </div>
     </Drawer>
   );

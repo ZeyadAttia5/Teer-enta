@@ -37,6 +37,9 @@ const TouristNavBar = ({setModalOpen, isNavigate, setIsNavigate}) => {
   const user = storedUser ? JSON.parse(storedUser) : null;
   
   const onAccountClick = () => {
+    if(user && (user.userRole === "Admin" || user.userRole === "TourismGovernor")){
+      return false;
+    }
     navigate(user ? "/profile" : "/login");
   };
 
@@ -49,7 +52,7 @@ const TouristNavBar = ({setModalOpen, isNavigate, setIsNavigate}) => {
   , [isNavigate]);
 
   return (
-    <header className="w-full flex flex-row text-white justify-between font-bold h-16 p-12 z-10 items-center">
+    <div className="w-full flex flex-row text-white justify-between font-bold h-16 p-12 z-10 items-center">
       <span className="font-bold flex-1 ml-8 text-lg leading-7 justify-start ">
         <div className="">
           <div className="cursor-pointer w-fit  border border-transparent hover:border-white p-2 rounded-md transition-all duration-300">
@@ -93,7 +96,7 @@ const TouristNavBar = ({setModalOpen, isNavigate, setIsNavigate}) => {
         )}
         
       </SideBar>
-    </header>
+    </div>
   );
 };
 

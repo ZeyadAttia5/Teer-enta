@@ -23,7 +23,8 @@ import {
   getItineraries,
   createItinerary,
   updateItinerary,
-  deleteItinerary, getMyItineraries,
+  deleteItinerary,
+  getMyItineraries,
 } from "../../api/itinerary.ts";
 import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
@@ -37,14 +38,16 @@ import {
   isThisYear,
   parseISO,
 } from "date-fns";
-import {useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 // import { format } from "path";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const ItineraryScreen = ({setFlag}) => {
+const ItineraryScreen = ({ setFlag }) => {
   setFlag(false);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem("accessToken");
   const [itineraries, setItineraries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -65,13 +68,12 @@ const ItineraryScreen = ({setFlag}) => {
   // New State Variables for ActivityList and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
-  const location = useLocation()  ;
+  const location = useLocation();
   useEffect(() => {
-    if(location.pathname === "/itinerary/my"){
+    if (location.pathname === "/itinerary/my") {
       fetchMyIternaries();
-    }else{
+    } else {
       fetchItineraries();
-
     }
     fetchActivities();
     fetchPreferenceTags();
@@ -145,7 +147,7 @@ const ItineraryScreen = ({setFlag}) => {
       message.error("Failed to fetch itineraries");
     }
     setLoading(false);
-  }
+  };
 
   const fetchActivities = async () => {
     try {
@@ -187,12 +189,14 @@ const ItineraryScreen = ({setFlag}) => {
       }));
 
       // console.log("The first ActivityList is: " + itinerary.activities[0].duration);
-      const formattedActivities = itinerary.activities.map((act ) => ({
+      const formattedActivities = itinerary.activities.map((act) => ({
         activity: act.activity ? act.activity._id : "ActivityList not found",
         duration: act.duration,
       }));
 
-      const formattedPreferenceTags = itinerary.preferenceTags.map((tag) => tag._id);
+      const formattedPreferenceTags = itinerary.preferenceTags.map(
+        (tag) => tag._id
+      );
 
       form.setFieldsValue({
         ...itinerary,
@@ -245,7 +249,7 @@ const ItineraryScreen = ({setFlag}) => {
       //       duration: act.duration,
       //     }))
       //   : [];
-      
+
       // get the activity from the activitiesList
       // get the duration from the values
       const formattedActivities = values.activities.map((act) => ({
@@ -254,7 +258,7 @@ const ItineraryScreen = ({setFlag}) => {
       }));
       // console.log("The first ActivityList is: " + JSON.stringify(formattedActivities[0]));
 
-      // formattedActivities.forEach((act, index) => { 
+      // formattedActivities.forEach((act, index) => {
       //   act.activity = activitiesList.find((activity) => activity._id === values.activities[index].activity);
       // });
 
@@ -279,8 +283,9 @@ const ItineraryScreen = ({setFlag}) => {
       // format prefrence tags
       // console.log("The preference tags are: " + values.preferenceTags);
 
-      const formattedPreferenceTags =
-          values.preferenceTags ? values.preferenceTags.map((tag) => tag) : [];
+      const formattedPreferenceTags = values.preferenceTags
+        ? values.preferenceTags.map((tag) => tag)
+        : [];
       // console.log("The formatted preference tags are: " + formattedPreferenceTags);
       // const formattedPreferenceTags = values.preferenceTags || [];
 
@@ -343,34 +348,39 @@ const ItineraryScreen = ({setFlag}) => {
       dataIndex: "dropOffLocation",
       key: "dropOffLocation",
     },
+
     {
-      title: "Actions",
+      title: user && user.userRole === "Admin" ? "Actions" : "",
       key: "actions",
       render: (text, record) => (
         <>
-          <Button
-            icon={<EditOutlined />}
-            onClick={() => showModal(record)}
-            className="mr-2"
-            style={{
-              backgroundColor: "#02735F",
-              color: "#fff",
-              border: "none",
-            }}
-          >
-            Edit
-          </Button>
-          <Button
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record._id)}
-            style={{
-              backgroundColor: "#02735F",
-              color: "#fff",
-              border: "none",
-            }}
-          >
-            Delete
-          </Button>
+          {user && user.userRole === "Admin" && (
+            <div>
+              <Button
+                icon={<EditOutlined />}
+                onClick={() => showModal(record)}
+                className="mr-2"
+                style={{
+                  backgroundColor: "#02735F",
+                  color: "#fff",
+                  border: "none",
+                }}
+              >
+                Edit
+              </Button>
+              <Button
+                icon={<DeleteOutlined />}
+                onClick={() => handleDelete(record._id)}
+                style={{
+                  backgroundColor: "#02735F",
+                  color: "#fff",
+                  border: "none",
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          )}
         </>
       ),
     },
@@ -379,15 +389,17 @@ const ItineraryScreen = ({setFlag}) => {
     <div className="p-6 bg-white min-h-screen">
       {" "}
       <h1 className="text-2xl font-bold mb-4">Itineraries</h1>
-      <Button
-        type="primary"
-        icon={<PlusOutlined />}
-        onClick={() => showModal()}
-        className="mb-4"
-        style={{ backgroundColor: "#02735F", borderColor: "#02735F" }}
-      >
-        Add Itinerary
-      </Button>
+      {user && user.userRole === "Admin" && (
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => showModal()}
+          className="mb-4"
+          style={{ backgroundColor: "#02735F", borderColor: "#02735F" }}
+        >
+          Add Itinerary
+        </Button>
+      )}
       <div className="p-8 bg-gray-100">
         <div className="mb-6">
           <input
