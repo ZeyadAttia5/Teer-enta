@@ -91,7 +91,7 @@ const HistoricalPlaceSingleCard = ({ places }) => {
             </div>
           ))}
       </div>
-      {user._id === places.createdBy && (
+      {((user.userRole === "TourismGovernor") && user._id === places.createdBy )&& (
         <div className="flex justify-center items-center gap-10 mt-4 p-4">
           <Link to={`/historicalPlace/update/${places._id}`}>
             <AiOutlineEdit

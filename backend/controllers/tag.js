@@ -19,7 +19,9 @@ exports.createTag = async (req, res, next) => {
         // const createdBy = req.user._id;
         // req.body.createdBy = createdBy
 
+
         const tag = await Tag.create(req.body);
+        console.log(tag)
         res.status(201).json({ message: 'Tag created successfully', tag });
     } catch (err) {
         errorHandler.SendError(res, err);
