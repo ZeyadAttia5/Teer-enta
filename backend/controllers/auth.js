@@ -81,6 +81,15 @@ exports.login = async (req, res) => {
         const doMatch = await bcrypt.compare(password, user.password);
         if (!doMatch) return res.status(401).json({ message: "Wrong Password" });
 
+        const status = user.isAccepted ;
+
+        if (status==="Pending"){
+            return res.status(401).json({message:"Your request is still pending "}) ;
+        }
+        if (status==="Rejected"){
+            return res.status(403).json({message:"Your request is rejected"})
+        }
+
         const { token: accessToken, expiresIn: accessExpiresIn } = await TokenHandler.generateAccessToken(user);
         const { token: refreshToken, expiresIn: refreshExpiresIn } = await TokenHandler.generateRefreshToken(user);
 
