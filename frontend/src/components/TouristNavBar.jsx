@@ -2,8 +2,13 @@ import { MenuOutlined } from "@ant-design/icons";
 import AccountButton from "./AccountButton";
 import useMediaQuery from "use-media-antd-query";
 import { Drawer } from "antd";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FiLogOut } from "react-icons/fi"; // Importing a logout icon from react-icons
+import logo from "../assets/logo/logo.jpeg";
+import ConfirmationModal from "./ConfirmationModal";
+import { on } from "events";
+import { set } from "date-fns";
 
 const SideBar = ({ children, classNames }) => {
   const size = useMediaQuery();
@@ -26,13 +31,33 @@ const SideBar = ({ children, classNames }) => {
   return children;
 };
 
-const TouristNavBar = () => {
+const TouristNavBar = ({setModalOpen, isNavigate, setIsNavigate}) => {
+  const navigate = useNavigate();
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  
+  const onAccountClick = () => {
+    navigate(user ? "/profile" : "/login");
+  };
+
+  useEffect(() => {
+    if (isNavigate) {
+      navigate("/");
+      setIsNavigate(false);
+    }
+  }
+  , [isNavigate]);
+
   return (
     <header className="w-full flex flex-row text-white justify-between font-bold h-16 p-12 z-10 items-center">
-      <span className="font-bold flex-1 text-lg leading-7 justify-start">
-        Teer Enta
-        <br />
-        طير انت
+      <span className="font-bold flex-1 ml-8 text-lg leading-7 justify-start ">
+        <div className="">
+          <div className="cursor-pointer w-fit  border border-transparent hover:border-white p-2 rounded-md transition-all duration-300">
+            <Link to={"/"} className="ring-0">
+              <img src={logo} alt="Logo" width={120} className=" rounded-lg"/>
+            </Link>
+          </div>
+        </div>
       </span>
 
       <SideBar
@@ -51,9 +76,22 @@ const TouristNavBar = () => {
             </span>
           ))}
         </div>
-          <Link to="/login" className="justify-end lg:flex-1 mt-2">
-            <AccountButton extra_tw={"justify-end lg:flex-1 mt-2"}/>
-          </Link>
+        <div className="justify-end lg:flex-1 mt-2 mr-4">
+          <AccountButton
+            extra_tw={"justify-end lg:flex-1 mt-2"}
+            onClick={onAccountClick}
+          />
+        </div>
+        {user && (
+        <button
+          onClick={() => setModalOpen(true)}
+          className="flex mt-2 items-center justify-center p-2 bg-red-600 text-white rounded-full hover:bg-red-700 focus:outline-none transition duration-300 ease-in-out"
+          aria-label="Logout"
+        >
+          <FiLogOut className="w-5 h-5" />
+        </button>
+        )}
+        
       </SideBar>
     </header>
   );

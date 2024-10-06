@@ -10,3 +10,7 @@ body {
 input:focus {
   @apply ring-0 outline-none;
 }
+
+button:focus {
+  @apply ring-0 outline-none;
+}

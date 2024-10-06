@@ -37,11 +37,14 @@ import DrawerBar from "./components/Drawer.js";
 import TouristNavBar from "./components/TouristNavBar.jsx";
 import AllActivitiesCRUD from "./screens/Activity/AllActivitiesCRUD.tsx";
 import { set } from "date-fns";
+import ConfirmationModal from "./components/ConfirmationModal.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
-
+  const [isModalOpen, setModalOpen] = useState(false);
+  
   const [visible, setVisible] = useState(false);
+  const [isNavigate, setIsNavigate] = useState(false);
 
   const showDrawer = () => {
     setVisible(true);
@@ -51,14 +54,16 @@ function App() {
     setVisible(false);
   };
 
+  const onLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    setIsNavigate(true);
+    setModalOpen(false);
+  };
+
   return (
-    <div className="App">
+    <div className="App relative">
       <Router>
-        {!flag && (
-          <div className=" relative bg-[#075B4C] z-10 overflow-scroll size-full flex flex-col items-center  before:content-[''] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background">
-            <TouristNavBar />
-          </div>
-        )}
         {!flag && (
           <DrawerBar
             onClose={onClose}
@@ -66,35 +71,109 @@ function App() {
             drawerVisible={visible}
           />
         )}
+        {!flag && (
+          <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  before:content-[''] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background">
+            <TouristNavBar setModalOpen={setModalOpen} isNavigate={isNavigate} setIsNavigate={setIsNavigate}/>
+          </div>
+        )}
+        <ConfirmationModal
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          onConfirm={onLogout}
+          message={`Are you sure you want to log out?`}
+        />
         <Routes>
-        <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
+          <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
           <Route path="/signup" element={<Signup setFlag={setFlag} />} />
           <Route path="/login" element={<Login setFlag={setFlag} />} />
           <Route path="/profile" element={<Profile setFlag={setFlag} />} />
-          <Route path="/preference-tags" element={<PreferenceTags setFlag={setFlag} />} />
-          <Route path="/activities" element={<AllActivitiesCRUD setFlag={setFlag} />} />
-          <Route path="/activities/my" element={<AllActivitiesCRUD setFlag={setFlag} />} />
-          <Route path="/activity-categories" element={<ActivityCategories setFlag={setFlag} />} />
+          <Route
+            path="/preference-tags"
+            element={<PreferenceTags setFlag={setFlag} />}
+          />
+          <Route
+            path="/activities"
+            element={<AllActivitiesCRUD setFlag={setFlag} />}
+          />
+          <Route
+            path="/activities/my"
+            element={<AllActivitiesCRUD setFlag={setFlag} />}
+          />
+          <Route
+            path="/activity-categories"
+            element={<ActivityCategories setFlag={setFlag} />}
+          />
           <Route path="/tags" element={<Tags setFlag={setFlag} />} />
-          <Route path="/touristItinerary/create" element={<CreateTouristItinerary setFlag={setFlag} />} />
-          <Route path="/touristItinerary/view" element={<ReadTouristItinerary setFlag={setFlag} />} />
-          <Route path="/touristItinerary" element={<ReadAllTouristItinerary setFlag={setFlag} />} />
-          <Route path="/touristItinerary/update" element={<UpdateTouristItinerary setFlag={setFlag} />} />
-          <Route path="/activity" element={<ActivityList setFlag={setFlag} />} />
-          <Route path="/historicalPlace" element={<ReadHistoriaclPlaces setFlag={setFlag} />} />
-          <Route path="/historicalPlace/my" element={<ReadHistoriaclPlaces setFlag={setFlag} />} />
-          <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces setFlag={setFlag} />} />
-          <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces setFlag={setFlag} />} />
-          <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces setFlag={setFlag} />} />
+          <Route
+            path="/touristItinerary/create"
+            element={<CreateTouristItinerary setFlag={setFlag} />}
+          />
+          <Route
+            path="/touristItinerary/view"
+            element={<ReadTouristItinerary setFlag={setFlag} />}
+          />
+          <Route
+            path="/touristItinerary"
+            element={<ReadAllTouristItinerary setFlag={setFlag} />}
+          />
+          <Route
+            path="/touristItinerary/update"
+            element={<UpdateTouristItinerary setFlag={setFlag} />}
+          />
+          <Route
+            path="/activity"
+            element={<ActivityList setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace"
+            element={<ReadHistoriaclPlaces setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace/my"
+            element={<ReadHistoriaclPlaces setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace/create"
+            element={<CreateHistoricalPlaces setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace/update/:id"
+            element={<UpdateHistoricalPlaces setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace/delete/:id"
+            element={<DeleteHistoricalPlaces setFlag={setFlag} />}
+          />
           <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />
-          <Route path="/pendingUsers" element={<PendingUsers setFlag={setFlag} />} />
+          <Route
+            path="/pendingUsers"
+            element={<PendingUsers setFlag={setFlag} />}
+          />
           <Route path="/addUser" element={<AddUser setFlag={setFlag} />} />
-          <Route path="/products" element={<AdminProductGrid setFlag={setFlag} />} />
-          <Route path="/products/:id" element={<ProductDetails setFlag={setFlag} />} />
-          <Route path="/products/create" element={<AdminProductForm setFlag={setFlag} />} />
-          <Route path="/admin/edit-product/:productId" element={<EditProductForm setFlag={setFlag} />} />
-          <Route path="/itinerary" element={<TourGuideItinerary setFlag={setFlag} />} />
-          <Route path="/itinerary/my" element={<TourGuideItinerary setFlag={setFlag} />} />
+          <Route
+            path="/products"
+            element={<AdminProductGrid setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/:id"
+            element={<ProductDetails setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/create"
+            element={<AdminProductForm setFlag={setFlag} />}
+          />
+          <Route
+            path="/admin/edit-product/:productId"
+            element={<EditProductForm setFlag={setFlag} />}
+          />
+          <Route
+            path="/itinerary"
+            element={<TourGuideItinerary setFlag={setFlag} />}
+          />
+          <Route
+            path="/itinerary/my"
+            element={<TourGuideItinerary setFlag={setFlag} />}
+          />
         </Routes>
         <Toaster />
       </Router>

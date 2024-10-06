@@ -37,7 +37,7 @@ const TouristWelcome = ({setFlag}) => {
 
   return (
     <div className="relative">
-      <div className='relative bg-[#075B4C] z-10 overflow-scroll size-full flex flex-col items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
+      <div className='relative bg-[#075B4C] z-10 size-full flex flex-col items-center before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
         
         
         <Fade
