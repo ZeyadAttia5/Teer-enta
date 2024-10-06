@@ -81,7 +81,7 @@ const UpdateHistoricalPlaces = () => {
     };
 
     try {
-      const response = await axios.put(`http://localhost:${PORT}/historicalPlace/update/${id}`, data ,
+      const response = await axios.put(`${PORT}/historicalPlace/update/${id}`, data ,
         {
           headers: {
               Authorization: `Bearer ${accessToken}`,
