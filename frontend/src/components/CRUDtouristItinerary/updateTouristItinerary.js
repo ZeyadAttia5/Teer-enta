@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import MapContainer from "../GoogleMapsTemp/GoogleMaps";
 
 const URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
@@ -198,7 +199,7 @@ const UpdateTouristItinerary = () => {
                     <br />
                     <strong>Time:</strong> {activity?.time}
                     <br />
-                    <strong>Location:</strong> {activity?.location}
+                    <MapContainer lat={activity?.location.lat} lng={activity?.location.lng}/>
                     <br />
                     <strong>Price:</strong> ${activity?.price?.min} - $
                     {activity?.price?.max}

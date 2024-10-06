@@ -60,6 +60,7 @@ function Login() {
       accessToken = response.data.accessToken;
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("isAuthenticated" , "ture")
       setMessage(response.data.message);
       navigate("/");
       // setFlag(false);

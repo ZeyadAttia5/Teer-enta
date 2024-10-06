@@ -9,7 +9,6 @@ const EditProductForm = () => {
     name: '',
     description: '',
     price: '',
-    seller: '',
     image: '', 
     quantity: '', 
   });
@@ -53,6 +52,7 @@ const EditProductForm = () => {
 
     try {
       const backURL = process.env.REACT_APP_BACKEND_URL;
+      console.log(product) ;
       await axios.put(`${backURL}/product/update/${productId}`, product ,{
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -60,7 +60,7 @@ const EditProductForm = () => {
       });
       setSuccess('Product successfully updated!');
       // Navigate back to the admin grid after successful update
-      setTimeout(() => navigate('/product/adminGrid'), 1000); // Redirect after a short delay
+      setTimeout(() => navigate('/products'), 1000); // Redirect after a short delay
     } catch (err) {
       setError('Failed to update product');
     } finally {
@@ -123,18 +123,6 @@ const EditProductForm = () => {
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Seller Name:</label>
-          <input
-            type="text"
-            name="seller"
-            value={product.seller}
-            onChange={handleChange}
-            placeholder="Enter seller name"
-            required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
-          />
-        </div>
 
         <div className="mb-4">
           <label className="block text-lg text-customGreen mb-2">Image URL:</label>

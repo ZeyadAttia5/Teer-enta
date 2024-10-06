@@ -82,10 +82,10 @@ function App() {
                     <Route path="/allUsers" element={<AllUsers/>}/>
                     <Route path="/pendingUsers" element={<PendingUsers/>}/>
                     <Route path="/addUser" element={<AddUser/>}/>
-                    <Route path="/products" element={<ProductGrid/>}/>
-                    <Route path="/product/:id" element={<ProductDetails/>}/>
-                    <Route path="/admin/product/form" element={<AdminProductForm/>}/>
-                    <Route path="/admin/products" element={<AdminProductGrid/>}/>
+                    {/*<Route path="/products/" element={<ProductGrid/>}/>*/}
+                    <Route path="/products" element={<AdminProductGrid/>}/>
+                    <Route path="/products/:id" element={<ProductDetails/>}/>
+                    <Route path="/products/create" element={<AdminProductForm/>}/>
                     <Route path="/admin/edit-product/:productId" element={<EditProductForm/>}/>
                     <Route path="/itinerary" element={<TourGuideItinerary/>}/>
                     <Route path="/itinerary/my" element={<TourGuideItinerary/>}/>
