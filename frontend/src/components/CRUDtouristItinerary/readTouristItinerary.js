@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import StaticMap from "../GoogleMaps/ViewLocation";
 
 const URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -137,6 +138,7 @@ function ReadTouristItinerary({setFlag}) {
                           .map((comment) => `${comment?.comment}`)
                           .join(", ")}
                   </p>
+                  <StaticMap lat={activity?.location.lat} lng={activity?.location.lng}/>
                 </li>
               ))
             ) : (
