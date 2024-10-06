@@ -5,7 +5,8 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { Item } = Form;
 
-const PreferenceTags = () => {
+const PreferenceTags = ({setFlag}) => {
+  setFlag(false);
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);

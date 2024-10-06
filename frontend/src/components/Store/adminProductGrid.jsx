@@ -6,7 +6,8 @@ import StarRating from './starRating'; // Importing StarRating component
 import {Input, Row, Col, Button} from 'antd';
 import { FaEdit } from 'react-icons/fa'; // Importing edit icon from react-icons
 
-const AdminProductGrid = () => {
+const AdminProductGrid = ({setFlag}) => {
+  setFlag(false);
   const backURL = process.env.REACT_APP_BACKEND_URL; // Ensure consistent API URL
   const user = JSON.parse(localStorage.getItem('user'));
     const accessToken = localStorage.getItem('accessToken');

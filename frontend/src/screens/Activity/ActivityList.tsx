@@ -176,7 +176,8 @@ const columns = [
   },
 ];
 
-const ActivityList = () => {
+const ActivityList = ({setFlag}) => {
+  setFlag(false);
   const [activities, setActivities] = useState<TActivity[]>([]);
   const [upcoming, setUpcoming] = useState(false);
   useEffect(() => {

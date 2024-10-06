@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Alert, Spin } from "antd"; // Import Ant Design components
 
-function ReadAllTouristItinerary() {
+function ReadAllTouristItinerary({setFlag}) {
+  setFlag(false);
   const [itinerary, setItinerary] = useState([]);
   const [isEmpty, setIsEmpty] = useState(true);
   const navigate = useNavigate();

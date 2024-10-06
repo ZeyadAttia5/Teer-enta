@@ -5,7 +5,8 @@ import { useLocation } from "react-router-dom";
 
 const URL = process.env.REACT_APP_BACKEND_URL;
 
-function ReadTouristItinerary() {
+function ReadTouristItinerary(setFlag) {
+  setFlag(false);
   const [itinerary, setItinerary] = useState([]);
   const [isEmpty, setIsEmpty] = useState(true);
   const navigate = useNavigate();

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Table, Spin, message, Button } from 'antd';
 import axios from 'axios';
 
-const PendingUsers = () => {
+const PendingUsers = ({setFlag}) => {
+    setFlag(false);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const Url = process.env.REACT_APP_BACKEND_URL;

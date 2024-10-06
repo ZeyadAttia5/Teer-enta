@@ -5,7 +5,8 @@ import MapContainer from "../GoogleMapsTemp/GoogleMaps";
 
 const URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
-const UpdateTouristItinerary = () => {
+const UpdateTouristItinerary = ({setFlag}) => {
+  setFlag(false);
   const location = useLocation();
   const itineraryData = location.state?.itinerary || {};
 

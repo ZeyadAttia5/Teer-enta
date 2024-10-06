@@ -6,7 +6,8 @@ import 'tailwindcss/tailwind.css';
 
 const { Item } = Form;
 
-const ActivityCategories = () => {
+const ActivityCategories = ({setFlag}) => {
+    setFlag(false);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);

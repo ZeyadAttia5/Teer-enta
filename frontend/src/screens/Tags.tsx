@@ -7,7 +7,8 @@ import 'tailwindcss/tailwind.css';
 const { Item } = Form;
 const { Option } = Select;
 
-const Tag = () => {
+const Tag = ({setFlag}) => {
+    setFlag(false);
     const [tags, setTags] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);

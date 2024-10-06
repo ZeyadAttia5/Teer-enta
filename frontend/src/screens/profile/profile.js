@@ -144,10 +144,10 @@ const LoadingCircle = () => {
   );
 };
 
-function Profile() {
+function Profile({setFlag}) {
   // const location = useLocation();
   // const { user, accessToken } = location.state || {}; // Destructure the user object passed
-  
+  setFlag(false);
   const storedUser = localStorage.getItem("user");
   const storedAccessToken = localStorage.getItem("accessToken");
 

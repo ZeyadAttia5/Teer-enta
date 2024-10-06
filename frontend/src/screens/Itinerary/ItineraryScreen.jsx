@@ -43,7 +43,8 @@ import {useLocation} from "react-router-dom";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const ItineraryScreen = () => {
+const ItineraryScreen = ({setFlag}) => {
+  setFlag(false);
   const [itineraries, setItineraries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);

@@ -6,8 +6,8 @@ import Toggle from "../../components/signup/Toggle.js";
 import { useNavigate } from "react-router-dom";
 import { FaExclamationCircle } from "react-icons/fa";
 import axios from "axios";
-function Signup() {
-  // setFlag(true);
+function Signup({setFlag}) {
+  setFlag(true);
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
@@ -342,7 +342,7 @@ function Signup() {
 
       setMessage(response.data.message);
       navigate("/login");
-      // setFlag(false);
+      setFlag(false);
     } catch (error) {
       setMessage(error.response.data.message || "Signup failed");
     }

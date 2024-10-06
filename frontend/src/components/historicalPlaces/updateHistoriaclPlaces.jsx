@@ -5,7 +5,8 @@ import axios from 'axios';
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
-const UpdateHistoricalPlaces = () => {
+const UpdateHistoricalPlaces = ({setFlag}) => {
+  setFlag(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const [name, setName] = useState('');

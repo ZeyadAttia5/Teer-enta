@@ -5,7 +5,8 @@ import axios from 'axios';
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
-const CreateHistoricalPlaces = () => {
+const CreateHistoricalPlaces = ({setFlag}) => {
+  setFlag(false);
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');

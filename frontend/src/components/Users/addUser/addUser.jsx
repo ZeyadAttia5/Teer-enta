@@ -4,7 +4,8 @@ import axios from 'axios';
 
 const { Option } = Select;
 
-const AddUser = () => {
+const AddUser = ({setFlag}) => {
+    setFlag(false);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
     const user = JSON.parse(localStorage.getItem('user'));

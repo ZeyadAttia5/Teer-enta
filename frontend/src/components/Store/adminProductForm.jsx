@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios'; // Import axios
 
-const AdminProductForm = () => {
+const AdminProductForm = ({setFlag}) => {
+  setFlag(false);
   const [product, setProduct] = useState({
     name: '',
     description: '',

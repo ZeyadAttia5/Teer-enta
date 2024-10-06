@@ -6,7 +6,8 @@ import { Button, Alert, Spin, message } from "antd"; // Using Ant Design for bet
 
 const URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
-const CreateTouristItinerary = () => {
+const CreateTouristItinerary = ({setFlag}) => {
+  setFlag(false);
   const [name, setName] = useState("");
   const [activities, setActivities] = useState([]);
   const [tags, setTags] = useState([]);

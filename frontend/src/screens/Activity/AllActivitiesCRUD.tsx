@@ -13,7 +13,8 @@ import { useLocation } from 'react-router-dom';
 const { Item } = Form;
 const { Option } = Select;
 
-const AllActivitiesCRUD = () => {
+const AllActivitiesCRUD = ({setFlag}) => {
+    setFlag(false);
     const [activities, setActivities] = useState([]);
     const [categories, setCategories] = useState([]);
     const [preferenceTags, setPreferenceTags] = useState([]);

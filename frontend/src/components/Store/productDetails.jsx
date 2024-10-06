@@ -6,7 +6,8 @@ import { Button, Typography, Spin, Divider } from 'antd'; // Import Ant Design c
 
 const { Title, Paragraph } = Typography;
 
-const ProductDetails = () => {
+const ProductDetails = ({setFlag}) => {
+  setFlag(false);
   const { id } = useParams(); // Get the product ID from the URL parameters
   const backURL = process.env.REACT_APP_BACKEND_URL;
 

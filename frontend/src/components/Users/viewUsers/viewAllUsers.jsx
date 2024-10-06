@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Table, Spin, message, Button, Popconfirm } from 'antd';
 import axios from 'axios';
 
-const AllUsers = () => {
+const AllUsers = (setFlag) => {
+    setFlag(false);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const user = JSON.parse(localStorage.getItem('user'));
