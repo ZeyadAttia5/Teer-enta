@@ -4,23 +4,22 @@ import { GoogleMap, LoadScript, MarkerF } from "@react-google-maps/api";
 /**
  * MapContainer component that displays a Google Map
  * and allows user to click on the map to set a marker
- * @param initialPosition the initial position of the marker
+ * @param latitude initial latitude of marker and map
+ * @param longitude initial longitude of marker and map
  * @param outputLocation callback function given by parent to output the location of the marker
  * function should take two inputs: latitude and longitude
  * @returns {Element}
  * @constructor
  */
-const MapContainer = ({initialPosition, outputLocation}) => {
+const MapContainer = ({latitude = 1, longitude = 1, outputLocation}) => {
     const mapStyles = {
         height: "400px",
         width: "100%",
     };
-    if(!initialPosition){
-        // Example input position
-        initialPosition = {
-            lat: 40.748817,  // Put latitude here
-            lng: -73.985428, // Put longitude here
-        };
+
+    const initialPosition = {
+        lat: latitude,
+        lng: longitude
     }
 
     const [markerPosition, setMarkerPosition] = useState(initialPosition);
