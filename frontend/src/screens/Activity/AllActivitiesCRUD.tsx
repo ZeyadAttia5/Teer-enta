@@ -157,115 +157,55 @@ const AllActivitiesCRUD = ({setFlag}) => {
     const handleMapClick = (event) => {
         setLocation({ lat: event.latLng.lat(), lng: event.latLng.lng() });
     };
-
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (name) => (
-                <span style={{ fontWeight: 'bold', color: '#389e0d' }}>{name}</span>
-            ),
+            render: (name) => <span>{name}</span>,
         },
         {
             title: 'Date',
             dataIndex: 'date',
             key: 'date',
-            render: (date) => (
-                <span style={{ color: '#52c41a' }}>{moment(date).format('YYYY-MM-DD')}</span>
-            ),
+            render: (date) => <span>{moment(date).format('YYYY-MM-DD')}</span>,
         },
         {
             title: 'Time',
             dataIndex: 'time',
             key: 'time',
-            render: (time) => (
-                <span style={{ color: '#73d13d' }}>{time}</span>
-            ),
+            render: (time) => <span>{time}</span>,
         },
         {
             title: 'Location',
             dataIndex: 'location',
             key: 'location',
-            render: (loc) => (
-                <span style={{ color: '#52c41a' }}>
-                ({loc.lat}, {loc.lng})
-            </span>
-            ),
+            render: (loc) => <span>({loc.lat}, {loc.lng})</span>,
         },
         {
             title: 'Category',
             dataIndex: 'category',
             key: 'category',
-            render: (category) => (
-                <span style={{ color: '#52c41a', fontWeight: 'bold' }}>
-                {category?.category || 'N/A'}
-            </span>
-            ),
+            render: (category) => <span>{category?.category || 'N/A'}</span>,
         },
         {
             title: 'Preference Tags',
             dataIndex: 'preferenceTags',
             key: 'preferenceTags',
-            render: (preferenceTags) => (
-                <span style={{ color: '#73d13d' }}>
-                {preferenceTags.map(tag => tag.tag).join(', ')}
-            </span>
-            ),
+            render: (preferenceTags) => <span>{preferenceTags.map(tag => tag.tag).join(', ')}</span>,
         },
         {
             title: 'Special Discounts',
             dataIndex: 'specialDiscounts',
             key: 'specialDiscounts',
             render: (discounts) => (
-                <Row gutter={[16, 24]} justify="center" style={{ padding: '20px' }}>
+                <Row>
                     {discounts.map((discount, index) => (
-                        <Col
-                            key={index}
-                            xs={24} sm={12} md={8} lg={6}
-                            style={{ display: 'flex', justifyContent: 'center' }}
-                        >
-                            <Card
-                                hoverable
-                                title={`${discount.discount}% Off`}
-                                bordered={false}
-                                style={{
-                                    width: '100%',
-                                    maxWidth: '280px',
-                                    textAlign: 'center',
-                                    borderRadius: '12px',
-                                    backgroundColor: '#f6ffed',
-                                    boxShadow: '0 6px 10px rgba(0, 0, 0, 0.1)',
-                                    transition: 'transform 0.3s ease',
-                                }}
-                                bodyStyle={{ padding: '16px' }}
-                                headStyle={{
-                                    backgroundColor: '#52c41a',
-                                    color: 'white',
-                                    borderRadius: '12px 12px 0 0',
-                                    fontSize: '16px',
-                                    padding: '12px',
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'scale(1.05)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'scale(1)';
-                                }}
-                            >
-                                <p style={{ fontSize: '14px', color: '#666' }}>
-                                    {discount.Description}
-                                </p>
+                        <Col key={index} xs={40} sm={10} md={10} lg={10}>
+                            <Card title={`${discount.discount}%`}>
+                                <p>{discount.Description}</p>
                                 <p>
-                                    <strong>Status:</strong>{' '}
-                                    <span
-                                        style={{
-                                            color: discount.isAvailable ? '#52c41a' : '#ff4d4f',
-                                            fontWeight: 'bold',
-                                        }}
-                                    >
-                                    {discount.isAvailable ? 'Available' : 'Not Available'}
-                                </span>
+                                    <strong>Status:</strong> {discount.isAvailable ? 'Available' : 'Not Available'}
                                 </p>
                             </Card>
                         </Col>
@@ -280,36 +220,21 @@ const AllActivitiesCRUD = ({setFlag}) => {
                 <span>
                 {user && (user.userRole === "Advertiser" && user._id === record.createdBy) && (
                     <div>
-                        <Button
-                            icon={<EditOutlined />}
-                            onClick={() => handleEditActivity(record)}
-                            style={{
-                                backgroundColor: '#52c41a',
-                                color: 'white',
-                                border: 'none',
-                                marginRight: '10px',
-                            }}
-                        />
+                        <Button icon={<EditOutlined />} onClick={() => handleEditActivity(record)} />
                         <Popconfirm
                             title="Are you sure you want to delete this activity?"
                             onConfirm={() => handleDeleteActivity(record._id)}
                         >
-                            <Button
-                                icon={<DeleteOutlined />}
-                                danger
-                                style={{
-                                    backgroundColor: '#ff4d4f',
-                                    color: 'white',
-                                    border: 'none',
-                                }}
-                            />
+                            <Button icon={<DeleteOutlined />} danger />
                         </Popconfirm>
                     </div>
                 )}
             </span>
             ),
-        }
+        },
     ];
+
+
 
 
     return (
