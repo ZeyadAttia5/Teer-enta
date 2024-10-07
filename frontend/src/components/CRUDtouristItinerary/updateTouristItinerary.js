@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import MapContainer from "../GoogleMaps/GoogleMaps";
+import StaticMap from "../GoogleMaps/ViewLocation";
 
 const URL = `${process.env.REACT_APP_BACKEND_URL}`;
 
@@ -199,8 +200,8 @@ const UpdateTouristItinerary = ({setFlag}) => {
                     <strong>Date:</strong> {activity?.date}
                     <br />
                     <strong>Time:</strong> {activity?.time}
-                    <br />
-                    <MapContainer lat={activity?.location.lat} lng={activity?.location.lng}/>
+                    <br/>
+                    <StaticMap latitude={activity?.location?.lat} longitude={activity?.location?.lng} />
                     <br />
                     <strong>Price:</strong> ${activity?.price?.min} - $
                     {activity?.price?.max}
@@ -261,7 +262,8 @@ const UpdateTouristItinerary = ({setFlag}) => {
                   <br />
                   <strong>Time:</strong> {activity?.time}
                   <br />
-                  <strong>Location:</strong> {activity?.location}
+                    <StaticMap latitude={activity?.location?.lat} longitude={activity?.location?.lng} />
+                  {/*<strong>Location:</strong> {activity?.location}*/}
                   <br />
                   <strong>Price:</strong> ${activity?.price?.min} - $
                   {activity?.price?.max}

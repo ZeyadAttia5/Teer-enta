@@ -35,12 +35,11 @@ const TouristActivity = ({ setFlag }) => {
 
         // Calculate average rating for each activity
         const activitiesWithAvgRating = response.data.map((activity) => {
+          const totalRating = activity.ratings.reduce((acc, curr) => acc + curr.rating, 0);
           const avgRating =
-              activity.ratings.length > 0
-                  ? activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
-                  activity.ratings.length
-                  : 0;
-          return { ...activity, averageRating: avgRating };
+              activity.ratings.length > 0 ? (totalRating / activity.ratings.length).toFixed(1) : 0;
+
+          return { ...activity, averageRating: parseFloat(avgRating) }; // Ensure averageRating is a number
         });
 
         setActivities(activitiesWithAvgRating);
@@ -48,7 +47,9 @@ const TouristActivity = ({ setFlag }) => {
 
         // Set dynamic budget range
         if (activitiesWithAvgRating.length > 0) {
-          const highestPrice = Math.max(...activitiesWithAvgRating.map(act => act.price.min));
+          const highestPrice = Math.max(
+              ...activitiesWithAvgRating.map((act) => act.price.max)
+          );
           setMaxBudget(highestPrice);
           setBudget([0, highestPrice]);
         }
@@ -84,17 +85,16 @@ const TouristActivity = ({ setFlag }) => {
       });
     }
 
-    // Filter by budget (using price.min)
+    // Filter by budget (using price.min and price.max)
     data = data.filter(
         (activity) =>
-            activity.price.min >= budget[0] && activity.price.min <= budget[1]
+            activity.price.min >= budget[0] && activity.price.max <= budget[1]
     );
 
     // Filter by category using _id
     if (category) {
       data = data.filter(
-          (activity) =>
-              activity.category && activity.category._id === category
+          (activity) => activity.category && activity.category._id === category
       );
     }
 
@@ -105,7 +105,7 @@ const TouristActivity = ({ setFlag }) => {
 
     // Filter for upcoming activities if the checkbox is checked
     if (showUpcoming) {
-      data = data.filter(activity => dayjs(activity.date).isAfter(dayjs()));
+      data = data.filter((activity) => dayjs(activity.date).isAfter(dayjs()));
     }
 
     // Sorting
@@ -129,7 +129,7 @@ const TouristActivity = ({ setFlag }) => {
 
   // Extract unique categories based on _id
   const uniqueCategories = activities.reduce((acc, act) => {
-    if (act.category && !acc.find(cat => cat.id === act.category._id)) {
+    if (act.category && !acc.find((cat) => cat.id === act.category._id)) {
       acc.push({ id: act.category._id, name: act.category.category });
     }
     return acc;
@@ -243,18 +243,15 @@ const TouristActivity = ({ setFlag }) => {
                         category={place.category ? place.category.category : "N/A"}
                         preferenceTags={
                           place.preferenceTags
-                              ? place.preferenceTags.map((tag) => tag.tag)
-                              : []
+                              ? place.preferenceTags.map((tag) => tag.tag).join(", ")
+                              : "N/A"
                         }
-                        specialDiscounts={place.specialDiscounts}
-                        ratings={place.averageRating.toFixed(1)} // Displaying average rating
-                        comments={place.comments}
-                        createdBy={place.createdBy}
+                        averageRating={place.averageRating} // Use the average rating calculated
                     />
                   </Link>
               ))
           ) : (
-              <p>No activities found based on your filters.</p>
+              <p>No activities found.</p>
           )}
         </div>
       </div>
