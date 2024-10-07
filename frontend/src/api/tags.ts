@@ -9,7 +9,7 @@ const token = localStorage.getItem("accessToken");
 export const getTags = async () => await axios.get(`${API_BASE_URL}/tag`);
 
 export const createTag = async (tag) =>
-  await axios.post(`${API_BASE_URL}/tag/create`, tag, {
+    await axios.post(`${API_BASE_URL}/tag/create`, tag, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

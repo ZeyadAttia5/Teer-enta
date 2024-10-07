@@ -15,6 +15,7 @@ const Tag = ({setFlag}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentTag, setCurrentTag] = useState(null);
     const [form] = Form.useForm();
+    const user = JSON.parse(localStorage.getItem('user'));
 
     // Fetch tags when the component loads
     useEffect(() => {
@@ -89,12 +90,16 @@ const Tag = ({setFlag}) => {
             title: 'Actions',
             key: 'actions',
             render: (text, record) => (
-                <>
-                    <Button type="link" icon={<EditOutlined />} onClick={() => handleEditTag(record)} />
-                    <Popconfirm title="Are you sure?" onConfirm={() => handleDeleteTag(record._id)}>
-                        <Button type="link" icon={<DeleteOutlined />} />
-                    </Popconfirm>
-                </>
+                <span>
+                    {(user && user.userRole === 'TourismGovernor' && user._id === record.createdBy) && (
+                        <>
+                            <Button type="link" icon={<EditOutlined />} onClick={() => handleEditTag(record)} />
+                            <Popconfirm title="Are you sure?" onConfirm={() => handleDeleteTag(record._id)}>
+                                <Button type="link" icon={<DeleteOutlined />} />
+                            </Popconfirm>
+                        </>
+                    )}
+                </span>
             )
         }
     ];

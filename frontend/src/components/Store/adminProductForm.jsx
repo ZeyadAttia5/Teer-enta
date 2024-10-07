@@ -149,7 +149,7 @@ const AdminProductForm = ({setFlag}) => {
           className={`bg-customGreen text-white px-4 py-2 rounded-lg transition-colors duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-darkerGreen'}`}
           disabled={loading}
         >
-          {loading ? 'Submitting...' : 'Submit Product'}
+          {loading ? 'Submitting...' : 'Add product'}
         </button>
       </form>
     </div>

@@ -5,28 +5,31 @@ import axios from 'axios';
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
-const CreateHistoricalPlaces = ({setFlag}) => {
+const CreateHistoricalPlaces = ({ setFlag }) => {
   setFlag(false);
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState('');
-  const [selectedTagType, setSelectedTagType] = useState(''); 
-  const [selectedTagId, setSelectedTagId] = useState(''); 
-  const [openingHours, setOpeningHours] = useState('');
+  const [selectedTagType, setSelectedTagType] = useState('');
+  const [selectedTagId, setSelectedTagId] = useState('');
+  const [openingTime, setOpeningTime] = useState('');
+  const [closingTime, setClosingTime] = useState('');
   const [foreignerPrice, setForeignerPrice] = useState(0);
   const [studentPrice, setStudentPrice] = useState(0);
   const [nativePrice, setNativePrice] = useState(0);
-  const [tags, setTags] = useState([]); 
+  const [tags, setTags] = useState([]);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
   const accessToken = localStorage.getItem('accessToken');
+
+  
 
   useEffect(() => {
     const fetchTags = async () => {
       try {
         const response = await axios.get(`${PORT}/tag`);
-        setTags(response.data); 
+        setTags(response.data);
       } catch (error) {
         console.error('Error fetching tags:', error);
         toast.error('Failed to fetch tags.');
@@ -36,19 +39,31 @@ const CreateHistoricalPlaces = ({setFlag}) => {
     fetchTags();
   }, []);
 
-  const uniqueTagTypes = [...new Set(tags.map(tag => tag.type))];
+  const uniqueTagTypes = [...new Set(tags.map((tag) => tag.type))];
 
-  const filteredTags = tags.filter(tag => tag.type === selectedTagType);
+  const filteredTags = tags.filter((tag) => tag.type === selectedTagType);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formatTime = (time) => {
+      if (!time) return "";
+    
+      let [hours, minutes] = time.split(":");
+      hours = parseInt(hours);
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12 || 12; // Convert to 12-hour format
+      return `${hours}:${minutes} ${ampm}`;
+    };
+    
+    const openingHours = `${formatTime(openingTime)} - ${formatTime(closingTime)}`;
 
     const data = {
       name,
       location,
       description,
       images: image ? [image] : [],
-      tags: [selectedTagId], 
+      tags: [selectedTagId],
       openingHours,
       tickets: [
         { type: 'Foreigner', price: foreignerPrice },
@@ -58,13 +73,11 @@ const CreateHistoricalPlaces = ({setFlag}) => {
     };
 
     try {
-
-      const response = await axios.post(`${PORT}/historicalPlace/create`, data ,
-          {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            }
-          });
+      const response = await axios.post(`${PORT}/historicalPlace/create`, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       if (response.status === 201) {
         toast.success('Historical place created successfully!');
@@ -77,13 +90,15 @@ const CreateHistoricalPlaces = ({setFlag}) => {
       toast.error('An error occurred while creating the historical place.');
     }
 
+    // Clear form fields
     setName('');
     setLocation('');
     setDescription('');
     setImage('');
     setSelectedTagType('');
     setSelectedTagId('');
-    setOpeningHours('');
+    setOpeningTime('');
+    setClosingTime('');
     setForeignerPrice(0);
     setStudentPrice(0);
     setNativePrice(0);
@@ -91,7 +106,9 @@ const CreateHistoricalPlaces = ({setFlag}) => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Create Historical Place</h1>
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+        Create Historical Place
+      </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -126,7 +143,7 @@ const CreateHistoricalPlaces = ({setFlag}) => {
             required
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
           />
-          
+
           {image && (
             <div className="mt-2">
               <img
@@ -148,7 +165,9 @@ const CreateHistoricalPlaces = ({setFlag}) => {
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
           required
         >
-          <option value="" disabled>Select Tag Type</option>
+          <option value="" disabled>
+            Select Tag Type
+          </option>
           {uniqueTagTypes.map((tagType, index) => (
             <option key={index} value={tagType}>
               {tagType}
@@ -163,7 +182,9 @@ const CreateHistoricalPlaces = ({setFlag}) => {
             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
             required
           >
-            <option value="" disabled>Select Tag Name</option>
+            <option value="" disabled>
+              Select Tag Name
+            </option>
             {filteredTags.map((tag) => (
               <option key={tag._id} value={tag._id}>
                 {tag.name}
@@ -172,17 +193,31 @@ const CreateHistoricalPlaces = ({setFlag}) => {
           </select>
         )}
 
-        <h2 className="text-xl font-semibold text-gray-800 mt-6">Opening Hours</h2>
-        <input
-          type="text"
-          placeholder="e.g. 10:00 AM - 5:30 PM"
-          value={openingHours}
-          onChange={(e) => setOpeningHours(e.target.value)}
-          required
-          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
-        />
+        <h2 className="text-xl font-semibold text-gray-800 mt-6">
+          Opening and Closing Hours
+        </h2>
+        <div className="flex justify-between gap-4">
+          <input
+            type="time"
+            placeholder="Opening Time (e.g. 10:00 AM)"
+            value={openingTime}
+            onChange={(e) => setOpeningTime(e.target.value)}
+            required
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
+          />
+          <input
+            type="time"
+            placeholder="Closing Time (e.g. 5:30 PM)"
+            value={closingTime}
+            onChange={(e) => setClosingTime(e.target.value)}
+            required
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
+          />
+        </div>
 
-        <h2 className="text-xl font-semibold text-gray-800 mt-6">Ticket Prices</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mt-6">
+          Ticket Prices
+        </h2>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <label className="text-gray-700">Foreigner Price:</label>

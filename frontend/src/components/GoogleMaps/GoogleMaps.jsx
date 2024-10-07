@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { GoogleMap, LoadScript, MarkerF } from "@react-google-maps/api";
+import {GoogleMap, MarkerF, useJsApiLoader} from "@react-google-maps/api";
 
 /**
  * MapContainer component that displays a Google Map
@@ -40,11 +40,15 @@ const MapContainer = ({latitude = 1, longitude = 1, outputLocation,containerStyl
     const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
     const mapId = process.env.REACT_APP_GOOGLE_MAPS_MAP;
 
+    const { isLoaded } = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: apiKey,
+        libraries: ['geometry', 'drawing'],
+        mapIds: [mapId]
+    });
     return (
-        <LoadScript googleMapsApiKey={apiKey}
-                    mapIds={[mapId]}
-                    >
-            <GoogleMap
+        <>
+            {isLoaded && <GoogleMap
                 mapContainerStyle={mapStyles}
                 zoom={13}
                 center={markerPosition}
@@ -52,8 +56,8 @@ const MapContainer = ({latitude = 1, longitude = 1, outputLocation,containerStyl
                 onClick={handleMapClick}
             >
                 <MarkerF position={markerPosition} draggable={true} onDrag={handleMapClick}/>
-            </GoogleMap>
-        </LoadScript>
+            </GoogleMap>}
+        </>
     );
 };
 
