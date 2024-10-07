@@ -12,7 +12,7 @@ import {
   Space,
   Divider,
   message,
-  Card,
+  Card, notification,
 } from "antd";
 import {
   MinusCircleOutlined,
@@ -153,7 +153,11 @@ const ItineraryScreen = ({ setFlag }) => {
       const data = await getMyItineraries();
       setItineraries(data);
     } catch (error) {
-      message.error("Failed to fetch itineraries");
+      if(error.response.status === 404){
+        notification.info({message:"You didnt create any itineraries yet"})
+      }else{
+        notification.error({ message: "Error fetching itineraries" });
+      }
     }
     setLoading(false);
   };

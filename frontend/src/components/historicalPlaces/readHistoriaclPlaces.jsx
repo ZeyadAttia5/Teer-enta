@@ -3,6 +3,7 @@ import HistoricalPlaceSingleCard from "./historicalPlaceSingleCard";
 import { MdOutlineAddBox } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
+import {notification} from "antd";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
@@ -27,7 +28,12 @@ const ReadHistoriaclPlaces = ({ setFlag }) => {
           });
           setHistoricalPlacesData(response.data);
         } catch (error) {
-          console.error("Error fetching historical places:", error);
+          if(error.response.status === 404){
+            notification.info({message:"You didnt create any historical places yet"})
+          }else{
+            notification.error({ message: "Error fetching historical places" });
+          }
+        }
         }
       };
       fetchMyHistoricalPlaces();

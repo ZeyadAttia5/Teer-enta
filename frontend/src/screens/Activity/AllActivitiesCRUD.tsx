@@ -86,7 +86,11 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       const response = await getMyActivities();
       setActivities(response.data);
     } catch (error) {
-      notification.error({ message: "Error fetching activities" });
+      if(error.response.status === 404){
+        notification.info({message:"You didnt create any activities yet"})
+      }else{
+        notification.error({ message: "Error fetching activities" });
+      }
     } finally {
       setLoading(false);
     }
