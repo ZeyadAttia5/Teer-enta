@@ -153,7 +153,7 @@ const ActivityDetails: React.FC = () => {
               <Space direction="vertical">
                 <div>
                   <Text strong>Category: </Text>
-                  <Tag color="blue">{activity.category.category}</Tag>
+                  <Tag color="blue">{activity.category?.category}</Tag>
                 </div>
                 <div>
                   <Text strong>Preference Tags: </Text>
