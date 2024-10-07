@@ -28,6 +28,7 @@ import {
 } from "@ant-design/icons";
 import MapContainer from "../../components/GoogleMaps/GoogleMaps";
 import { TActivity } from "../../types/Activity/Activity";
+import StaticMap from "../../components/GoogleMaps/ViewLocation";
 import { getActivity } from "../../api/activity.ts";
 
 
@@ -180,13 +181,7 @@ const ActivityDetails: React.FC = () => {
             }
             bodyStyle={{ padding: 0, height: "400px" }}
           >
-            <MapContainer
-            //   center={activity.location}
-            //   name={activity.name}
-            //   zoom={15}
-              longitude={activity.location.lng}
-              latitude={activity.location.lat}
-            />
+            <StaticMap longitude={activity.location.lng} latitude={activity.location.lat} />
           </Card>
         </Col>
       </Row>
