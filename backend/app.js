@@ -48,7 +48,7 @@ mongoose.connect(dbUrl).then(r => {
     console.log(dbUrl);
 })
 
-app.use("/activity/", activityRoutes);
+app.use("/activity", activityRoutes);
 app.use("/itinerary", itineraryRoutes);
 app.use("/historicalPlace", historicalPlacesRoutes);
 app.use("/activityCategory", activityCategoryRoutes);
