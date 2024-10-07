@@ -918,7 +918,7 @@ const ItineraryScreen = ({ setFlag }) => {
               {viewingItinerary.activities.map((activity, index) => (
                 <div key={index}>
                   <Input
-                    value={`${activity.activity.name} - ${activity.duration} min`}
+                    value={`${activity.activity?.name} - ${activity.duration} min`}
                     disabled
                   />
                 </div>
@@ -941,7 +941,7 @@ const ItineraryScreen = ({ setFlag }) => {
               {viewingItinerary.timeline.map((entry, index) => (
                 <div key={index}>
                   <Input
-                    value={`${entry.activity.name} - Start: ${entry.startTime}, Duration: ${entry.duration} min`}
+                    value={`${entry.activity?.name} - Start: ${entry.startTime}, Duration: ${entry.duration} min`}
                     disabled
                   />
                 </div>

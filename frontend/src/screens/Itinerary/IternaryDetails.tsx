@@ -127,10 +127,10 @@ const ItineraryDetails: React.FC = () => {
                 <Tag icon={<ClockCircleOutlined />}>{item.duration} min</Tag>
               }
               className="cursor-pointer hover:shadow hover:scale-105 transition-all"
-              onClick={() => navigate(`../activityDetails/${item.activity._id}`)}
+              onClick={() => navigate(`../activityDetails/${item.activity?._id}`)}
             >
               {/*{console.log(item)}*/}
-              <Text>{item.activity.name}</Text>
+              <Text>{item.activity?.name}</Text>
             </List.Item>
           )}
         />
@@ -148,7 +148,7 @@ const ItineraryDetails: React.FC = () => {
         <Timeline>
           {itinerary?.timeline.map((item, index) => (
             <Timeline.Item key={index}>
-              <Text strong>{item.activity.name}</Text>
+              <Text strong>{item.activity?.name}</Text>
               <br />
               {item.startTime && (
                 <Text type="secondary">Starts at {item.startTime}</Text>

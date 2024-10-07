@@ -8,6 +8,7 @@ import {GoogleMap, MarkerF, useJsApiLoader} from "@react-google-maps/api";
  * @param longitude initial longitude of marker and map
  * @param outputLocation callback function given by parent to output the location of the marker
  * function should take two inputs: latitude and longitude
+ * @param containerStyles
  * @returns {Element}
  * @constructor
  */
