@@ -142,7 +142,7 @@ function ReadTouristItinerary({setFlag}) {
                           .map((comment) => `${comment?.comment}`)
                           .join(", ")}
                   </p>
-                  <StaticMap lat={activity?.location.lat} lng={activity?.location.lng}/>
+                  <StaticMap latitude={activity?.location.lat} longitude={activity?.location.lng}/>
                 </li>
               ))
             ) : (
