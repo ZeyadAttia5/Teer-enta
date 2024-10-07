@@ -107,15 +107,12 @@ const Sidebar = ({ visible, onClose }) => {
             
           </Menu.SubMenu>
         )}
-        {user === null ||
-          (user.userRole === "Seller" ||
-            user.userRole === "Admin" ||
-            user.userRole === "Tourist") && (
+        {(user === null || (user &&( user.userRole === "Seller"|| user.userRole === "Tourist"||user.userRole === "Admin"))) && (
             <Menu.SubMenu key="sub6" title="Products">
               <Menu.Item key="13" onClick={() => handleClick("/products")}>
                 All Products
               </Menu.Item>
-              {(user.userRole === "Seller" || user.userRole === "Admin") && (
+              {((user &&(user.userRole === "Seller" || user.userRole === "Admin"))) && (
                 <Menu.Item
                   key="14"
                   onClick={() => handleClick("/products/create")}
