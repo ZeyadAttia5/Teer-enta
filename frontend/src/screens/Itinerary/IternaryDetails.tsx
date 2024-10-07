@@ -34,6 +34,7 @@ const ItineraryDetails: React.FC = () => {
   useEffect(() => {
     getIternary(iternaryId ?? -1)
       .then((res) => {
+        console.log(res.data);
         setItinerary(res.data);
       })
       .catch((error) => {
@@ -128,6 +129,7 @@ const ItineraryDetails: React.FC = () => {
               className="cursor-pointer hover:shadow hover:scale-105 transition-all"
               onClick={() => navigate(`../activityDetails/${item.activity._id}`)}
             >
+              {/*{console.log(item)}*/}
               <Text>{item.activity.name}</Text>
             </List.Item>
           )}

@@ -87,7 +87,7 @@ const HistoricalPlaceSingleCard = ({ places }) => {
       </div>
       
       <div className="flex justify-center items-center gap-x-4 p-4">
-        {((user.userRole === "TourismGovernor") && user._id === places.createdBy) && (
+        {(user && (user.userRole === "TourismGovernor") && user._id === places.createdBy) && (
           <div className="flex gap-4">
             <Link to={`/historicalPlace/update/${places._id}`}>
               <div className="flex justify-center items-center w-10 h-10 text-yellow-600 hover:text-black hover:scale-105 hover:shadow-lg transition duration-300 ease-in-out">

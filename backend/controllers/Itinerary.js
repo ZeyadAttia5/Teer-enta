@@ -36,6 +36,7 @@ exports.getItinerary = async (req, res, next) => {
         },
       ],
     });
+    console.log(itinerary);
 
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found" });
