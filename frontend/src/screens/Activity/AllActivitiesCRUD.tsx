@@ -36,6 +36,7 @@ import moment from "moment";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
 import { useLocation } from "react-router-dom";
+import MapContainer from "../../components/GoogleMaps/GoogleMaps";
 
 const { Item } = Form;
 const { Option } = Select;
@@ -284,6 +285,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
           {user &&
             user.userRole === "Advertiser" &&
             user._id === record.createdBy && (
+                console.log(record.createdBy),
               <div>
                 <Button
                   icon={<EditOutlined />}
@@ -360,18 +362,23 @@ const AllActivitiesCRUD = ({ setFlag }) => {
             <Switch disabled={isViewing} />
           </Item>
           <Item label="Location">
-            <LoadScript
-              googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
-            >
-              <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                zoom={8}
-                center={center}
-                onClick={isViewing ? null : handleMapClick}
-              >
-                {location.lat && location.lng && <Marker position={location} />}
-              </GoogleMap>
-            </LoadScript>
+            {/*<LoadScript*/}
+            {/*  googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}*/}
+            {/*>*/}
+            {/*  <GoogleMap*/}
+            {/*    mapContainerStyle={mapContainerStyle}*/}
+            {/*    zoom={8}*/}
+            {/*    center={center}*/}
+            {/*    onClick={isViewing ? null : handleMapClick}*/}
+            {/*  >*/}
+            {/*    {location.lat && location.lng && <Marker position={location} />}*/}
+            {/*  </GoogleMap>*/}
+            {/*</LoadScript>*/}
+            <MapContainer
+                longitude={location.lng}
+                latitude={location.lat}
+                outputLocation={(lat, lng) => setLocation({ lat, lng })}
+            />
           </Item>
           <Item label="Category" name="category" rules={[{ required: true }]}>
             <Select placeholder="Select Category" disabled={isViewing}>

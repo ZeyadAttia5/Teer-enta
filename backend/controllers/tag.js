@@ -1,4 +1,5 @@
 const Tag = require('../models/Tag');
+const historicalPlace = require('../models/HistoricalPlace/HistoricalPlaces');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.getTags = async (req, res, next) => {
@@ -15,13 +16,7 @@ exports.getTags = async (req, res, next) => {
 
 exports.createTag = async (req, res, next) => {
     try {
-        // req.user = { _id: '66f6564440ed4375b2abcdfb' };
-        // const createdBy = req.user._id;
-        // req.body.createdBy = createdBy
-
-
         const tag = await Tag.create(req.body);
-        console.log(tag)
         res.status(201).json({ message: 'Tag created successfully', tag });
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -64,6 +59,7 @@ exports.deleteTag = async (req, res, next) => {
         }
 
         await Tag.findByIdAndDelete(id);
+        await historicalPlace.updateMany({tags: id}, {$pull: {tags: id}});
         res.status(200).json({
             message: 'Tag deleted successfully',
             data: tag

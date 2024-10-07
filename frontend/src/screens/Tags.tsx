@@ -108,9 +108,11 @@ const Tag = ({setFlag}) => {
         <div className="p-8 bg-gray-100 min-h-screen">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold text-green-600">Tags Management</h1>
-                <Button type="primary" icon={<PlusOutlined />} className="bg-green-600" onClick={handleCreateTag}>
-                    Create Tag
-                </Button>
+                {(user && user.userRole === 'TourismGovernor') && (
+                    <Button type="primary" icon={<PlusOutlined />} className="bg-green-600" onClick={handleCreateTag}>
+                        Create Tag
+                    </Button>
+                )}
             </div>
 
             <Table

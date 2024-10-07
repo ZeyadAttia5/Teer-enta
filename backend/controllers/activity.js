@@ -1,4 +1,6 @@
 const Activity = require('../models/Activity/Activity');
+const Itinerary = require('../models/Itinerary/Itinerary');
+const TouristItinerary = require('../models/TouristItenerary/TouristItenerary');
 const mongoose = require('mongoose')
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 
@@ -66,14 +68,17 @@ exports.getUpcomingActivities = async (req, res, next) => {
     }
 }
 
-    exports.createActivity = async (req, res, next) => {
-        try {
-            const activity = await Activity.create(req.body);
-            res.status(201).json({message: 'ActivityList created successfully', activity});
-        } catch (err) {
-            errorHandler.SendError(res, err);
-        }
-    };
+exports.createActivity = async (req, res, next) => {
+    try {
+
+        const activity = await Activity.create(req.body);
+        console.log(activity);
+        res.status(201).json({message: 'ActivityList created successfully', activity});
+    } catch (err) {
+        console.log(err);
+        errorHandler.SendError(res, err);
+    }
+};
 
 
 exports.updateActivity = async (req, res, next) => {
@@ -112,6 +117,18 @@ exports.deleteActivity = async (req, res, next) => {
         }
 
         await Activity.findByIdAndDelete(id);
+        await Itinerary.updateMany({},
+            {
+                $pull: {
+                    activities: {activity: id},
+                    timeline: {activity: id}
+                }
+            }
+        );
+        await TouristItinerary.updateMany({},{
+            $pull: {activities: id}
+        });
+
         res.status(200).json({
             message: 'ActivityList deleted successfully',
             data: activity
@@ -123,15 +140,15 @@ exports.deleteActivity = async (req, res, next) => {
 
 exports.flagInappropriate = async (req, res) => {
     try {
-        const id = req.params.id ;
-        if (!mongoose.Types.objectId.isValid(id)){
-            return res.status(400).json({message:"invalid object id "}) ;
+        const id = req.params.id;
+        if (!mongoose.Types.objectId.isValid(id)) {
+            return res.status(400).json({message: "invalid object id "});
         }
-        const activity = await Activity.findByIdAndUpdate(id , {isActive: false} , {new:true});
-        if (!activity){
-            return res.status(404).json({message:"activity not found"}) ;
+        const activity = await Activity.findByIdAndUpdate(id, {isActive: false}, {new: true});
+        if (!activity) {
+            return res.status(404).json({message: "activity not found"});
         }
-        return res.status(200).json({message:"activity flagged inappropriate successfully"}) ;
+        return res.status(200).json({message: "activity flagged inappropriate successfully"});
     } catch (err) {
         errorHandler.SendError(res, err);
     }

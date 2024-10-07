@@ -48,14 +48,18 @@ const ActivityCard = ({
             </p>
             <p className="text-gray-700">Time: {time}</p>
             <p className="text-gray-700">
-              Category: {category?.name || "Uncategorized"}
+              Category: {category || "Uncategorized"}
             </p>
             
             <p className="text-gray-700">
               Price: {price?.min ? `$${price.min}` : "N/A"} -{" "}
               {price?.max ? `$${price.max}` : "N/A"}
             </p>
+
+
           </div>
+
+
 
           {/* Conditional Rendering for Special Discounts */}
           {specialDiscounts?.length > 0 &&
