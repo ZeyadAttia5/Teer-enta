@@ -17,9 +17,6 @@ export type TItinerary = {
         activity: TActivity; // ObjectId referencing 'ActivityList'
         duration: number;
     }[];
-    locations: {
-        name: string;
-    }[];
     timeline: {
         activity: TActivity; // ObjectId referencing 'ActivityList'
         startTime?: string;
