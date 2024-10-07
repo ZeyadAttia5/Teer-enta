@@ -22,7 +22,7 @@ const Sidebar = ({ visible, onClose }) => {
       onClose={onClose}
       visible={visible}
     >
-      <Menu mode="inline" defaultSelectedKeys={[]}>
+      <Menu mode="inline" defaultSelectedKeys={[]} className="">
         {user &&
           (user.userRole === "Admin" ||
             user.userRole === "TourismGovernor") && (

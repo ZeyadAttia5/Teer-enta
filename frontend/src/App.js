@@ -37,6 +37,7 @@ import TouristNavBar from "./components/TouristNavBar.jsx";
 import AllActivitiesCRUD from "./screens/Activity/AllActivitiesCRUD.tsx";
 import { set } from "date-fns";
 import ConfirmationModal from "./components/ConfirmationModal.js";
+import TouristActivity from "./screens/TouristActivity/TouristActivity.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -68,6 +69,7 @@ function App() {
             onClose={onClose}
             showDrawer={showDrawer}
             drawerVisible={visible}
+            
           />
         )}
         {!flag && (
@@ -172,6 +174,10 @@ function App() {
           <Route
             path="/itinerary/my"
             element={<TourGuideItinerary setFlag={setFlag} />}
+          />
+          <Route
+            path="/touristActivity"
+            element={<TouristActivity setFlag={setFlag} />}
           />
         </Routes>
         <Toaster />
