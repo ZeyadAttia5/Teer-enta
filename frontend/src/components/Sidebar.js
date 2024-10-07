@@ -49,7 +49,7 @@ const Sidebar = ({ visible, onClose }) => {
             <Menu.Item key="3" onClick={() => handleClick("/historicalPlace")}>
               Historical Places
             </Menu.Item>
-            {user && (user.userRole === "TourismGovernor" || user.userRole === "Admin") && (
+            {user && (user.userRole === "TourismGovernor") && (
               <Menu.Item
                 key="12"
                 onClick={() => handleClick("/historicalPlace/my")}
