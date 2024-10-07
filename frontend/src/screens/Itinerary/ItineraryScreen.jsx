@@ -515,7 +515,7 @@ const ItineraryScreen = ({ setFlag }) => {
           </div>
         </div>
       </div>
-      {true ? (
+      {user && userRole==='Tourist' ? (
         <main className="flex flex-wrap gap-2 py-10">
           {sortedItineraries?.map((iternary, index) => {
             return (
