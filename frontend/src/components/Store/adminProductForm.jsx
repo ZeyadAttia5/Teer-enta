@@ -48,7 +48,7 @@ const AdminProductForm = ({setFlag}) => {
         name: '',
         description: '',
         price: '',
-        seller: '',
+        // seller: '',
         imageUrl: '',
         quantity: '',
       });
@@ -106,18 +106,18 @@ const AdminProductForm = ({setFlag}) => {
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Seller Name:</label>
-          <input
-            type="text"
-            name="seller"
-            value={product.seller}
-            onChange={handleChange}
-            placeholder="Enter seller name"
-            required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
-          />
-        </div>
+        {/*<div className="mb-4">*/}
+        {/*  <label className="block text-lg text-customGreen mb-2">Seller Name:</label>*/}
+        {/*  <input*/}
+        {/*    type="text"*/}
+        {/*    name="seller"*/}
+        {/*    value={product.seller}*/}
+        {/*    onChange={handleChange}*/}
+        {/*    placeholder="Enter seller name"*/}
+        {/*    required*/}
+        {/*    className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"*/}
+        {/*  />*/}
+        {/*</div>*/}
 
         <div className="mb-4">
           <label className="block text-lg text-customGreen mb-2">Image URL:</label>

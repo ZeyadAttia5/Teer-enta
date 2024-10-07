@@ -170,7 +170,7 @@ function App() {
             element={<AdminProductForm setFlag={setFlag} />}
           />
           <Route
-            path="/admin/edit-product/:productId"
+            path="/products/edit/:productId"
             element={<EditProductForm setFlag={setFlag} />}
           />
           <Route
