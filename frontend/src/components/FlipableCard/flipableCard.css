@@ -1,0 +1,13 @@
+.cardContainer{
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.cardContainer:hover>div{
+    transform: rotateY(180deg);
+}
+
+
+.back:hover{
+    transform: rotateY(180deg);
+}
