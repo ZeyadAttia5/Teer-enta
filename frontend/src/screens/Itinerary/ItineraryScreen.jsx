@@ -206,7 +206,7 @@ const ItineraryScreen = ({ setFlag }) => {
 
       const formattedTimeline = itinerary.timeline.map((tl) => ({
         ...tl,
-        activity: tl.activity.name ? tl.activity.name : tl.activity,
+        activity: tl.activity ? tl.activity._id : "Activity not found",
         startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
 
@@ -293,6 +293,7 @@ const ItineraryScreen = ({ setFlag }) => {
       };
 
       if (editingItinerary) {
+        console.log("Updating itinerary", formattedData);
         await updateItinerary(editingItinerary._id, formattedData);
         message.success("Itinerary updated successfully");
       } else {
