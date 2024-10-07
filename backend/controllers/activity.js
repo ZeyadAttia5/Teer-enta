@@ -70,9 +70,12 @@ exports.getUpcomingActivities = async (req, res, next) => {
 
 exports.createActivity = async (req, res, next) => {
     try {
+
         const activity = await Activity.create(req.body);
+        console.log(activity);
         res.status(201).json({message: 'ActivityList created successfully', activity});
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 };

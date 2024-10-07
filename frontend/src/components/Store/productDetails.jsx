@@ -14,7 +14,7 @@ const ProductDetails = ({setFlag}) => {
   const [product, setProduct] = useState(null); // State for the product
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
-
+  const user = JSON.parse(localStorage.getItem("user"));
   // Fetch product details from the API
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -91,25 +91,28 @@ const ProductDetails = ({setFlag}) => {
               <Paragraph className="mt-4 text-gray-700 text-base">
                 {product.description}
               </Paragraph>
-
+              {user && user.userRole === "Tourist" && (
               <Button
                   type="primary"
                   className="mt-6 bg-[#02735F] text-white hover:bg-[#039F7B] w-full text-lg font-bold py-3 rounded-lg transition duration-300 ease-in-out"
               >
                 Add to Cart
               </Button>
+              )}
             </div>
           </div>
         </div>
 
         {/* Back to Products Button */}
         <Link to="/products" className="block mt-8 text-center">
-          <Button
-              type="default"
-              className="bg-[#F0F4F8] text-[#02735F] hover:bg-[#E0E8F0] hover:text-[#039F7B] border-none rounded-lg transition duration-300 ease-in-out px-6 py-3"
-          >
-            Back to Products
-          </Button>
+
+            <Button
+                type="default"
+                className="bg-[#F0F4F8] text-[#02735F] hover:bg-[#E0E8F0] hover:text-[#039F7B] border-none rounded-lg transition duration-300 ease-in-out px-6 py-3"
+            >
+              Back to Products
+            </Button>
+
         </Link>
       </div>
   );
