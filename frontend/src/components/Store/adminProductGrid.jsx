@@ -152,7 +152,7 @@ const AdminProductGrid = ({ setFlag }) => {
                     </button>
                   </Link>
                   )}
-                  <Link to={`/product/${product._id}`} className="flex-1">
+                  <Link to={`/products/${product._id}`} className="flex-1">
                     <button className="bg-customGreen text-white w-full py-2 transition-colors duration-300 hover:bg-darkerGreen rounded-none">
                       View Details
                     </button>
