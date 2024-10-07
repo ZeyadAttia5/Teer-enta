@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ActivityCard from "../../components/TouristActivity/ActivityCard";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-import { Input, Select, Slider, Row, Col } from "antd";
+import { Input, Select, Slider, Row, Col, Checkbox } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
@@ -21,6 +21,7 @@ const TouristActivity = ({ setFlag }) => {
   const [category, setCategory] = useState("");
   const [rating, setRating] = useState(0);
   const [sortBy, setSortBy] = useState(""); // To track sorting preference
+  const [showUpcoming, setShowUpcoming] = useState(false); // State for upcoming activities
 
   const location = useLocation();
 
@@ -32,13 +33,8 @@ const TouristActivity = ({ setFlag }) => {
         });
         console.log("Fetched Activities:", response.data); // Inspect the data structure
 
-        // Filter upcoming activities
-        const upcomingActivities = response.data.filter((activity) =>
-            dayjs(activity.date).isAfter(dayjs())
-        );
-
         // Calculate average rating for each activity
-        const activitiesWithAvgRating = upcomingActivities.map((activity) => {
+        const activitiesWithAvgRating = response.data.map((activity) => {
           const avgRating =
               activity.ratings.length > 0
                   ? activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
@@ -107,11 +103,20 @@ const TouristActivity = ({ setFlag }) => {
       data = data.filter((activity) => activity.averageRating >= rating);
     }
 
+    // Filter for upcoming activities if the checkbox is checked
+    if (showUpcoming) {
+      data = data.filter(activity => dayjs(activity.date).isAfter(dayjs()));
+    }
+
     // Sorting
     if (sortBy === "price") {
       data.sort((a, b) => a.price.min - b.price.min);
+    } else if (sortBy === "price_desc") {
+      data.sort((a, b) => b.price.max - a.price.max);
     } else if (sortBy === "rating") {
       data.sort((a, b) => b.averageRating - a.averageRating);
+    } else if (sortBy === "rating_asc") {
+      data.sort((a, b) => a.averageRating - b.averageRating);
     }
 
     setFilteredActivities(data);
@@ -120,7 +125,7 @@ const TouristActivity = ({ setFlag }) => {
   useEffect(() => {
     applyFilters();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, budget, category, rating, sortBy, activities]);
+  }, [searchQuery, budget, category, rating, sortBy, activities, showUpcoming]);
 
   // Extract unique categories based on _id
   const uniqueCategories = activities.reduce((acc, act) => {
@@ -205,10 +210,20 @@ const TouristActivity = ({ setFlag }) => {
             >
               <Option value="">No Sorting</Option>
               <Option value="price">Price (Low to High)</Option>
+              <Option value="price_desc">Price (High to Low)</Option>
               <Option value="rating">Rating (High to Low)</Option>
+              <Option value="rating_asc">Rating (Low to High)</Option>
             </Select>
           </Col>
         </Row>
+
+        {/* Checkbox for Upcoming Activities */}
+        <Checkbox
+            checked={showUpcoming}
+            onChange={(e) => setShowUpcoming(e.target.checked)}
+        >
+          Show Upcoming Activities
+        </Checkbox>
 
         {/* Activity Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -239,7 +254,7 @@ const TouristActivity = ({ setFlag }) => {
                   </Link>
               ))
           ) : (
-              <p className="col-span-full text-center text-gray-500">No activities found.</p>
+              <p>No activities found based on your filters.</p>
           )}
         </div>
       </div>
