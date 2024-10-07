@@ -1,4 +1,3 @@
-// frontend/screens/ItineraryScreen.js
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -12,12 +11,15 @@ import {
   Space,
   Divider,
   message,
+  Card,
+  notification,
 } from "antd";
 import {
   MinusCircleOutlined,
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import {
   getItineraries,
@@ -38,8 +40,7 @@ import {
   isThisYear,
   parseISO,
 } from "date-fns";
-import { useLocation } from "react-router-dom";
-// import { format } from "path";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -52,23 +53,27 @@ const ItineraryScreen = ({ setFlag }) => {
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItinerary, setEditingItinerary] = useState(null);
+  const navigate = useNavigate();
   const [form] = Form.useForm();
 
-  //states for filters
-  const [searchTerm, setSearchTerm] = useState(""); //search term
-  const [selectedBudget, setSelectedBudget] = useState(""); //filter
-  const [selectedDateFilter, setSelectedDateFilter] = useState(""); //filter
-  const [selectedLanguage, setSelectedLanguage] = useState(""); //filter fx
-  const [selectedPreference, setSelectedPreference] = useState(""); //filter fx
-  const [sortBy, setSortBy] = useState(""); //sort by price and rating
+  // States for filters
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBudget, setSelectedBudget] = useState("");
+  const [selectedDateFilter, setSelectedDateFilter] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [selectedPreference, setSelectedPreference] = useState("");
+  const [sortBy, setSortBy] = useState("");
 
-  const budgets = [...new Set(itineraries.map((itin) => itin.price))];
-  const languages = [...new Set(itineraries.map((itin) => itin.language))];
-
-  // New State Variables for ActivityList and Preference Tags
+  // New state variables for ActivityList and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
+
+  // New state variables for viewing itinerary
+  const [viewingItinerary, setViewingItinerary] = useState(null);
+  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+
   const location = useLocation();
+
   useEffect(() => {
     if (location.pathname === "/itinerary/my") {
       fetchMyIternaries();
@@ -79,7 +84,8 @@ const ItineraryScreen = ({ setFlag }) => {
     fetchPreferenceTags();
   }, [location.pathname]);
 
-  //filter fx
+  const budgets = [...new Set(itineraries.map((itin) => itin.price))];
+  const languages = [...new Set(itineraries.map((itin) => itin.language))];
 
   const filterByDate = (itin) => {
     return itin.availableDates.some((availableDate) => {
@@ -106,7 +112,7 @@ const ItineraryScreen = ({ setFlag }) => {
     });
   };
 
-  const filteredItinerareis = itineraries.filter(
+  const filteredItineraries = itineraries.filter(
     (itin) =>
       (selectedBudget ? itin.price <= selectedBudget : true) &&
       filterByDate(itin) &&
@@ -121,15 +127,23 @@ const ItineraryScreen = ({ setFlag }) => {
         ))
   );
 
-  const sortedItineraries = filteredItinerareis.sort((a, b) => {
+  const sortedItineraries = filteredItineraries.sort((a, b) => {
     if (sortBy === "pricingHighToLow") {
-      return a.price - b.price;
+      return b.price - a.price;
     } else if (sortBy === "pricingLowToHigh") {
-      return b.rating - a.rating;
+      return a.price - b.price;
     } else if (sortBy === "ratingHighToLow") {
-      return a.rating - b.rating;
+      const avgRatingA =
+        a.ratings.reduce((sum, r) => sum + r.rating, 0) / a.ratings.length || 0;
+      const avgRatingB =
+        b.ratings.reduce((sum, r) => sum + r.rating, 0) / b.ratings.length || 0;
+      return avgRatingB - avgRatingA;
     } else if (sortBy === "ratingLowToHigh") {
-      return b.rating - a.rating;
+      const avgRatingA =
+        a.ratings.reduce((sum, r) => sum + r.rating, 0) / a.ratings.length || 0;
+      const avgRatingB =
+        b.ratings.reduce((sum, r) => sum + r.rating, 0) / b.ratings.length || 0;
+      return avgRatingA - avgRatingB;
     }
     return 0;
   });
@@ -144,13 +158,18 @@ const ItineraryScreen = ({ setFlag }) => {
     }
     setLoading(false);
   };
+
   const fetchMyIternaries = async () => {
     setLoading(true);
     try {
       const data = await getMyItineraries();
       setItineraries(data);
     } catch (error) {
-      message.error("Failed to fetch itineraries");
+      if (error.response.status === 404) {
+        notification.info({ message: "You didn't create any itineraries yet" });
+      } else {
+        notification.error({ message: "Error fetching itineraries" });
+      }
     }
     setLoading(false);
   };
@@ -180,23 +199,19 @@ const ItineraryScreen = ({ setFlag }) => {
       await fetchActivities();
       await fetchPreferenceTags();
 
-      // console.log("The Itinerary is: " + JSON.stringify(itinerary));
-      // Format availableDates for RangePicker
       const formattedAvailableDates = itinerary.availableDates.map((date) => [
         moment(date.Date),
         moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm"),
       ]);
 
-      // Format timeline's startTime
       const formattedTimeline = itinerary.timeline.map((tl) => ({
         ...tl,
         activity: tl.activity.name ? tl.activity.name : tl.activity,
         startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
       }));
 
-      // console.log("The first ActivityList is: " + itinerary.activities[0].duration);
       const formattedActivities = itinerary.activities.map((act) => ({
-        activity: act.activity ? act.activity._id : "ActivityList not found",
+        activity: act.activity ? act.activity._id : "Activity not found",
         duration: act.duration,
       }));
 
@@ -238,9 +253,6 @@ const ItineraryScreen = ({ setFlag }) => {
 
   const onFinish = async (values) => {
     try {
-      // console.log("The values are: " + JSON.stringify(values));
-
-      // Format availableDates
       const formattedAvailableDates = values.availableDates.map(
         ([start, end]) => ({
           Date: start.format("YYYY-MM-DD"),
@@ -248,36 +260,17 @@ const ItineraryScreen = ({ setFlag }) => {
         })
       );
 
-      // Format activities
-      // const formattedActivities = values.activities
-      //   ? values.activities.map((act) => ({
-      //       ...act,
-      //       duration: act.duration,
-      //     }))
-      //   : [];
-
-      // get the activity from the activitiesList
-      // get the duration from the values
       const formattedActivities = values.activities.map((act) => ({
         activity: act.activity,
         duration: act.duration,
       }));
-      // console.log("The first ActivityList is: " + JSON.stringify(formattedActivities[0]));
 
-      // formattedActivities.forEach((act, index) => {
-      //   act.activity = activitiesList.find((activity) => activity._id === values.activities[index].activity);
-      // });
-
-      // console.log("The first ActivityList is: " + JSON.stringify(formattedActivities[0]));
-
-      // Format locations
       const formattedLocations = values.locations
         ? values.locations.map((loc) => ({
             name: loc.name,
           }))
         : [];
 
-      // Format timeline
       const formattedTimeline = values.timeline
         ? values.timeline.map((tl) => ({
             activity: tl.activity,
@@ -286,16 +279,10 @@ const ItineraryScreen = ({ setFlag }) => {
           }))
         : [];
 
-      // format prefrence tags
-      // console.log("The preference tags are: " + values.preferenceTags);
-
       const formattedPreferenceTags = values.preferenceTags
         ? values.preferenceTags.map((tag) => tag)
         : [];
-      // console.log("The formatted preference tags are: " + formattedPreferenceTags);
-      // const formattedPreferenceTags = values.preferenceTags || [];
 
-      // Prepare final data
       const formattedData = {
         ...values,
         availableDates: formattedAvailableDates,
@@ -303,9 +290,7 @@ const ItineraryScreen = ({ setFlag }) => {
         locations: formattedLocations,
         timeline: formattedTimeline,
         preferenceTags: formattedPreferenceTags,
-        // Exclude Ratings and Comments from Form Data
       };
-      // console.log("The formatted data is: " + JSON.stringify(formattedData));
 
       if (editingItinerary) {
         await updateItinerary(editingItinerary._id, formattedData);
@@ -320,6 +305,16 @@ const ItineraryScreen = ({ setFlag }) => {
       message.error("Failed to save itinerary");
       console.error(error);
     }
+  };
+
+  const showViewModal = (itinerary) => {
+    setViewingItinerary(itinerary);
+    setIsViewModalVisible(true);
+  };
+
+  const handleViewCancel = () => {
+    setIsViewModalVisible(false);
+    setViewingItinerary(null);
   };
 
   const columns = [
@@ -354,17 +349,25 @@ const ItineraryScreen = ({ setFlag }) => {
       dataIndex: "dropOffLocation",
       key: "dropOffLocation",
     },
-
     {
-      title:
-        user && ( user.userRole === "TourGuide")
-          ? "Actions"
-          : "",
+      title: "Actions",
       key: "actions",
       render: (text, record) => (
         <>
+          <Button
+            icon={<EyeOutlined />}
+            onClick={() => showViewModal(record)}
+            className="mr-2"
+            style={{
+              backgroundColor: "#02735F",
+              color: "#fff",
+              border: "none",
+            }}
+          >
+            View
+          </Button>
           {user && user._id === record.createdBy && (
-            <div>
+            <>
               <Button
                 icon={<EditOutlined />}
                 onClick={() => showModal(record)}
@@ -388,15 +391,15 @@ const ItineraryScreen = ({ setFlag }) => {
               >
                 Delete
               </Button>
-            </div>
+            </>
           )}
         </>
       ),
     },
   ];
+
   return (
     <div className="p-6 bg-white min-h-screen">
-      {" "}
       <h1 className="text-2xl font-bold mb-4">Itineraries</h1>
       {user && user.userRole === "TourGuide" && (
         <Button
@@ -515,13 +518,37 @@ const ItineraryScreen = ({ setFlag }) => {
           </div>
         </div>
       </div>
-      <Table
-        dataSource={sortedItineraries}
-        columns={columns}
-        rowKey="_id"
-        loading={loading}
-        pagination={{ pageSize: 10 }}
-      />
+      {(user===null || user.userRole === "Tourist") ? (
+        <main className="flex flex-wrap gap-2 py-10">
+          {sortedItineraries?.map((itinerary, index) => {
+            return (
+              <Card
+                hoverable
+                style={{ width: "33%" }}
+                key={index}
+                onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}
+              >
+                <Card.Meta
+                  title={itinerary.name}
+                  description={itinerary.language}
+                />
+                <p>Price: {itinerary.price}</p>
+                <p>Accessibility: {itinerary.accessibility}</p>
+                <p>Pickup Location: {itinerary.pickupLocation}</p>
+                <p>Drop Off Location: {itinerary.dropOffLocation}</p>
+              </Card>
+            );
+          })}
+        </main>
+      ) : (
+        <Table
+          dataSource={sortedItineraries}
+          columns={columns}
+          rowKey="_id"
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+        />
+      )}
       <Modal
         title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
         visible={isModalVisible}
@@ -535,7 +562,6 @@ const ItineraryScreen = ({ setFlag }) => {
           onFinish={onFinish}
           initialValues={{ isActive: true }}
         >
-          {/* Itinerary Name */}
           <Form.Item
             name="name"
             label="Itinerary Name"
@@ -546,7 +572,6 @@ const ItineraryScreen = ({ setFlag }) => {
             <Input placeholder="Enter itinerary name" />
           </Form.Item>
 
-          {/* Language */}
           <Form.Item
             name="language"
             label="Language"
@@ -556,11 +581,9 @@ const ItineraryScreen = ({ setFlag }) => {
               <Option value="English">English</Option>
               <Option value="Spanish">Spanish</Option>
               <Option value="Arabic">Arabic</Option>
-              {/* Add more languages as needed */}
             </Select>
           </Form.Item>
 
-          {/* Price */}
           <Form.Item name="price" label="Price" rules={[{ required: true }]}>
             <InputNumber
               min={0}
@@ -571,24 +594,20 @@ const ItineraryScreen = ({ setFlag }) => {
             />
           </Form.Item>
 
-          {/* Accessibility */}
           <Form.Item name="accessibility" label="Accessibility">
             <Input placeholder="Enter accessibility details" />
           </Form.Item>
 
-          {/* Pickup Location */}
           <Form.Item name="pickupLocation" label="Pickup Location">
             <Input placeholder="Enter pickup location" />
           </Form.Item>
 
-          {/* Drop Off Location */}
           <Form.Item name="dropOffLocation" label="Drop Off Location">
             <Input placeholder="Enter drop off location" />
           </Form.Item>
 
           <Divider />
 
-          {/* ActivityList */}
           <Form.List name="activities">
             {(fields, { add, remove }) => (
               <>
@@ -599,7 +618,6 @@ const ItineraryScreen = ({ setFlag }) => {
                     style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
-                    {/* ActivityList Dropdown */}
                     <Form.Item
                       {...restField}
                       name={[name, "activity"]}
@@ -617,7 +635,6 @@ const ItineraryScreen = ({ setFlag }) => {
                       </Select>
                     </Form.Item>
 
-                    {/* Duration */}
                     <Form.Item
                       {...restField}
                       name={[name, "duration"]}
@@ -631,7 +648,6 @@ const ItineraryScreen = ({ setFlag }) => {
                       />
                     </Form.Item>
 
-                    {/* Remove Button */}
                     <MinusCircleOutlined onClick={() => remove(name)} />
                   </Space>
                 ))}
@@ -657,7 +673,6 @@ const ItineraryScreen = ({ setFlag }) => {
 
           <Divider />
 
-          {/* Locations */}
           <Form.List name="locations">
             {(fields, { add, remove }) => (
               <>
@@ -668,7 +683,6 @@ const ItineraryScreen = ({ setFlag }) => {
                     style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
-                    {/* Location Name */}
                     <Form.Item
                       {...restField}
                       name={[name, "name"]}
@@ -679,7 +693,6 @@ const ItineraryScreen = ({ setFlag }) => {
                       <Input placeholder="Location Name" />
                     </Form.Item>
 
-                    {/* Remove Button */}
                     <MinusCircleOutlined onClick={() => remove(name)} />
                   </Space>
                 ))}
@@ -705,7 +718,6 @@ const ItineraryScreen = ({ setFlag }) => {
 
           <Divider />
 
-          {/* Timeline */}
           <Form.List name="timeline">
             {(fields, { add, remove }) => (
               <>
@@ -716,7 +728,6 @@ const ItineraryScreen = ({ setFlag }) => {
                     style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
-                    {/* ActivityList Dropdown */}
                     <Form.Item
                       {...restField}
                       name={[name, "activity"]}
@@ -734,7 +745,6 @@ const ItineraryScreen = ({ setFlag }) => {
                       </Select>
                     </Form.Item>
 
-                    {/* Start Time */}
                     <Form.Item
                       {...restField}
                       name={[name, "startTime"]}
@@ -750,7 +760,6 @@ const ItineraryScreen = ({ setFlag }) => {
                       />
                     </Form.Item>
 
-                    {/* Duration */}
                     <Form.Item
                       {...restField}
                       name={[name, "duration"]}
@@ -764,7 +773,6 @@ const ItineraryScreen = ({ setFlag }) => {
                       />
                     </Form.Item>
 
-                    {/* Remove Button */}
                     <MinusCircleOutlined onClick={() => remove(name)} />
                   </Space>
                 ))}
@@ -790,7 +798,6 @@ const ItineraryScreen = ({ setFlag }) => {
 
           <Divider />
 
-          {/* Available Dates */}
           <Form.List name="availableDates">
             {(fields, { add, remove }) => (
               <>
@@ -803,7 +810,6 @@ const ItineraryScreen = ({ setFlag }) => {
                     style={{ display: "flex", marginBottom: 8 }}
                     align="start"
                   >
-                    {/* RangePicker */}
                     <Form.Item
                       {...restField}
                       name={[name]}
@@ -819,7 +825,6 @@ const ItineraryScreen = ({ setFlag }) => {
                       />
                     </Form.Item>
 
-                    {/* Remove Button */}
                     <MinusCircleOutlined onClick={() => remove(name)} />
                   </Space>
                 ))}
@@ -845,7 +850,6 @@ const ItineraryScreen = ({ setFlag }) => {
 
           <Divider />
 
-          {/* Preference Tags */}
           <Form.Item name="preferenceTags" label="Preference Tags">
             <Select
               mode="multiple"
@@ -860,7 +864,6 @@ const ItineraryScreen = ({ setFlag }) => {
             </Select>
           </Form.Item>
 
-          {/* Submit Button */}
           <Form.Item>
             <Button
               type="primary"
@@ -871,6 +874,107 @@ const ItineraryScreen = ({ setFlag }) => {
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title="View Itinerary"
+        visible={isViewModalVisible}
+        onCancel={handleViewCancel}
+        footer={[
+          <Button key="close" onClick={handleViewCancel}>
+            Close
+          </Button>,
+        ]}
+        width={1000}
+      >
+        {viewingItinerary && (
+          <Form layout="vertical">
+            <Form.Item label="Itinerary Name">
+              <Input value={viewingItinerary.name} disabled />
+            </Form.Item>
+            <Form.Item label="Language">
+              <Input value={viewingItinerary.language} disabled />
+            </Form.Item>
+            <Form.Item label="Price">
+              <InputNumber
+                value={viewingItinerary.price}
+                formatter={(value) => `$ ${value}`}
+                disabled
+              />
+            </Form.Item>
+            <Form.Item label="Accessibility">
+              <Input value={viewingItinerary.accessibility} disabled />
+            </Form.Item>
+            <Form.Item label="Pickup Location">
+              <Input value={viewingItinerary.pickupLocation} disabled />
+            </Form.Item>
+            <Form.Item label="Drop Off Location">
+              <Input value={viewingItinerary.dropOffLocation} disabled />
+            </Form.Item>
+
+            <Divider />
+
+            <Form.Item label="Activities">
+              {viewingItinerary.activities.map((activity, index) => (
+                <div key={index}>
+                  <Input
+                    value={`${activity.activity.name} - ${activity.duration} min`}
+                    disabled
+                  />
+                </div>
+              ))}
+            </Form.Item>
+
+            <Divider />
+
+            <Form.Item label="Locations">
+              {viewingItinerary.locations.map((location, index) => (
+                <div key={index}>
+                  <Input value={location.name} disabled />
+                </div>
+              ))}
+            </Form.Item>
+
+            <Divider />
+
+            <Form.Item label="Timeline">
+              {viewingItinerary.timeline.map((entry, index) => (
+                <div key={index}>
+                  <Input
+                    value={`${entry.activity.name} - Start: ${entry.startTime}, Duration: ${entry.duration} min`}
+                    disabled
+                  />
+                </div>
+              ))}
+            </Form.Item>
+
+            <Divider />
+
+            <Form.Item label="Available Dates">
+              {viewingItinerary.availableDates.map((date, index) => (
+                <div key={index}>
+                  <Input value={`${date.Date} ${date.Times}`} disabled />
+                </div>
+              ))}
+            </Form.Item>
+
+            <Divider />
+
+            <Form.Item label="Preference Tags">
+              <Select
+                mode="multiple"
+                value={viewingItinerary.preferenceTags.map((tag) => tag._id)}
+                disabled
+              >
+                {preferenceTagsList.map((tag) => (
+                  <Option key={tag._id} value={tag._id}>
+                    {tag.tag}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </div>
   );

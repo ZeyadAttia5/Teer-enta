@@ -11,10 +11,11 @@ import {GoogleMap, MarkerF, useJsApiLoader} from "@react-google-maps/api";
  * @returns {Element}
  * @constructor
  */
-const MapContainer = ({latitude = 1, longitude = 1, outputLocation}) => {
+const MapContainer = ({latitude = 1, longitude = 1, outputLocation,containerStyles={}}) => {
     const mapStyles = {
         height: "400px",
         width: "100%",
+        ...containerStyles
     };
 
     const initialPosition = {
@@ -51,6 +52,7 @@ const MapContainer = ({latitude = 1, longitude = 1, outputLocation}) => {
                 mapContainerStyle={mapStyles}
                 zoom={13}
                 center={markerPosition}
+                
                 onClick={handleMapClick}
             >
                 <MarkerF position={markerPosition} draggable={true} onDrag={handleMapClick}/>

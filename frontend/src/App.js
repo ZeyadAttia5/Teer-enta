@@ -29,7 +29,7 @@ import ProductDetails from "./components/Store/productDetails";
 import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
 import EditProductForm from "./components/Store/editProductForm";
-import TourGuideItinerary from "./screens/Itinerary/ItineraryScreen.jsx";
+import IternaryScreen from "./screens/Itinerary/ItineraryScreen.jsx";
 import PreferenceTags from "./screens/Itinerary/PrefrenceTags.tsx";
 import ActivityCategories from "./screens/Activity/ActivityCategories.tsx";
 import Tags from "./screens/Tags.tsx";
@@ -38,11 +38,14 @@ import TouristNavBar from "./components/TouristNavBar.jsx";
 import AllActivitiesCRUD from "./screens/Activity/AllActivitiesCRUD.tsx";
 import { set } from "date-fns";
 import ConfirmationModal from "./components/ConfirmationModal.js";
+import IternaryDetails from "./screens/Itinerary/IternaryDetails.tsx";
+import ActivityDetails from "./screens/Activity/ActivityDetails.tsx";
+import TouristActivity from "./screens/TouristActivity/TouristActivity.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
-  
+
   const [visible, setVisible] = useState(false);
   const [isNavigate, setIsNavigate] = useState(false);
 
@@ -73,7 +76,11 @@ function App() {
         )}
         {!flag && (
           <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  ">
-            <TouristNavBar setModalOpen={setModalOpen} isNavigate={isNavigate} setIsNavigate={setIsNavigate}/>
+            <TouristNavBar
+              setModalOpen={setModalOpen}
+              isNavigate={isNavigate}
+              setIsNavigate={setIsNavigate}
+            />
           </div>
         )}
         <ConfirmationModal
@@ -171,12 +178,32 @@ function App() {
             element={<EditProductForm setFlag={setFlag} />}
           />
           <Route
-            path="/itinerary"
-            element={<TourGuideItinerary setFlag={setFlag} />}
+            path="/itinerary/*"
+            element={
+              <Routes>
+                <Route
+                  path="activityDetails/:id"
+                  element={<ActivityDetails setFlag={setFlag} />}
+                />
+                <Route
+                  path="/"
+                  element={<IternaryScreen setFlag={setFlag} />}
+                />
+                <Route
+                  path="iternaryDetails/:id"
+                  element={<IternaryDetails setFlag={setFlag} />}
+                />
+              </Routes>
+            }
           />
+
           <Route
             path="/itinerary/my"
-            element={<TourGuideItinerary setFlag={setFlag} />}
+            element={<IternaryScreen setFlag={setFlag} />}
+          />
+          <Route
+            path="/touristActivities"
+            element={<TouristActivity setFlag={setFlag} />}
           />
         </Routes>
         <Toaster />

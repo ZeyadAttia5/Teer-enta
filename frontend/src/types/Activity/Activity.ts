@@ -23,7 +23,7 @@ export type TActivity = {
     preferenceTags: TPreferenceTag[]; // Array of ObjectIds referencing 'Tag'
     specialDiscounts: {
         discount: number;
-        description: string;
+        Description: string;
         isAvailable: boolean;
     }[];
     ratings: {

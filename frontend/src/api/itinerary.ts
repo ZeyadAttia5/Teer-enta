@@ -47,3 +47,8 @@ export const deleteItinerary = async (id: string): Promise<void> => {
         },
     });
 };
+
+
+
+export const getIternary = async (id: string | number) => 
+    await axios.get<TItinerary>(`${API_BASE_URL}/itinerary/one/${id}`)
