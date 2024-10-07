@@ -59,7 +59,7 @@ const Sidebar = ({ visible, onClose }) => {
             )}
           </Menu.SubMenu>
         )}
-        {(user === null || (user &&( user.userRole === "TourGuide"|| user.userRole === "Admin"))) && (
+        {(user === null || (user &&( user.userRole === "TourGuide"|| user.userRole === "Tourist"||user.userRole === "Admin"))) && (
           <Menu.SubMenu key="sub1" title="Itinerary">
             <Menu.Item key="4" onClick={() => handleClick("/itinerary")}>
               Itinerary
