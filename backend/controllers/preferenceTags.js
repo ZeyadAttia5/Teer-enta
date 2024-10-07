@@ -87,7 +87,7 @@ exports.deletePreferenceTag = async (req, res, next) => {
         await Tourist.updateMany(
             {},
             {
-                $pull: { preferenceTags: id },
+                $pull: { tags: id },
             }
         );
         res.status(200).json({ message: 'Preference Tag deleted successfully' , data: preferenceTag });
