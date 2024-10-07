@@ -33,9 +33,8 @@ const ReadHistoriaclPlaces = ({ setFlag }) => {
           }else{
             notification.error({ message: "Error fetching historical places" });
           }
+        }s
         }
-        }
-      };
       fetchMyHistoricalPlaces();
     } else {
       const fetchHistoricalPlaces = async () => {
