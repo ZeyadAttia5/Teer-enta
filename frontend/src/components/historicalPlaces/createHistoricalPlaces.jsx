@@ -13,6 +13,7 @@ const CreateHistoricalPlaces = ({ setFlag }) => {
   const [image, setImage] = useState('');
   const [selectedTagType, setSelectedTagType] = useState('');
   const [selectedTagId, setSelectedTagId] = useState('');
+  const [historicalPeriod, setHistoricalPeriod] = useState(''); 
   const [openingTime, setOpeningTime] = useState('');
   const [closingTime, setClosingTime] = useState('');
   const [foreignerPrice, setForeignerPrice] = useState(0);
@@ -22,8 +23,6 @@ const CreateHistoricalPlaces = ({ setFlag }) => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
   const accessToken = localStorage.getItem('accessToken');
-
-  
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -40,7 +39,6 @@ const CreateHistoricalPlaces = ({ setFlag }) => {
   }, []);
 
   const uniqueTagTypes = [...new Set(tags.map((tag) => tag.type))];
-
   const filteredTags = tags.filter((tag) => tag.type === selectedTagType);
 
   const handleSubmit = async (e) => {
@@ -48,14 +46,14 @@ const CreateHistoricalPlaces = ({ setFlag }) => {
 
     const formatTime = (time) => {
       if (!time) return "";
-    
+
       let [hours, minutes] = time.split(":");
       hours = parseInt(hours);
       const ampm = hours >= 12 ? "PM" : "AM";
       hours = hours % 12 || 12; 
       return `${hours}:${minutes} ${ampm}`;
     };
-    
+
     const openingHours = `${formatTime(openingTime)} - ${formatTime(closingTime)}`;
 
     const data = {
@@ -64,6 +62,7 @@ const CreateHistoricalPlaces = ({ setFlag }) => {
       description,
       images: image ? [image] : [],
       tags: [selectedTagId],
+      historicalPeriod, 
       openingHours,
       tickets: [
         { type: 'Foreigner', price: foreignerPrice },
@@ -90,13 +89,13 @@ const CreateHistoricalPlaces = ({ setFlag }) => {
       toast.error('An error occurred while creating the historical place.');
     }
 
-    // Clear form fields
     setName('');
     setLocation('');
     setDescription('');
     setImage('');
     setSelectedTagType('');
     setSelectedTagId('');
+    setHistoricalPeriod(''); 
     setOpeningTime('');
     setClosingTime('');
     setForeignerPrice(0);
@@ -192,6 +191,20 @@ const CreateHistoricalPlaces = ({ setFlag }) => {
             ))}
           </select>
         )}
+
+        <select
+          value={historicalPeriod}
+          onChange={(e) => setHistoricalPeriod(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-sky-500"
+          required
+        >
+          <option value="" disabled>
+            Select Historical Period
+          </option>
+          <option value="Ancient">Ancient</option>
+          <option value="Medieval">Medieval</option>
+          <option value="Modern">Modern</option>
+        </select>
 
         <h2 className="text-xl font-semibold text-gray-800 mt-6">
           Opening and Closing Hours
