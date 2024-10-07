@@ -20,7 +20,7 @@ function ReadTouristItinerary({setFlag}) {
   const userRole = user?.userRole;
 
   useEffect(() => {
-    if (userRole === "TourGuide") {
+    if (userRole === "Admin") {
       setIsAdmin(true);
     }
   }, [userRole]); // Add userRole as a dependency

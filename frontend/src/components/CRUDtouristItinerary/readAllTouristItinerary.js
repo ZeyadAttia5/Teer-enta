@@ -75,7 +75,7 @@ function ReadAllTouristItinerary({ setFlag }) {
       {/* Header with Title and Add Button */}
       <div className="w-full max-w-4xl flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold">Tourist Itineraries</h2>
-        {user && (user.userRole === "TourGuide") && (
+        {user && (user.userRole === "TourGuide" || user.userRole === "Admin") && (
           <Button type="primary" onClick={handleAddItinerary}>
             Add Tourist Itinerary
           </Button>
