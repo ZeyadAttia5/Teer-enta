@@ -203,6 +203,7 @@ const ItineraryScreen = ({ setFlag }) => {
         moment(date.Date),
         moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm"),
       ]);
+      console.log("formattedAvailableDates", formattedAvailableDates);
 
       const formattedTimeline = itinerary.timeline.map((tl) => ({
         ...tl,
@@ -354,7 +355,7 @@ const ItineraryScreen = ({ setFlag }) => {
       title: "Actions",
       key: "actions",
       render: (text, record) => (
-          console.log("record", record.createdBy),
+          console.log("record", record.availableDates[0]),
           console.log("user", user._id),
         <>
           <Button
@@ -370,6 +371,7 @@ const ItineraryScreen = ({ setFlag }) => {
             View
           </Button>
           {user && user._id === record.createdBy && (
+              console.log("record", record),
             <>
               <Button
                 icon={<EditOutlined />}
@@ -952,11 +954,14 @@ const ItineraryScreen = ({ setFlag }) => {
             </Form.Item>
 
             <Divider />
-
             <Form.Item label="Available Dates">
               {viewingItinerary.availableDates.map((date, index) => (
+                  console.log("date", date),console.log("time", date.Times),
                 <div key={index}>
-                  <Input value={`${date.Date} ${date.Times}`} disabled />
+                  <Input
+                      value={`${moment(date.Date).format('dddd, MMMM D, YYYY')} ${moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm").format('hh:mm A')}`}
+                      disabled
+                  />
                 </div>
               ))}
             </Form.Item>
