@@ -354,6 +354,8 @@ const ItineraryScreen = ({ setFlag }) => {
       title: "Actions",
       key: "actions",
       render: (text, record) => (
+          console.log("record", record.createdBy),
+          console.log("user", user._id),
         <>
           <Button
             icon={<EyeOutlined />}

@@ -23,6 +23,7 @@ exports.createPreferenceTag = async (req, res, next) => {
         const preferenceTag = await PreferenceTag.create(req.body);
         res.status(201).json({message: 'Preference Tag created successfully', preferenceTag });
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 };

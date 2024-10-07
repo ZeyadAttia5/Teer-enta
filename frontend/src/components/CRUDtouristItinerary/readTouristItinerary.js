@@ -14,13 +14,17 @@ function ReadTouristItinerary({setFlag}) {
 
   const location = useLocation();
 
-  const [isAdmin, setIsAdmin] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem("accessToken");
   const userRole = user?.userRole;
 
   useEffect(() => {
-    if (userRole === "TourGuide"&& itinerary.createdBy === user._id) {
+    console.log("User Role:", userRole);
+    console.log("Itinerary:", location.state.itinerary.createdBy);
+    console.log("User:", user);
+    if (user &&userRole === "TourGuide" && location.state.itinerary.createdBy === user._id) {
+      console.log("User is an admin");
       setIsAdmin(true);
     }
   }, [userRole]); // Add userRole as a dependency

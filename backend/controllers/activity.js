@@ -84,6 +84,7 @@ exports.createActivity = async (req, res, next) => {
 exports.updateActivity = async (req, res, next) => {
     try {
         const {id} = req.params;
+        console.log(req.body);
 
         const updates = req.body;
 
@@ -103,6 +104,7 @@ exports.updateActivity = async (req, res, next) => {
             data: updatedActivity,
         });
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 };

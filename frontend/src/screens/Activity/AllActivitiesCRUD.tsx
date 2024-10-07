@@ -184,6 +184,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
 
     try {
       if (isEditing && currentActivity) {
+        console.log("Updating activity", activityData);
         await updateActivity(activityData, currentActivity._id);
         notification.success({ message: "Activity updated successfully" });
       } else {
