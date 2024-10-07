@@ -82,10 +82,13 @@ const HistoricalPlaceSingleCard = ({ places }) => {
               <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-xs font-medium text-gray-400 mr-2 mb-2">
                 {tag.type}
               </span>
+              <span className="inline-block bg-yellow-100 rounded-full px-3 py-1 text-xs font-medium text-yellow-600 mr-2 mb-2">
+                {tag.historicalPeriod}
+              </span>
             </div>
           ))}
       </div>
-      
+
       <div className="flex justify-center items-center gap-x-4 p-4">
         {(user && (user.userRole === "TourismGovernor") && user._id === places.createdBy) && (
           <div className="flex gap-4">

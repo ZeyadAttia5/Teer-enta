@@ -62,7 +62,6 @@ const ReadHistoriaclPlaces = ({ setFlag }) => {
     fetchTags();
   }, []);
 
-  // Get unique tag types
   const uniqueTagTypes = [...new Set(tags.map((tag) => tag.type))];
 
   const filteredPlaces = historicalPlacesData.filter(
