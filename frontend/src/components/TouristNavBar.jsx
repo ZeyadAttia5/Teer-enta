@@ -48,24 +48,24 @@ const TouristNavBar = ({setModalOpen, isNavigate, setIsNavigate}) => {
         }
     }, [isNavigate]);
 
-    return (<div
-            className="w-full flex flex-row justify-between items-center bg-gradient-to-r from-green-500 to-teal-600 shadow-lg p-6 z-10 h-20 text-white font-bold space-x-8">
+    return (
+        <div
+            className="w-full flex flex-row justify-between items-center bg-gradient-to-t from-green-600 to-teal-700% shadow-2xl p-6 z-10 h-20 text-white font-bold space-x-8">
             {/* Logo Section */}
-            <span className="ml-8 text-lg leading-7">
-    <div
-        className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105"
-    >
-      {/* Logo Link */}
-        <Link to={"/"} className="ring-0">
-        <img
-            src={logo}
-            alt="Logo"
-            width={120}
-            className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
-        />
-      </Link>
-    </div>
-  </span>
+                <span className="ml-8 text-lg leading-7">
+                    <div
+                        className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
+                      {/* Logo Link */}
+                        <Link to={"/"} className="ring-0">
+                            <img
+                                src={logo}
+                                alt="Logo"
+                                width={120}
+                                className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
+                            />
+                        </Link>
+                    </div>
+                </span>
 
             {/* Navigation Links */}
             <div className="flex flex-row gap-10 items-center">
