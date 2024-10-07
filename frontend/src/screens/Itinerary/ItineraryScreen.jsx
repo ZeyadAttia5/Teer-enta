@@ -12,6 +12,7 @@ import {
   Space,
   Divider,
   message,
+  Card,
 } from "antd";
 import {
   MinusCircleOutlined,
@@ -38,7 +39,7 @@ import {
   isThisYear,
   parseISO,
 } from "date-fns";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 // import { format } from "path";
 
 const { Option } = Select;
@@ -52,7 +53,9 @@ const ItineraryScreen = ({ setFlag }) => {
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItinerary, setEditingItinerary] = useState(null);
+  const navigate = useNavigate();
   const [form] = Form.useForm();
+
 
   //states for filters
   const [searchTerm, setSearchTerm] = useState(""); //search term
@@ -356,10 +359,7 @@ const ItineraryScreen = ({ setFlag }) => {
     },
 
     {
-      title:
-        user && ( user.userRole === "TourGuide")
-          ? "Actions"
-          : "",
+      title: user && user.userRole === "TourGuide" ? "Actions" : "",
       key: "actions",
       render: (text, record) => (
         <>
@@ -515,13 +515,37 @@ const ItineraryScreen = ({ setFlag }) => {
           </div>
         </div>
       </div>
-      <Table
-        dataSource={sortedItineraries}
-        columns={columns}
-        rowKey="_id"
-        loading={loading}
-        pagination={{ pageSize: 10 }}
-      />
+      {user && user.userRole==='Tourist' ? (
+        <main className="flex flex-wrap gap-2 py-10">
+          {sortedItineraries?.map((iternary, index) => {
+            return (
+              <Card
+                hoverable
+                style={{ width: "33%" }}
+                key={index}
+                onClick={() => navigate(`iternaryDetails/${iternary._id}`)}
+              >
+                <Card.Meta
+                  title={iternary.name}
+                  description={iternary.language}
+                />
+                <p>Price: {iternary.price}</p>
+                <p>Accessibility: {iternary.accessibility}</p>
+                <p>Pickup Location: {iternary.pickupLocation}</p>
+                <p>Drop Off Location: {iternary.dropOffLocation}</p>
+              </Card>
+            );
+          })}
+        </main>
+      ) : (
+        <Table
+          dataSource={sortedItineraries}
+          columns={columns}
+          rowKey="_id"
+          loading={loading}
+          pagination={{ pageSize: 10 }}
+        />
+      )}
       <Modal
         title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
         visible={isModalVisible}

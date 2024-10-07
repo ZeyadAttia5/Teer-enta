@@ -7,21 +7,21 @@ const user = JSON.parse(localStorage.getItem("user") || "{}");
 const token = localStorage.getItem("accessToken");
 
 const getActivities = async () =>
-    await axios.get<TActivity[]>(`${API_BASE_URL}/activity`);
+  await axios.get<TActivity[]>(`${API_BASE_URL}/activity`);
 
 const getMyActivities = async () => {
-   return  await axios.get<TActivity[]>(`${API_BASE_URL}/activity/my`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-}
+  return await axios.get<TActivity[]>(`${API_BASE_URL}/activity/my`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 const getUpcomingActivities = async () =>
-   await axios.get<TActivity[]>(`${API_BASE_URL}/activity/upcoming`);
+  await axios.get<TActivity[]>(`${API_BASE_URL}/activity/upcoming`);
 
 const createActivity = async (activity: TActivity) =>
-    // console.log(activity)
-  await axios.post<TActivity>(`${API_BASE_URL}/activity/create`, activity ,{
+  // console.log(activity)
+  await axios.post<TActivity>(`${API_BASE_URL}/activity/create`, activity, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -30,19 +30,30 @@ const createActivity = async (activity: TActivity) =>
 const updateActivity = async (
   activity: TActivity,
   activityId: string | Number
-) => await axios.put<TActivity>(`${API_BASE_URL}/activity/update/${activityId}`, activity,{
-    headers:
+) =>
+  await axios.put<TActivity>(
+    `${API_BASE_URL}/activity/update/${activityId}`,
+    activity,
     {
-      Authorization: `Bearer ${token}`,
-    },
-});
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
 const deleteActivity = async (activityId: string | Number) =>
-  await axios.delete<TActivity>(`${API_BASE_URL}/activity/delete/${activityId}`,{
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  await axios.delete<TActivity>(
+    `${API_BASE_URL}/activity/delete/${activityId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+// use the endpoint /activity/one/:id to get a single activity by its id
+const getActivity = async (id: string | number) =>
+  await axios.get<TActivity>(`${API_BASE_URL}/activity/one/${id}`);
 
 export {
   getActivities,
@@ -50,5 +61,6 @@ export {
   updateActivity,
   deleteActivity,
   getUpcomingActivities,
-    getMyActivities
+  getMyActivities,
+  getActivity,
 };

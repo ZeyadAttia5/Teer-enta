@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const ItinerarySchema = new mongoose.Schema({
+const ItinerarySchema = new mongoose.Schema(
+  {
     name: { type: String, required: true },
     accessibility: String,
     pickupLocation: String,
@@ -8,53 +9,63 @@ const ItinerarySchema = new mongoose.Schema({
     language: { type: String, required: true },
     price: { type: Number, required: true },
     isActive: { type: Boolean, default: true },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     activities: [
-        {
-            activity:{
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Activity'
-            },
-            duration:{
-                type: Number,
-                required: true
-            }
-        }
+      {
+        activity: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Activity",
+        },
+        duration: {
+          type: Number,
+          required: true,
+        },
+      },
     ],
-    locations: [{
-        name: { type: String, required: true } // Corrected usage
-    }],
-    timeline: [{
-        activity: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity' },
+    locations: [
+      {
+        name: { type: String, required: true }, // Corrected usage
+      },
+    ],
+    timeline: [
+      {
+        activity: { type: mongoose.Schema.Types.ObjectId, ref: "Activity" },
         startTime: String,
-        duration: Number // in minutes
-    }],
+        duration: Number, // in minutes
+      },
+    ],
     availableDates: [
-        {
-            Date:{
-                type: Date,
-                required: true ,
-                Times:{
-                    type:String ,
-                    required: true
-                }
-            }
-        }
+      {
+        Date: {
+          type: Date,
+          required: true,
+          Times: {
+            type: String,
+            required: true,
+          },
+        },
+      },
     ],
     preferenceTags: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'PreferenceTags'
-        }
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PreferenceTags",
+      },
     ],
-    ratings: [{
-        createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-        rating: Number
-    }],
-    comments: [{
-        createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    ratings: [
+      {
+        createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        rating: Number,
+      },
+    ],
+    comments: [
+      {
+        createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         comment: String,
-    }],
-} , {timestamps:true});
+      },
+    ],
+  },
+  { timestamps: true, strictPopulate : false }
+);
 
 module.exports = mongoose.model('Itinerary', ItinerarySchema);
