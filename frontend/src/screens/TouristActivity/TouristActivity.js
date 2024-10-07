@@ -21,9 +21,9 @@ const TouristActivity = ({ setFlag }) => {
       try {
         const response = await axios.get(`${PORT}/activity/`);
         setHistoricalPlacesData(response.data);
-        console.log("data is", response.data);
+        
       } catch (error) {
-        console.error("Error fetching historical places:", error);
+        console.error("Error fetching activities:", error);
       }
     };
     fetchHistoricalPlaces();
@@ -34,7 +34,7 @@ const TouristActivity = ({ setFlag }) => {
       <p className="font-bold text-4xl mb-8">Activities</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {historicalPlacesData.map((place, index) => (
-          <Link to={""}>
+          <Link to={`/itinerary/activityDetails/${place._id}`}>
             <ActivityCard
               key={index}
               name={place.name}
