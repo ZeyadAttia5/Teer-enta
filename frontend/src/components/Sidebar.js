@@ -44,7 +44,7 @@ const Sidebar = ({ visible, onClose }) => {
                 )}
             </Menu.SubMenu>
           )}
-        {(user === null || (user && (user.userRole === "TourismGovernor" || user.userRole === "Admin"))) && (
+        {(user === null || (user && (user.userRole === "TourismGovernor" ||user.userRole === "Tourist" || user.userRole === "Admin"))) && (
           <Menu.SubMenu key="sub4" title="Historical Places">
             <Menu.Item key="3" onClick={() => handleClick("/historicalPlace")}>
               Historical Places
@@ -77,7 +77,7 @@ const Sidebar = ({ visible, onClose }) => {
             </Menu.Item>
           </Menu.SubMenu>
         )}
-        {(user === null || (user && (user.userRole === "Advertiser" || user.userRole === "Admin"))) && (
+        {(user && (user && (user.userRole === "Advertiser" || user.userRole === "Admin"))) && (
           <Menu.SubMenu key="sub3" title="Activities">
             {user && user.userRole === "Admin" && (
               <Menu.Item
@@ -107,7 +107,7 @@ const Sidebar = ({ visible, onClose }) => {
             
           </Menu.SubMenu>
         )}
-        {user &&
+        {user === null ||
           (user.userRole === "Seller" ||
             user.userRole === "Admin" ||
             user.userRole === "Tourist") && (
