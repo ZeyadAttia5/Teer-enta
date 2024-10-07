@@ -18,6 +18,7 @@ import ReadHistoriaclPlaces from "./components/historicalPlaces/readHistoriaclPl
 import CreateHistoricalPlaces from "./components/historicalPlaces/createHistoricalPlaces.jsx";
 import UpdateHistoricalPlaces from "./components/historicalPlaces/updateHistoriaclPlaces.jsx";
 import DeleteHistoricalPlaces from "./components/historicalPlaces/deleteHistoriaclPlaces.jsx";
+import ShowHistoricalPlaces from "./components/historicalPlaces/showHistoricalPlaces.jsx";
 import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 import AddUser from "./components/Users/addUser/addUser";
@@ -142,6 +143,10 @@ function App() {
           <Route
             path="/historicalPlace/delete/:id"
             element={<DeleteHistoricalPlaces setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace/details/:id"
+            element={<ShowHistoricalPlaces setFlag={setFlag} />}
           />
           <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />
           <Route
