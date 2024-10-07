@@ -7,9 +7,9 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
 const token = localStorage.getItem('accessToken');
 
 export const getItineraries = async (): Promise<TItinerary[]> => {
-    console.log('API_BASE_URL', API_BASE_URL);
+    // console.log('API_BASE_URL', API_BASE_URL);
     const response = await axios.get(`${API_BASE_URL}/itinerary`);
-    console.log('response', response.data);
+    // console.log('response', response.data);
     return response.data;
 };
 export const getMyItineraries = async (): Promise<TItinerary[]> => {
@@ -18,7 +18,7 @@ export const getMyItineraries = async (): Promise<TItinerary[]> => {
             Authorization: `Bearer ${token}`,
         },
     });
-    console.log('response', response.data);
+    // console.log('response', response.data);
     return response.data;
 }
 export const createItinerary = async (itinerary: Partial<TItinerary>): Promise<TItinerary> => {
@@ -31,7 +31,7 @@ export const createItinerary = async (itinerary: Partial<TItinerary>): Promise<T
 };
 
 export const updateItinerary = async (id: string, itinerary: Partial<TItinerary>): Promise<TItinerary> => {
-    console.log("Itinerary", itinerary);
+    // console.log("Itinerary", itinerary);
     const response = await axios.put(`${API_BASE_URL}/itinerary/update/${id}`, itinerary,{
         headers: {
             Authorization: `Bearer ${token}`,
