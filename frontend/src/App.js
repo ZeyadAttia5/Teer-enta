@@ -41,7 +41,6 @@ import IternaryDetails from "./screens/Itinerary/IternaryDetails.tsx";
 import ActivityDetails from "./screens/Activity/ActivityDetails.tsx";
 import TouristActivity from "./screens/TouristActivity/TouristActivity.js";
 
-
 function App() {
   const [flag, setFlag] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -72,7 +71,6 @@ function App() {
             onClose={onClose}
             showDrawer={showDrawer}
             drawerVisible={visible}
-            
           />
         )}
         {!flag && (
@@ -199,7 +197,7 @@ function App() {
             element={<IternaryScreen setFlag={setFlag} />}
           />
           <Route
-            path="/touristActivity"
+            path="/touristActivities"
             element={<TouristActivity setFlag={setFlag} />}
           />
         </Routes>

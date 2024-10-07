@@ -97,6 +97,16 @@ const Sidebar = ({ visible, onClose }) => {
             )}
           </Menu.SubMenu>
         )}
+        {(user === null || (user && (user.userRole === "Tourist"))) && (
+          <Menu.SubMenu key="sub10" title="Activities">
+            
+            
+            <Menu.Item key="20" onClick={() => handleClick("/touristActivities")}>
+              Activities
+            </Menu.Item>
+            
+          </Menu.SubMenu>
+        )}
         {user &&
           (user.userRole === "Seller" ||
             user.userRole === "Admin" ||
