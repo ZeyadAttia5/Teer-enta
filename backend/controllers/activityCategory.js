@@ -1,4 +1,5 @@
 const ActivityCategory = require("../models/Activity/ActivityCategory");
+const Activity = require("../models/Activity/Activity");
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 
 exports.getActivityCategories = async (req, res, next) => {
@@ -59,7 +60,15 @@ exports.deleteActivityCategory = async (req, res, next) => {
         }
 
         await ActivityCategory.findByIdAndDelete(id);
-
+        // TODO: should deleting activity category delete entire activity?
+        await Activity.updateMany(
+            {category: id},
+            {
+                $set: {
+                    category: null
+                }
+            }
+        );
         res.status(200).json({ message: 'ActivityList Category deleted successfully' ,data : activityCategory });
     } catch (err) {
         errorHandler.SendError(res, err);

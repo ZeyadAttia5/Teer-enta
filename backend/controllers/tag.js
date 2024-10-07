@@ -1,4 +1,5 @@
 const Tag = require('../models/Tag');
+const historicalPlace = require('../models/HistoricalPlace/HistoricalPlaces');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 exports.getTags = async (req, res, next) => {
@@ -58,6 +59,7 @@ exports.deleteTag = async (req, res, next) => {
         }
 
         await Tag.findByIdAndDelete(id);
+        await historicalPlace.updateMany({tags: id}, {$pull: {tags: id}});
         res.status(200).json({
             message: 'Tag deleted successfully',
             data: tag

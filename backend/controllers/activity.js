@@ -1,4 +1,6 @@
 const Activity = require('../models/Activity/Activity');
+const Itinerary = require('../models/Itinerary/Itinerary');
+const TouristItinerary = require('../models/TouristItenerary/TouristItenerary');
 const mongoose = require('mongoose')
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 
@@ -112,6 +114,18 @@ exports.deleteActivity = async (req, res, next) => {
         }
 
         await Activity.findByIdAndDelete(id);
+        await Itinerary.updateMany({},
+            {
+                $pull: {
+                    activities: {activity: id},
+                    timeline: {activity: id}
+                }
+            }
+        );
+        await TouristItinerary.updateMany({},{
+            $pull: {activities: id}
+        });
+
         res.status(200).json({
             message: 'ActivityList deleted successfully',
             data: activity
