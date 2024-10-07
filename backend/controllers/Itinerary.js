@@ -112,7 +112,7 @@ exports.updateItinerary = async (req, res, next) => {
         const updatedItinerary = await Itinerary.findByIdAndUpdate(id, updates, {
             new: true,
             runValidators: true,
-            overwrite: false,
+            overwrite: true,
         });
 
         if (!updatedItinerary) {
@@ -126,6 +126,7 @@ exports.updateItinerary = async (req, res, next) => {
             data: updatedItinerary,
         });
     } catch (err) {
+      console.log(err);
         errorHandler.SendError(res, err);
     }
 };

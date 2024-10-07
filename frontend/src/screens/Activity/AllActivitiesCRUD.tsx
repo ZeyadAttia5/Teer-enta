@@ -285,6 +285,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
           {user &&
             user.userRole === "Advertiser" &&
             user._id === record.createdBy && (
+                console.log(record.createdBy),
               <div>
                 <Button
                   icon={<EditOutlined />}
