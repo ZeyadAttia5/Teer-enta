@@ -38,7 +38,7 @@ const TouristActivity = ({ setFlag }) => {
           const totalRating = activity.ratings.reduce((acc, curr) => acc + curr.rating, 0);
           const avgRating =
               activity.ratings.length > 0 ? (totalRating / activity.ratings.length).toFixed(1) : 0;
-
+          console.log( {...activity, averageRating: parseFloat(avgRating)})
           return { ...activity, averageRating: parseFloat(avgRating) }; // Ensure averageRating is a number
         });
 
@@ -243,15 +243,16 @@ const TouristActivity = ({ setFlag }) => {
                         category={place.category ? place.category.category : "N/A"}
                         preferenceTags={
                           place.preferenceTags
-                              ? place.preferenceTags.map((tag) => tag.tag).join(", ")
-                              : "N/A"
+                              ? place.preferenceTags.map((tag) => tag.tag)
+                              : []
                         }
-                        averageRating={place.averageRating} // Use the average rating calculated
+                        image={place.imagePath}
+                        averageRating={place.averageRating} // Pass average rating to ActivityCard
                     />
                   </Link>
               ))
           ) : (
-              <p>No activities found.</p>
+              <p>No activities found based on the applied filters.</p>
           )}
         </div>
       </div>

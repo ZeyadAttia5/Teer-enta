@@ -15,9 +15,10 @@ const ActivityCard = ({
                         ratings, // Assuming this is an array of rating values
                         comments,
                         createdBy,
+                        averageRating
                       }) => {
   const [address, setAddress] = useState("");
-  const [averageRating, setAverageRating] = useState(0);
+  // const [averageRating, setAverageRating] = useState(0);
 
   // Fetch address from Google Maps API based on latitude and longitude
   useEffect(() => {
@@ -42,7 +43,6 @@ const ActivityCard = ({
     if (ratings && ratings.length > 0) {
       const total = ratings.reduce((sum, rating) => sum + rating, 0);
       const average = total / ratings.length;
-      setAverageRating(average);
     }
   }, [ratings]);
 
@@ -72,6 +72,8 @@ const ActivityCard = ({
                 <span className="ml-2">{averageRating.toFixed(1)}</span>
               </div>
             </div>
+
+
 
             {/* Conditional Rendering for Special Discounts */}
             {specialDiscounts?.length > 0 &&
