@@ -81,7 +81,7 @@ exports.deletePreferenceTag = async (req, res, next) => {
         await TouristItinerary.updateMany(
             {},
             {
-                $pull: { preferenceTags: id },
+                $pull: { tags: id },
             }
         );
         await Tourist.updateMany(
