@@ -13,7 +13,7 @@ const AddTourismGovernor = () => {
     try {
       const response =  await axios.post('http://localhost:8000/account/create', { username, password },{
         headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }
       });
       setMessage(response.data.message); 

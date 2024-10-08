@@ -23,7 +23,7 @@ const ReadHistoriaclPlaces = ({ setFlag }) => {
         try {
           const response = await axios.get(`${PORT}/historicalPlace/my`, {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
           });
           setHistoricalPlacesData(response.data);

@@ -56,7 +56,7 @@ async function updateProfile(
     const response = await axios.get(
       `${process.env.REACT_APP_BACKEND_URL}/profile/${user._id}`,{
         headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }
         }
     );
@@ -337,7 +337,7 @@ function Profile({setFlag}) {
         `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
         data ,{
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           }
       }
       );

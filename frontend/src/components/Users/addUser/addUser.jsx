@@ -21,7 +21,7 @@ const AddUser = ({setFlag}) => {
             const response = await axios.post(`${Url}/account/create`, values ,
                 {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`,
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                     }
                 });
             message.success('User registered successfully');

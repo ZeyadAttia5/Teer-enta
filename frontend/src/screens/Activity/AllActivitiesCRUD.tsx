@@ -258,11 +258,12 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       title: "Special Discounts",
       dataIndex: "specialDiscounts",
       key: "specialDiscounts",
+      width:'20%',
       render: (discounts) => (
-        <Row>
+        <Row className='w-full'>
           {discounts.map((discount, index) => (
-            <Col key={index} xs={40} sm={10} md={10} lg={10}>
-              <Card title={`${discount.discount}%`}>
+            <Col key={index} md={10} lg={10}>
+              <Card className='w-full' style={{width:'100%'}} title={`${discount.discount}%`} >
                 <p>{discount.Description}</p>
                 <p>
                   <strong>Status:</strong>{" "}
@@ -320,6 +321,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       <Table
         columns={columns}
         dataSource={activities}
+        scroll={{ x: '80%' }}
         rowKey="_id"
         loading={loading}
       />

@@ -15,7 +15,7 @@ export const getItineraries = async (): Promise<TItinerary[]> => {
 export const getMyItineraries = async (): Promise<TItinerary[]> => {
     const response = await axios.get(`${API_BASE_URL}/itinerary/my`, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
     // console.log('response', response.data);
@@ -24,7 +24,7 @@ export const getMyItineraries = async (): Promise<TItinerary[]> => {
 export const createItinerary = async (itinerary: Partial<TItinerary>): Promise<TItinerary> => {
     const response = await axios.post(`${API_BASE_URL}/itinerary/create`, itinerary,{
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
     return response.data;
@@ -34,7 +34,7 @@ export const updateItinerary = async (id: string, itinerary: Partial<TItinerary>
     // console.log("Itinerary", itinerary);
     const response = await axios.put(`${API_BASE_URL}/itinerary/update/${id}`, itinerary,{
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
     return response.data;
@@ -43,7 +43,7 @@ export const updateItinerary = async (id: string, itinerary: Partial<TItinerary>
 export const deleteItinerary = async (id: string): Promise<void> => {
     await axios.delete(`${API_BASE_URL}/itinerary/delete/${id}`,{
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
 };

@@ -85,7 +85,7 @@ const UpdateHistoricalPlaces = ({setFlag}) => {
       const response = await axios.put(`${PORT}/historicalPlace/update/${id}`, data ,
         {
           headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           }
         });      if (response.status === 200) {
         toast.success('Historical place updated successfully!');

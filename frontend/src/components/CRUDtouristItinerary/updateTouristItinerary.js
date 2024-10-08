@@ -109,7 +109,7 @@ const UpdateTouristItinerary = ({setFlag}) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         }
       )

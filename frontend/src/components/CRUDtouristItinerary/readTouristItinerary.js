@@ -42,7 +42,7 @@ function ReadTouristItinerary({setFlag}) {
         `${URL}/touristItenerary/delete/${itinerary._id}`,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         }
       );

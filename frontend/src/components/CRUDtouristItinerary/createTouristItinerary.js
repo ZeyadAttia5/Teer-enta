@@ -27,7 +27,7 @@ const CreateTouristItinerary = ({setFlag}) => {
       try {
         const response = await axios.get(`${URL}/activity/`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`, // Include auth if required
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Include auth if required
           },
         });
         setActivities(response.data.filter((activity) => activity.isActive));
@@ -41,7 +41,7 @@ const CreateTouristItinerary = ({setFlag}) => {
       try {
         const response = await axios.get(`${URL}/preferenceTag/`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`, // Include auth if required
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Include auth if required
           },
         });
         setTags(response.data);
@@ -121,7 +121,7 @@ const CreateTouristItinerary = ({setFlag}) => {
           itinerary,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
               "Content-Type": "application/json",
             },
           }

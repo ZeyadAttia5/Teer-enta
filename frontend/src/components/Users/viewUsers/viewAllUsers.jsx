@@ -17,7 +17,7 @@ const AllUsers = ({setFlag}) => {
             try {
                 const response = await axios.get(`${Url}/account/all`,{
                     headers: {
-                        Authorization: `Bearer ${accessToken}`,
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                     }
                 });
                 setUsers(response.data);
@@ -36,7 +36,7 @@ const AllUsers = ({setFlag}) => {
         try {
             await axios.delete(`${Url}/account/delete/${id}`,{
                 headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                 }
             });
             message.success('User deleted successfully');

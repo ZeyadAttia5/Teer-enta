@@ -56,7 +56,7 @@ const EditProductForm = ({setFlag}) => {
       console.log(product) ;
       await axios.put(`${backURL}/product/update/${productId}`, product ,{
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
       setSuccess('Product successfully updated!');

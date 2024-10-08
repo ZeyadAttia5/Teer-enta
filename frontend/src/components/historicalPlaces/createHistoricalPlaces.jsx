@@ -74,7 +74,7 @@ const CreateHistoricalPlaces = ({ setFlag }) => {
     try {
       const response = await axios.post(`${PORT}/historicalPlace/create`, data, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
 

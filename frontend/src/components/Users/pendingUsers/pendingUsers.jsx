@@ -15,7 +15,7 @@ const PendingUsers = ({setFlag}) => {
             try {
                 const response = await axios.get(`${Url}/account/pending`, {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`,
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                     },
                 });
                 console.log(response.data); // Log the API response
@@ -40,7 +40,7 @@ const PendingUsers = ({setFlag}) => {
             await axios.patch(`${Url}/account/accept/${id}`, {},
                 {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`,
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                     },
                 });
             message.success('User accepted successfully');
@@ -55,7 +55,7 @@ const PendingUsers = ({setFlag}) => {
         try {
             await axios.patch(`${Url}/account/reject/${id}`, {}, {
                 headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                 }
             });
             message.success('User rejected successfully');

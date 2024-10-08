@@ -12,7 +12,7 @@ const getActivities = async () =>
 const getMyActivities = async () => {
   return await axios.get<TActivity[]>(`${API_BASE_URL}/activity/my`, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
   });
 };
@@ -23,7 +23,7 @@ const createActivity = async (activity: TActivity) =>
   // console.log(activity)
   await axios.post<TActivity>(`${API_BASE_URL}/activity/create`, activity, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
   });
 
@@ -36,7 +36,7 @@ const updateActivity = async (
     activity,
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
     }
   );
@@ -46,7 +46,7 @@ const deleteActivity = async (activityId: string | Number) =>
     `${API_BASE_URL}/activity/delete/${activityId}`,
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
     }
   );

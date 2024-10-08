@@ -11,7 +11,7 @@ const DeleteUser = () => {
     try {
         const response = await axios.delete(`/deleteUser/${userId}` ,{
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             }
         });
         alert(response.data.message);

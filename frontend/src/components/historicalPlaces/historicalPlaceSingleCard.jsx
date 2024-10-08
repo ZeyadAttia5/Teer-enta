@@ -17,7 +17,7 @@ const HistoricalPlaceSingleCard = ({ places }) => {
     try {
       const response = await axios.delete(`${PORT}/historicalPlace/delete/${id}`, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
 

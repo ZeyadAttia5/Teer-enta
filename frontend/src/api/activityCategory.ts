@@ -16,7 +16,7 @@ export const getActivityCategories = async () : Promise<TActivityCategory[]> => 
 export const createActivityCategory = async (activityCategory: TActivityCategory) : Promise<TActivityCategory> => {
     const response = await axios.post(`${API_BASE_URL}/activityCategory/create`, activityCategory, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
     return response.data;
@@ -25,7 +25,7 @@ export const createActivityCategory = async (activityCategory: TActivityCategory
 export const updateActivityCategory = async (activityCategory: TActivityCategory, activityCategoryId: string | Number) : Promise<TActivityCategory> => {
     const response = await axios.put(`${API_BASE_URL}/activityCategory/update/${activityCategoryId}`, activityCategory, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
     return response.data;
@@ -34,7 +34,7 @@ export const updateActivityCategory = async (activityCategory: TActivityCategory
 export const deleteActivityCategory = async (activityCategoryId: string | Number) : Promise<TActivityCategory> => {
     const response = await axios.delete(`${API_BASE_URL}/activityCategory/delete/${activityCategoryId}`, {
         headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
     return response.data;
