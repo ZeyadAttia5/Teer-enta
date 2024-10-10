@@ -6,7 +6,7 @@ export type TProduct = {
     _id: string;
     name: string;
     description?: string;
-    image?: string;
+    imageUrl?: string;
     price: number;
     quantity: number;
     createdBy: TUser|TSeller;

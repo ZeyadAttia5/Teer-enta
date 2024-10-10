@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Spin, message, Button, Popconfirm } from 'antd';
 import axios from 'axios';
+import {getUsers,deleteUser} from "../../../api/user.ts";
 
 const AllUsers = ({setFlag}) => {
     setFlag(false);
@@ -15,11 +16,7 @@ const AllUsers = ({setFlag}) => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`${Url}/account/all`,{
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                    }
-                });
+                const response = await getUsers();
                 setUsers(response.data);
             } catch (error) {
                 message.error('Failed to fetch users');
@@ -32,13 +29,9 @@ const AllUsers = ({setFlag}) => {
     }, []);
 
     // Function to delete a user
-    const deleteUser = async (id) => {
+    const deleteUserr = async (id) => {
         try {
-            await axios.delete(`${Url}/account/delete/${id}`,{
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                }
-            });
+            await deleteUser(id);
             message.success('User deleted successfully');
             setUsers(users.filter(user => user._id !== id));
         } catch (error) {
@@ -75,7 +68,7 @@ const AllUsers = ({setFlag}) => {
             render: (_, record) => (
                 <Popconfirm
                     title="Are you sure you want to delete this user?"
-                    onConfirm={() => deleteUser(record._id)}
+                    onConfirm={() => deleteUserr(record._id)}
                     okText="Yes"
                     cancelText="No"
                 >

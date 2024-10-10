@@ -5,6 +5,7 @@ import FilterDropdown from "./filterDropdown";
 import StarRating from "./starRating";
 import { Input, Row, Col, Button } from "antd";
 import { FaEdit } from "react-icons/fa";
+import {getProducts} from "../../api/products.ts";
 
 const AdminProductGrid = ({ setFlag }) => {
   setFlag(false);
@@ -26,7 +27,8 @@ const AdminProductGrid = ({ setFlag }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${backURL}/product/`);
+        const response = await getProducts();
+        console.log("Fetched Products:", response.data);
         setProducts(response.data);
       } catch (err) {
         setError(err.message);
@@ -131,7 +133,7 @@ const AdminProductGrid = ({ setFlag }) => {
                         View Details
                       </Button>
                     </Link>
-                    {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
+                    {user && (user._id === product.createdBy )&&(user.userRole === "Admin" || user.userRole === "Seller") && (
                         <Link to={`/products/edit/${product._id}`}>
                           <FaEdit className="text-customGreen mt-2 cursor-pointer" />
                         </Link>

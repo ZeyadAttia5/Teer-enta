@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import {createHistoricalPlace} from "../../api/historicalPlaces.ts";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
@@ -72,11 +73,7 @@ const CreateHistoricalPlaces = ({ setFlag }) => {
     };
 
     try {
-      const response = await axios.post(`${PORT}/historicalPlace/create`, data, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
+      const response = await createHistoricalPlace(data) ;
 
       if (response.status === 201) {
         toast.success('Historical place created successfully!');

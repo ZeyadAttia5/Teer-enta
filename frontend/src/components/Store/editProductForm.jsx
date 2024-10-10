@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
+import {getProduct, updateProduct} from "../../api/products.ts"; // Import useNavigate
 
 const EditProductForm = ({setFlag}) => {
   setFlag(false);
@@ -25,7 +26,7 @@ const EditProductForm = ({setFlag}) => {
     const fetchProductData = async () => {
       try {
         const backURL = process.env.REACT_APP_BACKEND_URL;
-        const response = await axios.get(`${backURL}/product/${productId}`);
+        const response = await getProduct(productId);
         setProduct(response.data);
       } catch (err) {
         setError('Failed to fetch product data');
@@ -54,11 +55,7 @@ const EditProductForm = ({setFlag}) => {
     try {
       const backURL = process.env.REACT_APP_BACKEND_URL;
       console.log(product) ;
-      await axios.put(`${backURL}/product/update/${productId}`, product ,{
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
+      await updateProduct(product, productId);
       setSuccess('Product successfully updated!');
       // Navigate back to the admin grid after successful update
       setTimeout(() => navigate('/products'), 1000); // Redirect after a short delay

@@ -4,8 +4,12 @@ import {TTourist} from "./Tourist";
 export type TTourGuide = TUser & {
     mobileNumber?: string;
     yearsOfExperience: number;
-    profileImage?: string;
-    profileDocument?: string;
+    photoUrl?: string;
+    idCardUrl?: string;
+    certificates:Array<{
+        certificateUrl:string;
+    }>
+    isTermsAndConditionsAccepted?: boolean;
     isActive: boolean;
     previousWorks: Array<{
         jobTitle?: string;

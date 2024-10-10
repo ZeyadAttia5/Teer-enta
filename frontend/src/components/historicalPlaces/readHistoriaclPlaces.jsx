@@ -4,6 +4,8 @@ import { MdOutlineAddBox } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import {notification} from "antd";
+import {getMyHistoricalPlaces ,getHistoricalPlaces} from "../../api/historicalPlaces.ts";
+import {getTags} from "../../api/tags.ts";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
@@ -21,11 +23,7 @@ const ReadHistoriaclPlaces = ({ setFlag }) => {
     if (location.pathname === "/historicalPlace/my") {
       const fetchMyHistoricalPlaces = async () => {
         try {
-          const response = await axios.get(`${PORT}/historicalPlace/my`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          });
+          const response =await getMyHistoricalPlaces() ;
           setHistoricalPlacesData(response.data);
         } catch (error) {
           if(error.response.status === 404){
@@ -39,7 +37,7 @@ const ReadHistoriaclPlaces = ({ setFlag }) => {
     } else {
       const fetchHistoricalPlaces = async () => {
         try {
-          const response = await axios.get(`${PORT}/historicalPlace`);
+          const response =await getHistoricalPlaces();
           setHistoricalPlacesData(response.data);
         } catch (error) {
           console.error("Error fetching historical places:", error);
@@ -52,7 +50,7 @@ const ReadHistoriaclPlaces = ({ setFlag }) => {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await axios.get(`${PORT}/tag`);
+        const response = await getTags();
         setTags(response.data);
       } catch (error) {
         console.error("Error fetching tags:", error);

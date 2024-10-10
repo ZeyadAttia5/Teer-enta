@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Table, Spin, message, Button} from 'antd';
 import axios from 'axios';
+import {getPendingAccounts,acceptUser,rejectUser} from "../../../api/user.ts";
 
 const PendingUsers = ({setFlag}) => {
     setFlag(false);
@@ -13,11 +14,7 @@ const PendingUsers = ({setFlag}) => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`${Url}/account/pending`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                    },
-                });
+                const response =await getPendingAccounts();
                 console.log(response.data); // Log the API response
                 if (Array.isArray(response.data)) {
                     setUsers(response.data);
@@ -35,14 +32,9 @@ const PendingUsers = ({setFlag}) => {
         fetchUsers();
     }, []);
 
-    const acceptUser = async (id) => {
+    const acceptUserr = async (id) => {
         try {
-            await axios.patch(`${Url}/account/accept/${id}`, {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                    },
-                });
+            await acceptUser(id);
             message.success('User accepted successfully');
             setUsers(prevUsers => prevUsers.filter(user => user._id !== id));
         } catch (error) {
@@ -51,13 +43,9 @@ const PendingUsers = ({setFlag}) => {
         }
     };
 
-    const rejectUser = async (id) => {
+    const rejectUserr = async (id) => {
         try {
-            await axios.patch(`${Url}/account/reject/${id}`, {}, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                }
-            });
+            await rejectUser(id);
             message.success('User rejected successfully');
             setUsers(prevUsers => prevUsers.filter(user => user._id !== id));
         } catch (error) {
@@ -86,10 +74,10 @@ const PendingUsers = ({setFlag}) => {
             key: 'action',
             render: (_, record) => (
                 <div>
-                    <Button type="primary" onClick={() => acceptUser(record._id)} style={{marginRight: 8}}>
+                    <Button type="primary" onClick={() => acceptUserr(record._id)} style={{marginRight: 8}}>
                         Accept
                     </Button>
-                    <Button type="danger" onClick={() => rejectUser(record._id)} style={{marginRight: 8}}>
+                    <Button type="danger" onClick={() => rejectUserr(record._id)} style={{marginRight: 8}}>
                         Reject
                     </Button>
                     <Button onClick={() => showDocuments(record._id)}>Show Documents</Button>

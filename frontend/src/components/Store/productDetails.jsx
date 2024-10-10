@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import StarRating from './starRating'; // Import StarRating component
-import { Button, Typography, Spin, Divider } from 'antd'; // Import Ant Design components
+import { Button, Typography, Spin, Divider } from 'antd';
+import {getProduct} from "../../api/products.ts"; // Import Ant Design components
 
 const { Title, Paragraph } = Typography;
 
@@ -19,7 +20,7 @@ const ProductDetails = ({setFlag}) => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await axios.get(`${backURL}/product/${id}`); // Replace with your API endpoint
+        const response = await getProduct(id) // Replace with your API endpoint
         setProduct(response.data);
       } catch (err) {
         setError(err.message);

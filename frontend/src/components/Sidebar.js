@@ -69,12 +69,6 @@ const Sidebar = ({ visible, onClose }) => {
               My Itinerary
             </Menu.Item>
             )}
-            <Menu.Item
-              key="15"
-              onClick={() => handleClick("/touristItinerary")}
-            >
-              Tourist Itinerary
-            </Menu.Item>
           </Menu.SubMenu>
         )}
         {(user && (user && (user.userRole === "Advertiser" || user.userRole === "Admin"))) && (

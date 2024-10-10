@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Input, Select, Slider, Row, Col, Checkbox } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { getTouristActivities } from "../../api/activity.ts";
 import dayjs from "dayjs";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
@@ -28,9 +29,7 @@ const TouristActivity = ({ setFlag }) => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await axios.get(`${PORT}/activity/`, {
-          params: { populate: "category preferenceTags" }, // Ensure backend populates these fields
-        });
+        const response = await getTouristActivities();
         console.log("Fetched Activities:", response.data); // Inspect the data structure
 
         // Calculate average rating for each activity

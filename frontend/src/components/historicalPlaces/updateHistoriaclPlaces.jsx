@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import {getHistoricalPlace , updateHistoricalPlace} from "../../api/historicalPlaces.ts";
+import {getTags} from "../../api/tags.ts";
 import axios from 'axios';
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
@@ -25,7 +27,7 @@ const UpdateHistoricalPlaces = ({setFlag}) => {
   useEffect(() => {
     const fetchPlace = async () => {
       try {
-        const response = await axios.get(`${PORT}/historicalPlace/one/${id}`);
+        const response =await getHistoricalPlace(id);
         const place = response.data;
 
         setName(place.name || '');
@@ -49,7 +51,7 @@ const UpdateHistoricalPlaces = ({setFlag}) => {
 
     const fetchTags = async () => {
       try {
-        const response = await axios.get(`${PORT}/tag`);
+        const response =await getTags();
         setTags(response.data); 
       } catch (error) {
         console.error('Error fetching tags:', error);
@@ -82,12 +84,8 @@ const UpdateHistoricalPlaces = ({setFlag}) => {
     };
 
     try {
-      const response = await axios.put(`${PORT}/historicalPlace/update/${id}`, data ,
-        {
-          headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          }
-        });      if (response.status === 200) {
+      const response = await updateHistoricalPlace(id,data);
+      if (response.status === 200) {
         toast.success('Historical place updated successfully!');
         navigate('/historicalPlace');
       } else {

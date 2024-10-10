@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Rate } from "antd";
+import {getGoogleMapsAddress} from "../../api/googleMaps.ts";
 
 const ActivityCard = ({
                         name,
@@ -24,9 +25,7 @@ const ActivityCard = ({
   useEffect(() => {
     const fetchAddress = async () => {
       try {
-        const response = await axios.get(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=AIzaSyBZdYJzYNCpvQpcRX75j7-eUiMd10Onnxo`
-        );
+        const response = await getGoogleMapsAddress(location);
         const formattedAddress =
             response.data.results[0]?.formatted_address || "Address not found";
         setAddress(formattedAddress);

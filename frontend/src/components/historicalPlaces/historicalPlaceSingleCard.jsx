@@ -5,6 +5,7 @@ import { MdOutlineDelete } from "react-icons/md";
 import { BsInfoCircle } from 'react-icons/bs';
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import {deleteHistoricalPlace} from "../../api/historicalPlaces.ts";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
@@ -15,12 +16,7 @@ const HistoricalPlaceSingleCard = ({ places }) => {
 
   const handleDeleteHistoricalPlace = async () => {
     try {
-      const response = await axios.delete(`${PORT}/historicalPlace/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-
+      const response =await deleteHistoricalPlace(id)
       if (response.status === 200) {
         toast.success('Historical place deleted successfully!');
         window.location.reload();

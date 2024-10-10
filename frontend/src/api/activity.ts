@@ -9,6 +9,12 @@ const token = localStorage.getItem("accessToken");
 const getActivities = async () =>
   await axios.get<TActivity[]>(`${API_BASE_URL}/activity`);
 
+const getTouristActivities = async () =>{
+   return await axios.get(`${API_BASE_URL}/activity/`, {
+        params: { populate: "category preferenceTags" },
+    });
+}
+
 const getMyActivities = async () => {
   return await axios.get<TActivity[]>(`${API_BASE_URL}/activity/my`, {
     headers: {
@@ -63,4 +69,5 @@ export {
   getUpcomingActivities,
   getMyActivities,
   getActivity,
+    getTouristActivities
 };

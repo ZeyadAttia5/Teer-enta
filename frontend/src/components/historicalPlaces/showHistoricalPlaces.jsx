@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import {getHistoricalPlace} from "../../api/historicalPlaces.ts";
 import { useParams } from 'react-router-dom';
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
@@ -11,7 +12,7 @@ const ShowHistoricalPlaces = () => {
   useEffect(() => {
     const fetchHistoricalPlace = async () => {
       try {
-        const response = await axios.get(`${PORT}/historicalPlace/one/${id}`);
+        const response= await getHistoricalPlace(id);
         setHistoricalPlace(response.data);
       } catch (error) {
         console.error("Error fetching historical place details:", error);

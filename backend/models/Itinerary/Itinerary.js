@@ -9,6 +9,7 @@ const ItinerarySchema = new mongoose.Schema(
     language: { type: String, required: true },
     price: { type: Number, required: true },
     isActive: { type: Boolean, default: true },
+    isBookingOpen: {type: Boolean, default: true},
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     activities: [
       {

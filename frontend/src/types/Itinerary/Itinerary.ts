@@ -9,6 +9,7 @@ export type TItinerary = {
     accessibility?: string;
     pickupLocation?: string;
     dropOffLocation?: string;
+    isBookingOpen: boolean;
     language: string;
     price: number;
     isActive: boolean;

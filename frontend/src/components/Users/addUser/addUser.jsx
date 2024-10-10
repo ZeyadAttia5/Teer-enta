@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Select, message } from 'antd';
 import axios from 'axios';
+import {getUsers , acceptUser ,rejectUser,addUser,deleteUser,getPendingAccounts} from "../../../api/user.ts";
 
 const { Option } = Select;
 
@@ -18,12 +19,8 @@ const AddUser = ({setFlag}) => {
         setLoading(true);
         try {
             // Sending the form data to the backend endpoint
-            const response = await axios.post(`${Url}/account/create`, values ,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                    }
-                });
+            console.log(values);
+            const response = await addUser(values);
             message.success('User registered successfully');
             form.resetFields();
         } catch (error) {

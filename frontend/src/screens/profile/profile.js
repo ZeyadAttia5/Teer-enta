@@ -6,6 +6,7 @@ import { FaExclamationCircle } from "react-icons/fa";
 import SocialMediaIcons from "./SocialMediaIcons";
 import AddPreviousWork from "./AddPreviousWork";
 import PreviousWorksList from "./PreviousWorksList";
+import {getProfile,updateProfilee} from "../../api/profile.ts";
 
 // async function getProfileData() {
 //   try {
@@ -53,13 +54,7 @@ async function updateProfile(
     const user = JSON.parse(localStorage.getItem("user"));
     const accessToken = localStorage.getItem("accessToken");
     console.log("user id is: " + user._id);
-    const response = await axios.get(
-      `${process.env.REACT_APP_BACKEND_URL}/profile/${user._id}`,{
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        }
-        }
-    );
+    const response = await getProfile(user._id);
     const { data } = response;
     const tmpDate = new Date(data.dateOfBirth).toLocaleDateString("en-CA");
 
@@ -333,14 +328,7 @@ function Profile({setFlag}) {
     }
 
     try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/profile/update/${user._id}`,
-        data ,{
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          }
-      }
-      );
+      const response = await updateProfilee(data, user._id);
 
       setMessage(response.data.message);
     } catch (error) {

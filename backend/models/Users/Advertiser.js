@@ -10,7 +10,7 @@ const AdvertiserProfileSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    profileImage: {
+    logoUrl: {
         type: String,
         default: null // Default profile image if not uploaded
     },
@@ -50,7 +50,16 @@ const AdvertiserProfileSchema = new mongoose.Schema({
         twitter: { type: String, default: null },
         instagram: { type: String, default: null }
     },
+    idCardUrl: {
+        type: String,
+        default: null
+    },
+    taxationCardUrl:{
+        type: String,
+        default: null
+    },
     isAccepted: {type:String , enum:['Pending','Accepted','Rejected'], default:'Pending'},
+    isTermsAndConditionsAccepted: {type:Boolean , default:false} ,
     isActive: {
         type: Boolean,
         default: true

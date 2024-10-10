@@ -1,0 +1,27 @@
+import axios from "axios";
+
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
+export const getProducts = async () => {
+    return await axios.get(`${API_BASE_URL}/product/`);
+}
+
+export const getProduct = async (productId) => {
+    return await axios.get(`${API_BASE_URL}/product/${productId}`);
+}
+
+export const addProduct = async (product) => {
+    return await axios.post(`${API_BASE_URL}/product/create`, product ,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
+
+export const updateProduct = async (product, productId) => {
+   return await axios.put(`${API_BASE_URL}/product/update/${productId}`, product ,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}

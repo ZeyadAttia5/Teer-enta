@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
+import {addProduct} from "../../api/products.ts"; // Import axios
 
 const AdminProductForm = ({setFlag}) => {
   setFlag(false);
@@ -35,11 +36,7 @@ const AdminProductForm = ({setFlag}) => {
     try {
       const backURL = process.env.REACT_APP_BACKEND_URL;
       // Replace with your API endpoint
-      const response = await axios.post(`${backURL}/product/create`, product ,{
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await addProduct(product);
       console.log('Product submitted:', response.data);
       setSuccess('Product successfully created!');
 

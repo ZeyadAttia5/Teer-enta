@@ -6,6 +6,7 @@ import Toggle from "../../components/signup/Toggle.js";
 import { useNavigate } from "react-router-dom";
 import { FaExclamationCircle } from "react-icons/fa";
 import axios from "axios";
+import {signup} from "../../api/auth.ts";
 function Signup({setFlag}) {
   setFlag(true);
   const navigate = useNavigate();
@@ -338,7 +339,7 @@ function Signup({setFlag}) {
           };
           break;
       }
-      const response = await axios.post(`${URL}/auth/signup`, data);
+      const response = await signup(data);
 
       setMessage(response.data.message);
       navigate("/login");
