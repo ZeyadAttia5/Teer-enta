@@ -5,8 +5,8 @@ import {Drawer} from "antd";
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {FiLogOut} from "react-icons/fi"; // Importing a logout icon from react-icons
-import logo from "../assets/logo/logo.jpeg";
-import ConfirmationModal from "./ConfirmationModal";
+import logo from "../../../assets/logo/logo.jpeg";
+import ConfirmationModal from "../ConfirmationModal";
 import {on} from "events";
 import {set} from "date-fns";
 

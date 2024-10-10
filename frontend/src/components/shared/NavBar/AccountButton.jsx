@@ -1,4 +1,4 @@
-import { ReactComponent as AccountIcon } from "../assets/svgs/account.svg";
+import { ReactComponent as AccountIcon } from "../../../assets/svgs/account.svg";
 
 const AccountButton = ({ extra_tw, onClick }) => {
   const storedUser = localStorage.getItem("user");

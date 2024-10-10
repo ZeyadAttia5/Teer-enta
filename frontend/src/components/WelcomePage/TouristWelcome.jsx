@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import TouristInstructionCard from "../components/TouristInstructionCard";
-import TouristNavBar from "../components/TouristNavBar";
+import TouristInstructionCard from "./TouristInstructionCard";
+import TouristNavBar from "../shared/NavBar/TouristNavBar";
 
-import airplaneImage from "../assets/airplane.png";
-import bedroom from "../assets/bedroom.png";
-import banat from "../assets/banat.png";
+import airplaneImage from "../../assets/airplane.png";
+import bedroom from "../../assets/bedroom.png";
+import banat from "../../assets/banat.png";
 import { Fade } from "react-awesome-reveal";
 
 

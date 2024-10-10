@@ -5,7 +5,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa"; // Example icons from react-
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { set } from "date-fns";
-import {login} from "../../api/auth.ts";
+import {login} from "../../../api/auth.ts";
 function Login({setFlag}) {
   setFlag(true);
   const navigate = useNavigate();

@@ -10,7 +10,7 @@ import {getProfile,updateProfilee} from "../../api/profile.ts";
 
 // async function getProfileData() {
 //   try {
-//     const response = await axios.get(`${URL}/profile/${id}`);
+//     const response = await axios.get(`${URL}/Profile/${id}`);
 
 //     setMessage(response.data.message);
 //   } catch (error) {
@@ -127,7 +127,7 @@ async function updateProfile(
     setMessage(response.data.message);
   } catch (error) {
     
-    setMessage(error.response.data.message || "Updating profile failed");
+    setMessage(error.response.data.message || "Updating Profile failed");
   }
 }
 
@@ -332,7 +332,7 @@ function Profile({setFlag}) {
 
       setMessage(response.data.message);
     } catch (error) {
-      setMessage(error.response.data.message || "Updating profile failed");
+      setMessage(error.response.data.message || "Updating Profile failed");
     }
 
     setAge(ageInput);
@@ -643,7 +643,7 @@ function Profile({setFlag}) {
                         type="text"
                         value={companyProfileInput}
                         placeholder={
-                          !isReadOnly ? "Enter your company profile" : ""
+                          !isReadOnly ? "Enter your company Profile" : ""
                         }
                         readOnly={isReadOnly}
                         onChange={(e) => setCompanyProfileInput(e.target.value)}

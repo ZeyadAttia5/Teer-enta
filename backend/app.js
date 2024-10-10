@@ -55,7 +55,7 @@ app.use("/activityCategory", activityCategoryRoutes);
 app.use("/tag", tagRoutes);
 app.use("/preferenceTag", preferenceTagRoutes);
 app.use("/auth" , authRoutes ) ;
-app.use("/profile", profileRoutes);
+app.use("/Profile", profileRoutes);
 app.use("/account" , accountRoutes) ;
 app.use("/product" , productRoutes) ;
 app.use("/touristItenerary" , touristIteneraryRoutes) ;

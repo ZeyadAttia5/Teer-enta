@@ -36,7 +36,7 @@ import moment from "moment";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
 import { useLocation } from "react-router-dom";
-import MapContainer from "../../components/GoogleMaps/GoogleMaps";
+import MapContainer from "../shared/GoogleMaps/GoogleMaps";
 
 const { Item } = Form;
 const { Option } = Select;

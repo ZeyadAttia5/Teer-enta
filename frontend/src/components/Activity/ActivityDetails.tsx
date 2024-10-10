@@ -26,9 +26,9 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
-import MapContainer from "../../components/GoogleMaps/GoogleMaps";
+import MapContainer from "../shared/GoogleMaps/GoogleMaps";
 import { TActivity } from "../../types/Activity/Activity";
-import StaticMap from "../../components/GoogleMaps/ViewLocation";
+import StaticMap from "../shared/GoogleMaps/ViewLocation";
 import { getActivity } from "../../api/activity.ts";
 
 

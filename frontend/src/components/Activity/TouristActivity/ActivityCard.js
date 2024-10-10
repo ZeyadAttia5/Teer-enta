@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Rate } from "antd";
-import {getGoogleMapsAddress} from "../../api/googleMaps.ts";
+import {getGoogleMapsAddress} from "../../../api/googleMaps.ts";
 
 const ActivityCard = ({
                         name,

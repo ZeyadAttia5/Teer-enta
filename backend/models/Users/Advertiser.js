@@ -12,7 +12,7 @@ const AdvertiserProfileSchema = new mongoose.Schema({
     },
     logoUrl: {
         type: String,
-        default: null // Default profile image if not uploaded
+        default: null // Default Profile image if not uploaded
     },
     profileDocument: {
         type: String,

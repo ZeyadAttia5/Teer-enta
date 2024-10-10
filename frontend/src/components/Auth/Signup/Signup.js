@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./signup.css";
-import { images } from "../login/loadImage.js";
+import { images } from "../Login/loadImage.js";
 import Select from "react-select";
-import Toggle from "../../components/signup/Toggle.js";
+import Toggle from "./Toggle.js";
 import { useNavigate } from "react-router-dom";
 import { FaExclamationCircle } from "react-icons/fa";
 import axios from "axios";
-import {signup} from "../../api/auth.ts";
+import {signup} from "../../../api/auth.ts";
 function Signup({setFlag}) {
   setFlag(true);
   const navigate = useNavigate();

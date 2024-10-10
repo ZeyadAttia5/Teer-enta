@@ -5,7 +5,7 @@ import React from "react";
 import { Switch, Table, Tag, Form, Input } from "antd";
 import { TActivityCategory } from "../../types/Activity/ActivityCategory.ts";
 import { TTag } from "../../types/Tag.ts";
-import Filter from "../../components/Filter.jsx";
+import Filter from "../shared/Filter.jsx";
 import {TPreferenceTag} from "../../types/Itinerary/PreferenceTag";
 
 // Tactivity keys are the dataIndex of each object in the data array

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import ActivityCard from "../../components/TouristActivity/ActivityCard";
+import ActivityCard from "./ActivityCard";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Input, Select, Slider, Row, Col, Checkbox } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { getTouristActivities } from "../../api/activity.ts";
+import { getTouristActivities } from "../../../api/activity.ts";
 import dayjs from "dayjs";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;

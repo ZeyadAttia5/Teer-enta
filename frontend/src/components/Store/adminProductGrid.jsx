@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import FilterDropdown from "./filterDropdown";
-import StarRating from "./starRating";
+import StarRating from "../shared/starRating";
 import { Input, Row, Col, Button } from "antd";
 import { FaEdit } from "react-icons/fa";
 import {getProducts} from "../../api/products.ts";

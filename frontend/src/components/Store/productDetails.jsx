@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import StarRating from './starRating'; // Import StarRating component
+import StarRating from '../shared/starRating'; // Import StarRating component
 import { Button, Typography, Spin, Divider } from 'antd';
 import {getProduct} from "../../api/products.ts"; // Import Ant Design components
 

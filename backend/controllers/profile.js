@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 
-// Define the middleware to create or update the profile based on userRole
+// Define the middleware to create or update the Profile based on userRole
 exports.createProfile = async (req, res, next) => {
     try {
         const userId = req.params.id;
@@ -105,7 +105,7 @@ exports.updateProfile = async (req, res) => {
             user.hasProfile = true;
             await user.save();
         }
-        res.status(200).json({"message":"profile updated successfully" ,updatedProfile}) ;
+        res.status(200).json({"message":"Profile updated successfully" ,updatedProfile}) ;
     } catch (err) {
         errorHandler.SendError(res, err);
     }
