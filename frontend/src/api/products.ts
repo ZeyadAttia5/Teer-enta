@@ -7,7 +7,7 @@ export const getProducts = async () => {
 }
 
 export const getProduct = async (productId) => {
-    return await axios.get(`${API_BASE_URL}/product/${productId}`);
+    return await axios.get(`${API_BASE_URL}/product/one/${productId}`);
 }
 
 export const addProduct = async (product) => {
@@ -36,6 +36,14 @@ export const archiveProduct = async (productId) => {
 
 export const unArchiveProduct = async (productId) => {
     return await axios.put(`${API_BASE_URL}/product/unArchive/${productId}`, null ,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
+
+export const viewAvailableQuantityAndSales = async () => {
+    return await axios.get(`${API_BASE_URL}/product/salesAndQuantity`,{
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },

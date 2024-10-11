@@ -17,6 +17,7 @@ const preferenceTagRoutes = require('./routes/preferenceTags');
 const profileRoutes = require('./routes/profile');
 const accountRoutes = require('./routes/account');
 const productRoutes = require('./routes/product');
+const orderRoutes = require('./routes/order');
 
 app.use(morgan('dev'))
 app.use((req, res, next) => {
@@ -57,6 +58,7 @@ app.use("/auth" , authRoutes ) ;
 app.use("/Profile", profileRoutes);
 app.use("/account" , accountRoutes) ;
 app.use("/product" , productRoutes) ;
+app.use("/order",orderRoutes)
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });

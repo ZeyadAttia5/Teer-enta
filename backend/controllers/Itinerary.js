@@ -215,8 +215,7 @@ exports.bookItinerary = async (req, res) => {
 
         return res.status(200).json({ message: "Itinerary booked successfully" });
     } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "An error occurred while booking the itinerary" });
+        errorHandler.SendError(res, err);
     }
 };
 
@@ -244,8 +243,7 @@ exports.cancelItineraryBooking = async (req, res) => {
 
         return res.status(200).json({ message: "Booking cancelled successfully" });
     } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "An error occurred while cancelling the booking" });
+        errorHandler.SendError(res, err);
     }
 };
 
