@@ -61,6 +61,27 @@ const deleteActivity = async (activityId: string | Number) =>
 const getActivity = async (id: string | number) =>
   await axios.get<TActivity>(`${API_BASE_URL}/activity/one/${id}`);
 
+const bookActivity = async (activityId: string | number) =>
+    await axios.post<TActivity>(
+        `${API_BASE_URL}/activity/book/${activityId}`,
+        {},
+        {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+        }
+    );
+
+const cancleActivityBooking = async (activityId: string | number) =>
+    await axios.patch<TActivity>(
+        `${API_BASE_URL}/activity/cancel/book/${activityId}`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+        });
+
 export {
   getActivities,
   createActivity,
@@ -69,5 +90,7 @@ export {
   getUpcomingActivities,
   getMyActivities,
   getActivity,
-    getTouristActivities
+    getTouristActivities ,
+    bookActivity ,
+    cancleActivityBooking
 };

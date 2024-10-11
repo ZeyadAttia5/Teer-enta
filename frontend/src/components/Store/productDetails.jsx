@@ -88,6 +88,9 @@ const ProductDetails = ({setFlag}) => {
               <Paragraph className="text-lg font-semibold">
                 Available Quantity: <span className="text-[#02735F]">{product.quantity}</span>
               </Paragraph>
+              <Paragraph className="text-lg font-semibold">
+                Seller: <span className="text-[#02735F]">{product.createdBy.userRole === 'Admin' ? "Teer Enta":product.createdBy.name }</span>
+              </Paragraph>
 
               <Paragraph className="mt-4 text-gray-700 text-base">
                 {product.description}

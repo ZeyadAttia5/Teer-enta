@@ -41,14 +41,32 @@ export const updateItinerary = async (id: string, itinerary: Partial<TItinerary>
 };
 
 export const deleteItinerary = async (id: string): Promise<void> => {
-    await axios.delete(`${API_BASE_URL}/itinerary/delete/${id}`,{
+   return  await axios.delete(`${API_BASE_URL}/itinerary/delete/${id}`,{
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
+
 };
 
 
 
 export const getIternary = async (id: string | number) => 
     await axios.get<TItinerary>(`${API_BASE_URL}/itinerary/one/${id}`)
+
+// example date "date":"2024-10-24T00:00:00.000Z"
+export const bookItinerary = async (itineraryId: string , date : string) => {
+    return await axios.post(`${API_BASE_URL}/itinerary/book/${itineraryId}`, {date:date}, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
+
+export const cancleItineraryBooking = async (itineraryId: string) => {
+    return await axios.patch(`${API_BASE_URL}/itinerary/cancel/book/${itineraryId}`, {}, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}

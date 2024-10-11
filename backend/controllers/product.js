@@ -29,7 +29,7 @@ exports.getProduct = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(400).send({message: 'Invalid product id'});
         }
-        const foundProduct = await product.findById(productId);
+        const foundProduct = await product.findById(productId).populate('createdBy');
         if (!foundProduct) {
             return res.status(404).send({message: 'Product not found'});
         }

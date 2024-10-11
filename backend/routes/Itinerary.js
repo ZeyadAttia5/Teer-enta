@@ -16,10 +16,15 @@ router.get("/upcoming", itineraryController.getUpcomingItineraries);
 
 router.post("/create", isAuth ,itineraryController.createItinerary);
 
+router.post("/book/:id",isAuth , itineraryController.bookItinerary);
+
 router.put("/update/:id",isAuth , itineraryController.updateItinerary);
+
+router.patch("/flagInappropriate/:id" , isAuth ,itineraryController.flagInappropriate)
+
+router.patch("/cancel/book/:id",isAuth , itineraryController.cancelItineraryBooking);
 
 router.delete("/delete/:id",isAuth , itineraryController.deleteItinerary);
 
-router.patch("/flagInappropriate/:id" , isAuth ,itineraryController.flagInappropriate)
 
 module.exports = router;

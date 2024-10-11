@@ -141,6 +141,7 @@ exports.deleteItinerary = async (req, res, next) => {
 
         const bookings = await BookedItinerary.find({
             itinerary: id,
+            status: "Pending",
             isActive: true,
         });
         if (bookings.length > 0) {
@@ -179,3 +180,72 @@ exports.flagInappropriate = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 };
+
+
+exports.bookItinerary = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { date } = req.body;
+        const userId = req.user._id;
+
+
+        const itinerary = await Itinerary.findOne({ isActive: true, _id: id });
+        if (!itinerary) {
+            return res.status(404).json({ message: "Itinerary not found or inactive" });
+        }
+
+
+        const existingBooking = await BookedItinerary.findOne({
+            itinerary: id,
+            createdBy: userId,
+            itineraryDate: new Date(date)
+        });
+
+        if (existingBooking) {
+            return res.status(400).json({ message: "You have already booked this itinerary on the selected date" });
+        }
+
+
+        await BookedItinerary.create({
+            itinerary: id,
+            createdBy: userId,
+            itineraryDate: new Date(date),
+            status: "Pending",
+        });
+
+        return res.status(200).json({ message: "Itinerary booked successfully" });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while booking the itinerary" });
+    }
+};
+
+exports.cancelItineraryBooking = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id;
+
+        const bookedItinerary = await BookedItinerary.findOne(
+            { _id: id, createdBy: userId ,status : 'Pending'}).populate('itinerary');
+        if (!bookedItinerary) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        const currentDate = new Date();
+        const itineraryDate = new Date(bookedItinerary.itineraryDate);
+        const hoursDifference = (itineraryDate - currentDate) / (1000 * 60 * 60);
+
+        if (hoursDifference < 48) {
+            return res.status(400).json({ message: "Cannot cancel the booking less than 48 hours before the itinerary" });
+        }
+
+        bookedItinerary.status = 'Cancelled';
+        await bookedItinerary.save();
+
+        return res.status(200).json({ message: "Booking cancelled successfully" });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while cancelling the booking" });
+    }
+};
+

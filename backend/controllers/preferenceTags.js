@@ -1,7 +1,6 @@
 const PreferenceTag = require("../models/Itinerary/PreferenceTags"); // Ensure mongoose is required
 const Itinerary = require("../models/Itinerary/Itinerary");
 const Activity = require("../models/Activity/Activity");
-const TouristItinerary = require("../models/TouristItenerary/TouristItenerary");
 const Tourist = require("../models/Users/Tourist");
 
 const errorHandler = require("../Util/ErrorHandler/errorSender"); // Ensure mongoose is required
@@ -72,12 +71,6 @@ exports.deletePreferenceTag = async (req, res, next) => {
             {},
             {
                 $pull: { preferenceTags: id },
-            }
-        );
-        await TouristItinerary.updateMany(
-            {},
-            {
-                $pull: { tags: id },
             }
         );
         await Tourist.updateMany(

@@ -1,6 +1,6 @@
 const Activity = require('../models/Activity/Activity');
 const Itinerary = require('../models/Itinerary/Itinerary');
-const TouristItinerary = require('../models/TouristItenerary/TouristItenerary');
+const BookedActivity = require('../models/Booking/BookedActivitie');
 const mongoose = require('mongoose')
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 
@@ -127,9 +127,6 @@ exports.deleteActivity = async (req, res, next) => {
                 }
             }
         );
-        await TouristItinerary.updateMany({},{
-            $pull: {activities: id}
-        });
 
         res.status(200).json({
             message: 'ActivityList deleted successfully',
@@ -155,3 +152,92 @@ exports.flagInappropriate = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+
+exports.bookActivity = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id;
+
+
+        const activity = await Activity.findOne({ isActive: true, _id: id });
+        if (!activity) {
+            return res.status(404).json({ message: "Activity not found or inactive" });
+        }
+
+
+        const existingBooking = await BookedActivity.findOne({
+            activity: id,
+            isActive: true,
+            createdBy: userId
+        }).populate('activity');
+
+        if (existingBooking && existingBooking.activityDate.toISOString().split('T')[0] === activity.date.toISOString().split('T')[0]) {
+            return res.status(400).json({ message: "You have already booked this activity on the same date" });
+        }
+
+
+        await BookedActivity.create({
+            activity: id,
+            createdBy: userId,
+            status: 'Pending',
+            activityDate: activity.date
+        });
+
+        return res.status(200).json({ message: "Activity booked successfully" });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+exports.cancelActivityBooking = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user._id;
+
+        const bookedActivity = await BookedActivity.findOne(
+            { _id: id, createdBy: userId , status : 'Pending' }).populate('activity');
+        if (!bookedActivity) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        const currentDate = new Date();
+        const activityDate = new Date(bookedActivity.activityDate);
+        const hoursDifference = (activityDate - currentDate) / (1000 * 60 * 60);
+
+        if (hoursDifference < 48) {
+            return res.status(400).json({ message: "Cannot cancel the booking less than 48 hours before the activity" });
+        }
+
+        bookedActivity.status = 'Cancelled';
+        await bookedActivity.save();
+
+        return res.status(200).json({ message: "Booking cancelled successfully" });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while cancelling the booking" });
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
