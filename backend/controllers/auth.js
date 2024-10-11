@@ -79,19 +79,19 @@ exports.login = async (req, res) => {
         if (!user) return res.status(404).json({message: 'User not found'});
 
         const doMatch = await bcrypt.compare(password, user.password);
-        if (!doMatch) return res.status(401).json({ message: "Wrong Password" });
+        if (!doMatch) return res.status(401).json({message: "Wrong Password"});
 
-        const status = user.isAccepted ;
+        const status = user.isAccepted;
 
-        if (status==="Pending"){
-            return res.status(401).json({message:"Your request is still pending "}) ;
+        if (status === "Pending") {
+            return res.status(401).json({message: "Your request is still pending "});
         }
-        if (status==="Rejected"){
-            return res.status(403).json({message:"Your request is rejected"})
+        if (status === "Rejected") {
+            return res.status(403).json({message: "Your request is rejected"})
         }
 
-        const { token: accessToken, expiresIn: accessExpiresIn } = await TokenHandler.generateAccessToken(user);
-        const { token: refreshToken, expiresIn: refreshExpiresIn } = await TokenHandler.generateRefreshToken(user);
+        const {token: accessToken, expiresIn: accessExpiresIn} = await TokenHandler.generateAccessToken(user);
+        const {token: refreshToken, expiresIn: refreshExpiresIn} = await TokenHandler.generateRefreshToken(user);
 
         res.status(200).json({
             accessToken,
@@ -100,6 +100,19 @@ exports.login = async (req, res) => {
             refreshExpiresIn,
             user: user,
         });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.changePassword = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const doMatch = await bcrypt.compare(req.body.oldPassword, user.password);
+        if (!doMatch) return res.status(401).json({message: "Wrong Password"});
+        const hashedPassword = await bcrypt.hash(req.body.newPassword, 12);
+        const updatedUser = await User.findByIdAndUpdate(req.user._id, {password: hashedPassword}, {new: true});
+        res.status(200).json({message: 'Password changed successfully.'});
     } catch (err) {
         errorHandler.SendError(res, err);
     }

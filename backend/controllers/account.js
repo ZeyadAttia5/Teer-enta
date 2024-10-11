@@ -3,7 +3,10 @@ const Advertiser = require("../models/Users/Advertiser");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const bcrypt = require('bcryptjs');
 const userModel = require('../models/Users/userModels');
-
+const Activity = require('../models/Activity/Activity');
+const Itinerary = require('../models/Itinerary/Itinerary');
+const Transportation = require('../models/Transportation');
+const Product = require('../models/Product/Product');
 
 exports.deleteAccount = async (req, res) => {
     try {
@@ -89,8 +92,8 @@ exports.rejectRequest = async (req, res) => {
             return res.status(404).json({message: "user not found"});
         }
         const model = userModel[user.userRole];
-        const updatedUser = await model.findByIdAndUpdate(id, {isAccepted: 'Rejected'}, {new: true}) ;
-        return res.status(200).json({message: "request rejected successfully" , updatedUser}) ;
+        const updatedUser = await model.findByIdAndUpdate(id, {isAccepted: 'Rejected'}, {new: true});
+        return res.status(200).json({message: "request rejected successfully", updatedUser});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -104,15 +107,66 @@ exports.getAllUsers = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
-exports.requestDeleteMyAccount = async (req,res) =>{
-    try{
-        const user = req.user ;
-        if(user.role === 'Tourist'){
-            const ifBookingItinerary = await BookingItinerary.find({touristId : user._id});
-        }
 
-    }catch (err) {
-        errorHandler.SendError
+exports.acceptTermsAndConditions = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+        const userRole = user.userRole;
+        const model = userModel[userRole];
+        const updatedUser = await model.findByIdAndUpdate(userId, {isTermsAndConditionsAccepted: true}, {new: true});
+        return res.status(200).json({message: "Terms and conditions accepted successfully", updatedUser});
+    } catch (err) {
+        errorHandler.SendError(res, err);
     }
 }
+
+exports.requestMyAccountDeletion = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+        const bookedActivities = await BookedActivity.find({createdBy: userId, status: "Pending"});
+        if (user.userRole === "Tourist") {
+            if (bookedActivities.length > 0) {
+                return res.status(400).json({message: "You have upcoming activities, you can't delete your account"});
+            }
+            const bookedItinerary = await BookedItinerary.find({createdBy: userId, status: "Pending"});
+            if (bookedItinerary.length > 0) {
+                return res.status(400).json({message: "You have upcoming itineraries, you can't delete your account"});
+            }
+            const bookedTransportation = await BookedTransportation.find({createdBy: userId, status: "Pending"});
+            if (bookedTransportation.length > 0) {
+                return res.status(400).json({message: "You have upcoming transportation, you can't delete your account"});
+            }
+        }
+
+        if (user.userRole === "Advertiser") {
+            await Activity
+                .find({createdBy: userId})
+                .updateMany({isActive: false});
+            await Transportation
+                .find({createdBy: userId})
+                .updateMany({isActive: false});
+        }
+        if (user.userRole === "TourGuide") {
+            await Itinerary
+                .find({createdBy: userId})
+                .updateMany({isActive: false});
+        }
+        if (user.userRole === "Seller") {
+            await Product
+                .find({createdBy: userId})
+                .updateMany({isActive: false});
+        }
+        await User.findByIdAndDelete(userId);
+        return res.status(200).json({message: "Account deleted successfully"});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+
+
+
+
 
