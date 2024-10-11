@@ -25,3 +25,19 @@ export const updateProduct = async (product, productId) => {
         },
     });
 }
+
+export const archiveProduct = async (productId) => {
+    return await axios.put(`${API_BASE_URL}/product/archive/${productId}`, null ,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
+
+export const unArchiveProduct = async (productId) => {
+    return await axios.put(`${API_BASE_URL}/product/unArchive/${productId}`, null ,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
