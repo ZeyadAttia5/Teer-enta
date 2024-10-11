@@ -17,7 +17,8 @@ router.get("/upcoming", itineraryController.getUpcomingItineraries);
 router.post("/create", isAuth ,itineraryController.createItinerary);
 
 router.post("/book/:id",isAuth , itineraryController.bookItinerary);
-
+router.post('/activate/:id' , itineraryController.activateItinerary) ;
+router.post('/deactivated/:id' , itineraryController.deactivateItinerary) ;
 router.put("/update/:id",isAuth , itineraryController.updateItinerary);
 
 router.patch("/flagInappropriate/:id" , isAuth ,itineraryController.flagInappropriate)

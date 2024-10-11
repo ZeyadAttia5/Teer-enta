@@ -1,11 +1,12 @@
 const Itinerary = require("../models/Itinerary/Itinerary");
 const BookedItinerary = require("../models/Booking/BookedItinerary");
+const User = require("../models/Users/User");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const mongoose = require("mongoose"); // Ensure mongoose is required
 
 exports.getItineraries = async (req, res, next) => {
     try {
-        const itineraries = await Itinerary.find()
+        const itineraries = await Itinerary.find({isActive: true , isBookingOpen: true})
             .populate("activities.activity")
             .populate("preferenceTags")
             .populate("timeline.activity");
@@ -126,7 +127,7 @@ exports.updateItinerary = async (req, res, next) => {
             data: updatedItinerary,
         });
     } catch (err) {
-      console.log(err);
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 };
@@ -163,23 +164,76 @@ exports.flagInappropriate = async (req, res) => {
     try {
         const id = req.params.id;
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({message: "Invalid object id"});
+            return res.status(400).json({ message: "Invalid object id" });
         }
-        const Itinerary = await Itinerary.findByIdAndUpdate(
+
+        // Step 1: Flag itinerary as inactive
+        const updatedItinerary = await Itinerary.findByIdAndUpdate(
             id,
-            {isActive: false},
-            {new: true}
+            { isActive: false },
+            { new: true }
         );
-        if (!Itinerary) {
-            res.status(404).json({message: "itinerary not found"});
+
+        if (!updatedItinerary) {
+            return res.status(404).json({ message: "Itinerary not found" });
         }
-        return res
-            .status(200)
-            .json({message: "itinerary flagged inappropriate successfully"});
+
+        const itineraryPrice = updatedItinerary.price;
+        const bookedItineraries = await BookedItinerary.find({ itinerary: id });
+
+        const userIds = bookedItineraries.map(booking => booking.createdBy);
+
+        await User.updateMany(
+            { _id: { $in: userIds } },  // Find users with IDs in userIds array
+            { $inc: { wallet: itineraryPrice } }  // Increment the wallet by the itinerary price
+        );
+
+        return res.status(200).json({ message: "Itinerary flagged inappropriate and users refunded successfully" });
     } catch (err) {
         errorHandler.SendError(res, err);
     }
 };
+
+exports.activateItinerary = async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid object id" });
+        }
+        const updatedItinerary = await Itinerary.findByIdAndUpdate(
+            id,
+            { isActive: true },
+            { new: true }
+        );
+        if (!updatedItinerary) {
+            return res.status(404).json({ message: "Itinerary not found" });
+        }
+        return res.status(200).json({ message: "Itinerary activated successfully" });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.deactivateItinerary = async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid object id" });
+        }
+        const updatedItinerary = await Itinerary.findByIdAndUpdate(
+            id,
+            { isActive: false },
+            { new: true }
+        );
+        if (!updatedItinerary) {
+            return res.status(404).json({ message: "Itinerary not found" });
+        }
+        return res.status(200).json({ message: "Itinerary deactivated successfully" });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
 
 
 exports.bookItinerary = async (req, res) => {

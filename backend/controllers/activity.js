@@ -6,7 +6,7 @@ const errorHandler = require('../Util/ErrorHandler/errorSender');
 
 exports.getActivities = async (req, res, next) => {
     try {
-        const activities = await Activity.find({isActive: true})
+        const activities = await Activity.find({isActive: true , isBookingOpen: true})
             .populate('category')
             .populate('preferenceTags');
         if (activities.length === 0) {
@@ -147,6 +147,7 @@ exports.flagInappropriate = async (req, res) => {
         if (!activity) {
             return res.status(404).json({message: "activity not found"});
         }
+        //refunding the user to be handled
         return res.status(200).json({message: "activity flagged inappropriate successfully"});
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -217,6 +218,39 @@ exports.cancelActivityBooking = async (req, res) => {
         return res.status(500).json({ message: "An error occurred while cancelling the booking" });
     }
 };
+
+exports.deactivateActivity = async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!mongoose.Types.objectId.isValid(id)) {
+            return res.status(400).json({message: "invalid object id "});
+        }
+        const activity = await Activity.findByIdAndUpdate(id, {isActive: false}, {new: true});
+        if (!activity) {
+            return res.status(404).json({message: "activity not found"});
+        }
+        //refunding the user to be handled
+        return res.status(200).json({message: "activity deactivated successfully"});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.activateActivity = async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!mongoose.Types.objectId.isValid(id)) {
+            return res.status(400).json({message: "invalid object id "});
+        }
+        const activity = await Activity.findByIdAndUpdate(id, {isActive: true}, {new: true});
+        if (!activity) {
+            return res.status(404).json({message: "activity not found"});
+        }
+        return res.status(200).json({message: "activity activated successfully"});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
 
 
 

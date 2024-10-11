@@ -12,6 +12,8 @@ router.post("/create",isAuth , preferenceTagController.createPreferenceTag);
 
 router.put("/update/:id",isAuth , preferenceTagController.updatePreferenceTag);
 
+router.put("/choosePreference",isAuth , preferenceTagController.chooseMyPreferenceTags);
+
 router.delete("/delete/:id",isAuth , preferenceTagController.deletePreferenceTag);
 
 module.exports = router;
