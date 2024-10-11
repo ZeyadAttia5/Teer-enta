@@ -24,12 +24,12 @@ const ActivitySchema = new mongoose.Schema({
         }
     ],
     ratings: [{
-        user: {type: mongoose.Schema.Types.ObjectId, ref: 'Tourist'},
+        user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
         rating: Number
     }],
     comments: [{
-        user: {type: mongoose.Schema.Types.ObjectId, ref: 'Tourist'},
-        rating: Number,
+        user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+        comment: String,
     }],
     createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const BookedFlightSchema = new mongoose.Schema({
-    flight: { type: mongoose.Schema.Types.ObjectId, ref: 'Flight' },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     status: {
         type: String,
