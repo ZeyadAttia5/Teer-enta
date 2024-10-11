@@ -1,4 +1,5 @@
 import {TUser} from "./Users/User";
+import {TAdvertiser} from "./Users/Advertiser";
 
 export type TTransportation = {
     _id: string;
@@ -15,7 +16,7 @@ export type TTransportation = {
     vehicleType: 'Car' | 'Scooter' | 'Bus';
     notes: string;
     isActive?: boolean;
-    createdBy: TUser; // Reference to the User model
+    createdBy: TAdvertiser; // Reference to the User model
     createdAt?: string; // Automatically added by Mongoose if timestamps are used
     updatedAt?: string; // Automatically added by Mongoose if timestamps are used
 }
