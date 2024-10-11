@@ -2,13 +2,15 @@ const router = require('express').Router();
 const accountController = require('../controllers/account');
 const isAuth = require('../middlewares/isAuth');
 
-router.delete('/delete/:id',isAuth, accountController.deleteAccount);
-router.post('/create',isAuth ,accountController.createAccount);
-router.get('/pending',isAuth , accountController.getAllPendingUsers);
-router.patch('/accept/:id',isAuth , accountController.acceptRequest);
-router.patch('/reject/:id' ,isAuth , accountController.rejectRequest) ;
 router.get('/accepted', isAuth ,accountController.getAllAcceptedUsers);
-router.get('/all' ,isAuth , accountController.getAllUsers) ;
-router.post('/requestDeleteMy', isAuth ,accountController.requestDeleteMyAccount);
+router.get('/pending',isAuth , accountController.getAllPendingUsers);
+router.get('/all' ,isAuth , accountController.getAllUsers)
+router.post('/create',isAuth ,accountController.createAccount);
+router.post('/acceptTermsAndConditions',isAuth , accountController.acceptTermsAndConditions);
+router.post('/requestAccountDeletion' , accountController.requestMyAccountDeletion) ;
+router.patch('/reject/:id' ,isAuth , accountController.rejectRequest) ;
+router.patch('/accept/:id',isAuth , accountController.acceptRequest);
+router.delete('/delete/:id',isAuth, accountController.deleteAccount);
+
 
 module.exports = router;

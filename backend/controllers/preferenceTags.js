@@ -10,7 +10,7 @@ exports.getPreferenceTags = async (req, res, next) => {
     try {
         const preferenceTags = await PreferenceTag.find();
         if (preferenceTags.length === 0) {
-            return res.status(404).json({ message: 'No Preference Tags found' });
+            return res.status(404).json({message: 'No Preference Tags found'});
         }
         res.status(200).json(preferenceTags);
     } catch (err) {
@@ -21,7 +21,7 @@ exports.getPreferenceTags = async (req, res, next) => {
 exports.createPreferenceTag = async (req, res, next) => {
     try {
         const preferenceTag = await PreferenceTag.create(req.body);
-        res.status(201).json({message: 'Preference Tag created successfully', preferenceTag });
+        res.status(201).json({message: 'Preference Tag created successfully', preferenceTag});
     } catch (err) {
         console.log(err);
         errorHandler.SendError(res, err);
@@ -30,17 +30,17 @@ exports.createPreferenceTag = async (req, res, next) => {
 
 exports.updatePreferenceTag = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
         const updates = req.body;
 
         const updatedPreferenceTag = await PreferenceTag.findByIdAndUpdate(
             id,
             updates,
-            { new: true, runValidators: true, overwrite: false }
+            {new: true, runValidators: true, overwrite: false}
         );
 
         if (!updatedPreferenceTag) {
-            return res.status(404).json({ message: 'Preference Tag not found or inactive' });
+            return res.status(404).json({message: 'Preference Tag not found or inactive'});
         }
 
         res.status(200).json({
@@ -54,39 +54,63 @@ exports.updatePreferenceTag = async (req, res, next) => {
 
 exports.deletePreferenceTag = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
 
         const preferenceTag = await PreferenceTag.findById(id);
         if (!preferenceTag) {
-            return res.status(404).json({ message: 'Preference Tag not found' });
+            return res.status(404).json({message: 'Preference Tag not found'});
         }
 
         await PreferenceTag.findByIdAndDelete(id);
         await Itinerary.updateMany(
             {},
             {
-                $pull: { preferenceTags: id },
+                $pull: {preferenceTags: id},
             }
         );
         await Activity.updateMany(
             {},
             {
-                $pull: { preferenceTags: id },
+                $pull: {preferenceTags: id},
             }
         );
         await TouristItinerary.updateMany(
             {},
             {
-                $pull: { tags: id },
+                $pull: {tags: id},
             }
         );
         await Tourist.updateMany(
             {},
             {
-                $pull: { tags: id },
+                $pull: {tags: id},
             }
         );
-        res.status(200).json({ message: 'Preference Tag deleted successfully' , data: preferenceTag });
+        res.status(200).json({message: 'Preference Tag deleted successfully', data: preferenceTag});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.chooseMyPreferenceTags = async (req, res, next) => {
+    try {
+        const id = req.user._id;
+        const {tags} = req.body;
+
+        const tourist = await Tourist.findById(id);
+        if (!tourist) {
+            return res.status(404).json({message: 'Tourist not found'});
+        }
+
+        await Tourist.findByIdAndUpdate(
+            id,
+            {
+                preferenceTags: tags
+            },
+            {new: true, runValidators: true}
+        );
+
+        res.status(200).json({message: 'Preference Tags updated successfully'});
     } catch (err) {
         errorHandler.SendError(res, err);
     }

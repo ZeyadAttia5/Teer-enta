@@ -8,21 +8,17 @@ const itineraryController = require("../controllers/Itinerary");
 const isAuth = require("../middlewares/isAuth");
 
 router.get("/", activityController.getActivities);
-
-
 router.get("/my",isAuth , activityController.getMyActivities);
-
+router.get("/one/:id", activityController.getActivity);
 router.get("/upcoming", activityController.getUpcomingActivities);
-
 router.post("/create",isAuth , activityController.createActivity);
-
+router.post("/flagInappropriate/:id" ,isAuth , activityController.flagInappropriate);
+router.post('/activate/:id' , activityController.activateActivity) ;
+router.post('/deactivate/:id' , activityController.deactivateActivity) ;
 router.put("/update/:id"  ,activityController.updateActivity);
-
 router.delete("/delete/:id",isAuth , activityController.deleteActivity);
 
-router.get("/one/:id", activityController.getActivity);
 
-router.patch("/flagInappropriate/:id" ,isAuth , activityController.flagInappropriate)
 
 
 module.exports = router;
