@@ -65,3 +65,7 @@ export const chooseMyPreferences = async (preferences) =>{
         }
     });
 }
+// will return two Arrays, one for preferenceTags and one for activityCategories
+export const getAllPreferences = async () =>{
+    return await axios.get(`${API_BASE_URL}/account/preferences`);
+}

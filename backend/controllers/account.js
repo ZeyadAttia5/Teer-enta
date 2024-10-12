@@ -8,6 +8,8 @@ const Itinerary = require('../models/Itinerary/Itinerary');
 const Transportation = require('../models/Transportation');
 const Product = require('../models/Product/Product');
 const Tourist = require("../models/Users/Tourist");
+const PreferenceTag = require("../models/Itinerary/PreferenceTags");
+const ActivityCategory = require("../models/Activity/ActivityCategory");
 
 exports.deleteAccount = async (req, res) => {
     try {
@@ -65,7 +67,23 @@ exports.getAllAcceptedUsers = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+exports.getAllPreferences = async (req, res) => {
+   try {
+        const prefrerenceTags = await PreferenceTag.find({isActive: true});
+        const activityCategories = await ActivityCategory.find({isActive: true});
 
+        if (prefrerenceTags.length === 0) {
+            return res.status(404).json({message: 'No Preference Tags found'});
+        }
+
+        if (activityCategories.length === 0) {
+            return res.status(404).json({message: 'No Activity Categories found'});
+        }
+        res.status(200).json({prefrerenceTags, activityCategories});
+    }catch (err) {
+       errorHandler.SendError(res, err);
+   }
+}
 
 exports.acceptRequest = async (req, res) => {
     try {
@@ -193,6 +211,8 @@ exports.chooseMyPreferences = async (req, res, next) => {
         errorHandler.SendError(res, err);
     }
 }
+
+
 
 
 

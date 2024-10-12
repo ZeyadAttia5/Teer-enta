@@ -2,6 +2,44 @@ const Transportation = require('../models/Transportation')
 const BookedTransportation = require('../models/Booking/BookedTransportation')
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
+exports.getAllTransportations = async (req, res) => {
+    try{
+        const transportations = await Transportation
+            .find({isActive:true})
+            .populate('createdBy');
+        if(transportations.length === 0){
+            return res.status(404).json({message: 'No Transportation found'});
+        }
+        res.status(200).json(transportations);
+    }catch(err){
+        errorHandler.SendError(res, err);
+    }
+}
+exports.getTransportation = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const transportation = await Transportation
+            .findOne({_id:id,isActive:true})
+            .populate('createdBy');
+        if(!transportation){
+            return res.status(404).json({message: 'Transportation not found or Inactive'});
+        }
+        res.status(200).json(transportation);
+    }catch(err){
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.createTransportation = async (req, res) => {
+    try{
+        const transportation = await Transportation.create(req.body);
+        res.status(201).json({message: 'Transportation created successfully', transportation});
+    }catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+
 exports.bookTransportation = async (req, res) => {
     try{
         const {id} = req.params;

@@ -6,6 +6,7 @@ const isAuth = require('../middlewares/isAuth');
 router.get('/accepted', isAuth ,accountController.getAllAcceptedUsers);
 router.get('/pending',isAuth , accountController.getAllPendingUsers);
 router.get('/all' ,isAuth , accountController.getAllUsers)
+router.get('/preferences', accountController.getAllPreferences);
 router.post('/create',isAuth ,accountController.createAccount);
 router.post('/acceptTermsAndConditions',isAuth , accountController.acceptTermsAndConditions);
 router.post('/requestAccountDeletion' , accountController.requestMyAccountDeletion) ;
