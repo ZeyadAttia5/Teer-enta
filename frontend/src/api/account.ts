@@ -65,6 +65,15 @@ export const chooseMyPreferences = async (preferences) =>{
         }
     });
 }
+
+export const redeemPoints = async (userId : number) =>{
+    return await axios.patch(`${API_BASE_URL}/account/redeemPoints`, userId, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+}
+
 // will return two Arrays, one for preferenceTags and one for activityCategories
 export const getAllPreferences = async () =>{
     return await axios.get(`${API_BASE_URL}/account/preferences`);

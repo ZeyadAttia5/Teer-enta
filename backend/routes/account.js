@@ -14,6 +14,7 @@ router.put("/choosePreferences",isAuth , accountController.chooseMyPreferences);
 router.patch('/reject/:id' ,isAuth , accountController.rejectRequest) ;
 router.patch('/accept/:id',isAuth , accountController.acceptRequest);
 router.delete('/delete/:id',isAuth, accountController.deleteAccount);
+router.patch('/redeemPoints',isAuth, accountController.redeemPoints);
 
 
 module.exports = router;
