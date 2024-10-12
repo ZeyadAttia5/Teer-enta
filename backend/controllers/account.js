@@ -7,6 +7,7 @@ const Activity = require('../models/Activity/Activity');
 const Itinerary = require('../models/Itinerary/Itinerary');
 const Transportation = require('../models/Transportation');
 const Product = require('../models/Product/Product');
+const Tourist = require("../models/Users/Tourist");
 
 exports.deleteAccount = async (req, res) => {
     try {
@@ -160,6 +161,34 @@ exports.requestMyAccountDeletion = async (req, res) => {
         }
         await User.findByIdAndDelete(userId);
         return res.status(200).json({message: "Account deleted successfully"});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+// body here should look like this
+// preferences:{
+//     preferenceTags: [id1, id2, id3],
+//     activityCategories: [id1, id2, id3]
+// }
+exports.chooseMyPreferences = async (req, res, next) => {
+    try {
+        const id = req.user._id;
+
+        const tourist = await Tourist.findById(id);
+        if (!tourist) {
+            return res.status(404).json({message: 'Tourist not found'});
+        }
+
+        await Tourist.findByIdAndUpdate(
+            id,
+            {
+                preferences: req.body
+            },
+            {new: true, runValidators: true}
+        );
+
+        res.status(200).json({message: 'Preferences updated successfully'});
     } catch (err) {
         errorHandler.SendError(res, err);
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Spin, message, Button, Popconfirm } from 'antd';
 import axios from 'axios';
-import {getUsers,deleteUser} from "../../../api/user.ts";
+import {getUsers,deleteUser} from "../../../api/account.ts";
 
 const AllUsers = ({setFlag}) => {
     setFlag(false);

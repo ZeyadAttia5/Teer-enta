@@ -1,5 +1,6 @@
 import axios  from "axios";
 
+
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
 export const getUsers = async () => {
@@ -52,4 +53,15 @@ export const deleteUser = async (userId) =>{
     });
 }
 
-
+// body here should look like this
+// preferences:{
+//     preferenceTags: [id1, id2, id3],
+//     activityCategories: [id1, id2, id3]
+// }
+export const chooseMyPreferences = async (preferences) =>{
+    return await axios.post(`${API_BASE_URL}/account/choosePreferences`, preferences, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+}
