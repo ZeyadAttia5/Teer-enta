@@ -46,72 +46,73 @@ const ActivityCard = ({
   }, [ratings]);
 
   return (
-      <div className="border-2 rounded border-gray-500 m-4">
-        <div className="border m-1 border-white">
-          <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white p-4 border-2 border-gray-500">
-            {/* Activity Details */}
-            <div className="mb-4">
-              <h2 className="text-xl font-bold mb-2">{name}</h2>
-              <p className="text-gray-700">
-                Date: {new Date(date).toLocaleDateString()}
-              </p>
-              <p className="text-gray-700">Time: {time}</p>
-              <p className="text-gray-700">
-                Category: {category || "Uncategorized"}
-              </p>
-              <p className="text-gray-700">
-                Price: {price?.min ? `$${price.min}` : "N/A"} -{" "}
-                {price?.max ? `$${price.max}` : "N/A"}
-              </p>
+    <div className="flex justify-center items-center">
+      <div className="max-w-3xl w-full bg-white rounded-lg shadow-lg p-6 m-4 transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out">
+        {/* Activity Name */}
+        <h2 className="font-bold text-3xl mb-4 text-gray-900">{name}</h2>
 
-              {/* Display Average Rating */}
-              <div className="mt-4">
-                <span className="text-gray-700">Average Rating: </span>
-                <Rate allowHalf disabled value={averageRating} />
-                <span className="ml-2">{averageRating.toFixed(1)}</span>
-              </div>
-            </div>
-
-
-
-            {/* Conditional Rendering for Special Discounts */}
-            {specialDiscounts?.length > 0 &&
-                specialDiscounts.map((discount, index) =>
-                    discount.isAvailable ? (
-                        <div
-                            key={index}
-                            className="mb-4 p-2 bg-green-100 text-green-700 rounded"
-                        >
-                          <p className="font-semibold">
-                            Special Discount: {discount.discount}% OFF -{" "}
-                            {discount.Description}
-                          </p>
-                        </div>
-                    ) : null
-                )}
-
-            {/* Google Maps Link */}
-            <a
-                href={`https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-            >
-              View on Google Maps
-            </a>
-
-            {/* Booking Status */}
-            <p
-                className={`mt-4 ${
-                    isBookingOpen ? "text-green-600" : "text-red-600"
-                }`}
-            >
-              {isBookingOpen ? "Booking is Open" : "Booking Closed"}
-            </p>
-          </div>
+        {/* Date and Time with Symbols and Creative Styling */}
+        <div className="flex items-center mb-4">
+          <span className="inline-block bg-blue-100 text-blue-600 text-sm px-3 py-1 rounded-full mr-4">
+            📅 {new Date(date).toLocaleDateString()}
+          </span>
+          <span className="inline-block bg-yellow-100 text-yellow-600 text-sm px-3 py-1 rounded-full">
+            🕒 {time}
+          </span>
         </div>
+
+        {/* Category */}
+        <p className="mb-4">
+        <span className="inline-block bg-purple-100 text-purple-600 text-xs px-3 py-1 rounded-full">
+          📂 {category || "Uncategorized"}
+        </span>
+      </p>
+
+        {/* Price Range with Creative Styling */}
+        <p className="text-gray-700 mb-4">
+        <span className="inline-block bg-green-100 text-green-600 text-xs px-3 py-1 rounded-full">
+          💲 {price?.min ? `$${price.min}` : "N/A"} - {price?.max ? `$${price.max}` : "N/A"}
+        </span>
+      </p>
+
+        {/* Average Rating */}
+        <div className="flex items-center mb-4">
+          <span className="text-gray-700 font-semibold">Rating: </span>
+          <Rate allowHalf disabled value={averageRating} className="ml-2" />
+          <span className="ml-2 text-gray-600">{averageRating.toFixed(1)}</span>
+        </div>
+
+        {/* Special Discounts */}
+        {specialDiscounts?.length > 0 &&
+          specialDiscounts.map((discount, index) =>
+            discount.isAvailable ? (
+              <div key={index} className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">
+                <p className="font-semibold">
+                  Special Discount: {discount.discount}% OFF - {discount.Description}
+                </p>
+              </div>
+            ) : null
+          )}
+
+        {/* Google Maps Link */}
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:underline block mb-4"
+        >
+          📍 View on Google Maps 
+        </a>
+
+        {/* Booking Status */}
+        <p className={`font-semibold mt-4 ${isBookingOpen ? "text-green-600" : "text-red-600"} bg-pink-100 p-2 rounded-lg`}>
+        🎟️  {isBookingOpen ? "Grab Your Spot!" : "Fully Booked!"}
+        </p>
       </div>
-  );
+    </div>
+);
+
+  
 };
 
 export default ActivityCard;
