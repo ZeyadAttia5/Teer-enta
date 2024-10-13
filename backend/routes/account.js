@@ -15,6 +15,7 @@ router.patch('/reject/:id' ,isAuth , accountController.rejectRequest) ;
 router.patch('/accept/:id',isAuth , accountController.acceptRequest);
 router.delete('/delete/:id',isAuth, accountController.deleteAccount);
 router.patch('/redeemPoints',isAuth, accountController.redeemPoints);
+router.post('/fileComplaint',isAuth, accountController.fileComplaint);
 
 
 module.exports = router;
