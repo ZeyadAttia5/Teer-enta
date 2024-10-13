@@ -20,6 +20,7 @@ const productRoutes = require('./routes/product');
 const orderRoutes = require('./routes/order');
 const transportationRoutes = require('./routes/transportation');
 const flightsRoutes = require('./routes/flights');
+const paymentRoutes = require('./routes/payment');
 
 app.use(morgan('dev'))
 app.use((req, res, next) => {
@@ -63,6 +64,7 @@ app.use("/product" , productRoutes) ;
 app.use("/order",orderRoutes)
 app.use("/transportation",transportationRoutes);
 app.use("/flights", flightsRoutes);
+app.use("/payment", paymentRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });
