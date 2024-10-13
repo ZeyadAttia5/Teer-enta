@@ -78,15 +78,3 @@ export const redeemPoints = async (userId : number) =>{
 export const getAllPreferences = async () =>{
     return await axios.get(`${API_BASE_URL}/account/preferences`);
 }
-
-
-export const fileComplaint = async (title, description, body) =>{
-    return await axios.post(`${API_BASE_URL}/account/fileComplaint`, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-        title: title,
-        description: description,
-        body: body
-    });
-}
