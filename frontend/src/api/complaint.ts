@@ -17,7 +17,7 @@ export const getComplaint = async (complaintId) => {
         }
     });
 }
-
+// for tourist to get his complaints
 export const getMyComplaints = async () => {
     return await axios.get(`${API_BASE_URL}/complaint/my`, {
         headers: {
@@ -34,8 +34,9 @@ export const addComplaint = async (complaint) => {
     });
 }
 
+// here for Mark complaint as pending/resolved and Reply to any complaints issued
 export const updateComplaint = async (complaint) => {
-    return await axios.patch(`${API_BASE_URL}/complaint/update/${complaint._id}`, complaint, {
+    return await axios.put(`${API_BASE_URL}/complaint/update/${complaint._id}`, complaint, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }
