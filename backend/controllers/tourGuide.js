@@ -18,7 +18,7 @@ exports.rateTourGuide = async (req, res) => {
 
         const booking = await BookedItinerary.findOne({
         createdBy: userId,
-        tourGuide: id,
+        // tourGuide: id,
         isActive: true,
         status: 'Completed'
         });
@@ -77,7 +77,7 @@ exports.commentOnTourGuide = async (req, res) => {
   
       const booking = await BookedItinerary.findOne({
         createdBy: userId,
-        tourGuide: id,
+        // tourGuide: id,
         isActive: true,
         status: 'Completed'
       });

@@ -60,7 +60,7 @@ app.use("/Profile", profileRoutes);
 app.use("/account" , accountRoutes) ;
 app.use("/product" , productRoutes) ;
 app.use("/order",orderRoutes)
-app.use("./tourGuide",tourGuideRoutes)
+app.use("/tourGuide",tourGuideRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });
