@@ -9,7 +9,7 @@ router.get('/all' ,isAuth , accountController.getAllUsers)
 router.get('/preferences', accountController.getAllPreferences);
 router.post('/create',isAuth ,accountController.createAccount);
 router.post('/acceptTermsAndConditions',isAuth , accountController.acceptTermsAndConditions);
-router.post('/requestAccountDeletion' , accountController.requestMyAccountDeletion) ;
+router.post('/requestAccountDeletion', isAuth, accountController.requestMyAccountDeletion) ;
 router.put("/choosePreferences",isAuth , accountController.chooseMyPreferences);
 router.patch('/reject/:id' ,isAuth , accountController.rejectRequest) ;
 router.patch('/accept/:id',isAuth , accountController.acceptRequest);

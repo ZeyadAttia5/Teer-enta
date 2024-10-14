@@ -1,11 +1,22 @@
 import React from "react";
 import "./TermsAndConditions.css";
-export default function TermsAndConditions({setNotAccepted}) {
-
-	  const handleAccept = () => {
-		setNotAccepted(false);
-	  }
-
+import { getProfile, updateProfilee } from "../../../api/profile.ts";
+export default function TermsAndConditions({ setNotAccepted }) {
+  const handleAccept = async () => {
+    setNotAccepted(false);
+    const user = JSON.parse(localStorage.getItem("user"));
+    user.isTermsAndConditionsAccepted = true;
+    localStorage.setItem("user", JSON.stringify(user));
+    try {
+      const response = await updateProfilee(
+        { isTermsAndConditionsAccepted: user.isTermsAndConditionsAccepted },
+        user._id
+      );
+      console.log("Profile updated successfully:", response);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
 
   return (
     <div className="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -27,7 +38,6 @@ export default function TermsAndConditions({setNotAccepted}) {
             </svg>
             Terms and Services
           </span>
-          
         </header>
         <section className="modal-container-body rtf">
           <span>
@@ -158,10 +168,7 @@ export default function TermsAndConditions({setNotAccepted}) {
         </section>
         <footer className="modal-container-footer">
           {/* <button className="button is-ghost">Decline</button> */}
-          <button
-            className="button is-primary"
-            onClick={handleAccept}
-          >
+          <button className="button is-primary" onClick={handleAccept}>
             Accept
           </button>
         </footer>

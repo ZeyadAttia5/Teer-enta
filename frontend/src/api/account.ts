@@ -78,3 +78,11 @@ export const redeemPoints = async (userId : number) =>{
 export const getAllPreferences = async () =>{
     return await axios.get(`${API_BASE_URL}/account/preferences`);
 }
+
+export const requestAccountDeletion = async () =>{
+    return await axios.delete(`${API_BASE_URL}/account/requestAccountDeletion`,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+}

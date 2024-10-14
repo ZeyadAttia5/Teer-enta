@@ -32,6 +32,7 @@ const cards = [
 
 const TouristWelcome = ({ setFlag }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  
   setFlag(false);
   const [notAccepted, setNotAccepted] = useState(true);
   return (
@@ -39,7 +40,7 @@ const TouristWelcome = ({ setFlag }) => {
       {notAccepted &&
         (user && (user.userRole === "TourGuide" ||
           user.userRole === "Advertiser" ||
-          user.userRole === "Seller")) && (
+          user.userRole === "Seller") && !user.isTermsAndConditionsAccepted) && (
           <TermsAndConditions setNotAccepted={setNotAccepted} />
         )}
       <div className='relative bg-[#075B4C] z-10 overflow-scroll  size-full flex flex-col  items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
