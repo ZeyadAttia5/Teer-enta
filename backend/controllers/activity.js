@@ -80,7 +80,6 @@ exports.createActivity = async (req, res, next) => {
     }
 };
 
-
 exports.updateActivity = async (req, res, next) => {
     try {
         const {id} = req.params;
@@ -252,6 +251,112 @@ exports.activateActivity = async (req, res) => {
     }
 }
 
+exports.addRatingToActivity = async (req, res) => {
+    try {
+      const { id } = req.params; 
+      const { rating } = req.body; 
+  
+      const userId = req.user._id;
+  
+      const activity = await Activity.findById(id);
+  
+      if (!activity) {
+        return res.status(404).json({ message: "Activity not found" });
+      }
+  
+      const booking = await BookedActivity.findOne({ 
+        createdBy: userId,
+        activity: id,
+        status: 'Completed'
+      });
+  
+      if (!booking) {
+        return res.status(400).json({ message: "You haven't completed this activity" });
+      }
+  
+      activity.ratings.push({
+        createdBy: userId,
+        rating: rating,
+      });
+  
+      await activity.save();
+  
+      res.status(200).json({ message: "Rating added successfully", activity });
+    } catch (err) {
+      errorHandler.SendError(res, err);
+    }
+};
+
+exports.getRatingsForActivity = async (req, res) => {
+    try {
+        const { id } = req.params; 
+
+        const activity = await Activity.findById(id)
+        .populate('ratings.user', 'username');
+
+        if (!activity) {
+        return res.status(404).json({ message: "Activity not found" });
+        }
+
+        res.status(200).json({ ratings: activity.ratings });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+  
+exports.addCommentToActivity = async (req, res) => {
+    try {
+      const { id } = req.params; 
+      const { comment } = req.body; 
+      const userId = req.user._id; 
+  
+      const activity = await Activity.findById(id).populate('createdBy');
+  
+      if (!activity || !activity.isActive) {
+        return res.status(404).json({ message: "Activity not found or inactive" });
+      }
+  
+      const booking = await BookedActivity.findOne({ 
+        activity: id,
+        createdBy: userId,
+        isActive: true,
+        status: 'Completed'
+      });
+  
+      if (!booking) {
+        return res.status(400).json({ message: "You haven't attended this activity" });
+      }
+  
+      activity.comments.push({
+        createdBy: userId,
+        comment: comment,
+      });
+  
+      await activity.save();
+  
+      res.status(200).json({ message: "Comment added successfully", activity });
+    } catch (err) {
+      errorHandler.SendError(res, err);
+    }
+};
+  
+exports.getCommentsForActivity = async (req, res) => {
+    try {
+        const { id } = req.params; 
+
+        const activity = await Activity.findById(id)
+        .populate('comments.user', 'username'); 
+
+        if (!activity || !activity.isActive) {
+        return res.status(404).json({ message: "Activity not found or inactive" });
+        }
+
+        res.status(200).json({ comments: activity.comments });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+  
 
 
 
