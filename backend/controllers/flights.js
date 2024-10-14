@@ -1,6 +1,7 @@
 const Amadeus = require('amadeus');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
+// Initialize the Amadeus client with your API credentials
 const amadeus = new Amadeus({
     clientId: process.env.AMADEUS_CLIENT_ID,
     clientSecret: process.env.AMADEUS_CLIENT_SECRET
@@ -8,12 +9,12 @@ const amadeus = new Amadeus({
 
 // Get airports by city or by country
 exports.getAirports = async (req, res) => {
-    const {keyword, countryCode} = req.query();
+    const {keyword, countryCode} = req.params;
     try{
         const response = await amadeus.client.get("/v1/reference-data/locations", {
-            keyword: keyword,
+            keyword: keyword,  // Ensure the keyword is "Cairo"
             subType: "AIRPORT,CITY",
-            "countryCode": countryCode,
+            "countryCode": countryCode,  // Filter for Egyptian airports
             "page[offset]": 10
         });
 
@@ -30,7 +31,7 @@ exports.getAirports = async (req, res) => {
 // returnDate: returnDate,
 exports.getFlightOffers = async (req, res) => {
 
-    const {origin, destinationAirport, departureDate, adults} = req.query();
+    const {origin, destinationAirport, departureDate, adults} = req.params;
 
     try {
         const offers = await amadeus.shopping.flightOffersSearch.get({

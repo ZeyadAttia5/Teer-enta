@@ -30,6 +30,7 @@ import ConfirmationModal from "./components/shared/ConfirmationModal.js";
 import IternaryDetails from "./components/Itinerary/IternaryDetails.tsx";
 import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
 import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
+import ChangePassword from "./components/Profile/ChangePassword.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -175,6 +176,10 @@ function App() {
             path="/touristActivities"
             element={<TouristActivity setFlag={setFlag} />}
           />
+          <Route
+          path="/changePassword"
+          element={<ChangePassword setFlag={setFlag} />}
+        />
         </Routes>
         <Toaster />
       </Router>

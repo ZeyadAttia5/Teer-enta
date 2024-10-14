@@ -3,13 +3,6 @@ const Advertiser = require("../models/Users/Advertiser");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const bcrypt = require('bcryptjs');
 const userModel = require('../models/Users/userModels');
-const Activity = require('../models/Activity/Activity');
-const Itinerary = require('../models/Itinerary/Itinerary');
-const Transportation = require('../models/Transportation');
-const Product = require('../models/Product/Product');
-const Tourist = require("../models/Users/Tourist");
-const PreferenceTag = require("../models/Itinerary/PreferenceTags");
-const ActivityCategory = require("../models/Activity/ActivityCategory");
 
 
 exports.deleteAccount = async (req, res) => {
