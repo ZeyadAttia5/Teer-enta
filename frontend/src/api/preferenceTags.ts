@@ -1,12 +1,31 @@
 import axios, { AxiosResponse } from "axios";
 import { TPreferenceTag } from "../types/Itinerary/PreferenceTag";
 
-// import http from "./http";
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+const token = localStorage.getItem("accessToken");
 
+export const getPreferenceTags = async () =>
+  await axios.get<TPreferenceTag[]>(`${BASE_URL}/preferenceTag/`);
 
-export const getPreferenceTags = async (): Promise<TPreferenceTag[]> => {
-    const response = await axios.get<TPreferenceTag[]>(`${API_BASE_URL}/preferenceTag/`);
-    return response.data;
-};
+export const createPreferenceTag = async (preferenceTag: TPreferenceTag) =>
+    await axios.post<TPreferenceTag>(`${BASE_URL}/preferenceTag/create`, preferenceTag,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+
+export const updatePreferenceTag = async (preferenceTag: TPreferenceTag) =>
+    await axios.put<TPreferenceTag>(`${BASE_URL}/preferenceTag/update/`+preferenceTag._id, preferenceTag,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+
+export const deletePreferenceTag = async (id: number) =>
+    await axios.delete<TPreferenceTag>(`${BASE_URL}/preferenceTag/delete/${id}`,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+

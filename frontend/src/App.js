@@ -1,96 +1,185 @@
 import "./index.css";
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import DeleteUser from "./components/deleteUser.js";
-import AddTourismGovernor from "./components/addTourismGovernor.js";
-import AddAdmin from "./components/addAdmin.js";
-import CreateCategory from "./components/CRUDactivitycategory/addActivityCategory.js";
-import DeleteActivityCategory from "./components/CRUDactivitycategory/deleteActivityCategory.js";
-import ViewActivityCategory from "./components/CRUDactivitycategory/viewActivityCategory.js";
-import UpdateActivityCategory from "./components/CRUDactivitycategory/updateActivityCategory.js";
 import { Toaster } from "react-hot-toast";
-import Signup from "./screens/signup/Signup.js";
-import Login from "./screens/login/login.js";
-import Profile from "./screens/profile/profile.js";
-import CreateActivity from "./components/CRUDactivity/createActivity.js";
-import ViewActivity from "./components/CRUDactivity/viewActivity.js";
-import UpdateActivity from "./components/CRUDactivity/updateActivity.js";
-import DeleteActivity from "./components/CRUDactivity/deleteActivity.js";
-import CreateTag from "./components/CRUDtag/createTag.js";
-import ViewTag from "./components/CRUDtag/viewTag.js";
-import UpdateTag from "./components/CRUDtag/updateTag.js";
-import DeleteTag from "./components/CRUDtag/deleteTag.js";
-import CreateTouristItinerary from "./components/CRUDtouristItinerary/createTouristItinerary.js";
-import ReadTouristItinerary from "./components/CRUDtouristItinerary/readTouristItinerary.js";
-import ReadAllTouristItinerary from "./components/CRUDtouristItinerary/readAllTouristItinerary.js";
-import UpdateTouristItinerary from "./components/CRUDtouristItinerary/updateTouristItinerary.js";
-import Activity from "./screens/Activity.tsx"; // From feat/activities
-
-import TouristWelcome from "./screens/TouristWelcome.jsx";
-import ReadHistoriaclPlaces from './components/historicalPlaces/readHistoriaclPlaces.jsx';
-import CreateHistoricalPlaces from './components/historicalPlaces/createHistoricalPlaces.jsx';
-import UpdateHistoricalPlaces from './components/historicalPlaces/updateHistoriaclPlaces.jsx';
-import DeleteHistoricalPlaces from './components/historicalPlaces/deleteHistoriaclPlaces.jsx';
+import Signup from "./components/Auth/Signup/Signup.js";
+import Login from "./components/Auth/Login/login.js";
+import Profile from "./components/Profile/profile.js";
+import ActivityList from "./components/Activity/ActivityList.tsx"; // From feat/activities
+import TouristWelcome from "./components/WelcomePage/TouristWelcome.jsx";
+import ReadHistoriaclPlaces from "./components/HistoricalPlaces/readHistoriaclPlaces.jsx";
+import CreateHistoricalPlaces from "./components/HistoricalPlaces/createHistoricalPlaces.jsx";
+import UpdateHistoricalPlaces from "./components/HistoricalPlaces/updateHistoriaclPlaces.jsx";
+import ShowHistoricalPlaces from "./components/HistoricalPlaces/showHistoricalPlaces.jsx";
 import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 import AddUser from "./components/Users/addUser/addUser";
 
-import Navbar from "./components/Store/navbar";
-import ProductGrid from "./components/Store/productGrid";
 import ProductDetails from "./components/Store/productDetails";
 import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
 import EditProductForm from "./components/Store/editProductForm";
-import TourGuideItinerary from "./screens/Itinerary/ItineraryScreen.jsx";
+import IternaryScreen from "./components/Itinerary/ItineraryScreen.jsx";
+import PreferenceTags from "./components/Tags/PrefrenceTags.tsx";
+import ActivityCategories from "./components/Activity/ActivityCategories.tsx";
+import Tags from "./components/Tags/Tags.tsx";
+import DrawerBar from "./components/shared/SideBar/Drawer.js";
+import TouristNavBar from "./components/shared/NavBar/TouristNavBar.jsx";
+import AllActivitiesCRUD from "./components/Activity/AllActivitiesCRUD.tsx";
+import ConfirmationModal from "./components/shared/ConfirmationModal.js";
+import IternaryDetails from "./components/Itinerary/IternaryDetails.tsx";
+import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
+import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
+import ChangePassword from "./components/Profile/ChangePassword.js";
+
 function App() {
+  const [flag, setFlag] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const [visible, setVisible] = useState(false);
+  const [isNavigate, setIsNavigate] = useState(false);
+
+  const showDrawer = () => {
+    setVisible(true);
+  };
+
+  const onClose = () => {
+    setVisible(false);
+  };
+
+  const onLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    setIsNavigate(true);
+    setModalOpen(false);
+  };
+
   return (
-    <div className="App">
+    <div className="App relative">
       <Router>
+        {!flag && (
+          <DrawerBar
+            onClose={onClose}
+            showDrawer={showDrawer}
+            drawerVisible={visible}
+          />
+        )}
+        {(
+          <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  ">
+            <TouristNavBar
+              setModalOpen={setModalOpen}
+              isNavigate={isNavigate}
+              setIsNavigate={setIsNavigate}
+            />
+          </div>
+        )}
+        <ConfirmationModal
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          onConfirm={onLogout}
+          message={`Are you sure you want to log out?`}
+        />
         <Routes>
-        <Route path="/" element={<TouristWelcome/>}/> // t
-        <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-          {/*<Route path="/delete-user" element={<DeleteUser />} />*/}
-          {/*<Route path="/add-tourism-governor" element={<AddTourismGovernor />} />*/}
-          {/*<Route path="/add-admin" element={<AddAdmin />} />*/}
-          <Route path="/create-activity-category" element={<CreateCategory />} />
-          {/*<Route path="/delete-activity-category" element={<DeleteActivityCategory />} />*/}
-          <Route path="/view-activity-categories" element={<ViewActivityCategory />} />
-          {/*<Route path="/update-activity-category" element={<UpdateActivityCategory />} />*/}
-          <Route path="/create-activity" element={<CreateActivity />} />
-          <Route path="/view-activity" element={<ViewActivity />} />
-          {/*<Route path="/update-activity/:id" element={<UpdateActivity />} />*/}
-          {/*<Route path="/delete-activity/:id" element={<DeleteActivity />} />*/}
-          {/*<Route path="/view-activities" element={<ViewActivity />} /> */}
-          {/*<Route path="/update-activity" element={<UpdateActivity />} />*/}
-          {/*<Route path="/delete-activity" element={<DeleteActivity />} />*/}
-          <Route path="/create-tag" element={<CreateTag />} />
-          <Route path="/view-tags" element={<ViewTag />} />
-          {/*<Route path="/update-tag" element={<UpdateTag />} />*/}
-          {/*<Route path="/delete-tag" element={<DeleteTag />} />*/}
-          <Route path="/create-tourist-itinerary" element={<CreateTouristItinerary />}/>
-          <Route path="/read-tourist-itinerary" element={<ReadTouristItinerary />}/>
-          <Route path="/read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
-          <Route path="/update-tourist-itinerary" element={<UpdateTouristItinerary />}/>
-          <Route path="/activity" element={<Activity />} />
-          <Route path="/historicalPlace" element={<ReadHistoriaclPlaces />} /> {/*tested*/}
-          <Route path="/historicalPlace/create" element={<CreateHistoricalPlaces />} /> {/*tested*/}
-          <Route path="/historicalPlace/update/:id" element={<UpdateHistoricalPlaces />} /> {/*tested*/}
-          <Route path="/historicalPlace/delete/:id" element={<DeleteHistoricalPlaces />} /> {/*tested*/}
-          <Route path="/allUsers" element={<AllUsers />} /> {/*tested*/}
-          <Route path="/pendingUsers" element={<PendingUsers />} /> {/*tested*/}
-          <Route path="/addUser" element={<AddUser />} /> {/*tested*/}
-          <Route path="create-tourist-itinerary" element={<CreateTouristItinerary />}/>
-          <Route path="read-tourist-itinerary" element={<ReadTouristItinerary />}/>
-          <Route path="read-all-tourist-itinerary" element={<ReadAllTouristItinerary />}/>
-          <Route path="update-tourist-itinerary"element={<UpdateTouristItinerary />}/>
-          {/*<Navbar />*/}
-          <Route path="/products" element={<ProductGrid />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/admin/product/form" element={<AdminProductForm />} />
-          <Route path="/admin/products" element={<AdminProductGrid />} />
-          <Route path="/admin/edit-product/:productId" element={<EditProductForm />} />
-          <Route path="/tourguide-itinerary" element={<TourGuideItinerary />} />
+          <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
+          <Route path="/signup" element={<Signup setFlag={setFlag} />} />
+          <Route path="/login" element={<Login setFlag={setFlag} />} />
+          <Route path="/profile" element={<Profile setFlag={setFlag} />} />
+          <Route
+            path="/preference-tags"
+            element={<PreferenceTags setFlag={setFlag} />}
+          />
+          <Route
+            path="/activities"
+            element={<AllActivitiesCRUD setFlag={setFlag} />}
+          />
+          <Route
+            path="/activities/my"
+            element={<AllActivitiesCRUD setFlag={setFlag} />}
+          />
+          <Route
+            path="/activity-categories"
+            element={<ActivityCategories setFlag={setFlag} />}
+          />
+          <Route path="/tags" element={<Tags setFlag={setFlag} />} />
+          <Route
+            path="/activity"
+            element={<ActivityList setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace"
+            element={<ReadHistoriaclPlaces setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace/my"
+            element={<ReadHistoriaclPlaces setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace/create"
+            element={<CreateHistoricalPlaces setFlag={setFlag} />}
+          />
+          <Route
+            path="/historicalPlace/update/:id"
+            element={<UpdateHistoricalPlaces setFlag={setFlag} />}
+          />
+
+          <Route
+            path="/historicalPlace/details/:id"
+            element={<ShowHistoricalPlaces setFlag={setFlag} />}
+          />
+          <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />
+          <Route
+            path="/pendingUsers"
+            element={<PendingUsers setFlag={setFlag} />}
+          />
+          <Route path="/addUser" element={<AddUser setFlag={setFlag} />} />
+          <Route
+            path="/products"
+            element={<AdminProductGrid setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/:id"
+            element={<ProductDetails setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/create"
+            element={<AdminProductForm setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/edit/:productId"
+            element={<EditProductForm setFlag={setFlag} />}
+          />
+          <Route
+            path="/itinerary/*"
+            element={
+              <Routes>
+                <Route
+                  path="activityDetails/:id"
+                  element={<ActivityDetails setFlag={setFlag} />}
+                />
+                <Route
+                  path="/"
+                  element={<IternaryScreen setFlag={setFlag} />}
+                />
+                <Route
+                  path="iternaryDetails/:id"
+                  element={<IternaryDetails setFlag={setFlag} />}
+                />
+              </Routes>
+            }
+          />
+
+          <Route
+            path="/itinerary/my"
+            element={<IternaryScreen setFlag={setFlag} />}
+          />
+          <Route
+            path="/touristActivities"
+            element={<TouristActivity setFlag={setFlag} />}
+          />
+          <Route
+          path="/changePassword"
+          element={<ChangePassword setFlag={setFlag} />}
+        />
         </Routes>
         <Toaster />
       </Router>

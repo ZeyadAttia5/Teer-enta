@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Select, message } from 'antd';
 import axios from 'axios';
+import {getUsers , acceptUser ,rejectUser,addUser,deleteUser,getPendingAccounts} from "../../../api/account.ts";
 
 const { Option } = Select;
 
-const AddUser = () => {
+const AddUser = ({setFlag}) => {
+    setFlag(false);
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     const Url = process.env.REACT_APP_BACKEND_URL ; // Replace with your backend URL
 
@@ -15,7 +19,8 @@ const AddUser = () => {
         setLoading(true);
         try {
             // Sending the form data to the backend endpoint
-            const response = await axios.post(`${Url}/account/create`, values);
+            console.log(values);
+            const response = await addUser(values);
             message.success('User registered successfully');
             form.resetFields();
         } catch (error) {

@@ -1,29 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
+import {getProduct, updateProduct} from "../../api/products.ts"; // Import useNavigate
 
-const EditProductForm = () => {
+const EditProductForm = ({setFlag}) => {
+  setFlag(false);
   const { productId } = useParams();
   const navigate = useNavigate(); // Initialize useNavigate
   const [product, setProduct] = useState({
     name: '',
     description: '',
     price: '',
-    seller: '',
     image: '', 
     quantity: '', 
   });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); 
-  const [success, setSuccess] = useState(null); 
+  const [success, setSuccess] = useState(null);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     // Fetch product data by ID
     const fetchProductData = async () => {
       try {
         const backURL = process.env.REACT_APP_BACKEND_URL;
-        const response = await axios.get(`${backURL}/product/${productId}`);
+        const response = await getProduct(productId);
         setProduct(response.data);
       } catch (err) {
         setError('Failed to fetch product data');
@@ -51,10 +54,11 @@ const EditProductForm = () => {
 
     try {
       const backURL = process.env.REACT_APP_BACKEND_URL;
-      await axios.put(`${backURL}/product/update/${productId}`, product); 
+      console.log(product) ;
+      await updateProduct(product, productId);
       setSuccess('Product successfully updated!');
       // Navigate back to the admin grid after successful update
-      setTimeout(() => navigate('/product/adminGrid'), 1000); // Redirect after a short delay
+      setTimeout(() => navigate('/products'), 1000); // Redirect after a short delay
     } catch (err) {
       setError('Failed to update product');
     } finally {
@@ -117,18 +121,6 @@ const EditProductForm = () => {
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Seller Name:</label>
-          <input
-            type="text"
-            name="seller"
-            value={product.seller}
-            onChange={handleChange}
-            placeholder="Enter seller name"
-            required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
-          />
-        </div>
 
         <div className="mb-4">
           <label className="block text-lg text-customGreen mb-2">Image URL:</label>

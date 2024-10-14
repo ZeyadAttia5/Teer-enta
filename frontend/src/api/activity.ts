@@ -1,20 +1,86 @@
 import { TActivity } from "../types/Activity/Activity";
-import http from "./http";
+// import http from "./http";
 import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+const user = JSON.parse(localStorage.getItem("user") || "{}");
+const token = localStorage.getItem("accessToken");
 
-const getActivities = async () => await axios.get<TActivity[]>(`${API_BASE_URL}/activity`);
+const getActivities = async () =>
+  await axios.get<TActivity[]>(`${API_BASE_URL}/activity`);
+
+const getTouristActivities = async () =>{
+   return await axios.get(`${API_BASE_URL}/activity/`, {
+        params: { populate: "category preferenceTags" },
+    });
+}
+
+const getMyActivities = async () => {
+  return await axios.get<TActivity[]>(`${API_BASE_URL}/activity/my`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
+};
 const getUpcomingActivities = async () =>
   await axios.get<TActivity[]>(`${API_BASE_URL}/activity/upcoming`);
+
 const createActivity = async (activity: TActivity) =>
-  await axios.post<TActivity>(`${API_BASE_URL}/activity`, activity);
+  // console.log(activity)
+  await axios.post<TActivity>(`${API_BASE_URL}/activity/create`, activity, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
+
 const updateActivity = async (
   activity: TActivity,
   activityId: string | Number
-) => await axios.put<TActivity>(`${API_BASE_URL}/activity/${activityId}`, activity);
+) =>
+  await axios.put<TActivity>(
+    `${API_BASE_URL}/activity/update/${activityId}`,
+    activity,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    }
+  );
+
 const deleteActivity = async (activityId: string | Number) =>
-  await axios.delete<TActivity>(`${API_BASE_URL}/activity/${activityId}`);
+  await axios.delete<TActivity>(
+    `${API_BASE_URL}/activity/delete/${activityId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    }
+  );
+
+// use the endpoint /activity/one/:id to get a single activity by its id
+const getActivity = async (id: string | number) =>
+  await axios.get<TActivity>(`${API_BASE_URL}/activity/one/${id}`);
+
+const bookActivity = async (activityId: string | number) =>
+    await axios.post<TActivity>(
+        `${API_BASE_URL}/activity/book/${activityId}`,
+        {},
+        {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+        }
+    );
+
+const cancleActivityBooking = async (activityId: string | number) =>
+    await axios.patch<TActivity>(
+        `${API_BASE_URL}/activity/cancel/book/${activityId}`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+        });
 
 export {
   getActivities,
@@ -22,4 +88,9 @@ export {
   updateActivity,
   deleteActivity,
   getUpcomingActivities,
+  getMyActivities,
+  getActivity,
+    getTouristActivities ,
+    bookActivity ,
+    cancleActivityBooking
 };

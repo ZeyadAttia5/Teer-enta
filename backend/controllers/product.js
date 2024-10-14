@@ -1,4 +1,5 @@
 const product = require('../models/Product/Product');
+const Order = require('../models/Product/Order');
 const mongoose = require("mongoose");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
@@ -13,7 +14,7 @@ exports.createProduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
     try {
-        const products = await product.find();
+        const products = await product.find({isActive: true});
         if (products.length === 0) {
             return res.status(404).send({message: 'No products found'});
         }
@@ -23,13 +24,55 @@ exports.getProducts = async (req, res) => {
     }
 }
 
+exports.viewAvailableQuantityAndSales = async (req, res) => {
+    try {
+        // Step 1: Fetch all active products created by the logged-in user
+        const products = await product.find({ isActive: true, createdBy: req.user._id });
+
+        // Step 2: Fetch all orders that are confirmed (i.e., not canceled or pending)
+        const orders = await Order.find({ status: { $ne: 'Cancelled' }, isActive: true }).populate('products.product');
+
+        // Step 3: Manually calculate the total quantity sold and total sales for each product
+        const productSales = products.map(product => {
+            let totalQuantitySold = 0;
+            let totalSales = 0;
+
+            // Loop through orders and aggregate sales for each product
+            orders.forEach(order => {
+                order.products.forEach(orderProduct => {
+                    if (orderProduct.product._id.toString() === product._id.toString()) {
+                        totalQuantitySold += orderProduct.quantity;
+                        totalSales += orderProduct.quantity * product.price;
+                    }
+                });
+            });
+
+            // Return the product data with its available quantity, total quantity sold, and total sales
+            return {
+                _id: product._id,
+                name: product.name,
+                availableQuantity: product.quantity,  // Available quantity in stock
+                totalQuantitySold: totalQuantitySold,  // Quantity sold in total
+                totalSales: totalSales  // Total sales amount
+            };
+        });
+
+        // Step 4: Return the result
+        return res.status(200).json(productSales);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while fetching product sales data." });
+    }
+};
+;
+
 exports.getProduct = async (req, res) => {
     try {
         const productId = req.params.id;
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(400).send({message: 'Invalid product id'});
         }
-        const foundProduct = await product.findById(productId);
+        const foundProduct = await product.findById(productId).populate('createdBy');
         if (!foundProduct) {
             return res.status(404).send({message: 'Product not found'});
         }

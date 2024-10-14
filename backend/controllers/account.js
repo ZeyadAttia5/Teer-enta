@@ -3,7 +3,13 @@ const Advertiser = require("../models/Users/Advertiser");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const bcrypt = require('bcryptjs');
 const userModel = require('../models/Users/userModels');
-
+const Activity = require('../models/Activity/Activity');
+const Itinerary = require('../models/Itinerary/Itinerary');
+const Transportation = require('../models/Transportation');
+const Product = require('../models/Product/Product');
+const Tourist = require("../models/Users/Tourist");
+const PreferenceTag = require("../models/Itinerary/PreferenceTags");
+const ActivityCategory = require("../models/Activity/ActivityCategory");
 
 exports.deleteAccount = async (req, res) => {
     try {
@@ -61,7 +67,23 @@ exports.getAllAcceptedUsers = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+exports.getAllPreferences = async (req, res) => {
+   try {
+        const prefrerenceTags = await PreferenceTag.find({isActive: true});
+        const activityCategories = await ActivityCategory.find({isActive: true});
 
+        if (prefrerenceTags.length === 0) {
+            return res.status(404).json({message: 'No Preference Tags found'});
+        }
+
+        if (activityCategories.length === 0) {
+            return res.status(404).json({message: 'No Activity Categories found'});
+        }
+        res.status(200).json({prefrerenceTags, activityCategories});
+    }catch (err) {
+       errorHandler.SendError(res, err);
+   }
+}
 
 exports.acceptRequest = async (req, res) => {
     try {
@@ -89,8 +111,8 @@ exports.rejectRequest = async (req, res) => {
             return res.status(404).json({message: "user not found"});
         }
         const model = userModel[user.userRole];
-        const updatedUser = await model.findByIdAndUpdate(id, {isAccepted: 'Rejected'}, {new: true}) ;
-        return res.status(200).json({message: "request rejected successfully" , updatedUser}) ;
+        const updatedUser = await model.findByIdAndUpdate(id, {isAccepted: 'Rejected'}, {new: true});
+        return res.status(200).json({message: "request rejected successfully", updatedUser});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -104,15 +126,133 @@ exports.getAllUsers = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
-exports.requestDeleteMyAccount = async (req,res) =>{
-    try{
-        const user = req.user ;
-        if(user.role === 'Tourist'){
-            const ifBookingItinerary = await BookingItinerary.find({touristId : user._id});
-        }
 
-    }catch (err) {
-        errorHandler.SendError
+exports.acceptTermsAndConditions = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+        const userRole = user.userRole;
+        const model = userModel[userRole];
+        const updatedUser = await model.findByIdAndUpdate(userId, {isTermsAndConditionsAccepted: true}, {new: true});
+        return res.status(200).json({message: "Terms and conditions accepted successfully", updatedUser});
+    } catch (err) {
+        errorHandler.SendError(res, err);
     }
 }
+
+exports.requestMyAccountDeletion = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+        const bookedActivities = await BookedActivity.find({createdBy: userId, status: "Pending"});
+        if (user.userRole === "Tourist") {
+            if (bookedActivities.length > 0) {
+                return res.status(400).json({message: "You have upcoming activities, you can't delete your account"});
+            }
+            const bookedItinerary = await BookedItinerary.find({createdBy: userId, status: "Pending"});
+            if (bookedItinerary.length > 0) {
+                return res.status(400).json({message: "You have upcoming itineraries, you can't delete your account"});
+            }
+            const bookedTransportation = await BookedTransportation.find({createdBy: userId, status: "Pending"});
+            if (bookedTransportation.length > 0) {
+                return res.status(400).json({message: "You have upcoming transportation, you can't delete your account"});
+            }
+        }
+
+        if (user.userRole === "Advertiser") {
+            await Activity
+                .find({createdBy: userId})
+                .updateMany({isActive: false});
+            await Transportation
+                .find({createdBy: userId})
+                .updateMany({isActive: false});
+        }
+        if (user.userRole === "TourGuide") {
+            await Itinerary
+                .find({createdBy: userId})
+                .updateMany({isActive: false});
+        }
+        if (user.userRole === "Seller") {
+            await Product
+                .find({createdBy: userId})
+                .updateMany({isActive: false});
+        }
+        await User.findByIdAndDelete(userId);
+        return res.status(200).json({message: "Account deleted successfully"});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+// body here should look like this
+// preferences:{
+//     preferenceTags: [id1, id2, id3],
+//     activityCategories: [id1, id2, id3]
+// }
+exports.chooseMyPreferences = async (req, res, next) => {
+    try {
+        const id = req.user._id;
+
+        const tourist = await Tourist.findById(id);
+        if (!tourist) {
+            return res.status(404).json({message: 'Tourist not found'});
+        }
+
+        await Tourist.findByIdAndUpdate(
+            id,
+            {
+                preferences: req.body
+            },
+            {new: true, runValidators: true}
+        );
+
+        res.status(200).json({message: 'Preferences updated successfully'});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.redeemPoints = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({message: 'Tourist not found'});
+        }
+
+        if(user.userRole !== 'Tourist'){
+            return res.status(400).json({ message: 'Invalid or unsupported user role' });
+        }
+        if(user.loyalityPoints < 10000){
+            return res.status(400).json({ message: 'Not enough points to redeem' });
+        }
+        const toRedeem = Math.floor(user.loyalityPoints/10000);
+        user.wallet += toRedeem*100;
+        user.loyalityPoints -= toRedeem*10000;
+
+        await Tourist.findOneAndUpdate(
+            { _id: userId },
+            { $set: { wallet: user.wallet, loyaltyPoints: user.loyalityPoints } },
+            { new: true, upsert: true, runValidators: true }
+        );
+
+        if (!user.hasProfile) {
+            user.hasProfile = true;
+            await user.save();
+        }
+        return res.status(200).json({message: "Successfully redeemed points",
+            redeemedPoints: toRedeem*10000,
+            remaining: user.loyalityPoints,
+            wallet: user.wallet
+        });
+    } catch(err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+
+
+
+
+
 

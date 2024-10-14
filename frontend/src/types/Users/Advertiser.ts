@@ -3,8 +3,11 @@ import { TUser } from './User'; // Assuming the base user type is defined
 export type TAdvertiser = TUser & {
     companyName?: string;
     website?: string;
-    profileImage?: string;
+    logoUrl?: string;
     profileDocument?: string;
+    idCardUrl?: string;
+    taxationCardUrl?: string;
+    isTermsAndConditionsAccepted?: boolean;
     hotline?: string;
     companyProfile?: string;
     industry?: string;

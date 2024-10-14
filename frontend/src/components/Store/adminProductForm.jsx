@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
+import {addProduct} from "../../api/products.ts"; // Import axios
 
-const AdminProductForm = () => {
+const AdminProductForm = ({setFlag}) => {
+  setFlag(false);
   const [product, setProduct] = useState({
     name: '',
     description: '',
@@ -11,6 +13,8 @@ const AdminProductForm = () => {
     quantity: '',
   });
 
+  const user  = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
   const [loading, setLoading] = useState(false); // Loading state
   const [error, setError] = useState(null); // Error state
   const [success, setSuccess] = useState(null); // Success message state
@@ -32,7 +36,7 @@ const AdminProductForm = () => {
     try {
       const backURL = process.env.REACT_APP_BACKEND_URL;
       // Replace with your API endpoint
-      const response = await axios.post(`${backURL}/product/create`, product);
+      const response = await addProduct(product);
       console.log('Product submitted:', response.data);
       setSuccess('Product successfully created!');
 
@@ -41,7 +45,7 @@ const AdminProductForm = () => {
         name: '',
         description: '',
         price: '',
-        seller: '',
+        // seller: '',
         imageUrl: '',
         quantity: '',
       });
@@ -99,18 +103,18 @@ const AdminProductForm = () => {
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Seller Name:</label>
-          <input
-            type="text"
-            name="seller"
-            value={product.seller}
-            onChange={handleChange}
-            placeholder="Enter seller name"
-            required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
-          />
-        </div>
+        {/*<div className="mb-4">*/}
+        {/*  <label className="block text-lg text-customGreen mb-2">Seller Name:</label>*/}
+        {/*  <input*/}
+        {/*    type="text"*/}
+        {/*    name="seller"*/}
+        {/*    value={product.seller}*/}
+        {/*    onChange={handleChange}*/}
+        {/*    placeholder="Enter seller name"*/}
+        {/*    required*/}
+        {/*    className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"*/}
+        {/*  />*/}
+        {/*</div>*/}
 
         <div className="mb-4">
           <label className="block text-lg text-customGreen mb-2">Image URL:</label>
@@ -142,7 +146,7 @@ const AdminProductForm = () => {
           className={`bg-customGreen text-white px-4 py-2 rounded-lg transition-colors duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-darkerGreen'}`}
           disabled={loading}
         >
-          {loading ? 'Submitting...' : 'Submit Product'}
+          {loading ? 'Submitting...' : 'Add product'}
         </button>
       </form>
     </div>

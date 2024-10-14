@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Spin, message, Button } from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Table, Spin, message, Button} from 'antd';
 import axios from 'axios';
+import {getPendingAccounts,acceptUser,rejectUser} from "../../../api/account.ts";
 
-const PendingUsers = () => {
+const PendingUsers = ({setFlag}) => {
+    setFlag(false);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const Url = process.env.REACT_APP_BACKEND_URL;
+    const user = JSON.parse(localStorage.getItem('user'));
+    const accessToken = localStorage.getItem('accessToken');
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get(`${Url}/account/pending`);
+                const response =await getPendingAccounts();
                 console.log(response.data); // Log the API response
                 if (Array.isArray(response.data)) {
                     setUsers(response.data);
@@ -28,9 +32,9 @@ const PendingUsers = () => {
         fetchUsers();
     }, []);
 
-    const acceptUser = async (id) => {
+    const acceptUserr = async (id) => {
         try {
-            await axios.patch(`${Url}/account/accept/${id}`);
+            await acceptUser(id);
             message.success('User accepted successfully');
             setUsers(prevUsers => prevUsers.filter(user => user._id !== id));
         } catch (error) {
@@ -39,9 +43,9 @@ const PendingUsers = () => {
         }
     };
 
-    const rejectUser = async (id) => {
+    const rejectUserr = async (id) => {
         try {
-            await axios.patch(`${Url}/account/reject/${id}`);
+            await rejectUser(id);
             message.success('User rejected successfully');
             setUsers(prevUsers => prevUsers.filter(user => user._id !== id));
         } catch (error) {
@@ -56,19 +60,24 @@ const PendingUsers = () => {
     };
 
     const columns = [
-        { title: 'Username', dataIndex: 'username', key: 'username' },
-        { title: 'Email', dataIndex: 'email', key: 'email' },
-        { title: 'Role', dataIndex: 'userRole', key: 'userRole' },
-        { title: 'Has Profile', dataIndex: 'hasProfile', key: 'hasProfile', render: (hasProfile) => (hasProfile ? 'Yes' : 'No') },
+        {title: 'Username', dataIndex: 'username', key: 'username'},
+        {title: 'Email', dataIndex: 'email', key: 'email'},
+        {title: 'Role', dataIndex: 'userRole', key: 'userRole'},
+        {
+            title: 'Has Profile',
+            dataIndex: 'hasProfile',
+            key: 'hasProfile',
+            render: (hasProfile) => (hasProfile ? 'Yes' : 'No')
+        },
         {
             title: 'Action',
             key: 'action',
             render: (_, record) => (
                 <div>
-                    <Button type="primary" onClick={() => acceptUser(record._id)} style={{ marginRight: 8 }}>
+                    <Button type="primary" onClick={() => acceptUserr(record._id)} style={{marginRight: 8}}>
                         Accept
                     </Button>
-                    <Button type="danger" onClick={() => rejectUser(record._id)} style={{ marginRight: 8 }}>
+                    <Button type="danger" onClick={() => rejectUserr(record._id)} style={{marginRight: 8}}>
                         Reject
                     </Button>
                     <Button onClick={() => showDocuments(record._id)}>Show Documents</Button>
@@ -80,7 +89,7 @@ const PendingUsers = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <Spin size="large" />
+                <Spin size="large"/>
             </div>
         );
     }
