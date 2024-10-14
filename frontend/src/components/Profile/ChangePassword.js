@@ -16,7 +16,7 @@ const ChangePassword = () => {
         newPassword: newPassword,
       });
     } catch (error) {
-      setMessage("Wrong password");
+      setMessage(error.response.data.message);
       return;
     }
 
