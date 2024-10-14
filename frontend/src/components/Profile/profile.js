@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import unknownImage from "./unknown.jpg";
 import axios from "axios";
@@ -439,9 +440,9 @@ function Profile({setFlag}) {
                 </svg>
                 Edit Profile
               </button>
-              <button
+              <Link
                 className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
-                onClick={handleEdit}
+                to="/changePassword"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -458,7 +459,7 @@ function Profile({setFlag}) {
                   />
                 </svg>
                 Change password
-              </button>
+              </Link>
 
               {/* <button
                 className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
