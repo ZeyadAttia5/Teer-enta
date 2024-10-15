@@ -9,51 +9,72 @@ const ComplaintsManagement = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
 
   useEffect(() => {
-    fetchComplaints();
+    const hardcodedComplaints = [
+      {
+        _id: "1",
+        title: "Complaint 1",
+        description: "Description for complaint 1",
+        body: "Body of complaint 1",
+        dateSubmitted: "2023-10-01",
+        createdBy: "User1",
+        status: "Pending",
+        reply: "Reply to complaint 1",
+      },
+      {
+        _id: "2",
+        title: "Complaint 2",
+        description: "Description for complaint 2",
+        body: "Body of complaint 2",
+        dateSubmitted: "2023-10-02",
+        createdBy: "User2",
+        status: "Resolved",
+        reply: "Reply to complaint 2",
+      },
+      {
+        _id: "3",
+        title: "Complaint 3",
+        description: "Description for complaint 3",
+        body: "Body of complaint 3",
+        dateSubmitted: "2023-10-03",
+        createdBy: "User3",
+        status: "Pending",
+        reply: "Reply to complaint 3",
+      },
+    ];
+
+    setComplaints(hardcodedComplaints);
+    setLoading(false);
   }, []);
-
-  const fetchComplaints = async () => {
-    // try {
-    //   const response = await getComplaints();
-    //   if (Array.isArray(response.data)) {
-    //     setComplaints(response.data);
-    //   } else {
-    //     message.error("Unexpected data format");
-    //   }
-    // } catch (error) {
-    //   const errorMessage =
-    //     error.response?.data?.message || "Failed to fetch complaints";
-    //   message.error(errorMessage);
-    // } finally {
-    //   setLoading(false);
-    // }
-  };
-
-  const updateStatus = async (id, newStatus) => {
-    // try {
-    //   await updateComplaintStatus(id, newStatus);
-    //   message.success(`Complaint status updated to ${newStatus}`);
-    //   setComplaints((prevComplaints) =>
-    //     prevComplaints.map((complaint) =>
-    //       complaint._id === id ? { ...complaint, status: newStatus } : complaint
-    //     )
-    //   );
-    // } catch (error) {
-    //   const errorMessage =
-    //     error.response?.data?.message || "Failed to update complaint status";
-    //   message.error(errorMessage);
-    // }
-  };
 
   const showComplaintDetails = (complaint) => {
     setSelectedComplaint(complaint);
     setModalVisible(true);
   };
 
+  const updateStatus = (complaintId, status) => {
+    try {
+      setComplaints((prevComplaints) => {
+        return prevComplaints.map((complaint) => {
+          if (complaint._id === complaintId) {
+            return { ...complaint, status };
+          }
+          return complaint;
+        });
+      });
+
+      message.success("Complaint status updated successfully");
+      // Fetch complaints again
+      // const data = await getComplaints();
+      // setComplaints(data);
+    } catch (error) {
+      message.error("Failed to update complaint status");
+    }
+  };
+
   const columns = [
     { title: "Title", dataIndex: "title", key: "title" },
-    { title: "Category", dataIndex: "category", key: "category" },
-    { title: "Status", dataIndex: "status", key: "status" },
+    { title: "Description", dataIndex: "description", key: "description" },
+    { title: "Body", dataIndex: "body", key: "body" },
     {
       title: "Date Submitted",
       dataIndex: "dateSubmitted",

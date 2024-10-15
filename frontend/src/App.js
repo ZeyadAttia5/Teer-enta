@@ -30,6 +30,7 @@ import ConfirmationModal from "./components/shared/ConfirmationModal.js";
 import IternaryDetails from "./components/Itinerary/IternaryDetails.tsx";
 import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
 import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
+import ComplaintsManagement from "./components/complaintsManagement.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -63,7 +64,7 @@ function App() {
             drawerVisible={visible}
           />
         )}
-        {(
+        {
           <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  ">
             <TouristNavBar
               setModalOpen={setModalOpen}
@@ -71,7 +72,7 @@ function App() {
               setIsNavigate={setIsNavigate}
             />
           </div>
-        )}
+        }
         <ConfirmationModal
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
@@ -174,6 +175,10 @@ function App() {
           <Route
             path="/touristActivities"
             element={<TouristActivity setFlag={setFlag} />}
+          />
+          <Route
+            path="ComplaintsManagement"
+            element={<ComplaintsManagement />}
           />
         </Routes>
         <Toaster />
