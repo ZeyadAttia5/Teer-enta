@@ -33,6 +33,7 @@ import TouristActivity from "./components/Activity/TouristActivity/TouristActivi
 import ChangePassword from "./components/Profile/ChangePassword.js";
 import DeleteAccountButton from "./components/Profile/DeleteAccountButton.js";
 import ComplaintsManagement from "./components/complaintsManagement.js";
+import CreateComplaint from "./components/Users/complain/createComplaint.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -190,6 +191,7 @@ function App() {
             path="ComplaintsManagement"
             element={<ComplaintsManagement />}
           />
+          <Route path="createComplaint" element={<CreateComplaint />} />
         </Routes>
         <Toaster />
       </Router>
