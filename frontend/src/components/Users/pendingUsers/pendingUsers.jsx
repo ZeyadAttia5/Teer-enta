@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Table, Spin, message, Button} from 'antd';
 import axios from 'axios';
-import {getPendingAccounts,acceptUser,rejectUser} from "../../../api/user.ts";
+import {getPendingAccounts,acceptUser,rejectUser} from "../../../api/account.ts";
 
 const PendingUsers = ({setFlag}) => {
     setFlag(false);

@@ -85,26 +85,3 @@ exports.deletePreferenceTag = async (req, res, next) => {
     }
 }
 
-exports.chooseMyPreferenceTags = async (req, res, next) => {
-    try {
-        const id = req.user._id;
-        const {tags} = req.body;
-
-        const tourist = await Tourist.findById(id);
-        if (!tourist) {
-            return res.status(404).json({message: 'Tourist not found'});
-        }
-
-        await Tourist.findByIdAndUpdate(
-            id,
-            {
-                preferenceTags: tags
-            },
-            {new: true, runValidators: true}
-        );
-
-        res.status(200).json({message: 'Preference Tags updated successfully'});
-    } catch (err) {
-        errorHandler.SendError(res, err);
-    }
-}

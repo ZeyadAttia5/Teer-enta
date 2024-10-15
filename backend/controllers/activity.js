@@ -169,11 +169,12 @@ exports.bookActivity = async (req, res) => {
         const existingBooking = await BookedActivity.findOne({
             activity: id,
             isActive: true,
+            status: 'Pending',
             createdBy: userId
         }).populate('activity');
 
-        if (existingBooking && existingBooking.activityDate.toISOString().split('T')[0] === activity.date.toISOString().split('T')[0]) {
-            return res.status(400).json({ message: "You have already booked this activity on the same date" });
+        if (existingBooking && existingBooking.date.toISOString().split('T')[0] === activity.date.toISOString().split('T')[0]) {
+            return res.status(400).json({ message: "You have already Pending booking on this activity on the same date" });
         }
 
 
@@ -181,7 +182,7 @@ exports.bookActivity = async (req, res) => {
             activity: id,
             createdBy: userId,
             status: 'Pending',
-            activityDate: activity.date
+            date: activity.date
         });
 
         return res.status(200).json({ message: "Activity booked successfully" });
@@ -202,8 +203,8 @@ exports.cancelActivityBooking = async (req, res) => {
         }
 
         const currentDate = new Date();
-        const activityDate = new Date(bookedActivity.activityDate);
-        const hoursDifference = (activityDate - currentDate) / (1000 * 60 * 60);
+        const date = new Date(bookedActivity.date);
+        const hoursDifference = (date - currentDate) / (1000 * 60 * 60);
 
         if (hoursDifference < 48) {
             return res.status(400).json({ message: "Cannot cancel the booking less than 48 hours before the activity" });

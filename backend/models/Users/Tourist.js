@@ -11,12 +11,10 @@ const touristSchema = new mongoose.Schema({
     loyalityPoints: {type: Number, default: 0},
     isActive: {type: Boolean, default: true},
     wallet: {type: Number, default: 0},
-    preferenceTags: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'PreferenceTags'
-        }
-    ],
+    preferences: {
+        preferenceTags: [{type: mongoose.Schema.Types.ObjectId, ref: 'PreferenceTag'}],
+        activityCategories: [{type: mongoose.Schema.Types.ObjectId, ref: 'ActivityCategory'}],
+    },
     complaints: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Complain'

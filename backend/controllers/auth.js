@@ -109,7 +109,8 @@ exports.changePassword = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         const doMatch = await bcrypt.compare(req.body.oldPassword, user.password);
-        if (!doMatch) return res.status(401).json({message: "Wrong Password"});
+        console.log(doMatch);
+        if (!doMatch) return res.status(401).json({message: "Wrong old Password"});
         const hashedPassword = await bcrypt.hash(req.body.newPassword, 12);
         const updatedUser = await User.findByIdAndUpdate(req.user._id, {password: hashedPassword}, {new: true});
         res.status(200).json({message: 'Password changed successfully.'});

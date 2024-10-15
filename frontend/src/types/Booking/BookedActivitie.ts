@@ -4,7 +4,7 @@ import {TTourist} from "../Users/Tourist";
 export type TBookedActivity = {
     _id: string;
     activity: TActivity; // ObjectId referencing 'ActivityList'
-    activityDate: string; // Date field
+    date: string; // Date field
     createdBy: TTourist; // ObjectId referencing 'User'
     status: 'Pending' | 'Completed' | 'Cancelled';
     isActive: boolean;

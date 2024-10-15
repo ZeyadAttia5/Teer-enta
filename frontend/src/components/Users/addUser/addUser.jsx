@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Select, message } from 'antd';
 import axios from 'axios';
-import {getUsers , acceptUser ,rejectUser,addUser,deleteUser,getPendingAccounts} from "../../../api/user.ts";
+import {getUsers , acceptUser ,rejectUser,addUser,deleteUser,getPendingAccounts} from "../../../api/account.ts";
 
 const { Option } = Select;
 

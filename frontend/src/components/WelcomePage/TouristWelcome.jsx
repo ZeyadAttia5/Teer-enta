@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import TouristInstructionCard from "./TouristInstructionCard";
-import TouristNavBar from "../shared/NavBar/TouristNavBar";
-
 import airplaneImage from "../../assets/airplane.png";
 import bedroom from "../../assets/bedroom.png";
 import banat from "../../assets/banat.png";
 import { Fade } from "react-awesome-reveal";
-
+import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 
 const cards = [
   {
@@ -32,14 +30,20 @@ const cards = [
   },
 ];
 
-const TouristWelcome = ({setFlag}) => {
- setFlag(false);
-
+const TouristWelcome = ({ setFlag }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  
+  setFlag(false);
+  const [notAccepted, setNotAccepted] = useState(true);
   return (
     <div className="relative">
+      {notAccepted &&
+        (user && (user.userRole === "TourGuide" ||
+          user.userRole === "Advertiser" ||
+          user.userRole === "Seller") && !user.isTermsAndConditionsAccepted) && (
+          <TermsAndConditions setNotAccepted={setNotAccepted} />
+        )}
       <div className='relative bg-[#075B4C] z-10 overflow-scroll  size-full flex flex-col  items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
-        
-        
         <Fade
           className="text-white left-[100px] top-[20%] absolute"
           direction="up"
@@ -54,9 +58,7 @@ const TouristWelcome = ({setFlag}) => {
           className="text-white left-[100px] top-[40%] absolute"
           direction="up"
           cascade
-        >
-          
-        </Fade>
+        ></Fade>
         <main className="w-[80%] h-full mt-[100vh] gap-20 justify-center flex flex-col m-0">
           {cards.map((card, index) => (
             <TouristInstructionCard

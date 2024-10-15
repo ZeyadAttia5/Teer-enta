@@ -252,18 +252,19 @@ exports.bookItinerary = async (req, res) => {
         const existingBooking = await BookedItinerary.findOne({
             itinerary: id,
             createdBy: userId,
-            itineraryDate: new Date(date)
+            status: 'Pending',
+            date: new Date(date)
         });
 
         if (existingBooking) {
-            return res.status(400).json({ message: "You have already booked this itinerary on the selected date" });
+            return res.status(400).json({ message: "You have already Pending booking on this itinerary on the selected date" });
         }
 
 
         await BookedItinerary.create({
             itinerary: id,
             createdBy: userId,
-            itineraryDate: new Date(date),
+            date: new Date(date),
             status: "Pending",
         });
 
@@ -285,8 +286,8 @@ exports.cancelItineraryBooking = async (req, res) => {
         }
 
         const currentDate = new Date();
-        const itineraryDate = new Date(bookedItinerary.itineraryDate);
-        const hoursDifference = (itineraryDate - currentDate) / (1000 * 60 * 60);
+        const date = new Date(bookedItinerary.date);
+        const hoursDifference = (date - currentDate) / (1000 * 60 * 60);
 
         if (hoursDifference < 48) {
             return res.status(400).json({ message: "Cannot cancel the booking less than 48 hours before the itinerary" });

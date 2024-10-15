@@ -6,8 +6,8 @@ import Toggle from "./Toggle.js";
 import { useNavigate } from "react-router-dom";
 import { FaExclamationCircle } from "react-icons/fa";
 import axios from "axios";
-import {signup} from "../../../api/auth.ts";
-function Signup({setFlag}) {
+import { signup } from "../../../api/auth.ts";
+function Signup({ setFlag }) {
   setFlag(true);
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
@@ -381,33 +381,35 @@ function Signup({setFlag}) {
   return (
     <div className="flex h-screen">
       <div className="relative w-[66%] h-screen overflow-hidden">
-      {images.map((image, index) => (
-        <img
-          key={index}
-          src={image}
-          alt={`Slide ${index + 1}`}
-          className={`absolute top-0 cursor-pointer left-0 w-full h-full transition-opacity duration-1000 ${
-            index === currentImageIndex ? "opacity-100" : "opacity-0"
-          }`}
-          onMouseDown={handleMouseDown} // Pause when clicked and held
-          onMouseUp={handleMouseUp}     // Resume when released
-          onClick={handleImageClick}    // Change image on click
-        />
-      ))}
-
-      {/* Dots indicator */}
-      {!isPaused && (<div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-        {images.map((_, index) => (
-          <span
+        {images.map((image, index) => (
+          <img
             key={index}
-            className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
-              currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
+            src={image}
+            alt={`Slide ${index + 1}`}
+            className={`absolute top-0 cursor-pointer left-0 w-full h-full transition-opacity duration-1000 ${
+              index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
-            onClick={() => setCurrentImageIndex(index)} // Click on dot to go to a specific image
+            onMouseDown={handleMouseDown} // Pause when clicked and held
+            onMouseUp={handleMouseUp} // Resume when released
+            onClick={handleImageClick} // Change image on click
           />
         ))}
-      </div>)}
-    </div>
+
+        {/* Dots indicator */}
+        {!isPaused && (
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+            {images.map((_, index) => (
+              <span
+                key={index}
+                className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
+                  currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
+                }`}
+                onClick={() => setCurrentImageIndex(index)} // Click on dot to go to a specific image
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="flex flex-col justify-center items-center w-1/3">
         <p className="text-[rgba(88,87,87,0.822)] font-bold text-1xl">
@@ -438,7 +440,7 @@ function Signup({setFlag}) {
                 value={username}
               />
             </label>
-
+            {selectedRole === "Tourist" && (
             <h6
               className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
                 selectedRole !== "Tourist" ? "hidden" : ""
@@ -450,7 +452,7 @@ function Signup({setFlag}) {
                   This field is required
                 </span>
               )}
-            </h6>
+            </h6>)}
 
             <div
               className={`relative ${
@@ -500,18 +502,20 @@ function Signup({setFlag}) {
               )}
             </label>
 
-            <h6
-              className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                selectedRole !== "Tourist" ? "hidden" : ""
-              }`}
-            >
-              <span>Mobile Number</span>
-              {isFormSubmitted && !mobileNumber && (
-                <span className="text-red-500 font-normal text-xs">
-                  This field is required
-                </span>
-              )}
-            </h6>
+            {selectedRole === "Tourist" && (
+              <h6
+                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                  selectedRole !== "Tourist" ? "hidden" : ""
+                }`}
+              >
+                <span>Mobile Number</span>
+                {isFormSubmitted && !mobileNumber && (
+                  <span className="text-red-500 font-normal text-xs">
+                    This field is required
+                  </span>
+                )}
+              </h6>
+            )}
             <label
               className={`relative labelsignup ${
                 selectedRole !== "Tourist" ? "hidden" : ""
@@ -526,6 +530,7 @@ function Signup({setFlag}) {
                 onChange={handleMobileNumberChange}
               />
             </label>
+            {selectedRole === "Tourist" && (
             <h6
               className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
                 selectedRole !== "Tourist" ? "hidden" : ""
@@ -537,7 +542,7 @@ function Signup({setFlag}) {
                   This field is required
                 </span>
               )}
-            </h6>
+            </h6>)}
 
             <label
               className={`relative labelsignup ${
