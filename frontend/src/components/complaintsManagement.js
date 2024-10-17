@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spin, message, Button, Modal, Input } from "antd";
+import { getComplaints, updateComplaint } from "../api/complaint.ts";
 //import { getComplaints, updateComplaintStatus } from "../../../api/complaints"; // Assume these API functions exist
 
 const ComplaintsManagement = () => {
@@ -19,51 +20,29 @@ const ComplaintsManagement = () => {
   );
   const sortedComplaints = filteredComplaints.sort((a, b) => {
     if (sortBy === "Date ascending") {
-      return new Date(a.dateSubmitted) - new Date(b.dateSubmitted);
+      return new Date(a.date) - new Date(b.date);
     } else if (sortBy === "Date descending") {
-      return new Date(b.dateSubmitted) - new Date(a.dateSubmitted);
+      return new Date(b.date) - new Date(a.date);
     }
     return 0;
   });
-
   useEffect(() => {
-    const hardcodedComplaints = [
-      {
-        _id: "1",
-        title: "Complaint 1",
-        description: "Description for complaint 1",
-        body: "Body of complaint 1",
-        dateSubmitted: new Date("2023-10-01"),
-        createdBy: "User1",
-        status: "Pending",
-        reply: "Reply to complaint 1",
-      },
-      {
-        _id: "2",
-        title: "Complaint 2",
-        description: "Description for complaint 2",
-        body: "Body of complaint 2",
-        dateSubmitted: new Date("2023-10-02"),
-        createdBy: "User2",
-        status: "Resolved",
-        reply: "Reply to complaint 2",
-      },
-      {
-        _id: "3",
-        title: "Complaint 3",
-        description: "Description for complaint 3",
-        body: "Body of complaint 3",
-        dateSubmitted: new Date("2023-10-03"),
-        createdBy: "User3",
-        status: "Pending",
-        reply: "Reply to complaint 3",
-      },
-    ];
+    const fetchComplaints = async () => {
+      try {
+        const data = await getComplaints();
+        setComplaints(data.data);
+        console.log(data);
+        console.log(complaints);
+      } catch (error) {
+        message.error("Failed to fetch complaints");
+        setComplaints([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setComplaints(hardcodedComplaints);
-    setLoading(false);
+    fetchComplaints();
   }, []);
-
   const showComplaintDetails = (complaint) => {
     setSelectedComplaint(complaint);
     setModalVisible(true);
@@ -73,16 +52,11 @@ const ComplaintsManagement = () => {
     setSelectedComplaint(complaint);
     setReplyModalVisible(true);
   };
-
-  const handleReplySubmit = () => {
+  const handleReplySubmit = async () => {
     try {
-      setComplaints((prevComplaints) => {
-        return prevComplaints.map((complaint) => {
-          if (complaint._id === selectedComplaint._id) {
-            return { ...complaint, reply: replyText };
-          }
-          return complaint;
-        });
+      await updateComplaint({
+        ...selectedComplaint,
+        reply: replyText,
       });
 
       message.success("Reply submitted successfully");
@@ -92,25 +66,33 @@ const ComplaintsManagement = () => {
       message.error("Failed to submit reply");
     }
   };
-
-  const updateStatus = (complaintId, status) => {
+  const updateStatus = async (complaint_id, status) => {
     try {
-      setComplaints((prevComplaints) => {
-        return prevComplaints.map((complaint) => {
-          if (complaint._id === complaintId) {
-            return { ...complaint, status };
-          }
-          return complaint;
-        });
+      const data = complaints.filter(
+        (complaint) => complaint._id === complaint_id
+      );
+      await updateComplaint({
+        ...data[0],
+        status: status,
       });
 
-      message.success("Complaint status updated successfully");
-      setModalVisible(false); // Close the modal here
-      // Fetch complaints again
-      // const data = await getComplaints();
-      // setComplaints(data);
+      // Update the status in the local state
+      setComplaints((prevComplaints) =>
+        prevComplaints.map((complaint) =>
+          complaint._id === complaint_id
+            ? { ...complaint, status: status }
+            : complaint
+        )
+      );
+      setSelectedComplaint((prevComplaint) => ({
+        ...prevComplaint,
+        status: status,
+      }));
+      message.success("Status updated successfully");
+      setReplyModalVisible(false);
+      setReplyText("");
     } catch (error) {
-      message.error("Failed to update complaint status");
+      message.error("Failed to update status");
     }
   };
 
@@ -120,8 +102,8 @@ const ComplaintsManagement = () => {
     { title: "Body", dataIndex: "body", key: "body" },
     {
       title: "Date Submitted",
-      dataIndex: "dateSubmitted",
-      key: "dateSubmitted",
+      dataIndex: "date",
+      key: "date",
       render: (date) => new Date(date).toLocaleDateString(), // Format the date here
     },
     {
@@ -140,14 +122,14 @@ const ComplaintsManagement = () => {
             disabled={record.status === "Pending"}
             style={{ marginRight: 8 }}
           >
-            Set Pending
+            Pending
           </Button>
           <Button
             onClick={() => updateStatus(record._id, "Resolved")}
             disabled={record.status === "Resolved"}
             style={{ marginRight: 8 }}
           >
-            Resolve
+            Resolved
           </Button>
           <Button onClick={() => showReplyModal(record)}>Reply</Button>
         </div>
@@ -226,7 +208,7 @@ const ComplaintsManagement = () => {
             </p>
             <p>
               <strong>Date Submitted:</strong>{" "}
-              {new Date(selectedComplaint.dateSubmitted).toLocaleDateString()}
+              {new Date(selectedComplaint.date).toLocaleDateString()}
             </p>
             <p>
               <strong>Description:</strong> {selectedComplaint.description}
@@ -238,13 +220,13 @@ const ComplaintsManagement = () => {
                 disabled={selectedComplaint.status === "Pending"}
                 style={{ marginRight: 8 }}
               >
-                Set Pending
+                Pending
               </Button>
               <Button
                 onClick={() => updateStatus(selectedComplaint._id, "Resolved")}
                 disabled={selectedComplaint.status === "Resolved"}
               >
-                Resolve
+                Resolved
               </Button>
             </div>
           </div>
