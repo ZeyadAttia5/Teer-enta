@@ -302,3 +302,143 @@ exports.cancelItineraryBooking = async (req, res) => {
     }
 };
 
+
+exports.addCommentToItinerary = async (req, res) => {
+    try {
+      const { id } = req.params; 
+      const { comment } = req.body; 
+      const userId = req.user._id; 
+  
+      
+      const itinerary = await Itinerary.findById(id).populate('createdBy');
+  
+      if (!itinerary || !itinerary.isActive) {
+        return res.status(404).json({ message: "Itinerary not found or inactive" });
+      }
+
+  
+      const creator = itinerary.createdBy;
+      if (creator.userRole !== 'TourGuide') {
+        return res.status(400).json({ message: "This itinerary is not made by a tour guide" });
+      }
+  
+      const booking = await BookedItinerary.findOne({ 
+        itinerary: id,
+        createdBy: userId,
+        isActive: true,
+        status: 'Completed'
+      });
+  
+      if (!booking) {
+        return res.status(400).json({ message: "You haven't followed this itinerary" });
+      }
+  
+      itinerary.comments.push({
+        createdBy: userId,
+        comment: comment,
+      });
+  
+  
+      await itinerary.save();
+  
+      res.status(200).json({ message: "Comment added successfully", itinerary });
+    } catch (err) {
+      errorHandler.SendError(res, err);
+    }
+  };
+  
+
+  exports.getCommentsForItinerary = async (req, res) => {
+    try {
+      const { id } = req.params; 
+  
+      const itinerary = await Itinerary.findById(id)
+      .populate( 'comments.createdBy', 'username' )
+      .populate('createdBy');
+  
+      if (!itinerary || !itinerary.isActive) {
+        return res.status(404).json({ message: "Itinerary not found or inactive" });
+      }
+
+      if(itinerary.createdBy.userRole !== 'TourGuide'){
+        return res.status(400).json({ message: "This itinerary is not made by a tour guide" });
+      }
+  
+      res.status(200).json({ comments: itinerary.comments });
+    } catch (err) {
+      errorHandler.SendError(res, err);
+    }
+  };
+
+
+  exports.rateItinerary = async (req, res) => {
+    try {
+      const { id } = req.params; 
+      const { rating } = req.body; 
+      const userId = req.user._id; 
+  
+      const itinerary = await Itinerary.findById(id).populate('createdBy');
+  
+      if (!itinerary || !itinerary.isActive) {
+        return res.status(404).json({ message: "Itinerary not found or inactive" });
+      }
+  
+      const creator = itinerary.createdBy;
+      if (creator.userRole !== 'TourGuide') {
+        return res.status(400).json({ message: "This itinerary is not made by a tour guide" });
+      }
+  
+      const booking = await BookedItinerary.findOne({
+        itinerary: id,
+        createdBy: userId,
+        isActive: true,
+        status: 'Completed'
+      });
+  
+      if (!booking) {
+        return res.status(400).json({ message: "You haven't completed this itinerary" });
+      }
+  
+      const existingRating = itinerary.ratings.find((r) => r.createdBy.toString() === userId);
+  
+      if (existingRating) {
+        existingRating.rating = rating;
+      } else {
+        itinerary.ratings.push({
+          createdBy: userId,
+          rating: rating,
+        });
+      }
+  
+      await itinerary.save();
+  
+      res.status(200).json({ message: "Rating added successfully", itinerary });
+    } catch (err) {
+      errorHandler.SendError(res, err);
+    }
+  };
+
+
+  exports.getRatingsForItinerary = async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      const itinerary = await Itinerary.findById(id)
+        .populate('ratings.createdBy', 'username')
+        .populate('createdBy'); 
+  
+      if (!itinerary || !itinerary.isActive) {
+        return res.status(404).json({ message: "Itinerary not found or inactive" });
+      }
+  
+      if (itinerary.createdBy.userRole !== 'TourGuide') {
+        return res.status(400).json({ message: "This itinerary is not made by a tour guide" });
+      }
+  
+      res.status(200).json({ ratings: itinerary.ratings });
+    } catch (err) {
+      errorHandler.SendError(res, err);
+    }
+  };
+  
+  

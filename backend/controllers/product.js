@@ -129,3 +129,115 @@ exports.unArchiveProduct = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+
+exports.addRatingToProduct = async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const { rating } = req.body; 
+
+        const userId = req.user._id;
+
+        const Product = await product.findById(id);
+
+        if (!Product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        const order = await Order.findOne({
+            createdBy: userId,
+            'products.product': id,
+            status: 'Delivered', 
+            isActive: true
+        });
+
+        if (!order) {
+            return res.status(400).json({ message: "You haven't purchased this product" });
+        }
+
+        Product.ratings.push({
+            createdBy: userId,
+            rating: rating,
+        });
+
+        await Product.save();
+
+        res.status(200).json({ message: "Rating added successfully", product });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+exports.getRatingsForProduct = async (req, res) => {
+    try {
+        const { id } = req.params; 
+
+        const Product = await product.findById(id)
+            .populate('ratings.createdBy', 'username');
+
+        if (!Product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({ ratings: Product.ratings });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+exports.addReviewToProduct = async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const { review } = req.body; 
+
+        const userId = req.user._id;
+
+        // Check if the product exists
+        const Product = await product.findById(id);
+
+        if (!Product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        // Check if the user has purchased the product
+        const order = await Order.findOne({
+            createdBy: userId,
+            'products.product': id,
+            status: 'Delivered', 
+            isActive: true
+        });
+
+        if (!order) {
+            return res.status(400).json({ message: "You haven't purchased this product" });
+        }
+
+        Product.reviews.push({
+            createdBy: userId,
+            review: review,
+        });
+
+        await Product.save();
+
+        res.status(200).json({ message: "Review added successfully", product });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+exports.getReviewsForProduct = async (req, res) => {
+    try {
+        const { id } = req.params; 
+
+        const Product = await product.findById(id)
+            .populate('reviews.createdBy', 'username');
+
+        if (!Product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({ reviews: Product.reviews });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+

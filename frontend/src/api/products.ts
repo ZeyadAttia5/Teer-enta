@@ -1,6 +1,8 @@
 import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
+const token = localStorage.getItem("accessToken");
+
 
 export const getProducts = async () => {
     return await axios.get(`${API_BASE_URL}/product/`);
@@ -49,3 +51,36 @@ export const viewAvailableQuantityAndSales = async () => {
         },
     });
 }
+
+
+export const getProductRatings = async (productId) => {
+    const response = await axios.get(`${API_BASE_URL}/product/${productId}/ratings`);
+    return response.data;
+};
+
+export const addRatingToProduct = async (productId, rating) => {
+    const response = await axios.post(`${API_BASE_URL}/product/${productId}/rate`, 
+        { rating }, 
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    return response.data;
+};
+
+export const getProductReviews = async (productId) => {
+    const response = await axios.get(`${API_BASE_URL}/product/${productId}/reviews`);
+    return response.data;
+};
+
+export const addReviewToProduct = async (productId, review) => {
+    const response = await axios.post(`${API_BASE_URL}/product/${productId}/review`, 
+        { review }, 
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    return response.data;
+};
