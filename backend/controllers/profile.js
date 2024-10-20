@@ -2,8 +2,10 @@ const User = require('../models/Users/User');
 const Seller = require('../models/Users/Seller');
 const TourGuide = require('../models/Users/TourGuide');
 const Advertiser = require('../models/Users/Advertiser');
-const Tourist = require("../models/Users/Tourist")
+const Tourist = require("../models/Users/Tourist");
+const userModel = require('../models/Users/userModels');
 const mongoose = require("mongoose");
+const imageUploader = require('../middlewares/imageUploader');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 
@@ -14,41 +16,25 @@ exports.createProfile = async (req, res, next) => {
         const profileData = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ message: 'Invalid user ID' });
+            return res.status(400).json({message: 'Invalid user ID'});
         }
 
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({message: 'User not found'});
         }
-
-        let Model;
-
-        switch (user.userRole) {
-            case 'Advertiser':
-                Model = Advertiser;
-                break;
-            case 'TourGuide':
-                Model = TourGuide;
-                break;
-            case 'Seller':
-                Model = Seller;
-                break;
-            default:
-                return res.status(400).json({ message: 'Invalid or unsupported user role' });
-        }
-
+        const Model = userModel[user.userRole];
         const updatedProfile = await Model.findOneAndUpdate(
-            { _id: userId },
+            {_id: userId},
             profileData,
-            { new: true, upsert: true, runValidators: true }
+            {new: true, upsert: true, runValidators: true}
         );
 
         if (!user.hasProfile) {
             user.hasProfile = true;
             await user.save();
         }
-        res.status(200).json({"message":"user created successfully" ,updatedProfile}) ;
+        res.status(200).json({"message": "user created successfully", updatedProfile});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -73,39 +59,49 @@ exports.updateProfile = async (req, res) => {
 
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({message: 'User not found'});
         }
 
-        let Model;
-
-        switch (user.userRole) {
-            case 'Advertiser':
-                Model = Advertiser;
-                break;
-            case 'TourGuide':
-                Model = TourGuide;
-                break;
-            case 'Seller':
-                Model = Seller;
-                break;
-            case 'Tourist':
-                Model = Tourist ;
-                break ;
-            default:
-                return res.status(400).json({ message: 'Invalid or unsupported user role' });
-        }
+        const Model = userModel[user.userRole];
 
         const updatedProfile = await Model.findOneAndUpdate(
-            { _id: userId },
+            {_id: userId},
             profileData,
-            { new: true, upsert: true, runValidators: true }
+            {new: true, upsert: true, runValidators: true}
         );
 
         if (!user.hasProfile) {
             user.hasProfile = true;
             await user.save();
         }
-        res.status(200).json({"message":"Profile updated successfully" ,updatedProfile}) ;
+        res.status(200).json({"message": "Profile updated successfully", updatedProfile});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.uploadPicture = async (req, res) => {
+    try {
+        const userRole = req.user.role;
+        if (userRole === "Advertiser" || userRole === "Seller") {
+            imageUploader('logoUrl');
+        } else if (userRole === 'TourGuide') {
+            imageUploader('photoUrl');
+        }
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+
+exports.manageFieldNames = async (req, res) => {
+    try {
+        const userRole = req.user.role ;
+        if (userRole === "Advertiser" || userRole === "Seller") {
+            req.body.logoUrl = req.fileUrl ;
+        } else if (userRole === 'TourGuide') {
+            req.body.photoUrl = req.fileUrl ;
+        }
     } catch (err) {
         errorHandler.SendError(res, err);
     }

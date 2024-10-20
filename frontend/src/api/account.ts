@@ -1,5 +1,6 @@
 import axios  from "axios";
 
+
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
 export const getUsers = async () => {
@@ -52,4 +53,36 @@ export const deleteUser = async (userId) =>{
     });
 }
 
+// body here should look like this
+// preferences:{
+//     preferenceTags: [id1, id2, id3],
+//     activityCategories: [id1, id2, id3]
+// }
+export const chooseMyPreferences = async (preferences) =>{
+    return await axios.post(`${API_BASE_URL}/account/choosePreferences`, preferences, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+}
 
+export const redeemPoints = async (userId : number) =>{
+    return await axios.patch(`${API_BASE_URL}/account/redeemPoints`, userId, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+}
+
+// will return two Arrays, one for preferenceTags and one for activityCategories
+export const getAllPreferences = async () =>{
+    return await axios.get(`${API_BASE_URL}/account/preferences`);
+}
+
+export const requestAccountDeletion = async () =>{
+    return await axios.delete(`${API_BASE_URL}/account/requestAccountDeletion`,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+}

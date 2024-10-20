@@ -10,3 +10,11 @@ export const login =async (details)=> {
 export const signup = async (data) => {
     return await axios.post(`${API_BASE_URL}/auth/signup`, data);
 }
+
+export const changePassword = async (data) => {
+    return await axios.post(`${API_BASE_URL}/auth/changePassword`, data ,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+}
