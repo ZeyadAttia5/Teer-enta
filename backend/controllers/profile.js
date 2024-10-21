@@ -54,7 +54,7 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     try {
-        console.log(req.body);
+        // console.log(req.body);
         const userId = req.params.id;
         const profileData = req.body;
 
@@ -93,19 +93,30 @@ exports.uploadPicture = async (req, res, next) => {
         } else if (userRole === "TourGuide") {
             fieldName = 'photoUrl'; // Field name for TourGuide
         } else {
-            return res.status(403).json({message: 'Forbidden: User role not supported for file upload.'});
+            return res.status(403).json({ message: 'Forbidden: User role not supported for file upload.' });
         }
-        singleImageUploader(fieldName, req , res);
-        next() ;
+
+        // Upload the file and get the file URL
+        const fileUrl = await singleImageUploader(fieldName, req, res);
+        req.fileUrl = fileUrl; // Store the file URL in the request object for further use
+        console.log("File URL is", fileUrl);
+
+        next(); // Proceed to the next middleware or route handler
     } catch (err) {
-        errorHandler.SendError(res, err);
+        // If error occurs during the upload, send the error response
+        if (err.status) {
+            return res.status(err.status).json({ message: err.message, error: err.error });
+        } else {
+            return res.status(500).json({ message: 'Server error', error: err.message });
+        }
     }
-}
+};
+
 
 
 exports.manageFieldNames = async (req, res, next) => {
     try {
-        console.log(req.fileUrl) ;
+        console.log("Here",req.fileUrl) ;
         const userRole = req.user.role;
         if (userRole === "Advertiser" || userRole === "Seller") {
             req.body.logoUrl = req.fileUrl;
