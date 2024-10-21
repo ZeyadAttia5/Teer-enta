@@ -84,6 +84,7 @@ exports.uploadPicture = async (req, res , next) => {
     try {
         const userRole = req.user.role;
         if (userRole === "Advertiser" || userRole === "Seller") {
+            console.log(1);
             imageUploader('logoUrl');
         } else if (userRole === 'TourGuide') {
             imageUploader('photoUrl');

@@ -1,13 +1,13 @@
 import React from "react";
 import "./passwordRestrictions.css";
 
-const PasswordRestrictions = ({ password, isSubmitted, confirmPassword }) => {
+const PasswordRestrictions = ({ password, isSubmitted, confirmPassword, setIsValidVariable }) => {
   const isMin = password.length < 8;
   const isUpper = !/[A-Z]/.test(password);
   const isLower = !/[a-z]/.test(password);
   const isNum = !/[0-9]/.test(password);
   const isSpecial = !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password);
-
+  setIsValidVariable(!(isMin || isUpper || isLower || isNum || isSpecial || confirmPassword !== password || password == ""));
   return (
     
     <div>

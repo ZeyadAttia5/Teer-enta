@@ -7,7 +7,8 @@ import { FaExclamationCircle } from "react-icons/fa";
 import SocialMediaIcons from "./SocialMediaIcons";
 import AddPreviousWork from "./AddPreviousWork";
 import PreviousWorksList from "./PreviousWorksList";
-import {getProfile,updateProfilee} from "../../api/profile.ts";
+import { getProfile, updateProfilee } from "../../api/profile.ts";
+import ImageUpload from "./ImageUpload/ImageUpload.js";
 
 // async function getProfileData() {
 //   try {
@@ -64,10 +65,10 @@ async function updateProfile(
         setUserRole("Tourist");
         setUsername(data.username);
         setMobileNumberInput(data.mobileNumber);
-              
+
         setEmail(data.email);
         setEmailInput(data.email);
-        
+
         setDob(tmpDate);
         setJobTitleInput(data.occupation);
         setJobTitle(data.occupation);
@@ -112,7 +113,6 @@ async function updateProfile(
       case "Seller":
         setUserRole("Seller");
         setUsername(data.username);
-        
 
         setNameInput(data.name);
         setEmail(data.email);
@@ -127,7 +127,6 @@ async function updateProfile(
 
     setMessage(response.data.message);
   } catch (error) {
-    
     setMessage(error.response.data.message || "Updating Profile failed");
   }
 }
@@ -140,7 +139,7 @@ const LoadingCircle = () => {
   );
 };
 
-function Profile({setFlag}) {
+function Profile({ setFlag }) {
   // const location = useLocation();
   // const { user, accessToken } = location.state || {}; // Destructure the user object passed
   setFlag(false);
@@ -151,7 +150,8 @@ function Profile({setFlag}) {
   const user = storedUser ? JSON.parse(storedUser) : null;
   const accessToken = storedAccessToken || null;
 
-  
+  const [profileImage, setProfileImage] = useState(null);
+
   const [addWork, setAddWork] = useState(false);
   const [message, setMessage] = useState("");
   const [userRole, setUserRole] = useState("");
@@ -271,6 +271,8 @@ function Profile({setFlag}) {
 
     var data;
 
+    const formData = new FormData();
+
     switch (userRole) {
       case "Tourist":
         console.log("hey1 " + nationalityInput);
@@ -305,7 +307,20 @@ function Profile({setFlag}) {
           companyName: companyName,
           companySize: companySize,
         };
-
+        formData.append("website", linkInput);
+        formData.append("hotline", mobileNumberInput);
+        formData.append("companyProfile", companyProfileInput);
+        formData.append("email", emailInput);
+        formData.append("facebook", facebook);
+        formData.append("instagram", instagram);
+        formData.append("twitter", twitter);
+        formData.append("linkedin", linkedin);
+        formData.append("city", city);
+        formData.append("country", country);
+        formData.append("address", locationAddressInput);
+        formData.append("companyName", companyName);
+        formData.append("companySize", companySize);
+        formData.append("logoUrl", profileImage);
         break;
       case "TourGuide":
         data = {
@@ -314,7 +329,11 @@ function Profile({setFlag}) {
           previousWorks: updatedWorks, // This will have the updated value
           email: emailInput,
         };
-
+        formData.append("mobileNumber", mobileNumberInput);
+        formData.append("yearsOfExperience", yearsOfExperienceInput);
+        formData.append("previousWorks", updatedWorks);
+        formData.append("email", emailInput);
+        formData.append("photoUrl", profileImage);
         break;
       case "Seller":
         data = {
@@ -323,17 +342,42 @@ function Profile({setFlag}) {
           description: descriptionInput,
           name: nameInput,
         };
+        formData.append("mobileNumber", mobileNumberInput);
+        formData.append("email", emailInput);
+        formData.append("description", descriptionInput);
+        formData.append("name", nameInput);
+        formData.append("logoUrl", profileImage);
         break;
       default:
         return false;
     }
+    if (userRole === "Tourist") {
+      try {
+        const response = await updateProfilee(data, user._id);
 
-    try {
-      const response = await updateProfilee(data, user._id);
+        setMessage(response.data.message);
+      } catch (error) {
+        setMessage(error.response.data.message || "Updating Profile failed");
+      }
+    } else {
+      try {
+        for (let pair of formData.entries()) {
+          console.log(`${pair[0]}: ${pair[1]}`);
+        }
+        const response = await axios.put(
+          `${process.env.REACT_APP_BACKEND_URL}/Profile/update/${user._id}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        );
 
-      setMessage(response.data.message);
-    } catch (error) {
-      setMessage(error.response.data.message || "Updating Profile failed");
+        setMessage(response.data.message);
+      } catch (error) {
+        setMessage(error.response.data.message || "Updating Profile failed");
+      }
     }
 
     setAge(ageInput);
@@ -408,16 +452,18 @@ function Profile({setFlag}) {
         )}
         {userRole && (
           <div className="flex flex-col">
-            <div className="border-2 border-[#02735f]">
-              <div className="border-2 border-white">
-                <img
-                  width={200}
-                  src={unknownImage}
-                  alt={`user's profile`}
-                  className="border-2 border-[#02735f]"
-                />
+            {userRole !== "Tourist" && (
+              <div className="border-2 border-[#02735f]">
+                <div className="border-2 border-white">
+                  <img
+                    width={200}
+                    src={unknownImage}
+                    alt={`user's profile`}
+                    className="border-2 border-[#02735f]"
+                  />
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex flex-col space-y-4 mt-4"></div>
             <div className="flex flex-col space-y-4 mt-4">
               <button
@@ -481,18 +527,21 @@ function Profile({setFlag}) {
                 </svg>
                 Complaint
               </button> */}
-              {userRole === "Tourist" && (<div className="max-w-sm mx-auto mt-10">
-                <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
-                  <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                    My Wallet
-                  </h2>
-                  <div className="text-gray-600 text-lg">Available Credit</div>
-                  <div className="text-4xl font-bold text-[#02735f] mt-2">
-                    ${wallet}
+              {userRole === "Tourist" && (
+                <div className="max-w-sm mx-auto mt-10">
+                  <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                      My Wallet
+                    </h2>
+                    <div className="text-gray-600 text-lg">
+                      Available Credit
+                    </div>
+                    <div className="text-4xl font-bold text-[#02735f] mt-2">
+                      ${wallet}
+                    </div>
                   </div>
-                  
                 </div>
-              </div>)}
+              )}
             </div>
           </div>
         )}
@@ -822,6 +871,7 @@ function Profile({setFlag}) {
                     </div>
                   </div>
                 </div>
+                <ImageUpload setProfileImage={setProfileImage} />
                 <div className="mt-8">
                   <PreviousWorksList
                     previousWorks={previousWorks}

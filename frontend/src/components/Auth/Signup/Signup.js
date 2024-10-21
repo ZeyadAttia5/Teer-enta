@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { FaExclamationCircle } from "react-icons/fa";
 import axios from "axios";
 import { signup } from "../../../api/auth.ts";
+import PasswordRestrictions from "./PasswordRestrictions.js";
 function Signup({ setFlag }) {
   setFlag(true);
   const navigate = useNavigate();
@@ -111,6 +112,10 @@ function Signup({ setFlag }) {
       setPasswordMatch(false);
     }
   };
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isValidVariable, setIsValidVariable] = useState(false);
+
   const [selectedNationality, setSelectedNationality] = useState(null);
   const [selectedRole, setSelectedRole] = useState("Tourist");
   const [isFormSubmitted, setFormSubmitted] = useState(false);
@@ -294,7 +299,7 @@ function Signup({ setFlag }) {
   const handleButtonClick = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
-    if (!isValid()) {
+    if (!isValid() || !isValidVariable) {
       return false;
     }
 
@@ -354,6 +359,8 @@ function Signup({ setFlag }) {
     if (selectedRole === "Tourist" && !isDobValid) {
       setMessage("Invalid date of birth");
       return false;
+    }else{
+      setMessage("");
     }
     const nonNumericRegex = /\D/;
     if (
@@ -374,7 +381,7 @@ function Signup({ setFlag }) {
     if (password !== confirmPassword) {
       return false;
     }
-
+    setIsSubmitted(true);
     return true;
   }
 
@@ -420,7 +427,7 @@ function Signup({ setFlag }) {
             className="form w-full p-[10px] pt-[5px] flex flex-col gap-1.5 max-w-[350px] bg-white relative   outline-none border border-[rgba(105,105,105,0.397)] rounded-[10px]
        left-[10px] top-[15px] text-gray-500 text-[0.9em] cursor-text transition ease-linear duration-300 shadow-lg"
           >
-            <Toggle selectedRole={handleRoleChange} />
+            <Toggle selectedRole={handleRoleChange} setMessage={setMessage}/>
 
             <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
               <span>Username</span>
@@ -618,6 +625,14 @@ function Signup({ setFlag }) {
               />
               {/* Role Change */}
             </label>
+
+            <PasswordRestrictions
+              password={password}
+              confirmPassword={confirmPassword}
+              setIsValidVariable={setIsValidVariable}
+              isSubmitted={isSubmitted}
+            />
+
             {!passwordMatch && (
               <p className="text-red-500 text-xs">Passwords do not match</p>
             )}
