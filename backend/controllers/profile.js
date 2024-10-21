@@ -54,7 +54,7 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     try {
-        // console.log(req.body);
+        console.log(req.body);
         const userId = req.params.id;
         const profileData = req.body;
 
