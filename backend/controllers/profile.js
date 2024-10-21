@@ -5,8 +5,9 @@ const Advertiser = require('../models/Users/Advertiser');
 const Tourist = require("../models/Users/Tourist");
 const userModel = require('../models/Users/userModels');
 const mongoose = require("mongoose");
-const imageUploader = require('../middlewares/imageUploader');
+const singleImageUploader = require('../middlewares/imageUploader');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
+const cloudinary = require('../Util/Cloudinary') ;
 
 
 // Define the middleware to create or update the Profile based on userRole
@@ -53,6 +54,7 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     try {
+        console.log(req.body);
         const userId = req.params.id;
         const profileData = req.body;
 
@@ -80,15 +82,20 @@ exports.updateProfile = async (req, res) => {
     }
 }
 
-exports.uploadPicture = async (req, res , next) => {
+exports.uploadPicture = async (req, res, next) => {
     try {
-        const userRole = req.user.role;
+        const userRole = req.user.role; // Assuming req.user contains the authenticated user info
+        let fieldName;
+
+        // Determine the field name based on user role
         if (userRole === "Advertiser" || userRole === "Seller") {
-            console.log(1);
-            imageUploader('logoUrl');
-        } else if (userRole === 'TourGuide') {
-            imageUploader('photoUrl');
+            fieldName = 'logoUrl'; // Field name for Advertiser and Seller
+        } else if (userRole === "TourGuide") {
+            fieldName = 'photoUrl'; // Field name for TourGuide
+        } else {
+            return res.status(403).json({message: 'Forbidden: User role not supported for file upload.'});
         }
+        singleImageUploader(fieldName, req , res);
         next() ;
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -96,15 +103,16 @@ exports.uploadPicture = async (req, res , next) => {
 }
 
 
-exports.manageFieldNames = async (req, res , next) => {
+exports.manageFieldNames = async (req, res, next) => {
     try {
-        const userRole = req.user.role ;
+        console.log(req.fileUrl) ;
+        const userRole = req.user.role;
         if (userRole === "Advertiser" || userRole === "Seller") {
-            req.body.logoUrl = req.fileUrl ;
+            req.body.logoUrl = req.fileUrl;
         } else if (userRole === 'TourGuide') {
-            req.body.photoUrl = req.fileUrl ;
+            req.body.photoUrl = req.fileUrl;
         }
-        next() ;
+        next();
     } catch (err) {
         errorHandler.SendError(res, err);
     }

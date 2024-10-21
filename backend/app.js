@@ -2,7 +2,8 @@ require('dotenv').config();
 const morgan = require("morgan");
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require('body-parser');
+const multer = require("multer");
+const upload = multer();
 const dbUrl = process.env.DB_URL;
 const PORT= process.env.PORT || 8000;
 const app = express();
@@ -25,9 +26,10 @@ const paymentRoutes = require('./routes/payment');
 const complaintRoutes = require('./routes/complaint');
 
 
+
 app.use(morgan('dev'))
 app.use((req, res, next) => {
-    res.setHeader("Content-Type", "application/json");
+    // res.setHeader("Content-Type", "application/json");
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
 
@@ -43,8 +45,8 @@ app.use((req, res, next) => {
 
 });
 app.use(cors());
-app.use(bodyParser.json({type: "application/json", limit: '50mb'}));
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true })); // Allow for nested objects
 mongoose.connect(dbUrl).then(r => {
     console.log('Connected to DB');
     console.log(PORT)
