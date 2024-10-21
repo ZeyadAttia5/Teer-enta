@@ -58,6 +58,13 @@ async function updateProfile(
     console.log("user id is: " + user._id);
     const response = await getProfile(user._id);
     const { data } = response;
+    console.log("Profile Data:", data);
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+      console.log(`${key}: ${data[key]}`);
+      }
+    }
+    
     const tmpDate = new Date(data.dateOfBirth).toLocaleDateString("en-CA");
 
     switch (data.userRole) {
@@ -361,9 +368,7 @@ function Profile({ setFlag }) {
       }
     } else {
       try {
-        for (let pair of formData.entries()) {
-          console.log(`${pair[0]}: ${pair[1]}`);
-        }
+        
         const response = await axios.put(
           `${process.env.REACT_APP_BACKEND_URL}/Profile/update/${user._id}`,
           formData,
