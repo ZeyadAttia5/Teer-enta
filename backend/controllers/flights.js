@@ -1,5 +1,6 @@
 const Amadeus = require('amadeus');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
+const BookedFlight = require("../models/Booking/BookedFlight");
 
 // Initialize the Amadeus client with your API credentials
 const amadeus = new Amadeus({
@@ -9,14 +10,17 @@ const amadeus = new Amadeus({
 
 // Get airports by city or by country
 exports.getAirports = async (req, res) => {
-    const {keyword, countryCode} = req.params;
+    const {keyword, countryCode} = req.query;
     try{
-        const response = await amadeus.client.get("/v1/reference-data/locations", {
-            keyword: keyword,  // Ensure the keyword is "Cairo"
+        const params = {
+            keyword: keyword,
             subType: "AIRPORT,CITY",
-            "countryCode": countryCode,  // Filter for Egyptian airports
-            "page[offset]": 10
-        });
+            "page[offset]": 0
+        }
+        if(countryCode){
+            params["countryCode"] = countryCode;
+        }
+        const response = await amadeus.client.get("/v1/reference-data/locations", params);
 
         return res.status(200).json(JSON.parse(response.body));
     } catch (err) {
@@ -25,22 +29,24 @@ exports.getAirports = async (req, res) => {
     }
 }
 
-// TODO: add other parameters to the request
+// TODO: add other parameters to the request (one way, return, etc.)
 // children: children,
 // infants: infants
 // returnDate: returnDate,
 exports.getFlightOffers = async (req, res) => {
 
-    const {origin, destinationAirport, departureDate, adults} = req.params;
+    const {departureAirport, destinationAirport, departureDate, adults} = req.query;
 
     try {
         const offers = await amadeus.shopping.flightOffersSearch.get({
-            originLocationCode: origin,
+            originLocationCode: departureAirport,
             destinationLocationCode: destinationAirport,
             departureDate: departureDate,
             adults: adults
         });
-        console.log(offers.data);
+        if (!offers.data || offers.data.length === 0) {
+            return res.status(404).json({ error: 'No flight offers found.' });
+        }
         // offers.data is an array of flight offers
         res.status(200).json(offers.data);
     } catch(err) {
@@ -64,6 +70,9 @@ exports.bookFlight = async (req, res) => {
                 }
             })
         )
+        if (!pricingResponse.data || pricingResponse.data.length === 0) {
+            return res.status(400).json({ error: 'Flight offer pricing failed.' });
+        }
         // travelers should be an array of traveler objects
         /* Example of a traveler object:
         {
@@ -97,6 +106,14 @@ exports.bookFlight = async (req, res) => {
                 },
             })
         );
+        // TODO: How to handle two way flights
+        await BookedFlight.create({
+            departureDate: booking.flightOffers[0].itineraries[0].segments[0].departure.at,
+            arrivalDate: offer.data.itineraries[0].segments[0].arrival.at,
+            departureAirport: offer.data.itineraries[0].segments[0].departure.iataCode,
+            arrivalAirport: offer.data.itineraries[0].segments[0].arrival.iataCode,
+            // createdBy: req.user._id
+        });
         res.status(200).json({message: "Successfully booked a Flight", booking: booking.data});
 
     }catch(err){
