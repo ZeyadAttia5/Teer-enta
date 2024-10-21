@@ -80,7 +80,7 @@ exports.updateProfile = async (req, res) => {
     }
 }
 
-exports.uploadPicture = async (req, res) => {
+exports.uploadPicture = async (req, res , next) => {
     try {
         const userRole = req.user.role;
         if (userRole === "Advertiser" || userRole === "Seller") {
@@ -88,13 +88,14 @@ exports.uploadPicture = async (req, res) => {
         } else if (userRole === 'TourGuide') {
             imageUploader('photoUrl');
         }
+        next() ;
     } catch (err) {
         errorHandler.SendError(res, err);
     }
 }
 
 
-exports.manageFieldNames = async (req, res) => {
+exports.manageFieldNames = async (req, res , next) => {
     try {
         const userRole = req.user.role ;
         if (userRole === "Advertiser" || userRole === "Seller") {
@@ -102,6 +103,7 @@ exports.manageFieldNames = async (req, res) => {
         } else if (userRole === 'TourGuide') {
             req.body.photoUrl = req.fileUrl ;
         }
+        next() ;
     } catch (err) {
         errorHandler.SendError(res, err);
     }
