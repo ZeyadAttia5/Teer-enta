@@ -7,8 +7,7 @@ const userModel = require('../models/Users/userModels');
 const mongoose = require("mongoose");
 const singleImageUploader = require('../middlewares/imageUploader');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
-const cloudinary = require('../Util/Cloudinary') ;
-
+const upload = require('multer')();
 
 // Define the middleware to create or update the Profile based on userRole
 exports.createProfile = async (req, res, next) => {
@@ -97,6 +96,7 @@ exports.uploadPicture = async (req, res, next) => {
         }
 
         // Upload the file and get the file URL
+        upload.single(fieldName) ;
         const fileUrl = await singleImageUploader(fieldName, req, res);
         req.fileUrl = fileUrl; // Store the file URL in the request object for further use
         console.log("File URL is", fileUrl);
