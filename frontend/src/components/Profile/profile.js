@@ -9,6 +9,9 @@ import AddPreviousWork from "./AddPreviousWork";
 import PreviousWorksList from "./PreviousWorksList";
 import { getProfile, updateProfilee } from "../../api/profile.ts";
 import ImageUpload from "./ImageUpload/ImageUpload.js";
+import ImageProfile from "./ImageProfile/ImageProfile.js";
+import DeleteAccountButton from "./DeleteAccountButton.js";
+
 
 // async function getProfileData() {
 //   try {
@@ -313,6 +316,7 @@ function Profile({ setFlag }) {
           },
           companyName: companyName,
           companySize: companySize,
+          // logoUrl: profileImage,
         };
         formData.append("website", linkInput);
         formData.append("hotline", mobileNumberInput);
@@ -327,7 +331,7 @@ function Profile({ setFlag }) {
         formData.append("address", locationAddressInput);
         formData.append("companyName", companyName);
         formData.append("companySize", companySize);
-        formData.append("logoUrl", profileImage);
+        // formData.append("logoUrl", profileImage);
         break;
       case "TourGuide":
         data = {
@@ -335,12 +339,13 @@ function Profile({ setFlag }) {
           yearsOfExperience: yearsOfExperienceInput,
           previousWorks: updatedWorks, // This will have the updated value
           email: emailInput,
+          // photoUrl: profileImage,
         };
         formData.append("mobileNumber", mobileNumberInput);
         formData.append("yearsOfExperience", yearsOfExperienceInput);
         formData.append("previousWorks", updatedWorks);
         formData.append("email", emailInput);
-        formData.append("photoUrl", profileImage);
+        // formData.append("photoUrl", profileImage);
         break;
       case "Seller":
         data = {
@@ -348,12 +353,13 @@ function Profile({ setFlag }) {
           email: emailInput,
           description: descriptionInput,
           name: nameInput,
+          // logoUrl: profileImage,
         };
         formData.append("mobileNumber", mobileNumberInput);
         formData.append("email", emailInput);
         formData.append("description", descriptionInput);
         formData.append("name", nameInput);
-        formData.append("logoUrl", profileImage);
+        // formData.append("logoUrl", profileImage);
         break;
       default:
         return false;
@@ -369,21 +375,17 @@ function Profile({ setFlag }) {
     } else {
       try {
         
-        const response = await axios.put(
-          `${process.env.REACT_APP_BACKEND_URL}/Profile/update/${user._id}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          }
-        );
+        const response = await updateProfilee(formData, user._id);
 
         setMessage(response.data.message);
       } catch (error) {
         setMessage(error.response.data.message || "Updating Profile failed");
       }
     }
+
+    // Update the user in local storage
+    const updatedUser = { ...user, ...data };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
 
     setAge(ageInput);
     setNationality(nationalityInput);
@@ -458,19 +460,10 @@ function Profile({ setFlag }) {
         {userRole && (
           <div className="flex flex-col">
             {userRole !== "Tourist" && (
-              <div className="border-2 border-[#02735f]">
-                <div className="border-2 border-white">
-                  <img
-                    width={200}
-                    src={unknownImage}
-                    alt={`user's profile`}
-                    className="border-2 border-[#02735f]"
-                  />
-                </div>
-              </div>
+              <ImageProfile />
             )}
-            <div className="flex flex-col space-y-4 mt-4"></div>
-            <div className="flex flex-col space-y-4 mt-4">
+            
+            <div className="flex flex-col space-y-4">
               <button
                 className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
                 onClick={handleEdit}
@@ -512,26 +505,8 @@ function Profile({ setFlag }) {
                 Change password
               </Link>
 
-              {/* <button
-                className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
-                onClick={handleComplaint}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
-                  />
-                </svg>
-                Complaint
-              </button> */}
+              <DeleteAccountButton />
+              
               {userRole === "Tourist" && (
                 <div className="max-w-sm mx-auto mt-10">
                   <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
@@ -876,7 +851,8 @@ function Profile({ setFlag }) {
                     </div>
                   </div>
                 </div>
-                <ImageUpload setProfileImage={setProfileImage} />
+                
+                
                 <div className="mt-8">
                   <PreviousWorksList
                     previousWorks={previousWorks}

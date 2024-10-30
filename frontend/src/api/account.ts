@@ -80,9 +80,11 @@ export const getAllPreferences = async () =>{
 }
 
 export const requestAccountDeletion = async () =>{
-    return await axios.delete(`${API_BASE_URL}/account/requestAccountDeletion`,{
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    return await axios.delete(`${API_BASE_URL}/account/requestAccountDeletion`,
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            }
         }
-    });
+    );
 }

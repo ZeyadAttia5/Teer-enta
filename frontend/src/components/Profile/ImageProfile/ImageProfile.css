@@ -1,0 +1,157 @@
+/* From Uiverse.io by JaydipPrajapati1910 */ 
+.card {
+    position: relative;
+    width: 315px;
+    height: 380px;
+    margin: 30px auto;
+    box-shadow: 0 0 100px rgba(0,0,0, .3);
+    border-radius: 10px;
+    background: linear-gradient(to top, rgb(86, 190, 224), rgb(239, 248, 249));
+  }
+  
+  .card-header {
+    position: relative;
+    height: 220px;
+    background-size: cover;
+    background-position: top;
+  }
+  
+  .card-header:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    
+    border-radius: 10px;
+  }
+
+  
+  .card-header-bar {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+    width: 100%;
+  }
+  
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    clip: rect(0,0,0,0);
+    border: none;
+    overflow: hidden;
+  }
+  
+  .btn-message {
+    display: inline-block;
+    width: 19.37px;
+    height: 16.99px;
+    margin-right: 10px;
+    margin-top: 10px;
+    float: right;
+  }
+  
+  .btn-menu {
+    display: inline-block;
+    background: linear-gradient(to bottom, rgb(5,85,134), rgba(181,181,181, -0.20));
+    width: 19px;
+    height: 12.16px;
+    margin-left: 10px;
+    margin-top: 10px;
+    float: left;
+  }
+  
+  .card-header-slanted-edge {
+    position: absolute;
+    bottom: -3px;
+    z-index: 1;
+    width: 100%;
+    right: 0;
+    left: 0;
+  }
+  
+  .card-body {
+    text-align: center;
+    padding-left: 10px;
+  }
+  
+  .name {
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0 auto;
+  }
+  
+  .job-title {
+    font-size: 14px;
+    font-weight: 300;
+    margin-top: 15px;   
+    color: #4f5152;
+  }
+  
+  .bio {
+    font-size: 14px;
+    color: #7B7B7B;
+    font-weight: 300;
+    margin: 10px auto;
+    line-height: 20px;
+  }
+  
+  .social-accounts img {
+    width: 15px;
+  }
+  
+  .social-accounts a {
+    margin-left: 10px;
+  }
+  
+  .social-accounts a:first-child {
+    margin-left: 0;
+  }
+  
+  .card-footer {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    bottom: 20px;
+  }
+  
+  .stat {
+    box-sizing: border-box;
+    width: calc(100% / 3);
+    float: left;
+    text-align: center;
+  }
+  
+  .stat:nth-child(2) {
+    border-left: 1px solid grey;
+  }
+  
+  .stat:nth-child(3) {
+    border-left: 1px solid grey;
+  }
+  
+  .stat .label {
+    display: block;
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #4f5152;
+  }
+  
+  .stat .value {
+    display: block;
+    font-weight: 700;
+    font-size: 20px;
+    margin-top: 5px;
+  }
+
+  .profile-image {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    margin-top: 15px;
+  }
+  

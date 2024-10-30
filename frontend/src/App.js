@@ -51,6 +51,7 @@ function App() {
   const onLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("isAuthenticated");
     setIsNavigate(true);
     setModalOpen(false);
   };

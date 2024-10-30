@@ -82,6 +82,7 @@ exports.updateProfile = async (req, res) => {
 }
 
 exports.uploadPicture = async (req, res, next) => {
+    console.log("Uploading picture");
     try {
         const userRole = req.user.role; // Assuming req.user contains the authenticated user info
         let fieldName;
