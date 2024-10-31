@@ -1,5 +1,6 @@
 const Amadeus = require('amadeus');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
+const { getCityCodes } = require("../Util/LocationCodes");
 
 const amadeus = new Amadeus({
     clientId: process.env.AMADEUS_CLIENT_ID,
@@ -8,8 +9,21 @@ const amadeus = new Amadeus({
 
 exports.getHotelOffers = async (req, res) => {
     try{
-        const {cityCode, checkInDate, checkOutDate, adults} = req.query();
-        const hotelSearch = await amadeus.shopping.hotelOffers.get({
+        const {city, checkInDate, checkOutDate, adults} = req.query;
+        const cityCode = await getCityCodes(city);
+        if (!cityCode) {
+            return res.status(400).json({ error: "Invalid city name or no city code found" });
+        }
+        const hotelIds = await amadeus.referenceData.locations.hotels.byCity.get({
+            cityCode: cityCode
+        });
+        if (!hotelIds.data || hotelIds.data.length === 0) {
+            return res.status(404).json({ error: 'No hotels found in the city.' });
+        }
+        hotelIds.data = hotelIds.data.slice(0, 5);
+        console.log(hotelIds.data.map(hotel => hotel.hotelId));
+        const hotelSearch = await amadeus.shopping.hotelOffersSearch.get({
+            hotelIds: 'RTPAR001',
             cityCode: cityCode,
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
@@ -66,3 +80,37 @@ exports.bookHotel = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+
+
+
+////// Amadeus API Reference
+// // City Search API
+// // finds cities that match a specific word or string of letters.
+// // Return a list of cities matching a keyword 'Paris'
+// amadeus.referenceData.locations.cities.get({
+//     keyword: 'Paris'
+// })
+//
+// //Hotel Name Autocomplete API
+// //Autocomplete a hotel search field
+// amadeus.referenceData.locations.hotel.get({
+//     keyword: 'PARI',
+//     subType: 'HOTEL_GDS'
+// })
+//
+// //Hotel List API
+// //Get list of hotels by city code
+// amadeus.referenceData.locations.hotels.byCity.get({
+//     cityCode: 'PAR'
+// })
+//
+// //Get List of hotels by Geocode
+// amadeus.referenceData.locations.hotels.byGeocode.get({
+//     latitude: 48.83152,
+//     longitude: 2.24691
+// })
+//
+// //Get List of hotels by hotelIds
+// amadeus.referenceData.locations.hotels.byHotels.get({
+//     hotelIds: 'ACPAR245'
+// })

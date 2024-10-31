@@ -1,17 +1,17 @@
 const Amadeus = require('amadeus');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const BookedFlight = require("../models/Booking/BookedFlight");
+const { getCountryCode } = require("../Util/LocationCodes");
 
-// Initialize the Amadeus client with your API credentials
 const amadeus = new Amadeus({
     clientId: process.env.AMADEUS_CLIENT_ID,
     clientSecret: process.env.AMADEUS_CLIENT_SECRET
 });
 
-// Get airports by city or by country
 exports.getAirports = async (req, res) => {
-    const {keyword, countryCode} = req.query;
+    const {keyword, countryName} = req.query;
     try{
+        const countryCode = await getCountryCode(countryName);
         const params = {
             keyword: keyword,
             subType: "AIRPORT,CITY",
@@ -55,8 +55,6 @@ exports.getFlightOffers = async (req, res) => {
     }
 }
 
-// TODO: reflect the changes in the database
-// TODO: ask PM
 exports.bookFlight = async (req, res) => {
     const offer = req.body.offer;
     const travelers = req.body.travelers;
