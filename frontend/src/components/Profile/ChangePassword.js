@@ -7,9 +7,13 @@ const ChangePassword = () => {
   const [oldPassword, setOldPassword] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [isValidVariable, setIsValidVariable] = React.useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isValid()) {
+      return false;
+    }
     try {
       const response = await changePassword({
         oldPassword: oldPassword,
@@ -20,15 +24,27 @@ const ChangePassword = () => {
       return;
     }
 
-    if (!isValid()) {
-      return false;
-    }
+    
   };
 
   const isValid = () => {
     
     setMessage("");
+    if(newPassword !== confirmPassword){
+      setMessage("Passwords do not match");
+      return false;
+    }
+    if(newPassword === ""){
+      setMessage("Password cannot be empty");
+      return false;
+    }
+    if(oldPassword === ""){
+      setMessage("Old password cannot be empty");
+      return false;
+    }
     setIsSubmitted(true);
+    if(!isValidVariable)
+      return false;
     return true;
   };
 
@@ -97,6 +113,7 @@ const ChangePassword = () => {
             <PasswordRestrictions
               password={newPassword}
               confirmPassword={confirmPassword}
+              setIsValidVariable={setIsValidVariable}
               isSubmitted={isSubmitted}
             />
             <div class="col-span-full">

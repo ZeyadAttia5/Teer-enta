@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function ConfirmationModal({ isOpen, onClose, onConfirm, message }) {
   if (!isOpen) return null;
@@ -16,12 +17,18 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, message }) {
             Cancel
           </button>
           {onConfirm && (
-            <button
+            <Link
+              to={
+                message === "Are you sure you want to log out?" ||
+                message === "Are you sure you want to delete your account?"
+                  ? "/"
+                  : window.location.pathname
+              }
               onClick={onConfirm}
               className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none"
             >
               Confirm
-            </button>
+            </Link>
           )}
         </div>
       </div>

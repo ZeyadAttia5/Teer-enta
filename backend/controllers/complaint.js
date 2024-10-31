@@ -22,7 +22,7 @@ exports.getMyComplaints = async (req, res) => {
         }
         res.status(200).json(complaints);
     }catch (err) {
-        errorHandler.SendError
+        errorHandler.SendError(res,err)
     }
 }
 

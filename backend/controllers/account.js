@@ -1,4 +1,6 @@
 const User = require('../models/Users/User');
+const BookedActivity = require('../models/Booking/BookedActivitie');
+const Product = require('../models/Product/Product');
 const Advertiser = require("../models/Users/Advertiser");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const bcrypt = require('bcryptjs');
@@ -138,8 +140,8 @@ exports.requestMyAccountDeletion = async (req, res) => {
     try {
         const userId = req.user._id;
         const user = await User.findById(userId);
-        const bookedActivities = await BookedActivity.find({createdBy: userId, status: "Pending"});
         if (user.userRole === "Tourist") {
+            const bookedActivities = await BookedActivity.find({createdBy: userId, status: "Pending"});
             if (bookedActivities.length > 0) {
                 return res.status(400).json({message: "You have upcoming activities, you can't delete your account"});
             }
@@ -167,6 +169,7 @@ exports.requestMyAccountDeletion = async (req, res) => {
                 .updateMany({isActive: false});
         }
         if (user.userRole === "Seller") {
+            console.log("hey");
             await Product
                 .find({createdBy: userId})
                 .updateMany({isActive: false});

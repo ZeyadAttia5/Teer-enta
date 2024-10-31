@@ -82,6 +82,38 @@ const cancleActivityBooking = async (activityId: string | number) =>
             },
         });
 
+export const getActivityRatings = async (activityId) => {
+  const response = await axios.get(`${API_BASE_URL}/activity/${activityId}/ratings`);
+  return response.data;
+};
+
+export const addRatingToActivity = async (activityId, rating) => {
+    const response = await axios.post(`${API_BASE_URL}/activity/${activityId}/rate`, 
+        { rating }, 
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    return response.data;
+};
+
+export const getActivityComments = async (activityId) => {
+    const response = await axios.get(`${API_BASE_URL}/activity/${activityId}/comments`);
+    return response.data;
+};
+
+export const addCommentToActivity = async (activityId, comment) => {
+    const response = await axios.post(`${API_BASE_URL}/activity/${activityId}/comment`, 
+        { comment }, 
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    return response.data;
+};
+
 export {
   getActivities,
   createActivity,

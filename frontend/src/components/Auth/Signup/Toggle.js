@@ -8,6 +8,7 @@ function Toggle(props){
         const value = event.target.value;
         setSelectedOption(value);
         props.selectedRole(value);
+        props.setMessage("");
     };
 
     return (

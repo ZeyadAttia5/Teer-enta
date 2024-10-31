@@ -7,23 +7,28 @@ const router = require('express').Router();
 //then the cloudinary will update the req.fileUrl with the url of the uploaded file
 //then you can use the req.fileUrl to save the url in the database
 
-const uploadSingleFile = (fieldName) => (req, res, next) => {
-    if (!fieldName){
-        return res.status(400).json({ message: 'Field name is required' });
-    }
-    const uploader = upload.single(fieldName); // Field name for the file upload
+const uploadSingleFile = (fieldName, req, res) => {
+    return new Promise((resolve, reject) => {
+        if (!fieldName) {
+            return reject({ status: 400, message: 'Field name is required' });
+        }
 
-    uploader(req, res, (err) => {
-        if (err) {
-            // Handle any errors that occur during the upload
-            return res.status(500).json({ message: 'File upload failed', error: err.message });
-        }
-        // If file is uploaded, append the file URL to req
-        if (req.file) {
-            req.fileUrl = req.file.path; // Cloudinary returns the file path as the URL
-            console.log(req.fileUrl);
-        }
-        next(); // Proceed to the next middleware or route handler
+        const uploader = upload.single(fieldName);
+
+        uploader(req, res, (err) => {
+            if (err) {
+                // Reject the promise if an error occurs during file upload
+                return reject({ status: 500, message: 'File upload failed', error: err.message });
+            }
+
+            if (req.file) {
+                // Resolve the promise with the file path if successful
+                resolve(req.file.path);
+            } else {
+                // Reject if no file is found in the request
+                reject({ status: 400, message: 'No file found' });
+            }
+        });
     });
 };
 

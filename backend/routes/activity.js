@@ -11,12 +11,16 @@ router.get("/", activityController.getActivities);
 router.get("/my",isAuth , activityController.getMyActivities);
 router.get("/upcoming", activityController.getUpcomingActivities);
 router.get("/one/:id", activityController.getActivity);
+router.get("/:id/ratings", activityController.getRatingsForActivity);
+router.get("/:id/comments", activityController.getCommentsForActivity);
 router.post("/create",isAuth , activityController.createActivity);
-router.post('/activate/:id' , activityController.activateActivity) ;
-router.post('/deactivate/:id' , activityController.deactivateActivity) ;
+router.post('/activate/:id' , activityController.activateActivity);
+router.post('/deactivate/:id' , activityController.deactivateActivity);
 router.post("/book/:id",isAuth , activityController.bookActivity);
+router.post("/:id/rate",isAuth , activityController.addRatingToActivity);
+router.post('/:id/comment',isAuth , activityController.addCommentToActivity);
 router.put("/update/:id"  ,activityController.updateActivity);
-router.patch("/flagInappropriate/:id" ,isAuth , activityController.flagInappropriate)
+router.patch("/flagInappropriate/:id" ,isAuth , activityController.flagInappropriate);
 router.patch("/cancel/book/:id",isAuth , activityController.cancelActivityBooking);
 router.delete("/delete/:id",isAuth , activityController.deleteActivity);
 

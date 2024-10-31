@@ -70,3 +70,36 @@ export const cancleItineraryBooking = async (itineraryId: string) => {
         },
     });
 }
+
+
+export const getItineraryRatings = async (itineraryId) => {
+    const response = await axios.get(`${API_BASE_URL}/itinerary/${itineraryId}/ratings`);
+    return response.data;
+};
+
+export const addRatingToItinerary = async (itineraryId, rating) => {
+    const response = await axios.post(`${API_BASE_URL}/itinerary/${itineraryId}/rating`, 
+        { rating }, 
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    return response.data;
+};
+
+export const getItineraryComments = async (itineraryId) => {
+    const response = await axios.get(`${API_BASE_URL}/itinerary/${itineraryId}/comments`);
+    return response.data;
+};
+
+export const addCommentToItinerary = async (itineraryId, comment) => {
+    const response = await axios.post(`${API_BASE_URL}/itinerary/${itineraryId}/comment`, 
+        { comment }, 
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+    return response.data;
+};
