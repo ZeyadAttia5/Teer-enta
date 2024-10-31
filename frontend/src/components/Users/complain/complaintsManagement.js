@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Table, Spin, message, Button, Modal, Input } from "antd";
-import { getComplaints, updateComplaint } from "../api/complaint.ts";
-//import { getComplaints, updateComplaintStatus } from "../../../api/complaints"; // Assume these API functions exist
+import {
+  getComplaints,
+  getComplaint,
+  updateComplaint,
+} from "../../../api/complaint.ts";
 
 const ComplaintsManagement = () => {
   const [complaints, setComplaints] = useState([]);
@@ -26,13 +29,13 @@ const ComplaintsManagement = () => {
     }
     return 0;
   });
+
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
         const data = await getComplaints();
-        setComplaints(data.data);
         console.log(data);
-        console.log(complaints);
+        setComplaints(data.data);
       } catch (error) {
         message.error("Failed to fetch complaints");
         setComplaints([]);
@@ -43,15 +46,23 @@ const ComplaintsManagement = () => {
 
     fetchComplaints();
   }, []);
-  const showComplaintDetails = (complaint) => {
-    setSelectedComplaint(complaint);
-    setModalVisible(true);
+
+  const showComplaintDetails = async (complaint) => {
+    try {
+      console.log(complaint);
+      const data = await getComplaint(complaint._id);
+      setSelectedComplaint(data.data);
+      setModalVisible(true);
+    } catch (error) {
+      message.error("Failed to fetch complaint details");
+    }
   };
 
   const showReplyModal = (complaint) => {
     setSelectedComplaint(complaint);
     setReplyModalVisible(true);
   };
+
   const handleReplySubmit = async () => {
     try {
       await updateComplaint({
@@ -62,10 +73,13 @@ const ComplaintsManagement = () => {
       message.success("Reply submitted successfully");
       setReplyModalVisible(false);
       setReplyText("");
+      // Re-fetch the complaint details to update the UI
+      showComplaintDetails(selectedComplaint);
     } catch (error) {
       message.error("Failed to submit reply");
     }
   };
+
   const updateStatus = async (complaint_id, status) => {
     try {
       const data = complaints.filter(
@@ -89,8 +103,8 @@ const ComplaintsManagement = () => {
         status: status,
       }));
       message.success("Status updated successfully");
-      setReplyModalVisible(false);
-      setReplyText("");
+      // Re-fetch the complaint details to update the UI
+      showComplaintDetails(selectedComplaint);
     } catch (error) {
       message.error("Failed to update status");
     }
@@ -98,13 +112,12 @@ const ComplaintsManagement = () => {
 
   const columns = [
     { title: "Title", dataIndex: "title", key: "title" },
-    { title: "Description", dataIndex: "description", key: "description" },
-    { title: "Body", dataIndex: "body", key: "body" },
+    { title: "User", dataIndex: ["createdBy", "username"], key: "username" },
     {
       title: "Date Submitted",
       dataIndex: "date",
       key: "date",
-      render: (date) => new Date(date).toLocaleDateString(), // Format the date here
+      render: (date) => new Date(date).toLocaleDateString(),
     },
     {
       title: "Action",
@@ -201,7 +214,7 @@ const ComplaintsManagement = () => {
               <strong>Title:</strong> {selectedComplaint.title}
             </p>
             <p>
-              <strong>Category:</strong> {selectedComplaint.category}
+              <strong>Body:</strong> {selectedComplaint.body}
             </p>
             <p>
               <strong>Status:</strong> {selectedComplaint.status}
@@ -210,10 +223,7 @@ const ComplaintsManagement = () => {
               <strong>Date Submitted:</strong>{" "}
               {new Date(selectedComplaint.date).toLocaleDateString()}
             </p>
-            <p>
-              <strong>Description:</strong> {selectedComplaint.description}
-            </p>
-            {/* Add more details as needed */}
+
             <div style={{ marginTop: 20 }}>
               <Button
                 onClick={() => updateStatus(selectedComplaint._id, "Pending")}
