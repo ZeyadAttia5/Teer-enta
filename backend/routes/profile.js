@@ -10,7 +10,6 @@ router.get('/:id',isAuth , profileController.getProfile);
 router.post('/create/:id' , isAuth ,profileController.createProfile)
 router.put('/update/:id'
             , isAuth
-            ,upload.none()
             , profileController.updateProfile);
 router.put('/update/picture/:id'
                 , isAuth
