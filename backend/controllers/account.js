@@ -1,10 +1,19 @@
 const User = require('../models/Users/User');
+const Tourist = require('../models/Users/Tourist');
 const BookedActivity = require('../models/Booking/BookedActivitie');
+const BookedItinerary = require('../models/Booking/BookedItinerary');
+const BookedTransportation = require('../models/Booking/BookedTransportation');
+const Activity = require('../models/Activity/Activity') ;
+const Transportation = require('../models/Transportation');
+const Itinerary = require('../models/Itinerary/Itinerary');
 const Product = require('../models/Product/Product');
 const Advertiser = require("../models/Users/Advertiser");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const bcrypt = require('bcryptjs');
 const userModel = require('../models/Users/userModels');
+const TourGuide = require('../models/Users/TourGuide');
+const {uploadMultipleFiles, uploadSingleFile} = require('../middlewares/imageUploader');
+const {Model} = require("mongoose");
 
 
 exports.deleteAccount = async (req, res) => {
@@ -64,7 +73,7 @@ exports.getAllAcceptedUsers = async (req, res) => {
     }
 }
 exports.getAllPreferences = async (req, res) => {
-   try {
+    try {
         const prefrerenceTags = await PreferenceTag.find({isActive: true});
         const activityCategories = await ActivityCategory.find({isActive: true});
 
@@ -76,9 +85,9 @@ exports.getAllPreferences = async (req, res) => {
             return res.status(404).json({message: 'No Activity Categories found'});
         }
         res.status(200).json({prefrerenceTags, activityCategories});
-    }catch (err) {
-       errorHandler.SendError(res, err);
-   }
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
 }
 
 exports.acceptRequest = async (req, res) => {
@@ -217,37 +226,84 @@ exports.redeemPoints = async (req, res) => {
             return res.status(404).json({message: 'Tourist not found'});
         }
 
-        if(user.userRole !== 'Tourist'){
-            return res.status(400).json({ message: 'Invalid or unsupported user role' });
+        if (user.userRole !== 'Tourist') {
+            return res.status(400).json({message: 'Invalid or unsupported user role'});
         }
-        if(user.loyalityPoints < 10000){
-            return res.status(400).json({ message: 'Not enough points to redeem' });
+        if (user.loyalityPoints < 10000) {
+            return res.status(400).json({message: 'Not enough points to redeem'});
         }
-        const toRedeem = Math.floor(user.loyalityPoints/10000);
-        user.wallet += toRedeem*100;
-        user.loyalityPoints -= toRedeem*10000;
+        const toRedeem = Math.floor(user.loyalityPoints / 10000);
+        user.wallet += toRedeem * 100;
+        user.loyalityPoints -= toRedeem * 10000;
 
         await Tourist.findOneAndUpdate(
-            { _id: userId },
-            { $set: { wallet: user.wallet, loyaltyPoints: user.loyalityPoints } },
-            { new: true, upsert: true, runValidators: true }
+            {_id: userId},
+            {$set: {wallet: user.wallet, loyaltyPoints: user.loyalityPoints}},
+            {new: true, upsert: true, runValidators: true}
         );
 
         if (!user.hasProfile) {
             user.hasProfile = true;
             await user.save();
         }
-        return res.status(200).json({message: "Successfully redeemed points",
-            redeemedPoints: toRedeem*10000,
+        return res.status(200).json({
+            message: "Successfully redeemed points",
+            redeemedPoints: toRedeem * 10000,
             remaining: user.loyalityPoints,
             wallet: user.wallet
         });
-    } catch(err) {
+    } catch (err) {
         errorHandler.SendError(res, err);
     }
 }
 
+exports.uploadId = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const IdUrl = await uploadSingleFile('idCardUrl', req, res);
+        const Model = userModel[req.user.role];
+        const user = await Model.findByIdAndUpdate(userId, {idCardUrl: IdUrl}, {new: true, runValidators: true});
+        if (!user) {
+            return res.status(404).json({message: 'User not found'});
+        }
+        res.status(200).json({message: 'Id uploaded successfully', user});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
 
+exports.uploadTaxationRegistery = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const taxUrl = await uploadSingleFile('taxationCardUrl', req, res);
+        const Model = userModel[req.user.role];
+        const user = await Model.findByIdAndUpdate(userId, {taxationCardUrl: taxUrl}, {new: true, runValidators: true});
+        if (!user) {
+            return res.status(404).json({message: 'User not found'});
+        }
+        res.status(200).json({message: 'Taxation card uploaded successfully', user});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.uploadCertificates = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const certificates = await uploadMultipleFiles('certificates', req, res);
+        const Model = userModel[req.user.role];
+        const user = await Model.findByIdAndUpdate(userId, {certificates: certificates}, {
+            new: true,
+            runValidators: true
+        });
+        if (!user) {
+            return res.status(404).json({message: 'User not found'});
+        }
+        res.status(200).json({message: 'Certificates uploaded successfully', user});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
 
 
 

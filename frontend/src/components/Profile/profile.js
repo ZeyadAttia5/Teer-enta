@@ -318,19 +318,19 @@ function Profile({ setFlag }) {
           companySize: companySize,
           // logoUrl: profileImage,
         };
-        formData.append("website", linkInput);
-        formData.append("hotline", mobileNumberInput);
-        formData.append("companyProfile", companyProfileInput);
-        formData.append("email", emailInput);
-        formData.append("facebook", facebook);
-        formData.append("instagram", instagram);
-        formData.append("twitter", twitter);
-        formData.append("linkedin", linkedin);
-        formData.append("city", city);
-        formData.append("country", country);
-        formData.append("address", locationAddressInput);
-        formData.append("companyName", companyName);
-        formData.append("companySize", companySize);
+        // formData.append("website", linkInput);
+        // formData.append("hotline", mobileNumberInput);
+        // formData.append("companyProfile", companyProfileInput);
+        // formData.append("email", emailInput);
+        // formData.append("facebook", facebook);
+        // formData.append("instagram", instagram);
+        // formData.append("twitter", twitter);
+        // formData.append("linkedin", linkedin);
+        // formData.append("city", city);
+        // formData.append("country", country);
+        // formData.append("address", locationAddressInput);
+        // formData.append("companyName", companyName);
+        // formData.append("companySize", companySize);
         // formData.append("logoUrl", profileImage);
         break;
       case "TourGuide":
@@ -341,10 +341,10 @@ function Profile({ setFlag }) {
           email: emailInput,
           // photoUrl: profileImage,
         };
-        formData.append("mobileNumber", mobileNumberInput);
-        formData.append("yearsOfExperience", yearsOfExperienceInput);
-        formData.append("previousWorks", updatedWorks);
-        formData.append("email", emailInput);
+        // formData.append("mobileNumber", mobileNumberInput);
+        // formData.append("yearsOfExperience", yearsOfExperienceInput);
+        // formData.append("previousWorks", updatedWorks);
+        // formData.append("email", emailInput);
         // formData.append("photoUrl", profileImage);
         break;
       case "Seller":
@@ -355,10 +355,10 @@ function Profile({ setFlag }) {
           name: nameInput,
           // logoUrl: profileImage,
         };
-        formData.append("mobileNumber", mobileNumberInput);
-        formData.append("email", emailInput);
-        formData.append("description", descriptionInput);
-        formData.append("name", nameInput);
+        // formData.append("mobileNumber", mobileNumberInput);
+        // formData.append("email", emailInput);
+        // formData.append("description", descriptionInput);
+        // formData.append("name", nameInput);
         // formData.append("logoUrl", profileImage);
         break;
       default:
@@ -375,7 +375,7 @@ function Profile({ setFlag }) {
     } else {
       try {
         
-        const response = await updateProfilee(formData, user._id);
+        const response = await updateProfilee(data, user._id);
 
         setMessage(response.data.message);
       } catch (error) {

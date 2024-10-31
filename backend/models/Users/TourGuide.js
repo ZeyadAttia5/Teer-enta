@@ -7,11 +7,7 @@ const TourGuideProfileSchema = new mongoose.Schema({
     yearsOfExperience: {type: Number, default: 0},
     photoUrl: {type: String, default: null},
     idCardUrl: {type: String, default: null},
-    certificates: [
-        {
-            certificateUrl: {type: String, default: null}
-        }
-    ],
+    certificates: [{type: String, default: null}],
     isActive: {type: Boolean, default: true},
     previousWorks: [
         {
@@ -33,8 +29,8 @@ const TourGuideProfileSchema = new mongoose.Schema({
         createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
         comment: {type: String},
     }],
-    isAccepted: {type:String , enum:['Pending','Accepted','Rejected'], default:'Pending'} ,
-    isTermsAndConditionsAccepted: {type:Boolean , default:false}
+    isAccepted: {type: String, enum: ['Pending', 'Accepted', 'Rejected'], default: 'Pending'},
+    isTermsAndConditionsAccepted: {type: Boolean, default: false}
 }, {timestamps: true});
 
 const TourGuide = User.discriminator('TourGuide', TourGuideProfileSchema);
