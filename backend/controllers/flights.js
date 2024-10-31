@@ -29,7 +29,7 @@ exports.getAirports = async (req, res) => {
     }
 }
 
-// TODO: add other parameters to the request (one way, return, etc.)
+// TODO: add other parameters to the request (return Date, etc.)
 // children: children,
 // infants: infants
 // returnDate: returnDate,
@@ -112,6 +112,8 @@ exports.bookFlight = async (req, res) => {
             arrivalDate: offer.data.itineraries[0].segments[0].arrival.at,
             departureAirport: offer.data.itineraries[0].segments[0].departure.iataCode,
             arrivalAirport: offer.data.itineraries[0].segments[0].arrival.iataCode,
+            noOfPassengers: travelers.length,
+            price: offer.data.price,
             // createdBy: req.user._id
         });
         res.status(200).json({message: "Successfully booked a Flight", booking: booking.data});
