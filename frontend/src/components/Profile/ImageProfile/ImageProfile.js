@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./ImageProfile.css";
 import unknownImage from "../unknown.jpg";
-import { updateProfilee } from "../../../api/profile.ts";
+import {updateProfilee, updateProfilePicture} from "../../../api/profile.ts";
 function Card() {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
@@ -58,7 +58,7 @@ function Card() {
    
     try {
       
-      const response = await updateProfilee(formData, user._id);
+      const response = await updateProfilePicture(formData, user._id);
       localStorage.setItem("user", JSON.stringify(response.data.updatedProfile));
       setSrcImage(response.data.updatedProfile[x]);
       console.log("updated 1");

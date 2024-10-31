@@ -21,3 +21,15 @@ export const updateProfilee = async (data, userId) => {
         }
     );
 }
+
+export const updateProfilePicture = async (data, userId) => {
+    return await axios.put(
+        `${process.env.REACT_APP_BACKEND_URL}/Profile/update/picture/${userId}`,
+        data ,
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            }
+        }
+    );
+}
