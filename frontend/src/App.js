@@ -32,8 +32,8 @@ import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
 import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
 import ChangePassword from "./components/Profile/ChangePassword.js";
 import DeleteAccountButton from "./components/Profile/DeleteAccountButton.js";
-import ComplaintsManagement from "./components/complaintsManagement.js";
-import CreateComplaint from "./components/Users/complain/createComplaint.js";
+import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
+import MyComplaints from "./components/Users/complain/myComplaints.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -192,7 +192,7 @@ function App() {
             path="ComplaintsManagement"
             element={<ComplaintsManagement />}
           />
-          <Route path="createComplaint" element={<CreateComplaint />} />
+          <Route path="myComplaints" element={<MyComplaints />} />
         </Routes>
         <Toaster />
       </Router>

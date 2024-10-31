@@ -145,7 +145,7 @@
 // export default MyComplaints;
 
 import React, { useEffect, useState } from "react";
-import { Table, Form, Input, Button, Modal, Tag } from "antd";
+import { Table, Form, Input, Button, Modal, Tag, message } from "antd";
 import {
   getComplaint,
   getMyComplaints,
@@ -165,6 +165,7 @@ const MyComplaints = () => {
     const fetchComplaints = async () => {
       try {
         const response = await getMyComplaints();
+        console.log(response);
         setComplaints(response.data);
       } catch (error) {
         console.error("Failed to fetch complaints:", error);
@@ -180,16 +181,15 @@ const MyComplaints = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const handleViewDetails = (complaint_id) => {
-    const complaint = async () => {
-      try {
-        const response = await getComplaint(complaint_id);
-        setSelectedComplaint(response.data);
-      } catch (error) {
-        console.error("Failed to fetch complaints:", error);
-      }
-    };
-    setModalVisible(true);
+  const handleViewDetails = async (complaintId) => {
+    try {
+      console.log(complaintId);
+      const response = await getComplaint(complaintId);
+      setSelectedComplaint(response.data);
+      setModalVisible(true);
+    } catch (error) {
+      message.error("Failed to fetch complaint details");
+    }
   };
 
   const handleCloseModal = () => {
@@ -254,7 +254,7 @@ const MyComplaints = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="primary" onClick={() => handleViewDetails(record)}>
+        <Button type="primary" onClick={() => handleViewDetails(record._id)}>
           View
         </Button>
       ),
