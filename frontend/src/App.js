@@ -32,6 +32,8 @@ import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
 import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
 import ChangePassword from "./components/Profile/ChangePassword.js";
 import DeleteAccountButton from "./components/Profile/DeleteAccountButton.js";
+import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
+import MyComplaints from "./components/Users/complain/myComplaints.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -66,7 +68,7 @@ function App() {
             drawerVisible={visible}
           />
         )}
-        {(
+        {
           <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  ">
             <TouristNavBar
               setModalOpen={setModalOpen}
@@ -74,7 +76,7 @@ function App() {
               setIsNavigate={setIsNavigate}
             />
           </div>
-        )}
+        }
         <ConfirmationModal
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
@@ -179,13 +181,18 @@ function App() {
             element={<TouristActivity setFlag={setFlag} />}
           />
           <Route
-          path="/changePassword"
-          element={<ChangePassword setFlag={setFlag} />}
-        />
+            path="/changePassword"
+            element={<ChangePassword setFlag={setFlag} />}
+          />
           <Route
-          path="/requestAccountDeletion"
-          element={<DeleteAccountButton setFlag={setFlag} />}
-        />
+            path="/requestAccountDeletion"
+            element={<DeleteAccountButton setFlag={setFlag} />}
+          />
+          <Route
+            path="ComplaintsManagement"
+            element={<ComplaintsManagement />}
+          />
+          <Route path="myComplaints" element={<MyComplaints />} />
         </Routes>
         <Toaster />
       </Router>

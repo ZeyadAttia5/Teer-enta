@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 
 const complainSchema = new mongoose.Schema({
     title: {type: String, required: true},
-    description: {type: String, required: true},
     body: {type: String, required: true},
     date: {type: Date, required: true},
     createdBy: {

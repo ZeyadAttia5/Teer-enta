@@ -42,16 +42,23 @@ exports.getComplaint = async (req, res) => {
 exports.updateComplaint = async (req, res) => {
     try {
         const complaintId = req.params.id;
+
         const complaint = await Complaint.findById(complaintId);
-        if(!complaint){
-            return res.status(404).json({message: 'Complaint not found'});
+        if (!complaint) {
+            return res.status(404).json({ message: 'Complaint not found' });
         }
-        await Complaint.findByIdAndUpdate(complaintId, req.body);
-        res.status(200).json({message: 'Complaint updated successfully'});
-    } catch(err) {
+
+        const updateData = { ...req.body };
+        delete updateData.createdBy;
+
+        await Complaint.findByIdAndUpdate(complaintId, updateData);
+
+        res.status(200).json({ message: 'Complaint updated successfully' });
+    } catch (err) {
         errorHandler.SendError(res, err);
     }
-}
+};
+
 
 
 exports.createComplaint = async (req, res) => {
