@@ -26,7 +26,7 @@ const ShowHistoricalPlaces = () => {
   if (!historicalPlace) {
     return <p className="text-center text-gray-500">Loading...</p>;
   }
-  const shareLink = `${window.location.origin}/historical-places/${id}`;
+  const shareLink = `${window.location.origin}/historicalPlace/details/${id}`;
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-8 pb-10 mb-16 bg-white shadow-lg rounded-lg border border-gray-200">
@@ -96,3 +96,4 @@ const ShowHistoricalPlaces = () => {
 };
 
 export default ShowHistoricalPlaces;
+
