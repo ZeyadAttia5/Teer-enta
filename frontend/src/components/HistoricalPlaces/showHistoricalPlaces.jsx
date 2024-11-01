@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {getHistoricalPlace} from "../../api/historicalPlaces.ts";
 import { useParams } from 'react-router-dom';
+import ShareButton from '../shared/ShareButton.js';
+
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
@@ -24,10 +26,15 @@ const ShowHistoricalPlaces = () => {
   if (!historicalPlace) {
     return <p className="text-center text-gray-500">Loading...</p>;
   }
+  const shareLink = `${window.location.origin}/historical-places/${id}`;
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-8 pb-10 mb-16 bg-white shadow-lg rounded-lg border border-gray-200">
       <h2 className="text-3xl font-semibold mb-6 text-gray-700 text-center">{historicalPlace.name}</h2>
+
+      <div className="flex justify-center mb-6">
+        <ShareButton shareLink={shareLink} />
+      </div>
 
       {/* Image section */}
       {historicalPlace.images && historicalPlace.images.length > 0 && (

@@ -3,6 +3,7 @@ import axios from "axios";
 import { Rate } from "antd";
 import {getGoogleMapsAddress} from "../../../api/googleMaps.ts";
 
+
 const ActivityCard = ({
                         name,
                         date,
@@ -45,6 +46,7 @@ const ActivityCard = ({
     }
   }, [ratings]);
 
+  
   return (
       <div className="border-2 rounded border-gray-500 m-4">
         <div className="border m-1 border-white">
@@ -115,3 +117,4 @@ const ActivityCard = ({
 };
 
 export default ActivityCard;
+
