@@ -23,11 +23,12 @@ exports.getHotelOffers = async (req, res) => {
         hotelIds.data = hotelIds.data.slice(0, 5);
         console.log(hotelIds.data.map(hotel => hotel.hotelId));
         const hotelSearch = await amadeus.shopping.hotelOffersSearch.get({
-            hotelIds: 'RTPAR001',
+            hotelIds: 'RTPAR001,ACPAR245,XKPARC12,RTMUC001,RTMUC002',
             cityCode: cityCode,
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
-            adults: adults
+            adults: adults,
+            children: 2,
         });
 
         res.status(200).json(hotelSearch.data);
