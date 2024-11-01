@@ -6,8 +6,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { set } from "date-fns";
 import {login} from "../../../api/auth.ts";
-function Login({setFlag}) {
-  setFlag(true);
+function Login({setFlag, flag}) {
+  if(!flag){
+    setFlag(true);
+    
+  }
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");

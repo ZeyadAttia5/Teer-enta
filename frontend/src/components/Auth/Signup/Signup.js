@@ -346,17 +346,9 @@ function Signup({ setFlag }) {
       if (selectedRole === "TourGuide") {
         try {
           
-          certificates.forEach((certificate, index) => {
-            console.log(`Certificate ${index + 1}: ${certificate.name}`);
-          });
+         
           response3 = await uploadFiles(certificates);
-          console.log(response3.data.imageUrls);
-          console.log(
-            "image urls are: " +
-              response3.data.imageUrls[0] +
-              " " +
-              response3.data.imageUrls[1]
-          );
+         
           setCertificatesUrls(response3.data.imageUrls);
         } catch (error) {
           setMessage(response.data.message);
@@ -366,7 +358,7 @@ function Signup({ setFlag }) {
       }
       
       console.log(response1.data.imageUrl);
-      console.log(response3.data.imageUrls);
+      console.log(response2.data.imageUrl);
 
       var data;
       switch (selectedRole) {
@@ -383,8 +375,7 @@ function Signup({ setFlag }) {
           };
           break;
         case "TourGuide":
-          console.log("card url: " + response1.data.imageUrl);
-          console.log("cert are" + response3.data.imageUrls);
+          
           data = {
             email: email,
             username: username,
@@ -395,6 +386,8 @@ function Signup({ setFlag }) {
           };
           break;
         case "Advertiser":
+          console.log("card url1: " + response1.data.imageUrl);
+          console.log("card url2: " + response2.data.imageUrl);
           data = {
             email: email,
             username: username,
@@ -431,7 +424,10 @@ function Signup({ setFlag }) {
           " " +
           response3.data.imageUrls
       );
+
       const response = await signup(data);
+
+      console.log("after sign up " + response.status);
 
       setMessage(response.data.message);
       navigate("/login");

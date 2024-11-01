@@ -86,7 +86,7 @@ function App() {
         <Routes>
           <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
           <Route path="/signup" element={<Signup setFlag={setFlag} />} />
-          <Route path="/login" element={<Login setFlag={setFlag} />} />
+          <Route path="/login" element={<Login setFlag={setFlag} flag={flag} />} />
           <Route path="/profile" element={<Profile setFlag={setFlag} />} />
           <Route
             path="/preference-tags"

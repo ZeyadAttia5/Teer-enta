@@ -98,6 +98,7 @@ export const uploadFile = async (file) =>{
 
 export const uploadFiles = async (files) =>{
     const formData = new FormData();
-    formData.append('files', files)
+    formData.append('files', files);
+    files.forEach((file) => formData.append('files', file)); 
     return await axios.post(`${API_BASE_URL}/upload/files`, formData);
 }

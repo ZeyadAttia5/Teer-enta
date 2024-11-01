@@ -5,6 +5,7 @@ const IDUpload = ({ setID }) => {
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
+    console.log("file is"+event.target.files[0]);
     setID(event.target.files[0]);
   };
 

@@ -38,12 +38,19 @@ exports.signup = async (req, res) => {
                 await tourist.save();
                 return res.status(201).send({message: 'Tourist created successfully.'});
             case 'TourGuide':
+                console.log("in auth: " + req.body.idCardUrl);
+                console.log("in auth: " + req.body);
+                for (const key in req.body) {
+                    if (req.body.hasOwnProperty(key)) {
+                        console.log(`${key}: ${req.body[key]}`);
+                    }
+                }
                 const tourGuide = new TourGuide({
                     email: req.body.email,
                     username: req.body.username,
                     password: hashedPassword,
                     userRole: userRole,
-                    isCardUrl: req.body.isCardUrl,
+                    idCardUrl: req.body.idCardUrl,
                     certificates: req.body.certificates
                 });
                 await tourGuide.save();
@@ -54,7 +61,7 @@ exports.signup = async (req, res) => {
                     username: req.body.username,
                     password: hashedPassword,
                     userRole: userRole,
-                    isCardUrl: req.body.isCardUrl,
+                    idCardUrl: req.body.idCardUrl,
                     taxationCardUrl: req.body.taxationCardUrl
                 });
                 await advertiser.save();
@@ -65,7 +72,7 @@ exports.signup = async (req, res) => {
                     username: req.body.username,
                     password: hashedPassword,
                     userRole: userRole,
-                    isCardUrl: req.body.isCardUrl,
+                    idCardUrl: req.body.idCardUrl,
                     taxationCardUrl: req.body.taxationCardUrl
                 });
                 await seller.save();
