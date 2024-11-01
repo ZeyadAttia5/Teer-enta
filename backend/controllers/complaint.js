@@ -4,7 +4,7 @@ const User = require("../models/Users/userModels");
 
 exports.getComplaints = async (req, res) => {
     try {
-        const complaints = await Complaint.find();
+        const complaints = await Complaint.find().populate('createdBy');
         if(complaints.length === 0){
             return res.status(404).json({message: 'No complaints found'});
         }
@@ -16,7 +16,7 @@ exports.getComplaints = async (req, res) => {
 exports.getMyComplaints = async (req, res) => {
     try {
         const userId = req.user._id;
-        const complaints = await Complaint.find({createdBy: userId});
+        const complaints = await Complaint.find({createdBy: userId}).populate('createdBy');
         if (complaints.length === 0) {
             return res.status(404).json({message: 'No complaints found'});
         }
@@ -29,7 +29,7 @@ exports.getMyComplaints = async (req, res) => {
 exports.getComplaint = async (req, res) => {
     try {
         const complaintId = req.params.id;
-        const complaint = await Complaint.findById(complaintId);
+        const complaint = await Complaint.findById(complaintId).populate('createdBy');
         if(!complaint){
             return res.status(404).json({message: 'Complaint not found'});
         }
