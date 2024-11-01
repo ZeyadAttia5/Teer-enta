@@ -328,15 +328,7 @@ const MyComplaints = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              label="Description"
-              name="description"
-              rules={[
-                { required: true, message: "Please input the description!" },
-              ]}
-            >
-              <TextArea rows={4} />
-            </Form.Item>
+
             <Form.Item
               label="Body"
               name="body"

@@ -47,19 +47,22 @@ const ComplaintsManagement = () => {
     fetchComplaints();
   }, []);
 
-  const showComplaintDetails = async (complaint) => {
+  const showComplaintDetails = async (complaintId) => {
     try {
-      console.log(complaint);
-      const data = await getComplaint(complaint._id);
-      setSelectedComplaint(data.data);
+      console.log(complaintId);
+      const response = await getComplaint(complaintId);
+      setSelectedComplaint(response.data);
+      setReplyText(response.data.reply || "");
       setModalVisible(true);
     } catch (error) {
       message.error("Failed to fetch complaint details");
     }
   };
 
-  const showReplyModal = (complaint) => {
-    setSelectedComplaint(complaint);
+  const showReplyModal = async (complaintId) => {
+    const complaint = await getComplaint(complaintId);
+    setSelectedComplaint(complaint.data);
+    setReplyText(complaint.data.reply || "");
     setReplyModalVisible(true);
   };
 
@@ -73,8 +76,9 @@ const ComplaintsManagement = () => {
       message.success("Reply submitted successfully");
       setReplyModalVisible(false);
       setReplyText("");
-      // Re-fetch the complaint details to update the UI
-      showComplaintDetails(selectedComplaint);
+      // Re-fetch the complaints list to update the UI
+      const response = await getComplaints();
+      setComplaints(response.data);
     } catch (error) {
       message.error("Failed to submit reply");
     }
@@ -82,31 +86,51 @@ const ComplaintsManagement = () => {
 
   const updateStatus = async (complaint_id, status) => {
     try {
-      const data = complaints.filter(
-        (complaint) => complaint._id === complaint_id
-      );
+      //save it in a variable to use it later
+      const complaint = await getComplaint(complaint_id);
+
       await updateComplaint({
-        ...data[0],
+        ...complaint.data,
         status: status,
       });
 
-      // Update the status in the local state
-      setComplaints((prevComplaints) =>
-        prevComplaints.map((complaint) =>
-          complaint._id === complaint_id
-            ? { ...complaint, status: status }
-            : complaint
-        )
-      );
-      setSelectedComplaint((prevComplaint) => ({
-        ...prevComplaint,
-        status: status,
-      }));
+      //refetch the whole complaints list
+      const response = await getComplaints();
+      setComplaints(response.data);
+      if (modalVisible) {
+        const updatedComplaint = response.data.find(
+          (c) => c._id === complaint_id
+        );
+        setSelectedComplaint(updatedComplaint);
+      }
       message.success("Status updated successfully");
-      // Re-fetch the complaint details to update the UI
-      showComplaintDetails(selectedComplaint);
     } catch (error) {
       message.error("Failed to update status");
+    }
+  };
+
+  const updateReply = async (complaint_id) => {
+    try {
+      //save it in a variable to use it later
+      const complaint = await getComplaint(complaint_id);
+
+      await updateComplaint({
+        ...complaint.data,
+        reply: replyText,
+      });
+
+      //refetch the whole complaints list
+      const response = await getComplaints();
+      setComplaints(response.data);
+      if (modalVisible) {
+        const updatedComplaint = response.data.find(
+          (c) => c._id === complaint_id
+        );
+        setSelectedComplaint(updatedComplaint);
+      }
+      message.success("Reply submitted successfully");
+    } catch (error) {
+      message.error("Failed to submit reply");
     }
   };
 
@@ -125,7 +149,7 @@ const ComplaintsManagement = () => {
       render: (_, record) => (
         <div>
           <Button
-            onClick={() => showComplaintDetails(record)}
+            onClick={() => showComplaintDetails(record._id)}
             style={{ marginRight: 8 }}
           >
             View Details
@@ -144,7 +168,7 @@ const ComplaintsManagement = () => {
           >
             Resolved
           </Button>
-          <Button onClick={() => showReplyModal(record)}>Reply</Button>
+          <Button onClick={() => showReplyModal(record._id)}>Reply</Button>
         </div>
       ),
     },
@@ -202,11 +226,10 @@ const ComplaintsManagement = () => {
       )}
       <Modal
         title="Complaint Details"
-        visible={modalVisible}
+        open={modalVisible}
         onCancel={() => setModalVisible(false)}
         footer={null}
-        style={{ top: 20 }}
-        bodyStyle={{ padding: "20px" }}
+        style={{ top: 20, padding: "20px" }}
       >
         {selectedComplaint && (
           <div className="complaint-details">
@@ -223,6 +246,15 @@ const ComplaintsManagement = () => {
               <strong>Date Submitted:</strong>{" "}
               {new Date(selectedComplaint.date).toLocaleDateString()}
             </p>
+            <div>
+              <strong>Reply:</strong>
+              <Input.TextArea
+                rows={4}
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Enter your reply here"
+              />
+            </div>
 
             <div style={{ marginTop: 20 }}>
               <Button
@@ -235,8 +267,12 @@ const ComplaintsManagement = () => {
               <Button
                 onClick={() => updateStatus(selectedComplaint._id, "Resolved")}
                 disabled={selectedComplaint.status === "Resolved"}
+                style={{ marginRight: 8 }}
               >
                 Resolved
+              </Button>
+              <Button onClick={() => updateReply(selectedComplaint._id)}>
+                Reply
               </Button>
             </div>
           </div>
@@ -244,7 +280,7 @@ const ComplaintsManagement = () => {
       </Modal>
       <Modal
         title="Reply to Complaint"
-        visible={replyModalVisible}
+        open={replyModalVisible}
         onCancel={() => setReplyModalVisible(false)}
         onOk={handleReplySubmit}
         okText="Send Reply"
