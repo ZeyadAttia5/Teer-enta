@@ -14,7 +14,7 @@ router.delete('/requestAccountDeletion', isAuth, accountController.requestMyAcco
 router.put("/choosePreferences",isAuth , accountController.chooseMyPreferences);
 router.patch('/reject/:id' ,isAuth , accountController.rejectRequest) ;
 router.patch('/accept/:id',isAuth , accountController.acceptRequest);
-router.patch('/upload/idCard', isAuth ,accountController.uploadId);
+router.patch('/upload/idCard' ,accountController.uploadId);
 router.patch('/upload/taxationCard',isAuth ,accountController.uploadTaxationRegistery);
 router.patch('/upload/certificates' , isAuth   , accountController.uploadCertificates);
 router.delete('/delete/:id',isAuth, accountController.deleteAccount);

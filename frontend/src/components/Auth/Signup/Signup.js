@@ -8,6 +8,10 @@ import { FaExclamationCircle } from "react-icons/fa";
 import axios from "axios";
 import { signup } from "../../../api/auth.ts";
 import PasswordRestrictions from "./PasswordRestrictions.js";
+import FileUploadForm from "./FilesUpload/FileUploadForm.js";
+import IDUpload from "./FilesUpload/IDUpload.js";
+import { uploadFile, uploadFiles } from "../../../api/account.ts";
+
 function Signup({ setFlag }) {
   setFlag(true);
   const navigate = useNavigate();
@@ -16,6 +20,14 @@ function Signup({ setFlag }) {
   const handleUsernameChange = (event) => {
     setUsername(event.target.value); // Update the username state
   };
+
+  const [idUrl, setIdUrl] = useState(null);
+  const [secondIdUrl, setSecondIdUrl] = useState(null);
+  const [certificatesUrls, setCertificatesUrls] = useState([]);
+
+  const [ID, setID] = useState(null);
+  const [secondID, setSecondID] = useState(null);
+
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(false);
 
@@ -112,6 +124,8 @@ function Signup({ setFlag }) {
       setPasswordMatch(false);
     }
   };
+
+  const [certificates, setCertificates] = useState([]);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isValidVariable, setIsValidVariable] = useState(false);
@@ -303,9 +317,58 @@ function Signup({ setFlag }) {
       return false;
     }
 
-    try {
-      var data;
+    var response1;
+    var response2;
+    var response3;
 
+    try {
+      if (selectedRole !== "Tourist") {
+        try {
+          response1 = await uploadFile(ID);
+          console.log("image url is: " + response1.data.imageUrl);
+          setIdUrl(response1.data.imageUrl);
+        } catch (error) {
+          setMessage(error.response?.data?.message || "Upload failed");
+          return false;
+        }
+      }
+
+      if (selectedRole === "Advertiser" || selectedRole === "Seller") {
+        try {
+          response2 = await uploadFile(secondID);
+          setSecondIdUrl(response2.data.imageUrl);
+        } catch (error) {
+          setMessage(error.response?.data?.message || "Upload failed");
+          return false;
+        }
+      }
+
+      if (selectedRole === "TourGuide") {
+        try {
+          
+          certificates.forEach((certificate, index) => {
+            console.log(`Certificate ${index + 1}: ${certificate.name}`);
+          });
+          response3 = await uploadFiles(certificates);
+          console.log(response3.data.imageUrls);
+          console.log(
+            "image urls are: " +
+              response3.data.imageUrls[0] +
+              " " +
+              response3.data.imageUrls[1]
+          );
+          setCertificatesUrls(response3.data.imageUrls);
+        } catch (error) {
+          setMessage(response.data.message);
+          setMessage(error.response?.data?.message || "Upload failed");
+          return false;
+        }
+      }
+      
+      console.log(response1.data.imageUrl);
+      console.log(response3.data.imageUrls);
+
+      var data;
       switch (selectedRole) {
         case "Tourist":
           data = {
@@ -320,11 +383,35 @@ function Signup({ setFlag }) {
           };
           break;
         case "TourGuide":
+          console.log("card url: " + response1.data.imageUrl);
+          console.log("cert are" + response3.data.imageUrls);
           data = {
             email: email,
             username: username,
             password: password,
             userRole: selectedRole,
+            idCardUrl: response1.data.imageUrl,
+            certificates: response3.data.imageUrls,
+          };
+          break;
+        case "Advertiser":
+          data = {
+            email: email,
+            username: username,
+            password: password,
+            userRole: selectedRole,
+            idCardUrl: response1.data.imageUrl,
+            taxationCardUrl: response2.data.imageUrl,
+          };
+          break;
+        case "Seller":
+          data = {
+            email: email,
+            username: username,
+            password: password,
+            userRole: selectedRole,
+            idCardUrl: response1.data.imageUrl,
+            taxationCardUrl: response2.data.imageUrl,
           };
           break;
         case "Admin":
@@ -336,14 +423,14 @@ function Signup({ setFlag }) {
           };
           break;
         default:
-          data = {
-            email: email,
-            username: username,
-            password: password,
-            userRole: selectedRole,
-          };
           break;
       }
+      console.log(
+        "finally are: " +
+          response1.data.imageUrl +
+          " " +
+          response3.data.imageUrls
+      );
       const response = await signup(data);
 
       setMessage(response.data.message);
@@ -359,9 +446,19 @@ function Signup({ setFlag }) {
     if (selectedRole === "Tourist" && !isDobValid) {
       setMessage("Invalid date of birth");
       return false;
-    }else{
+    } else {
       setMessage("");
     }
+    if (selectedRole !== "Tourist" && !ID) {
+      return false;
+    }
+    if (
+      (selectedRole === "Advertiser" || selectedRole === "Seller") &&
+      !secondID
+    ) {
+      return false;
+    }
+
     const nonNumericRegex = /\D/;
     if (
       username === "" ||
@@ -427,7 +524,7 @@ function Signup({ setFlag }) {
             className="form w-full p-[10px] pt-[5px] flex flex-col gap-1.5 max-w-[350px] bg-white relative   outline-none border border-[rgba(105,105,105,0.397)] rounded-[10px]
        left-[10px] top-[15px] text-gray-500 text-[0.9em] cursor-text transition ease-linear duration-300 shadow-lg"
           >
-            <Toggle selectedRole={handleRoleChange} setMessage={setMessage}/>
+            <Toggle selectedRole={handleRoleChange} setMessage={setMessage} />
 
             <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
               <span>Username</span>
@@ -448,18 +545,19 @@ function Signup({ setFlag }) {
               />
             </label>
             {selectedRole === "Tourist" && (
-            <h6
-              className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                selectedRole !== "Tourist" ? "hidden" : ""
-              }`}
-            >
-              <span>Nationality</span>
-              {isFormSubmitted && !selectedNationality && (
-                <span className="text-red-500 font-normal text-xs">
-                  This field is required
-                </span>
-              )}
-            </h6>)}
+              <h6
+                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                  selectedRole !== "Tourist" ? "hidden" : ""
+                }`}
+              >
+                <span>Nationality</span>
+                {isFormSubmitted && !selectedNationality && (
+                  <span className="text-red-500 font-normal text-xs">
+                    This field is required
+                  </span>
+                )}
+              </h6>
+            )}
 
             <div
               className={`relative ${
@@ -533,23 +631,24 @@ function Signup({ setFlag }) {
                 type="tel"
                 placeholder="Enter your mobile number"
                 required
-                value={mobileNumber}
+                value={!mobileNumber}
                 onChange={handleMobileNumberChange}
               />
             </label>
             {selectedRole === "Tourist" && (
-            <h6
-              className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                selectedRole !== "Tourist" ? "hidden" : ""
-              }`}
-            >
-              <span>Job Title</span>
-              {isFormSubmitted && (!jobTitle || jobTitle === "") && (
-                <span className="text-red-500 font-normal text-xs">
-                  This field is required
-                </span>
-              )}
-            </h6>)}
+              <h6
+                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                  selectedRole !== "Tourist" ? "hidden" : ""
+                }`}
+              >
+                <span>Job Title</span>
+                {isFormSubmitted && (!jobTitle || jobTitle === "") && (
+                  <span className="text-red-500 font-normal text-xs">
+                    This field is required
+                  </span>
+                )}
+              </h6>
+            )}
 
             <label
               className={`relative labelsignup ${
@@ -594,7 +693,51 @@ function Signup({ setFlag }) {
                 />
               </div>
             </div>
-            <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
+
+            {selectedRole !== "Tourist" && (
+              <div>
+                <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
+                  <span>ID</span>
+                  {isFormSubmitted && !ID && (
+                    <span className="text-red-500 font-normal text-xs">
+                      This field is required
+                    </span>
+                  )}
+                </h6>
+                {selectedRole !== "Tourist" && <IDUpload setID={setID} />}
+              </div>
+            )}
+
+            {(selectedRole === "Advertiser" || selectedRole === "Seller") && (
+              <div>
+                <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
+                  <span>Taxation registry card</span>
+                  {isFormSubmitted && !secondID && (
+                    <span className="text-red-500 font-normal text-xs">
+                      This field is required
+                    </span>
+                  )}
+                </h6>
+
+                <IDUpload setID={setSecondID} />
+              </div>
+            )}
+
+            {selectedRole === "TourGuide" && (
+              <div>
+                <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
+                  <span>Certificates</span>
+                  {isFormSubmitted && certificates.length === 0 && (
+                    <span className="text-red-500 font-normal text-xs">
+                      This field is required
+                    </span>
+                  )}
+                </h6>
+                <FileUploadForm setCertificates={setCertificates} />
+              </div>
+            )}
+
+            <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
               <span>Password</span>
               {isFormSubmitted && !password && (
                 <span className="text-red-500 font-normal text-xs">

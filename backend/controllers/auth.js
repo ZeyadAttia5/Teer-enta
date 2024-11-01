@@ -42,7 +42,9 @@ exports.signup = async (req, res) => {
                     email: req.body.email,
                     username: req.body.username,
                     password: hashedPassword,
-                    userRole: userRole
+                    userRole: userRole,
+                    isCardUrl: req.body.isCardUrl,
+                    certificates: req.body.certificates
                 });
                 await tourGuide.save();
                 return res.status(201).send({message: 'TourGuide created successfully.'});
@@ -51,7 +53,9 @@ exports.signup = async (req, res) => {
                     email: req.body.email,
                     username: req.body.username,
                     password: hashedPassword,
-                    userRole: userRole
+                    userRole: userRole,
+                    isCardUrl: req.body.isCardUrl,
+                    taxationCardUrl: req.body.taxationCardUrl
                 });
                 await advertiser.save();
                 return res.status(201).send({message: 'Advertiser created successfully.'});
@@ -60,7 +64,9 @@ exports.signup = async (req, res) => {
                     email: req.body.email,
                     username: req.body.username,
                     password: hashedPassword,
-                    userRole: userRole
+                    userRole: userRole,
+                    isCardUrl: req.body.isCardUrl,
+                    taxationCardUrl: req.body.taxationCardUrl
                 });
                 await seller.save();
                 return res.status(201).send({message: 'Seller created successfully.'});

@@ -88,3 +88,16 @@ export const requestAccountDeletion = async () =>{
         }
     );
 }
+
+export const uploadFile = async (file) =>{
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return await axios.post(`${API_BASE_URL}/upload/file`, formData );
+}
+
+export const uploadFiles = async (files) =>{
+    const formData = new FormData();
+    formData.append('files', files)
+    return await axios.post(`${API_BASE_URL}/upload/files`, formData);
+}
