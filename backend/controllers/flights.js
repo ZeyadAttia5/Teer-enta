@@ -1,7 +1,7 @@
-const Amadeus = require('amadeus');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const BookedFlight = require("../models/Booking/BookedFlight");
 const { getCountryCode } = require("../Util/LocationCodes");
+const Amadeus = require('amadeus');
 
 const amadeus = new Amadeus({
     clientId: process.env.AMADEUS_CLIENT_ID,
