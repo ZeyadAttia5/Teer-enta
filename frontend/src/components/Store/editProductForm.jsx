@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import {getProduct, updateProduct} from "../../api/products.ts"; // Import useNavigate
+import {getProduct, updateProduct, archiveProduct, unArchiveProduct} from "../../api/products.ts"; // Import useNavigate
 
 const EditProductForm = ({setFlag}) => {
   setFlag(false);
@@ -13,6 +13,7 @@ const EditProductForm = ({setFlag}) => {
     price: '',
     image: '', 
     quantity: '', 
+    isActive: '',
   });
 
   const [loading, setLoading] = useState(true);
@@ -45,7 +46,24 @@ const EditProductForm = ({setFlag}) => {
       [name]: value,
     }));
   };
-
+  const handleArchiveToggle = async () => {
+    try {
+      if (product.isActive) {
+        await archiveProduct(productId);
+        setSuccess('Product archived successfully!');
+      } else {
+        await unArchiveProduct(productId);
+        setSuccess('Product unarchived successfully!');
+      }
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        isActive: !prevProduct.isActive, // Toggle isActive locally to reflect the change
+      }));
+    } catch (err) {
+      setError('Failed to update archive status');
+    }
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -153,7 +171,15 @@ const EditProductForm = ({setFlag}) => {
         >
           Update Product
         </button>
-      </form>
+        <button
+          type="button"
+          onClick={handleArchiveToggle}
+          className="bg-gray-500 text-white px-4 py-2 rounded-lg transition-colors duration-300 hover:bg-gray-700 ml-4"
+        >
+          {product.isActive ? 'Archive' : 'Unarchive'}
+        </button>
+
+    </form>
     </div>
   );
 };
