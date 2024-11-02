@@ -3,6 +3,7 @@ const productController = require('../controllers/product');
 const isAuth = require("../middlewares/isAuth");
 
 router.get('/' , productController.getProducts);
+router.get('/archived',productController.getArchivedProducts) ;
 router.get('/one/:id'  , productController.getProduct);
 router.get('/salesAndQuantity' , isAuth ,productController.viewAvailableQuantityAndSales);
 router.get('/:id/ratings' , productController.getRatingsForProduct);

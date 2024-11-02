@@ -16,11 +16,23 @@ exports.getProducts = async (req, res) => {
     try {
         const products = await product.find({isActive: true});
         if (products.length === 0) {
-            return res.status(404).send({message: 'No products found'});
+            return res.status(200).send({message: 'No products found'});
         }
         res.status(200).json(products);
     } catch (err) {
         errorHandler.SendError(res, err);
+    }
+}
+
+exports.getArchivedProducts = async (req,res)=>{
+    try {
+        const products = await product.find({isActive:false}) ;
+        if (products.length===0){
+            return res.status(200).json({message:"no products found"})
+        }
+        res.status(200).json(products) ;
+    }catch (err){
+        errorHandler.SendError(res,err) ;
     }
 }
 
