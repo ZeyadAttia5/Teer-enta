@@ -101,15 +101,26 @@ const AdminProductGrid = ({ setFlag }) => {
             />
           </div>
           {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
-              <Link to="/products/create">
-                <Button
-                    type="primary"
-                    className="bg-customGreen hover:bg-darkerGreen transition duration-300 mr-14"
-                >
-                  Add Product
-                </Button>
-              </Link>
-          )}
+  <>
+    <Link to="/products/create">
+      <Button
+        type="primary"
+        className="bg-customGreen hover:bg-darkerGreen transition duration-300 mr-4"
+      >
+        Add Product
+      </Button>
+    </Link>
+    <Link to="/products/quantity&Sales">
+      <Button
+        type="primary"
+        className="bg-customGreen hover:bg-darkerGreen transition duration-300 mr-4"
+      >
+        Quantity and Sales
+      </Button>
+    </Link>
+  </>
+)}
+
         </div>
 
         <Row gutter={[16, 16]} className="mt-5">
