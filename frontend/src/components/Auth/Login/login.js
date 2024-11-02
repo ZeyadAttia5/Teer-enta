@@ -5,11 +5,11 @@ import { FaEye, FaEyeSlash } from "react-icons/fa"; // Example icons from react-
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { set } from "date-fns";
-import {login} from "../../../api/auth.ts";
-function Login({setFlag, flag}) {
-  if(!flag){
+import { login } from "../../../api/auth.ts";
+import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
+function Login({ setFlag, flag }) {
+  if (!flag) {
     setFlag(true);
-    
   }
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
@@ -21,6 +21,8 @@ function Login({setFlag, flag}) {
 
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -59,7 +61,9 @@ function Login({setFlag, flag}) {
     var user;
     var accessToken;
     try {
+      setIsLoading(true);
       const response = await login(details);
+      setIsLoading(false);
       user = response.data.user;
       accessToken = response.data.accessToken;
       localStorage.setItem("user", JSON.stringify(user));
@@ -87,6 +91,7 @@ function Login({setFlag, flag}) {
   };
   return (
     <div className="flex">
+      {isLoading && <LoadingCircle />}
       <div className="relative w-[66%] h-screen overflow-hidden">
         {images.map((image, index) => (
           <img

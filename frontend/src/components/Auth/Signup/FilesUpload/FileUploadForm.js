@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from "react";
 
-const FileUploadForm = ({setCertificates}) => {
+const FileUploadForm = ({setCertificates, onChange}) => {
   const [files, setFiles] = useState([]);
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
     setCertificates((prevFiles) => [...prevFiles, ...selectedFiles]);
+    // onChange();
   };
 
   const handleDrop = useCallback((e) => {

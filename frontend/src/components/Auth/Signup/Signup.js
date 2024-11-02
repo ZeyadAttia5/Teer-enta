@@ -11,6 +11,7 @@ import PasswordRestrictions from "./PasswordRestrictions.js";
 import FileUploadForm from "./FilesUpload/FileUploadForm.js";
 import IDUpload from "./FilesUpload/IDUpload.js";
 import { uploadFile, uploadFiles } from "../../../api/account.ts";
+import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
 
 function Signup({ setFlag }) {
   setFlag(true);
@@ -39,6 +40,8 @@ function Signup({ setFlag }) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setIsValidEmail(emailRegex.test(inputEmail));
   };
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [passwordMatch, setPasswordMatch] = useState(true);
 
@@ -322,12 +325,14 @@ function Signup({ setFlag }) {
     var response3;
 
     try {
+      setIsLoading(true);
       if (selectedRole !== "Tourist") {
         try {
           response1 = await uploadFile(ID);
           console.log("image url is: " + response1.data.imageUrl);
           setIdUrl(response1.data.imageUrl);
         } catch (error) {
+          setIsLoading(false);
           setMessage(error.response?.data?.message || "Upload failed");
           return false;
         }
@@ -338,6 +343,7 @@ function Signup({ setFlag }) {
           response2 = await uploadFile(secondID);
           setSecondIdUrl(response2.data.imageUrl);
         } catch (error) {
+          setIsLoading(false);
           setMessage(error.response?.data?.message || "Upload failed");
           return false;
         }
@@ -345,20 +351,15 @@ function Signup({ setFlag }) {
 
       if (selectedRole === "TourGuide") {
         try {
-          
-         
           response3 = await uploadFiles(certificates);
-         
+
           setCertificatesUrls(response3.data.imageUrls);
         } catch (error) {
-          setMessage(response.data.message);
+          setIsLoading(false);
           setMessage(error.response?.data?.message || "Upload failed");
           return false;
         }
       }
-      
-      console.log(response1.data.imageUrl);
-      console.log(response2.data.imageUrl);
 
       var data;
       switch (selectedRole) {
@@ -375,7 +376,6 @@ function Signup({ setFlag }) {
           };
           break;
         case "TourGuide":
-          
           data = {
             email: email,
             username: username,
@@ -386,8 +386,6 @@ function Signup({ setFlag }) {
           };
           break;
         case "Advertiser":
-          console.log("card url1: " + response1.data.imageUrl);
-          console.log("card url2: " + response2.data.imageUrl);
           data = {
             email: email,
             username: username,
@@ -418,21 +416,15 @@ function Signup({ setFlag }) {
         default:
           break;
       }
-      console.log(
-        "finally are: " +
-          response1.data.imageUrl +
-          " " +
-          response3.data.imageUrls
-      );
-
+      
       const response = await signup(data);
-
-      console.log("after sign up " + response.status);
+      setIsLoading(false);
 
       setMessage(response.data.message);
       navigate("/login");
       setFlag(false);
     } catch (error) {
+      setIsLoading(false);
       setMessage(error.response.data.message || "Signup failed");
     }
   };
@@ -480,6 +472,7 @@ function Signup({ setFlag }) {
 
   return (
     <div className="flex h-screen">
+    {isLoading && <LoadingCircle  />}
       <div className="relative w-[66%] h-screen overflow-hidden">
         {images.map((image, index) => (
           <img

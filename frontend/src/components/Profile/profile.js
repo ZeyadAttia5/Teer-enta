@@ -1,27 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import unknownImage from "./unknown.jpg";
-import axios from "axios";
 import { FaExclamationCircle } from "react-icons/fa";
 import SocialMediaIcons from "./SocialMediaIcons";
 import AddPreviousWork from "./AddPreviousWork";
 import PreviousWorksList from "./PreviousWorksList";
 import { getProfile, updateProfilee } from "../../api/profile.ts";
-import ImageUpload from "./ImageUpload/ImageUpload.js";
 import ImageProfile from "./ImageProfile/ImageProfile.js";
 import DeleteAccountButton from "./DeleteAccountButton.js";
-
-
-// async function getProfileData() {
-//   try {
-//     const response = await axios.get(`${URL}/Profile/${id}`);
-
-//     setMessage(response.data.message);
-//   } catch (error) {
-//     setMessage(error.response.data.message || 'Getting data failed');
-//   }
-// }
 
 async function updateProfile(
   user,
@@ -64,10 +49,10 @@ async function updateProfile(
     console.log("Profile Data:", data);
     for (const key in data) {
       if (data.hasOwnProperty(key)) {
-      console.log(`${key}: ${data[key]}`);
+        console.log(`${key}: ${data[key]}`);
       }
     }
-    
+
     const tmpDate = new Date(data.dateOfBirth).toLocaleDateString("en-CA");
 
     switch (data.userRole) {
@@ -143,7 +128,7 @@ async function updateProfile(
 
 const LoadingCircle = () => {
   return (
-    <div className="flex items-start  justify-center h-screen pt-20">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="w-32 h-32 border-4 border-blue-500 border-dotted rounded-full animate-spin"></div>
     </div>
   );
@@ -159,6 +144,8 @@ function Profile({ setFlag }) {
   // Parse the user object
   const user = storedUser ? JSON.parse(storedUser) : null;
   const accessToken = storedAccessToken || null;
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [profileImage, setProfileImage] = useState(null);
 
@@ -365,22 +352,25 @@ function Profile({ setFlag }) {
         return false;
     }
     if (userRole === "Tourist") {
+      setIsLoading(true);
       try {
         const response = await updateProfilee(data, user._id);
-
-        setMessage(response.data.message);
-      } catch (error) {
-        setMessage(error.response.data.message || "Updating Profile failed");
-      }
-    } else {
-      try {
         
-        const response = await updateProfilee(data, user._id);
-
         setMessage(response.data.message);
       } catch (error) {
         setMessage(error.response.data.message || "Updating Profile failed");
       }
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+      try {
+        const response = await updateProfilee(data, user._id);
+        
+        setMessage(response.data.message);
+      } catch (error) {
+        setMessage(error.response.data.message || "Updating Profile failed");
+      }
+      setIsLoading(false);
     }
 
     // Update the user in local storage
@@ -447,6 +437,7 @@ function Profile({ setFlag }) {
 
   return (
     <div className="flex justify-center">
+    {isLoading && (<LoadingCircle />)}
       <div className="flex m-16 gap-16">
         {!userRole && (
           <div className="container mx-auto">
@@ -459,10 +450,8 @@ function Profile({ setFlag }) {
         )}
         {userRole && (
           <div className="flex flex-col">
-            {userRole !== "Tourist" && (
-              <ImageProfile />
-            )}
-            
+            {userRole !== "Tourist" && <ImageProfile />}
+
             <div className="flex flex-col space-y-4">
               <button
                 className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
@@ -506,7 +495,7 @@ function Profile({ setFlag }) {
               </Link>
 
               <DeleteAccountButton />
-              
+
               {userRole === "Tourist" && (
                 <div className="max-w-sm mx-auto mt-10">
                   <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
@@ -851,8 +840,7 @@ function Profile({ setFlag }) {
                     </div>
                   </div>
                 </div>
-                
-                
+
                 <div className="mt-8">
                   <PreviousWorksList
                     previousWorks={previousWorks}
