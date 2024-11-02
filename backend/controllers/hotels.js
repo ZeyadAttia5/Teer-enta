@@ -1,11 +1,14 @@
 const Amadeus = require('amadeus');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const { getCityCodes } = require("../Util/LocationCodes");
+const BookedHotel = require("../models/Booking/BookedHotel");
 
 const amadeus = new Amadeus({
     clientId: process.env.AMADEUS_CLIENT_ID,
     clientSecret: process.env.AMADEUS_CLIENT_SECRET
 });
+
+
 
 exports.getHotelOffers = async (req, res) => {
     try{
@@ -14,21 +17,36 @@ exports.getHotelOffers = async (req, res) => {
         if (!cityCode) {
             return res.status(400).json({ error: "Invalid city name or no city code found" });
         }
-        const hotelIds = await amadeus.referenceData.locations.hotels.byCity.get({
+        const hotels = await amadeus.referenceData.locations.hotels.byCity.get({
             cityCode: cityCode
         });
-        if (!hotelIds.data || hotelIds.data.length === 0) {
+        if (!hotels.data || hotels.data.length === 0) {
             return res.status(404).json({ error: 'No hotels found in the city.' });
         }
-        hotelIds.data = hotelIds.data.slice(0, 5);
-        console.log(hotelIds.data.map(hotel => hotel.hotelId));
+
+        const uniqueHotels = [];
+        const chainCodes = new Set();
+
+        hotels.data.forEach(hotel => {
+            if (!chainCodes.has(hotel.chainCode)) {
+                chainCodes.add(hotel.chainCode);
+                uniqueHotels.push(hotel); // Add the hotel if chainCode is unique
+            }
+        });
+        // console.log("number of unique hotels: ", uniqueHotels.length);
+        // console.log(uniqueHotels);
+
+
+        // hotelIds.data = hotelIds.data.slice(0, 5);
+        // console.log(hotelIds.data);
+        // console.log(hotelIds.data.map(hotel => hotel.hotelId));
+        let hotelIds = uniqueHotels.map(hotel => hotel.hotelId).slice(0,Math.min(50,uniqueHotels.length)).join(',');
         const hotelSearch = await amadeus.shopping.hotelOffersSearch.get({
-            hotelIds: 'RTPAR001,ACPAR245,XKPARC12,RTMUC001,RTMUC002',
-            cityCode: cityCode,
+            hotelIds: hotelIds,
+            // cityCode: cityCode,
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
             adults: adults,
-            children: 2,
         });
 
         res.status(200).json(hotelSearch.data);
@@ -38,45 +56,49 @@ exports.getHotelOffers = async (req, res) => {
     }
 }
 exports.bookHotel = async (req, res) => {
+    const {hotel, offer, guests, payments} = req.body;
+    if(!hotel || !offer || !guests || !payments) {
+        return res.status(400).json({error: "Invalid request body: required fields missing (hotel, offer, guests, payments)"});
+    }
     try {
-        const {offerId, guests, payments} = req.body;
-        const hotelOfferDetails = await amadeus.shopping.hotelOffer(offerId).get();
-        console.log(hotelOfferDetails.data);
+        // const hotelOfferDetails = await amadeus.shopping.hotelOfferSearch('VRWK38MO20').get();
+        // console.log(hotelOfferDetails.data);
 
         const hotelBooking = await amadeus.booking.hotelBookings.post(
             JSON.stringify({
                 "data": {
-                    "offerId": offerId, // The ID of the selected hotel offer
-                    "guests": [...guests
-                        // {
-                        //     "name": {
-                        //         "title": "MR",
-                        //         "firstName": "John",
-                        //         "lastName": "Doe"
-                        //     },
-                        //     "contact": {
-                        //         "phone": "123456789",
-                        //         "email": "john.doe@example.com"
-                        //     }
-                        // }
-                    ],
-                    "payments": [ ...payments
-                        // {
-                        //     "method": "creditCard",
-                        //     "card": {
-                        //         "vendorCode": "VI",  // Visa, Mastercard, etc.
-                        //         "cardNumber": "4111111111111111", // Test card number
-                        //         "expiryDate": "2024-10",
-                        //         "holderName": "John Doe"
-                        //     }
-                        // }
-                    ]
+                    "offerId": offer.id, // The ID of the selected hotel offer
+                    "guests": guests,
+                    "payments": payments
                 }
             })
         )
         console.log(hotelBooking.data);
         res.status(200).json(hotelBooking.data);
     } catch(err) {
+        if(err.statusCode === 401) {
+            try {
+                await BookedHotel.create({
+                    hotel: {
+                        hotelId: hotel.hotelId,
+                        name: hotel.name,
+                        chainCode: hotel.chainCode,
+                        cityCode: hotel.cityCode,
+                        latitude: hotel.latitude,
+                        longitude: hotel.longitude
+                    },
+                    checkInDate: offer.checkInDate,
+                    checkOutDate: offer.checkOutDate,
+                    guests: guests,
+                    price: offer.price.total,
+                    // createdBy: req.user._id
+                });
+                return res.status(200).json({message: "Successfully booked!"});
+            } catch(e){
+                console.log(e);
+                return res.status(400).json(e);
+            }
+        }
         console.log(err);
         errorHandler.SendError(res, err);
     }
