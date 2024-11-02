@@ -266,7 +266,13 @@ const MyComplaints = () => {
       <Button
         type="primary"
         onClick={handleCreateComplaint}
-        style={{ marginBottom: 16, marginRight: 16 }}
+        style={{
+          backgroundColor: "#ff4d4f",
+          borderColor: "#ff4d4f",
+          marginBottom: 16,
+          marginRight: 16,
+          marginTop: 16,
+        }}
       >
         Create Complaint
       </Button>

@@ -240,6 +240,10 @@ const ComplaintsManagement = () => {
               <strong>Body:</strong> {selectedComplaint.body}
             </p>
             <p>
+              <strong>User:</strong>{" "}
+              {selectedComplaint.createdBy.username || "Unknown"}
+            </p>
+            <p>
               <strong>Status:</strong> {selectedComplaint.status}
             </p>
             <p>
