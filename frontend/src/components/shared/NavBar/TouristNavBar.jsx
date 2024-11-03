@@ -54,7 +54,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
   }, [isNavigate]);
 
   return (
-    <div className="w-full flex flex-row justify-between items-center bg-gradient-to-t from-green-600 to-teal-700% shadow-2xl p-6 z-10 h-20 text-white font-bold space-x-8">
+    <div className="w-full flex flex-row justify-between items-center bg-gradient-to-b from-green-600 to-teal-700% shadow-2xl p-6 z-10 h-20 text-white font-bold space-x-8">
       {/* Logo Section */}
       <span className="ml-8 text-lg leading-7">
         <div className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">

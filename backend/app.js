@@ -24,6 +24,8 @@ const transportationRoutes = require('./routes/transportation');
 const flightsRoutes = require('./routes/flights');
 const paymentRoutes = require('./routes/payment');
 const complaintRoutes = require('./routes/complaint');
+const currencyRoutes = require('./routes/currency') ;
+const fileRoutes = require('./routes/file');
 
 
 
@@ -72,6 +74,8 @@ app.use("/transportation",transportationRoutes);
 app.use("/flights", flightsRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/complaint", complaintRoutes);
+app.use("/upload" , fileRoutes ) ;
+app.use("/currency" , currencyRoutes) ;
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });

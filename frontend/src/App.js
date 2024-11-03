@@ -32,6 +32,9 @@ import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
 import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
 import ChangePassword from "./components/Profile/ChangePassword.js";
 import DeleteAccountButton from "./components/Profile/DeleteAccountButton.js";
+import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
+import MyComplaints from "./components/Users/complain/myComplaints.js";
+import ShowDocuments from "./components/Users/pendingUsers/ShowDocuments.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -66,7 +69,7 @@ function App() {
             drawerVisible={visible}
           />
         )}
-        {(
+        {!flag && (
           <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  ">
             <TouristNavBar
               setModalOpen ={setModalOpen}
@@ -75,6 +78,7 @@ function App() {
             />
           </div>
         )}
+
         <ConfirmationModal
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
@@ -84,7 +88,10 @@ function App() {
         <Routes>
           <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
           <Route path="/signup" element={<Signup setFlag={setFlag} />} />
-          <Route path="/login" element={<Login setFlag={setFlag} />} />
+          <Route
+            path="/login"
+            element={<Login setFlag={setFlag} flag={flag} />}
+          />
           <Route path="/profile" element={<Profile setFlag={setFlag} />} />
           <Route
             path="/preference-tags"
@@ -133,6 +140,7 @@ function App() {
             path="/pendingUsers"
             element={<PendingUsers setFlag={setFlag} />}
           />
+          <Route path="/showDocuments/:id" element={<ShowDocuments />} />
           <Route path="/addUser" element={<AddUser setFlag={setFlag} />} />
           <Route
             path="/products"
@@ -179,13 +187,18 @@ function App() {
             element={<TouristActivity setFlag={setFlag} />}
           />
           <Route
-          path="/changePassword"
-          element={<ChangePassword setFlag={setFlag} />}
-        />
+            path="/changePassword"
+            element={<ChangePassword setFlag={setFlag} />}
+          />
           <Route
-          path="/requestAccountDeletion"
-          element={<DeleteAccountButton setFlag={setFlag} />}
-        />
+            path="/requestAccountDeletion"
+            element={<DeleteAccountButton setFlag={setFlag} />}
+          />
+          <Route
+            path="ComplaintsManagement"
+            element={<ComplaintsManagement />}
+          />
+          <Route path="myComplaints" element={<MyComplaints />} />
         </Routes>
         <Toaster />
       </Router>
