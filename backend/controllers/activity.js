@@ -68,6 +68,20 @@ exports.getUpcomingActivities = async (req, res, next) => {
     }
 }
 
+exports.getBookedActivities = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const bookedActivities = await BookedActivity.find({createdBy: userId, isActive: true})
+            .populate('activity').populate('createdBy');
+        if (bookedActivities.length === 0) {
+            return res.status(404).json({message: 'No booked ActivityList found'});
+        }
+        res.status(200).json(bookedActivities);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
 exports.createActivity = async (req, res, next) => {
     try {
 

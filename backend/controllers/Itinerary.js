@@ -89,6 +89,20 @@ exports.getUpcomingItineraries = async (req, res, next) => {
     }
 };
 
+exports.getBookedItineraries = async (req, res, next) => {
+    try{
+        const userId = req.user._id;
+        const bookedItineraries = await BookedItinerary.find({createdBy: userId,isActive: true})
+            .populate('itinerary').populate('createdBy');
+        if(bookedItineraries.length === 0){
+            return res.status(404).json({message: "No booked itineraries found"});
+        }
+        res.status(200).json(bookedItineraries);
+    }catch (err){
+        errorHandler.SendError(res, err);
+    }
+}
+
 exports.createItinerary = async (req, res, next) => {
     try {
         // req.user = {_id: '66f6564440ed4375b2abcdfb'};
