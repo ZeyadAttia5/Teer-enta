@@ -113,43 +113,54 @@ const ItineraryDetails: React.FC = () => {
 
 
   return (
-      <Space
-          direction="vertical"
-          size="large"
-          style={{ width: "100%", margin: "0 auto", padding: 24 }}
-      >
-        {/* Header Section */}
-        <Card>
-          <Row justify="space-between" align="top">
+    <div className="bg-[#496989] min-h-screen flex items-center justify-center p-0 overflow-hidden w-full">
+      <Space direction="vertical" size="large" className="relative w-full p-8">
+        <div className="absolute top-1 left-8 animate-bounce">
+          <EnvironmentOutlined className="text-5xl text-white" />
+        </div>
+  
+        {/* First Card for Itinerary Details */}
+        <Card
+          bordered={false}
+          className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
+        >
+          <Row justify="center" className="text-center mb-1">
+            <Title level={2} className="font-extrabold text-[#58A399]">
+              {itinerary?.name}
+            </Title>
+          </Row>
+          <Row justify="center" className="text-center">
+            <p className="text-[#58A399] text-lg font-medium mb-6">
+              {itinerary?.description || "Explore amazing travel experiences!"}
+            </p>
+          </Row>
+          <Row justify="space-between" align="middle" gutter={[16, 16]}>
             <Col>
-              <Title level={2} style={{ marginBottom: 8 }}>
-                {itinerary?.name}
-              </Title>
               <Space size="small">
-                <Tag icon={<GlobalOutlined />}>{itinerary?.language}</Tag>
-                <Tag icon={<DollarOutlined />}>${itinerary?.price}</Tag>
+                <Tag icon={<GlobalOutlined />} color="magenta">
+                  {itinerary?.language}
+                </Tag>
+                <Tag icon={<DollarOutlined />} color="green">
+                  ${itinerary?.price}
+                </Tag>
                 {itinerary?.isActive && (
-                    <Tag icon={<CheckCircleOutlined />} color="success">
-                      Active
-                    </Tag>
+                  <Tag icon={<CheckCircleOutlined />} color="success">
+                    Active
+                  </Tag>
                 )}
               </Space>
             </Col>
             <Col>
-              <Space direction="vertical" align="end">
+              <Space direction="vertical" align="center">
                 <Rate disabled value={averageRating} allowHalf />
-                <Text type="secondary">{itinerary?.ratings.length} ratings</Text>
+                <Text type="secondary" className="text-[#58A399]">
+                  {itinerary?.ratings.length} ratings
+                </Text>
                 <Space>
-                  <Button
-                      icon={<CopyOutlined />}
-                      onClick={handleCopyLink}
-                  >
+                  <Button icon={<CopyOutlined />} onClick={handleCopyLink}>
                     Copy Link
                   </Button>
-                  <Button
-                      icon={<MailOutlined />}
-                      onClick={handleShareEmail}
-                  >
+                  <Button icon={<MailOutlined />} onClick={handleShareEmail}>
                     Share via Email
                   </Button>
                 </Space>
@@ -157,147 +168,168 @@ const ItineraryDetails: React.FC = () => {
             </Col>
           </Row>
         </Card>
-
-        {/* Location Information */}
-        {(itinerary?.pickupLocation || itinerary?.dropOffLocation) && (
-            <Card
+  
+        {/* Combined Row for Locations, Activities, Timeline, and Available Dates */}
+        <Row gutter={[16, 16]}>
+          {/* Locations Card */}
+          {(itinerary?.pickupLocation || itinerary?.dropOffLocation) && (
+            <Col xs={24} sm={12} md={6}>
+              <Card
                 title={
                   <Space>
-                    <EnvironmentOutlined />
+                    <EnvironmentOutlined className="text-[#58A399]" />
                     <span>Locations</span>
                   </Space>
                 }
+                className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
+              >
+                {itinerary?.pickupLocation && (
+                  <div>
+                    <Text strong className="text-[#58A399]">Pickup: </Text>
+                    <Text className="text-[#58A399]">{itinerary?.pickupLocation}</Text>
+                  </div>
+                )}
+                {itinerary?.dropOffLocation && (
+                  <div>
+                    <Text strong className="text-[#58A399]">Drop-off: </Text>
+                    <Text className="text-[#58A399]">{itinerary?.dropOffLocation}</Text>
+                  </div>
+                )}
+              </Card>
+            </Col>
+          )}
+  
+          {/* Activities Card */}
+          <Col xs={24} sm={12} md={6}>
+            <Card
+              title={
+                <Space>
+                  <ClockCircleOutlined className="text-[#58A399]" />
+                  <span>Activities</span>
+                </Space>
+              }
+              className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
             >
-              {itinerary?.pickupLocation && (
-                  <div>
-                    <Text strong>Pickup: </Text>
-                    <Text>{itinerary?.pickupLocation}</Text>
-                  </div>
-              )}
-              {itinerary?.dropOffLocation && (
-                  <div>
-                    <Text strong>Drop-off: </Text>
-                    <Text>{itinerary?.dropOffLocation}</Text>
-                  </div>
-              )}
-            </Card>
-        )}
-
-        {/* Activities */}
-        <Card
-            title={
-              <Space>
-                <ClockCircleOutlined />
-                <span>Activities</span>
-              </Space>
-            }
-        >
-          <List
-              dataSource={itinerary?.activities}
-              renderItem={(item) => (
+              <List
+                dataSource={itinerary?.activities}
+                renderItem={(item) => (
                   <List.Item
-                      extra={<Tag icon={<ClockCircleOutlined />}>{item.duration} min</Tag>}
-                      className="cursor-pointer hover:shadow hover:scale-105 transition-all"
-                      onClick={() => navigate(`../activityDetails/${item.activity?._id}`)}
+                    className="cursor-pointer hover:bg-indigo-50 transition duration-300 transform hover:scale-105 rounded-md"
+                    onClick={() => navigate(`../activityDetails/${item.activity?._id}`)}
                   >
-                    <Text>{item.activity?.name}</Text>
+                    <Text className="text-[#58A399] text-lg">{item.activity?.name}</Text>
+                    <Tag color="blue">{item.duration} min</Tag>
                   </List.Item>
-              )}
-          />
-        </Card>
-
-        {/* Timeline */}
-        <Card
-            title={
-              <Space>
-                <ClockCircleOutlined />
-                <span>Timeline</span>
-              </Space>
-            }
-        >
-          <Timeline>
-            {itinerary?.timeline.map((item, index) => (
-                <Timeline.Item key={index}>
-                  <Text strong>{item.activity?.name}</Text>
-                  <br />
-                  {item.startTime && (
-                      <Text type="secondary">Starts at {item.startTime}</Text>
-                  )}
-                  {item.duration && (
-                      <Tag style={{ marginLeft: 8 }}>{item.duration} min</Tag>
-                  )}
-                </Timeline.Item>
-            ))}
-          </Timeline>
-        </Card>
-
-        {/* Available Dates */}
-        <Card
-            title={
-              <Space>
-                <CalendarOutlined />
-                <span>Available Dates</span>
-              </Space>
-            }
-        >
-          <List
-              grid={{ gutter: 16, column: 2 }}
-              dataSource={itinerary?.availableDates}
-              renderItem={(date) => (
+                )}
+              />
+            </Card>
+          </Col>
+  
+          {/* Timeline Card */}
+          <Col xs={24} sm={12} md={6}>
+            <Card
+              title={
+                <Space>
+                  <ClockCircleOutlined className="text-[#58A399]" />
+                  <span>Timeline</span>
+                </Space>
+              }
+              className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
+            >
+              <Timeline>
+                {itinerary?.timeline.map((item, index) => (
+                  <Timeline.Item key={index}>
+                    <Text strong className="text-[#58A399]">{item.activity?.name}</Text>
+                    {item.startTime && (
+                      <Text type="secondary" className="text-[#58A399]"> Starts at {item.startTime}</Text>
+                    )}
+                    {item.duration && <Tag color="blue">{item.duration} min</Tag>}
+                  </Timeline.Item>
+                ))}
+              </Timeline>
+            </Card>
+          </Col>
+  
+          {/* Available Dates Card */}
+          <Col xs={24} sm={12} md={6}>
+            <Card
+              title={
+                <Space>
+                  <CalendarOutlined className="text-[#58A399]" />
+                  <span>Available Dates</span>
+                </Space>
+              }
+              className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
+            >
+              <List
+                grid={{ gutter: 16, column: 2 }}
+                dataSource={itinerary?.availableDates}
+                renderItem={(date) => (
                   <List.Item>
-                    <Card size="small">
-                      <Space
-                          style={{ width: "100%", justifyContent: "space-between" }}
-                      >
-                        <Text>{new Date(date.Date).toLocaleDateString()}</Text>
-                        <Tag>{date.Times}</Tag>
+                    <Card size="small" className="shadow-sm rounded-lg bg-white transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105">
+                      <Space className="justify-between w-full">
+                        <Text className="text-[#58A399]">{new Date(date.Date).toLocaleDateString()}</Text>
+                        <Tag color="cyan">{date.Times}</Tag>
                       </Space>
                     </Card>
                   </List.Item>
-              )}
-          />
-        </Card>
-
-        {/* Comments */}
-        {(itinerary?.comments.length ?? 0) > 0 && (
-            <Card
-                title={
-                  <Space>
-                    <UserOutlined />
-                    <span>Comments</span>
-                  </Space>
-                }
-            >
-              <List
-                  itemLayout="horizontal"
-                  dataSource={itinerary?.comments}
-                  renderItem={(comment) => (
-                      <List.Item>
-                        <List.Item.Meta
-                            avatar={<Avatar icon={<UserOutlined />} />}
-                            title={"Tour Guide"}
-                            description={comment.comment}
-                        />
-                      </List.Item>
-                  )}
+                )}
               />
             </Card>
+          </Col>
+        </Row>
+  
+        {/* Last Full-Width Card for Comments */}
+        {(itinerary?.comments.length ?? 0) > 0 && (
+          <Card
+            title={
+              <Space>
+                <UserOutlined className="text-[#58A399]" />
+                <span>Comments</span>
+              </Space>
+            }
+            className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#ffffff] hover:scale-105 w-full"
+          >
+            <List
+              itemLayout="horizontal"
+              dataSource={itinerary?.comments}
+              renderItem={(comment) => (
+                <List.Item className="transition-transform duration-300 hover:bg-[#496989] hover:scale-105 hover:text-white">
+                  <List.Item.Meta
+                    avatar={<Avatar icon={<UserOutlined />} />}
+                    title={
+                      <span className="text-gray-700 hover:text-white">Traveler's feedback</span>
+                    }
+                    description={
+                      <Space>
+                        <Text className="text-[#58A399] hover:text-white">
+                          {comment.comment}
+                        </Text>
+                      </Space>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
         )}
-
+  
         {/* Footer Information */}
-        <Card size="small">
+        <Card className="text-center mt-4 bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full">
           <Space direction="vertical" size="small">
-            <Text type="secondary">Created by: Unknown</Text>
-            <Text type="secondary">
+            <Text type="secondary" className="text-[#58A399]">Created by: {itinerary?.createdBy.username}</Text>
+            <Text type="secondary" className="text-[#58A399]">
               Created: {new Date(itinerary?.createdAt ?? "").toLocaleDateString()}
             </Text>
-            <Text type="secondary">
-              Last updated: {new Date(itinerary?.updatedAt ?? "").toLocaleDateString()}
+            <Text type="secondary" className="text-[#58A399]">
+              Last Updated: {new Date(itinerary?.updatedAt ?? "").toLocaleDateString()}
             </Text>
           </Space>
         </Card>
       </Space>
+    </div>
   );
 };
-
-export default ItineraryDetails;
+  export default ItineraryDetails;
+  
+  

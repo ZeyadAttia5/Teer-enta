@@ -524,27 +524,69 @@ const ItineraryScreen = ({ setFlag }) => {
         </div>
       </div>
       {(user===null || user.userRole === "Tourist") ? (
-        <main className="flex flex-wrap gap-2 py-10">
-          {sortedItineraries?.map((itinerary, index) => {
-            return (
-              <Card
-                hoverable
-                style={{ width: "33%" }}
-                key={index}
-                onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}
-              >
-                <Card.Meta
-                  title={itinerary.name}
-                  description={itinerary.language}
-                />
-                <p>Price: {itinerary.price}</p>
-                <p>Accessibility: {itinerary.accessibility}</p>
-                <p>Pickup Location: {itinerary.pickupLocation}</p>
-                <p>Drop Off Location: {itinerary.dropOffLocation}</p>
-              </Card>
-            );
-          })}
-        </main>
+       <main className="flex flex-wrap gap-4 py-10">
+       {sortedItineraries?.map((itinerary, index) => (
+         <div
+           key={index}
+           className="relative m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-gradient-to-r from-[#E2F4C5] via-[#A8CD9F] to-[#58A399] hover:text-white"
+           onClick={() => navigate(`iternaryDetails/${itinerary._id}`)} // Set the click handler here
+           style={{ cursor: 'pointer' }} // Ensure the cursor changes to pointer
+         >
+           <Card
+             className="rounded-lg shadow-lg p-6"
+             style={{ backgroundColor: '#E2F4C5' }} // Default Card background color
+           >
+             <Card.Meta
+               title={
+                 <span className="font-bold text-3xl mb-4 transition-transform duration-500 ease-out hover:scale-110" style={{ color: '#496989' }}>
+                   {itinerary.name}
+                 </span>
+               }
+               description={
+                 <div style={{ color: '#496989' }}>
+                   <div className="flex justify-between items-center mb-1">
+                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
+                       🌐 {itinerary.language}
+                     </span>
+                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
+                       💲 {itinerary.price ? `$${itinerary.price}` : "N/A"}
+                     </span>
+                   </div>
+     
+                   <p className="font-medium mb-2">
+                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
+                       ♿ {itinerary.accessibility || "N/A"}
+                     </span>
+                   </p>
+     
+                   <div className="flex justify-between items-center mb-1">
+                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
+                       📍 Pickup: {itinerary.pickupLocation}
+                     </span>
+                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
+                       📍 Drop Off: {itinerary.dropOffLocation}
+                     </span>
+                   </div>
+                 </div>
+               }
+             />
+           </Card>
+     
+           {/* Overlay with route symbol and additional information */}
+           <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-80 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+             <div className="text-center p-6">
+               <h3 className="text-xl font-semibold mb-2">
+                 {itinerary.name}
+               </h3>
+               <p className="text-sm mb-4">{itinerary.description}</p>
+             </div>
+           </div>
+         </div>
+       ))}
+     </main>
+     
+     
+     
       ) : (
         <Table
           dataSource={sortedItineraries}
