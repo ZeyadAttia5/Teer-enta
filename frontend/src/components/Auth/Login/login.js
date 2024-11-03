@@ -7,6 +7,9 @@ import axios from "axios";
 import { set } from "date-fns";
 import { login } from "../../../api/auth.ts";
 import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
+import { Link } from "react-router-dom";
+import logo from "../../../assets/logo/logo.jpeg";
+
 function Login({ setFlag, flag }) {
   if (!flag) {
     setFlag(true);
@@ -122,8 +125,21 @@ function Login({ setFlag, flag }) {
           </div>
         )}
       </div>
-      <div className="w-1/2 flex justify-center items-center">
-        <form class="formlogin bg-white block p-4 max-w-[500px] rounded-lg shadow-md">
+      <div className="w-1/2 flex flex-col justify-center items-center">
+        <span className="ml-8 text-lg leading-7">
+          <div className="cursor-pointer  w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
+            {/* Logo Link */}
+            <Link to={"/"} className="ring-0">
+              <img
+                src={logo}
+                alt="Logo"
+                width={120}
+                className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
+              />
+            </Link>
+          </div>
+        </span>
+        <form class="formlogin mt-2 bg-white block p-4 max-w-[500px] rounded-lg shadow-xl">
           <p className="text-4xl font-bold my-4">Login now</p>
           <p className="my-2">Hi, Welcome back </p>
 
