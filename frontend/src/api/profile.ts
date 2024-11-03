@@ -33,3 +33,33 @@ export const updateProfilePicture = async (data, userId) => {
         }
     );
 }
+
+export const getAllCurrencies = async () => {
+    return await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/currency`,
+    );
+}
+
+export const getMyCurrency = async () => {
+    return await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/currency/getMyCurrency`,
+        
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            }
+        }
+    );
+}
+
+export const chooseMyCurrency = async (id) => {
+    return await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}/account/chooseCurrency/${id}`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            }
+        }
+    );
+}
