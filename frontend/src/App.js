@@ -195,10 +195,10 @@ function App() {
             element={<DeleteAccountButton setFlag={setFlag} />}
           />
           <Route
-            path="ComplaintsManagement"
+            path="/ComplaintsManagement"
             element={<ComplaintsManagement />}
           />
-          <Route path="myComplaints" element={<MyComplaints />} />
+          <Route path="/myComplaints" element={<MyComplaints />} />
         </Routes>
         <Toaster />
       </Router>
