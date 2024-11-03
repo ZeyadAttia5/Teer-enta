@@ -12,6 +12,7 @@ router.get("/my",isAuth , itineraryController.getMyItineraries);
 router.get("/upcoming", itineraryController.getUpcomingItineraries);
 router.get("/:id/comments", itineraryController.getCommentsForItinerary);
 router.get("/:id/ratings", itineraryController.getRatingsForItinerary);
+router.get("/booked",isAuth , itineraryController.getBookedItineraries);
 router.post("/create", isAuth ,itineraryController.createItinerary);
 router.post("/book/:id",isAuth , itineraryController.bookItinerary);
 router.post('/activate/:id' , itineraryController.activateItinerary) ;

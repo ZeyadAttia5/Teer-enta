@@ -1,8 +1,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { requestAccountDeletion } from "../../api/account.ts";
+import { useNavigate } from "react-router-dom";
 
 function ConfirmationModal({ isOpen, onClose, onConfirm, message }) {
+  const navigate = useNavigate();
   if (!isOpen) return null;
+  const handleModalClick = async (e) => {
+    onConfirm();
+
+    if (message === "Are you sure you want to delete your account?") {
+      const reponse = await requestAccountDeletion();
+      localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("isAuthenticated");
+      navigate("/");
+      // window.location.reload();
+    }
+    if (message === "Are you sure you want to log out?") {
+      localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("isAuthenticated");
+      navigate("/");
+      // window.location.reload();
+    }
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -17,18 +39,12 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, message }) {
             Cancel
           </button>
           {onConfirm && (
-            <Link
-              to={
-                message === "Are you sure you want to log out?" ||
-                message === "Are you sure you want to delete your account?"
-                  ? "/"
-                  : window.location.pathname
-              }
-              onClick={onConfirm}
+            <button
+              onClick={handleModalClick}
               className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none"
             >
               Confirm
-            </Link>
+            </button>
           )}
         </div>
       </div>

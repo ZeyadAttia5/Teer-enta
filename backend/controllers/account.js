@@ -257,6 +257,19 @@ exports.redeemPoints = async (req, res) => {
     }
 }
 
+exports.chooseMyCurrency = async (req,res)=>{
+    try {
+        const userId = req.user._id ;
+        const currencyId = req.params.id ;
+        const userRole = req.user.role ;
+        const Model = userModel[userRole] ;
+        const updatedUser = await Model.findByIdAndUpdate(userId , {currency:currencyId} , {new:true}) ;
+        return res.status(200).json({message:"currency updated successfully" , user : updatedUser}) ;
+    }catch (err){
+        errorHandler.SendError(res,err) ;
+    }
+}
+
 exports.uploadId = async (req, res) => {
     try {
         const userId = req.user._id;

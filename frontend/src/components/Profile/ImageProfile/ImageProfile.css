@@ -6,7 +6,7 @@
     margin: 30px auto;
     box-shadow: 0 0 100px rgba(0,0,0, .3);
     border-radius: 10px;
-    background: linear-gradient(to top, rgb(86, 190, 224), rgb(239, 248, 249));
+    background: linear-gradient(to top, #6366f1, #2e1065);
   }
   
   .card-header {

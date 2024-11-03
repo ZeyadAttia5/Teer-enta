@@ -8,6 +8,13 @@ import { FaExclamationCircle } from "react-icons/fa";
 import axios from "axios";
 import { signup } from "../../../api/auth.ts";
 import PasswordRestrictions from "./PasswordRestrictions.js";
+import FileUploadForm from "./FilesUpload/FileUploadForm.js";
+import IDUpload from "./FilesUpload/IDUpload.js";
+import { uploadFile, uploadFiles } from "../../../api/account.ts";
+import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
+import { Link } from "react-router-dom";
+import logo from "../../../assets/logo/logo.jpeg";
+
 function Signup({ setFlag }) {
   setFlag(true);
   const navigate = useNavigate();
@@ -16,6 +23,14 @@ function Signup({ setFlag }) {
   const handleUsernameChange = (event) => {
     setUsername(event.target.value); // Update the username state
   };
+
+  const [idUrl, setIdUrl] = useState(null);
+  const [secondIdUrl, setSecondIdUrl] = useState(null);
+  const [certificatesUrls, setCertificatesUrls] = useState([]);
+
+  const [ID, setID] = useState(null);
+  const [secondID, setSecondID] = useState(null);
+
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(false);
 
@@ -27,6 +42,8 @@ function Signup({ setFlag }) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setIsValidEmail(emailRegex.test(inputEmail));
   };
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [passwordMatch, setPasswordMatch] = useState(true);
 
@@ -112,6 +129,8 @@ function Signup({ setFlag }) {
       setPasswordMatch(false);
     }
   };
+
+  const [certificates, setCertificates] = useState([]);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isValidVariable, setIsValidVariable] = useState(false);
@@ -303,9 +322,48 @@ function Signup({ setFlag }) {
       return false;
     }
 
-    try {
-      var data;
+    var response1;
+    var response2;
+    var response3;
 
+    try {
+      setIsLoading(true);
+      if (selectedRole !== "Tourist") {
+        try {
+          response1 = await uploadFile(ID);
+          console.log("image url is: " + response1.data.imageUrl);
+          setIdUrl(response1.data.imageUrl);
+        } catch (error) {
+          setIsLoading(false);
+          setMessage(error.response?.data?.message || "Upload failed");
+          return false;
+        }
+      }
+
+      if (selectedRole === "Advertiser" || selectedRole === "Seller") {
+        try {
+          response2 = await uploadFile(secondID);
+          setSecondIdUrl(response2.data.imageUrl);
+        } catch (error) {
+          setIsLoading(false);
+          setMessage(error.response?.data?.message || "Upload failed");
+          return false;
+        }
+      }
+
+      if (selectedRole === "TourGuide") {
+        try {
+          response3 = await uploadFiles(certificates);
+
+          setCertificatesUrls(response3.data.imageUrls);
+        } catch (error) {
+          setIsLoading(false);
+          setMessage(error.response?.data?.message || "Upload failed");
+          return false;
+        }
+      }
+
+      var data;
       switch (selectedRole) {
         case "Tourist":
           data = {
@@ -325,6 +383,28 @@ function Signup({ setFlag }) {
             username: username,
             password: password,
             userRole: selectedRole,
+            idCardUrl: response1.data.imageUrl,
+            certificates: response3.data.imageUrls,
+          };
+          break;
+        case "Advertiser":
+          data = {
+            email: email,
+            username: username,
+            password: password,
+            userRole: selectedRole,
+            idCardUrl: response1.data.imageUrl,
+            taxationCardUrl: response2.data.imageUrl,
+          };
+          break;
+        case "Seller":
+          data = {
+            email: email,
+            username: username,
+            password: password,
+            userRole: selectedRole,
+            idCardUrl: response1.data.imageUrl,
+            taxationCardUrl: response2.data.imageUrl,
           };
           break;
         case "Admin":
@@ -336,20 +416,17 @@ function Signup({ setFlag }) {
           };
           break;
         default:
-          data = {
-            email: email,
-            username: username,
-            password: password,
-            userRole: selectedRole,
-          };
           break;
       }
+
       const response = await signup(data);
+      setIsLoading(false);
 
       setMessage(response.data.message);
       navigate("/login");
       setFlag(false);
     } catch (error) {
+      setIsLoading(false);
       setMessage(error.response.data.message || "Signup failed");
     }
   };
@@ -359,9 +436,19 @@ function Signup({ setFlag }) {
     if (selectedRole === "Tourist" && !isDobValid) {
       setMessage("Invalid date of birth");
       return false;
-    }else{
+    } else {
       setMessage("");
     }
+    if (selectedRole !== "Tourist" && !ID) {
+      return false;
+    }
+    if (
+      (selectedRole === "Advertiser" || selectedRole === "Seller") &&
+      !secondID
+    ) {
+      return false;
+    }
+
     const nonNumericRegex = /\D/;
     if (
       username === "" ||
@@ -387,7 +474,8 @@ function Signup({ setFlag }) {
 
   return (
     <div className="flex h-screen">
-      <div className="relative w-[66%] h-screen overflow-hidden">
+      {isLoading && <LoadingCircle />}
+      <div className="relative w-[57%] h-screen overflow-hidden">
         {images.map((image, index) => (
           <img
             key={index}
@@ -418,7 +506,20 @@ function Signup({ setFlag }) {
         )}
       </div>
 
-      <div className="flex flex-col justify-center items-center w-1/3">
+      <div className="flex flex-col justify-center items-center w-[43%]">
+      <span className="ml-8 text-lg leading-7">
+        <div className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
+          {/* Logo Link */}
+          <Link to={"/"} className="ring-0">
+            <img
+              src={logo}
+              alt="Logo"
+              width={120}
+              className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
+            />
+          </Link>
+        </div>
+      </span>
         <p className="text-[rgba(88,87,87,0.822)] font-bold text-1xl">
           Signup now and get full access to our app.
         </p>
@@ -427,7 +528,7 @@ function Signup({ setFlag }) {
             className="form w-full p-[10px] pt-[5px] flex flex-col gap-1.5 max-w-[350px] bg-white relative   outline-none border border-[rgba(105,105,105,0.397)] rounded-[10px]
        left-[10px] top-[15px] text-gray-500 text-[0.9em] cursor-text transition ease-linear duration-300 shadow-lg"
           >
-            <Toggle selectedRole={handleRoleChange} setMessage={setMessage}/>
+            <Toggle selectedRole={handleRoleChange} setMessage={setMessage} />
 
             <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
               <span>Username</span>
@@ -448,25 +549,26 @@ function Signup({ setFlag }) {
               />
             </label>
             {selectedRole === "Tourist" && (
-            <h6
-              className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                selectedRole !== "Tourist" ? "hidden" : ""
-              }`}
-            >
-              <span>Nationality</span>
-              {isFormSubmitted && !selectedNationality && (
-                <span className="text-red-500 font-normal text-xs">
-                  This field is required
-                </span>
-              )}
-            </h6>)}
+              <h6
+                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                  selectedRole !== "Tourist" ? "hidden" : ""
+                }`}
+              >
+                <span>Nationality</span>
+                {isFormSubmitted && !selectedNationality && (
+                  <span className="text-red-500 font-normal text-xs">
+                    This field is required
+                  </span>
+                )}
+              </h6>
+            )}
 
             <div
               className={`relative ${
                 selectedRole !== "Tourist" ? "hidden" : ""
               }`}
             >
-              <div style={{ width: "100%", margin: "auto" }} className="h-">
+              <div style={{ width: "100%", margin: "auto" }}>
                 <Select
                   className=""
                   options={options}
@@ -538,18 +640,19 @@ function Signup({ setFlag }) {
               />
             </label>
             {selectedRole === "Tourist" && (
-            <h6
-              className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                selectedRole !== "Tourist" ? "hidden" : ""
-              }`}
-            >
-              <span>Job Title</span>
-              {isFormSubmitted && (!jobTitle || jobTitle === "") && (
-                <span className="text-red-500 font-normal text-xs">
-                  This field is required
-                </span>
-              )}
-            </h6>)}
+              <h6
+                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                  selectedRole !== "Tourist" ? "hidden" : ""
+                }`}
+              >
+                <span>Job Title</span>
+                {isFormSubmitted && (!jobTitle || jobTitle === "") && (
+                  <span className="text-red-500 font-normal text-xs">
+                    This field is required
+                  </span>
+                )}
+              </h6>
+            )}
 
             <label
               className={`relative labelsignup ${
@@ -594,7 +697,51 @@ function Signup({ setFlag }) {
                 />
               </div>
             </div>
-            <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
+
+            {selectedRole !== "Tourist" && (
+              <div>
+                <h6 className="text-sm mb-2 font-medium text-gray-700 flex justify-between items-center ">
+                  <span>ID</span>
+                  {isFormSubmitted && !ID && (
+                    <span className="text-red-500 font-normal text-xs">
+                      This field is required
+                    </span>
+                  )}
+                </h6>
+                {selectedRole !== "Tourist" && <IDUpload setID={setID} />}
+              </div>
+            )}
+
+            {(selectedRole === "Advertiser" || selectedRole === "Seller") && (
+              <div>
+                <h6 className="text-sm mb-2 font-medium text-gray-700 flex justify-between items-center ">
+                  <span>Taxation registry card</span>
+                  {isFormSubmitted && !secondID && (
+                    <span className="text-red-500 font-normal text-xs">
+                      This field is required
+                    </span>
+                  )}
+                </h6>
+
+                <IDUpload setID={setSecondID} />
+              </div>
+            )}
+
+            {selectedRole === "TourGuide" && (
+              <div>
+                <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
+                  <span>Certificates</span>
+                  {isFormSubmitted && certificates.length === 0 && (
+                    <span className="text-red-500 font-normal text-xs">
+                      This field is required
+                    </span>
+                  )}
+                </h6>
+                <FileUploadForm setCertificates={setCertificates} />
+              </div>
+            )}
+
+            <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
               <span>Password</span>
               {isFormSubmitted && !password && (
                 <span className="text-red-500 font-normal text-xs">
