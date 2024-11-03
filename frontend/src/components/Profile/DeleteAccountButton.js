@@ -15,12 +15,7 @@ const DeleteAccountButton = () => {
 
 
   const handleDelete = async () => {
-    const response = await requestAccountDeletion();
-    if (response.status === 200) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
-      
-    }
+    
   };
 
   return (

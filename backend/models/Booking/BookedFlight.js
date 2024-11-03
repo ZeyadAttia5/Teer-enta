@@ -5,6 +5,8 @@ const BookedFlightSchema = new mongoose.Schema({
     arrivalDate: { type: Date, required: true },
     departureAirport: { type: String, required: true },
     arrivalAirport: { type: String, required: true },
+    noOfPassengers: { type: Number, required: true },
+    price: { type: Number, required: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     status: {
         type: String,

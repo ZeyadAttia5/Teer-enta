@@ -11,7 +11,7 @@ export const getComplaints = async () => {
 }
 
 export const getComplaint = async (complaintId) => {
-    return await axios.get(`${API_BASE_URL}/complaint/${complaintId}`, {
+    return await axios.get(`${API_BASE_URL}/complaint/one/${complaintId}`, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }

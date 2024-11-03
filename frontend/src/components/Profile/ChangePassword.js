@@ -24,7 +24,7 @@ const ChangePassword = () => {
       return;
     }
 
-    
+    window.location.href = "/";
   };
 
   const isValid = () => {
