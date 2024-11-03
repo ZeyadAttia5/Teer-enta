@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProduct, updateProduct, archiveProduct, unArchiveProduct } from "../../api/products.ts";
 import ImageUpload from "./ImageUpload"; // Import the image upload component
@@ -79,8 +78,7 @@ const EditProductForm = ({ setFlag }) => {
     try {
       const response = await updateProduct(product, productId);
       setSuccess('Product successfully updated!');
-      // message.success('Product successfully updated!');
-      message.loading('loading') ;
+      message.loading('loading');
       setTimeout(() => navigate('/products'), 1000);
     } catch (err) {
       setError('Failed to update product');
@@ -136,8 +134,18 @@ const EditProductForm = ({ setFlag }) => {
           />
         </div>
 
+        {/* Display existing image */}
         <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Upload Product Image:</label>
+          <label className="block text-lg text-customGreen mb-2">Current Image:</label>
+          {product.imageUrl ? (
+            <img src={product.imageUrl} alt="Current product" className="w-full h-auto max-h-40 object-cover rounded mb-2" />
+          ) : (
+            <p>No image available</p>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-lg text-customGreen mb-2">Upload New Product Image:</label>
           <ImageUpload setImageUrl={setImageUrl} />
         </div>
 
