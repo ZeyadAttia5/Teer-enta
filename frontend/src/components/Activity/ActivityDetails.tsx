@@ -64,7 +64,7 @@ const ActivityDetails: React.FC = () => {
   if (loading) return <Skeleton active />;
   if (error) return <Alert type="error" message={error} />;
   if (!activity) return <Alert type="warning" message="Activity not found" />;
-
+// hello
   const averageRating =
       activity.ratings.length > 0
           ? Number(
