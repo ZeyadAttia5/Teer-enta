@@ -123,6 +123,47 @@ exports.uploadPicture = async (req, res, next) => {
   }
 };
 
+exports.addAddress = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const { newAddress } = req.body;
+
+    if (!newAddress || typeof newAddress !== 'string') {
+      return res.status(400).json({ message: 'Invalid address provided.' });
+    }
+    const updatedTourist = await Tourist.findByIdAndUpdate(
+        userId,
+        { $push: { addresses: newAddress } },
+        { new: true }
+    );
+
+    if (!updatedTourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+
+    res.status(200).json({ message: 'Address added successfully.', tourist: updatedTourist });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error adding address', error: err.message });
+  }
+};
+
+exports.getAllAddresses = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+    res.status(200).json({ addresses: tourist.addresses });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching addresses', error: err.message });
+  }
+};
+
+
 exports.manageFieldNames = async (req, res, next) => {
   try {
     console.log("Here", req.fileUrl);
