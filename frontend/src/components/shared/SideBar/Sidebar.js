@@ -116,6 +116,20 @@ const Sidebar = ({ visible, onClose }) => {
               )}
             </Menu.SubMenu>
           )}
+        {(user && (user.userRole === "Tourist" || user.userRole === "Admin")) && (
+          <Menu.SubMenu key="sub7" title="Complaints">
+            {user && user.userRole === "Admin" && (
+              <Menu.Item key="15" onClick={() => handleClick("/ComplaintsManagement")}>
+                Complaints Management
+              </Menu.Item>
+            )}
+            {user && user.userRole === "Tourist" && (
+              <Menu.Item key="16" onClick={() => handleClick("/myComplaints")}>
+                My Complaints
+              </Menu.Item>
+            )}
+          </Menu.SubMenu>
+        )}
         {user && user.userRole === "Admin" && (
           <Menu.SubMenu key="sub2" title="Users">
             <Menu.Item key="9" onClick={() => handleClick("/allUsers")}>

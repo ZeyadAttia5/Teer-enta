@@ -13,6 +13,7 @@ router.get("/upcoming", activityController.getUpcomingActivities);
 router.get("/one/:id", activityController.getActivity);
 router.get("/:id/ratings", activityController.getRatingsForActivity);
 router.get("/:id/comments", activityController.getCommentsForActivity);
+router.get("/booked",isAuth , activityController.getBookedActivities);
 router.post("/create",isAuth , activityController.createActivity);
 router.post('/activate/:id' , activityController.activateActivity);
 router.post('/deactivate/:id' , activityController.deactivateActivity);

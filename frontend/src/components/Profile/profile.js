@@ -1,24 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import unknownImage from "./unknown.jpg";
-import axios from "axios";
 import { FaExclamationCircle } from "react-icons/fa";
 import SocialMediaIcons from "./SocialMediaIcons";
 import AddPreviousWork from "./AddPreviousWork";
 import PreviousWorksList from "./PreviousWorksList";
 import { getProfile, updateProfilee } from "../../api/profile.ts";
-import ImageUpload from "./ImageUpload/ImageUpload.js";
-
-// async function getProfileData() {
-//   try {
-//     const response = await axios.get(`${URL}/Profile/${id}`);
-
-//     setMessage(response.data.message);
-//   } catch (error) {
-//     setMessage(error.response.data.message || 'Getting data failed');
-//   }
-// }
+import ImageProfile from "./ImageProfile/ImageProfile.js";
+import DeleteAccountButton from "./DeleteAccountButton.js";
 
 async function updateProfile(
   user,
@@ -53,7 +41,11 @@ async function updateProfile(
   setCompanySize
 ) {
   try {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const ded = localStorage.getItem("user");
+    if (!ded) {
+      throw new Error("User not found in local storage");
+    }
+    const user = JSON.parse(ded);
     const accessToken = localStorage.getItem("accessToken");
     console.log("user id is: " + user._id);
     const response = await getProfile(user._id);
@@ -61,10 +53,10 @@ async function updateProfile(
     console.log("Profile Data:", data);
     for (const key in data) {
       if (data.hasOwnProperty(key)) {
-      console.log(`${key}: ${data[key]}`);
+        console.log(`${key}: ${data[key]}`);
       }
     }
-    
+
     const tmpDate = new Date(data.dateOfBirth).toLocaleDateString("en-CA");
 
     switch (data.userRole) {
@@ -140,7 +132,7 @@ async function updateProfile(
 
 const LoadingCircle = () => {
   return (
-    <div className="flex items-start  justify-center h-screen pt-20">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="w-32 h-32 border-4 border-blue-500 border-dotted rounded-full animate-spin"></div>
     </div>
   );
@@ -157,6 +149,8 @@ function Profile({ setFlag }) {
   const user = storedUser ? JSON.parse(storedUser) : null;
   const accessToken = storedAccessToken || null;
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [profileImage, setProfileImage] = useState(null);
 
   const [addWork, setAddWork] = useState(false);
@@ -172,7 +166,7 @@ function Profile({ setFlag }) {
   const [dob, setDob] = useState("");
   const [nationality, setNationality] = useState("");
   const [age, setAge] = useState("");
-  const [wallet, setWallet] = useState(1400);
+  const [wallet, setWallet] = useState(0);
   const [complaints, setComplaints] = useState("");
   const [ageInput, setAgeInput] = useState(age);
   const [nationalityInput, setNationalityInput] = useState(nationality);
@@ -313,21 +307,22 @@ function Profile({ setFlag }) {
           },
           companyName: companyName,
           companySize: companySize,
+          // logoUrl: profileImage,
         };
-        formData.append("website", linkInput);
-        formData.append("hotline", mobileNumberInput);
-        formData.append("companyProfile", companyProfileInput);
-        formData.append("email", emailInput);
-        formData.append("facebook", facebook);
-        formData.append("instagram", instagram);
-        formData.append("twitter", twitter);
-        formData.append("linkedin", linkedin);
-        formData.append("city", city);
-        formData.append("country", country);
-        formData.append("address", locationAddressInput);
-        formData.append("companyName", companyName);
-        formData.append("companySize", companySize);
-        formData.append("logoUrl", profileImage);
+        // formData.append("website", linkInput);
+        // formData.append("hotline", mobileNumberInput);
+        // formData.append("companyProfile", companyProfileInput);
+        // formData.append("email", emailInput);
+        // formData.append("facebook", facebook);
+        // formData.append("instagram", instagram);
+        // formData.append("twitter", twitter);
+        // formData.append("linkedin", linkedin);
+        // formData.append("city", city);
+        // formData.append("country", country);
+        // formData.append("address", locationAddressInput);
+        // formData.append("companyName", companyName);
+        // formData.append("companySize", companySize);
+        // formData.append("logoUrl", profileImage);
         break;
       case "TourGuide":
         data = {
@@ -335,12 +330,13 @@ function Profile({ setFlag }) {
           yearsOfExperience: yearsOfExperienceInput,
           previousWorks: updatedWorks, // This will have the updated value
           email: emailInput,
+          // photoUrl: profileImage,
         };
-        formData.append("mobileNumber", mobileNumberInput);
-        formData.append("yearsOfExperience", yearsOfExperienceInput);
-        formData.append("previousWorks", updatedWorks);
-        formData.append("email", emailInput);
-        formData.append("photoUrl", profileImage);
+        // formData.append("mobileNumber", mobileNumberInput);
+        // formData.append("yearsOfExperience", yearsOfExperienceInput);
+        // formData.append("previousWorks", updatedWorks);
+        // formData.append("email", emailInput);
+        // formData.append("photoUrl", profileImage);
         break;
       case "Seller":
         data = {
@@ -348,17 +344,19 @@ function Profile({ setFlag }) {
           email: emailInput,
           description: descriptionInput,
           name: nameInput,
+          // logoUrl: profileImage,
         };
-        formData.append("mobileNumber", mobileNumberInput);
-        formData.append("email", emailInput);
-        formData.append("description", descriptionInput);
-        formData.append("name", nameInput);
-        formData.append("logoUrl", profileImage);
+        // formData.append("mobileNumber", mobileNumberInput);
+        // formData.append("email", emailInput);
+        // formData.append("description", descriptionInput);
+        // formData.append("name", nameInput);
+        // formData.append("logoUrl", profileImage);
         break;
       default:
         return false;
     }
     if (userRole === "Tourist") {
+      setIsLoading(true);
       try {
         const response = await updateProfilee(data, user._id);
 
@@ -366,24 +364,22 @@ function Profile({ setFlag }) {
       } catch (error) {
         setMessage(error.response.data.message || "Updating Profile failed");
       }
+      setIsLoading(false);
     } else {
+      setIsLoading(true);
       try {
-        
-        const response = await axios.put(
-          `${process.env.REACT_APP_BACKEND_URL}/Profile/update/${user._id}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          }
-        );
+        const response = await updateProfilee(data, user._id);
 
         setMessage(response.data.message);
       } catch (error) {
         setMessage(error.response.data.message || "Updating Profile failed");
       }
+      setIsLoading(false);
     }
+
+    // Update the user in local storage
+    const updatedUser = { ...user, ...data };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
 
     setAge(ageInput);
     setNationality(nationalityInput);
@@ -445,6 +441,7 @@ function Profile({ setFlag }) {
 
   return (
     <div className="flex justify-center">
+      {isLoading && <LoadingCircle />}
       <div className="flex m-16 gap-16">
         {!userRole && (
           <div className="container mx-auto">
@@ -457,20 +454,9 @@ function Profile({ setFlag }) {
         )}
         {userRole && (
           <div className="flex flex-col">
-            {userRole !== "Tourist" && (
-              <div className="border-2 border-[#02735f]">
-                <div className="border-2 border-white">
-                  <img
-                    width={200}
-                    src={unknownImage}
-                    alt={`user's profile`}
-                    className="border-2 border-[#02735f]"
-                  />
-                </div>
-              </div>
-            )}
-            <div className="flex flex-col space-y-4 mt-4"></div>
-            <div className="flex flex-col space-y-4 mt-4">
+            {userRole !== "Tourist" && <ImageProfile />}
+
+            <div className="flex flex-col space-y-4">
               <button
                 className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
                 onClick={handleEdit}
@@ -512,37 +498,22 @@ function Profile({ setFlag }) {
                 Change password
               </Link>
 
-              {/* <button
-                className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
-                onClick={handleComplaint}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
-                  />
-                </svg>
-                Complaint
-              </button> */}
+              <DeleteAccountButton />
+
               {userRole === "Tourist" && (
                 <div className="max-w-sm mx-auto mt-10">
                   <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                      My Wallet
-                    </h2>
                     <div className="text-gray-600 text-lg">
                       Available Credit
                     </div>
                     <div className="text-4xl font-bold text-[#02735f] mt-2">
                       ${wallet}
+                    </div>
+                  </div>
+                  <div className="bg-white shadow-lg rounded-lg p-6 border my-4 border-gray-200">
+                    <div className="text-gray-600 text-lg">Total points</div>
+                    <div className="text-4xl font-bold text-[#02735f] mt-2">
+                      {user.loyalityPoints}
                     </div>
                   </div>
                 </div>
@@ -558,6 +529,9 @@ function Profile({ setFlag }) {
               </h6>
               <p className="text-lg font-semibold text-[#02735f]">
                 {userRole === "TourGuide" ? "Tour Guide" : userRole}
+              </p>
+              <p className="text-lg text-[#02735f]">
+                {user.loyalityPoints <= 100000 ? "Bronze" : user.loyalityPoints <= 500000 ? "Silver" : "Gold"} 
               </p>
             </div>
             {userRole === "Advertiser" && (
@@ -876,7 +850,7 @@ function Profile({ setFlag }) {
                     </div>
                   </div>
                 </div>
-                <ImageUpload setProfileImage={setProfileImage} />
+
                 <div className="mt-8">
                   <PreviousWorksList
                     previousWorks={previousWorks}

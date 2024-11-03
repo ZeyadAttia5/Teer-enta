@@ -100,6 +100,7 @@ const HistoricalPlaceSingleCard = ({ places }) => {
             </button>
           </div>
         )}
+
         <Link to={`/historicalPlace/details/${places._id}`}>
           <div className="flex justify-center items-center w-10 h-10 text-green-800 hover:text-black hover:scale-105 hover:shadow-lg transition duration-300 ease-in-out">
             <BsInfoCircle className="text-2xl" title='Details' />
@@ -111,3 +112,5 @@ const HistoricalPlaceSingleCard = ({ places }) => {
 };
 
 export default HistoricalPlaceSingleCard;
+
+

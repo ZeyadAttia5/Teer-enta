@@ -12,4 +12,4 @@ const BookedTransportationSchema = new mongoose.Schema({
     isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
-exports.BookedTransportation = mongoose.model('BookedTransportation', BookedTransportationSchema);
+module.exports = mongoose.model('BookedTransportation', BookedTransportationSchema);

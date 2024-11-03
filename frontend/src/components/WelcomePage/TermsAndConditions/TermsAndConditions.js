@@ -8,10 +8,10 @@ export default function TermsAndConditions({ setNotAccepted }) {
     user.isTermsAndConditionsAccepted = true;
     localStorage.setItem("user", JSON.stringify(user));
     try {
-      const response = await updateProfilee(
-        { isTermsAndConditionsAccepted: user.isTermsAndConditionsAccepted },
-        user._id
-      );
+      var data = {
+        isTermsAndConditionsAccepted: true,
+      }
+      const response = await updateProfilee(data, user._id);
       console.log("Profile updated successfully:", response);
     } catch (error) {
       console.error("Error updating profile:", error);

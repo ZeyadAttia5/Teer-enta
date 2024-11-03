@@ -12,8 +12,21 @@ export const getProfile = async (userId) => {
 
 export const updateProfilee = async (data, userId) => {
     return await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}/profile/update/${userId}`,
-        data ,{
+        `${process.env.REACT_APP_BACKEND_URL}/Profile/update/${userId}`,
+        data ,
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            }
+        }
+    );
+}
+
+export const updateProfilePicture = async (data, userId) => {
+    return await axios.put(
+        `${process.env.REACT_APP_BACKEND_URL}/Profile/update/picture/${userId}`,
+        data ,
+        {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             }

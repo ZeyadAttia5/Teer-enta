@@ -80,9 +80,25 @@ export const getAllPreferences = async () =>{
 }
 
 export const requestAccountDeletion = async () =>{
-    return await axios.delete(`${API_BASE_URL}/account/requestAccountDeletion`,{
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    return await axios.delete(`${API_BASE_URL}/account/requestAccountDeletion`,
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            }
         }
-    });
+    );
+}
+
+export const uploadFile = async (file) =>{
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return await axios.post(`${API_BASE_URL}/upload/file`, formData );
+}
+
+export const uploadFiles = async (files) =>{
+    const formData = new FormData();
+    formData.append('files', files);
+    files.forEach((file) => formData.append('files', file)); 
+    return await axios.post(`${API_BASE_URL}/upload/files`, formData);
 }

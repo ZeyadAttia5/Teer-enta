@@ -7,6 +7,7 @@ import {notification} from "antd";
 import {getMyHistoricalPlaces ,getHistoricalPlaces} from "../../api/historicalPlaces.ts";
 import {getTags} from "../../api/tags.ts";
 
+
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
 const ReadHistoriaclPlaces = ({ setFlag }) => {
