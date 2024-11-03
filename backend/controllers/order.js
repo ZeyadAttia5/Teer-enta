@@ -1,50 +1,67 @@
 const Order = require('../models/Product/Order')
+const Tourist = require('../models/Users/Tourist')
 const Product = require('../models/Product/Product')
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
-exports.createOrder = async (req, res) => {
+exports.checkOutOrder = async (req, res) => {
     try {
-        const { products} = req.body;
-        let totalPrice = 0 ;
+        const userId = req.user._id;
 
-        if (!products || products.length === 0) {
-            return res.status(400).json({ message: 'No products in the order' });
+        const user = await Tourist.findById(userId).populate('cart.product');
+
+        if (!user || !user.cart || user.cart.length === 0) {
+            return res.status(400).json({ message: 'No products in the cart to create an order.' });
         }
 
-        for (const productOrder of products) {
-            const product = await Product.findById(productOrder.product);
+        let totalPrice = 0;
+        const products = [];
 
+        // Loop through cart items to prepare order details
+        for (const cartItem of user.cart) {
+            const product = cartItem.product;
+
+            // Check if product exists
             if (!product) {
-                return res.status(404).json({ message: `Product with ID ${productOrder.product} not found` });
+                return res.status(404).json({ message: 'Product not found in cart.' });
             }
-            if (productOrder.quantity > product.quantity) {
+
+            // Check if sufficient stock is available
+            if (cartItem.quantity > product.quantity) {
                 return res.status(400).json({ message: `Insufficient stock for product: ${product.name}` });
             }
-            // add price of each product to products array of objects
-            productOrder.price = product.price;
-            totalPrice += productOrder.quantity * product.price;
+
+            // Calculate total price and prepare the product details for the order
+            const price = product.price;
+            products.push({
+                product: product._id,
+                quantity: cartItem.quantity,
+                price: price
+            });
+            totalPrice += cartItem.quantity * price;
         }
 
         const newOrder = new Order({
-            createdBy: req.user._id,  // Assuming req.user._id contains the authenticated user's ID
+            createdBy: userId,
             products,
             totalPrice,
-            status: 'Pending',  // Default status is 'Pending'
+            status: 'Pending',
             isActive: true,
         });
 
-        await newOrder.save();  // Save the order
 
-        // Step 4: Update the stock of products (reduce the quantity)
-        for (const productOrder of products) {
-            const product = await Product.findById(productOrder.product);
-            product.quantity -= productOrder.quantity;
+        await newOrder.save();
+
+        for (const cartItem of user.cart) {
+            const product = cartItem.product;
+            product.quantity -= cartItem.quantity;
             await product.save();
         }
 
+        user.cart = [];
+        await user.save();
+
         res.status(201).json({ message: 'Order created successfully', order: newOrder });
     } catch (err) {
-        console.log(err);
         errorHandler.SendError(res, err);
     }
 };

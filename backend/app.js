@@ -27,6 +27,7 @@ const paymentRoutes = require('./routes/payment');
 const complaintRoutes = require('./routes/complaint');
 const currencyRoutes = require('./routes/currency') ;
 const fileRoutes = require('./routes/file');
+const cartRoutes = require('./routes/cart');
 
 
 
@@ -69,6 +70,7 @@ app.use("/auth" , authRoutes ) ;
 app.use("/Profile", profileRoutes);
 app.use("/account" , accountRoutes) ;
 app.use("/product" , productRoutes) ;
+app.use("/cart",cartRoutes)
 app.use("/order",orderRoutes)
 app.use("/tourGuide",tourGuideRoutes);
 app.use("/transportation",transportationRoutes);
