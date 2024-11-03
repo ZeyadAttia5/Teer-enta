@@ -155,16 +155,16 @@ exports.addRatingToProduct = async (req, res) => {
             return res.status(404).json({ message: "Product not found" });
         }
 
-        const order = await Order.findOne({
-            createdBy: userId,
-            'products.product': id,
-            status: 'Delivered', 
-            isActive: true
-        });
+        // const order = await Order.findOne({
+        //     createdBy: userId,
+        //     'products.product': id,
+        //     status: 'Delivered', 
+        //     isActive: true
+        // });
 
-        if (!order) {
-            return res.status(400).json({ message: "You haven't purchased this product" });
-        }
+        // if (!order) {
+        //     return res.status(400).json({ message: "You haven't purchased this product" });
+        // }
 
         Product.ratings.push({
             createdBy: userId,
@@ -212,16 +212,16 @@ exports.addReviewToProduct = async (req, res) => {
         }
 
         // Check if the user has purchased the product
-        const order = await Order.findOne({
-            createdBy: userId,
-            'products.product': id,
-            status: 'Delivered', 
-            isActive: true
-        });
+        // const order = await Order.findOne({
+        //     createdBy: userId,
+        //     'products.product': id,
+        //     status: 'Delivered', 
+        //     isActive: true
+        // });
 
-        if (!order) {
-            return res.status(400).json({ message: "You haven't purchased this product" });
-        }
+        // if (!order) {
+        //     return res.status(400).json({ message: "You haven't purchased this product" });
+        // }
 
         Product.reviews.push({
             createdBy: userId,

@@ -25,6 +25,7 @@ const FeedbackForm = ({ entity, onSubmit }) => {
 
   // Call the provided handleSubmit function on form submission
   const handleSubmit = () => {
+    console.log("Feedback Form Entity Id: " + entity._id);
     onSubmit({
       entityId: entity._id,
       rating: feedback.rating,

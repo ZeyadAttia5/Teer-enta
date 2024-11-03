@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import {getProduct, updateProduct, archiveProduct, unArchiveProduct} from "../../api/products.ts"; // Import useNavigate
+import { getProduct, updateProduct, archiveProduct, unArchiveProduct } from "../../api/products.ts";
+import ImageUpload from "./ImageUpload"; // Import the image upload component
+import { message } from 'antd';
 
-const EditProductForm = ({setFlag}) => {
+const EditProductForm = ({ setFlag }) => {
   setFlag(false);
   const { productId } = useParams();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [product, setProduct] = useState({
     name: '',
     description: '',
     price: '',
-    image: '', 
+    imageUrl: '', 
     quantity: '', 
     isActive: '',
   });
@@ -19,14 +21,10 @@ const EditProductForm = ({setFlag}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null); 
   const [success, setSuccess] = useState(null);
-  const user = JSON.parse(localStorage.getItem('user'));
-  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
-    // Fetch product data by ID
     const fetchProductData = async () => {
       try {
-        const backURL = process.env.REACT_APP_BACKEND_URL;
         const response = await getProduct(productId);
         setProduct(response.data);
       } catch (err) {
@@ -46,6 +44,14 @@ const EditProductForm = ({setFlag}) => {
       [name]: value,
     }));
   };
+
+  const setImageUrl = (url) => {
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      imageUrl: url,
+    }));
+  };
+
   const handleArchiveToggle = async () => {
     try {
       if (product.isActive) {
@@ -57,13 +63,13 @@ const EditProductForm = ({setFlag}) => {
       }
       setProduct((prevProduct) => ({
         ...prevProduct,
-        isActive: !prevProduct.isActive, // Toggle isActive locally to reflect the change
+        isActive: !prevProduct.isActive,
       }));
     } catch (err) {
       setError('Failed to update archive status');
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -71,12 +77,11 @@ const EditProductForm = ({setFlag}) => {
     setSuccess(null);
 
     try {
-      const backURL = process.env.REACT_APP_BACKEND_URL;
-      console.log(product) ;
-      await updateProduct(product, productId);
+      const response = await updateProduct(product, productId);
       setSuccess('Product successfully updated!');
-      // Navigate back to the admin grid after successful update
-      setTimeout(() => navigate('/products'), 1000); // Redirect after a short delay
+      // message.success('Product successfully updated!');
+      message.loading('loading') ;
+      setTimeout(() => navigate('/products'), 1000);
     } catch (err) {
       setError('Failed to update product');
     } finally {
@@ -84,13 +89,8 @@ const EditProductForm = ({setFlag}) => {
     }
   };
 
-  if (loading) {
-    return <div className="text-center mt-24">Loading product data...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center mt-24">Error: {error}</div>;
-  }
+  if (loading) return <div className="text-center mt-24">Loading product data...</div>;
+  if (error) return <div className="text-center mt-24">Error: {error}</div>;
 
   return (
     <div className="flex flex-col items-center py-16 px-5 mt-20">
@@ -107,9 +107,8 @@ const EditProductForm = ({setFlag}) => {
             name="name"
             value={product.name}
             onChange={handleChange}
-            placeholder="Enter product name"
             required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
+            className="w-full p-2 border-2 border-customGreen rounded"
           />
         </div>
 
@@ -119,10 +118,9 @@ const EditProductForm = ({setFlag}) => {
             name="description"
             value={product.description}
             onChange={handleChange}
-            placeholder="Enter product description"
             rows="4"
             required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
+            className="w-full p-2 border-2 border-customGreen rounded"
           />
         </div>
 
@@ -133,23 +131,14 @@ const EditProductForm = ({setFlag}) => {
             name="price"
             value={product.price}
             onChange={handleChange}
-            placeholder="Enter product price"
             required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
+            className="w-full p-2 border-2 border-customGreen rounded"
           />
         </div>
 
-
         <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Image URL:</label>
-          <input
-            type="text"
-            name="image"
-            value={product.image}  
-            onChange={handleChange}
-            placeholder="Enter image URL"
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
-          />
+          <label className="block text-lg text-customGreen mb-2">Upload Product Image:</label>
+          <ImageUpload setImageUrl={setImageUrl} />
         </div>
 
         <div className="mb-4">
@@ -159,27 +148,27 @@ const EditProductForm = ({setFlag}) => {
             name="quantity"
             value={product.quantity}
             onChange={handleChange}
-            placeholder="Enter available quantity"
             required
-            className="w-full p-2 border-2 border-customGreen rounded focus:outline-none focus:border-darkerGreen"
+            className="w-full p-2 border-2 border-customGreen rounded"
           />
         </div>
 
         <button
           type="submit"
-          className={`bg-customGreen text-white px-4 py-2 rounded-lg transition-colors duration-300 hover:bg-darkerGreen`}
+          className={`bg-customGreen text-white px-4 py-2 rounded-lg ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-darkerGreen'}`}
+          disabled={loading}
         >
-          Update Product
+          {loading ? "Updating..." : "Update Product"}
         </button>
+
         <button
           type="button"
           onClick={handleArchiveToggle}
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg transition-colors duration-300 hover:bg-gray-700 ml-4"
+          className="bg-gray-500 text-white px-4 py-2 rounded-lg ml-4 hover:bg-gray-700"
         >
           {product.isActive ? 'Archive' : 'Unarchive'}
         </button>
-
-    </form>
+      </form>
     </div>
   );
 };

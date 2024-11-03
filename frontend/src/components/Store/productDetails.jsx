@@ -5,7 +5,8 @@ import StarRating from '../shared/starRating'; // Import StarRating component
 import { Button, Typography, Spin, Divider } from 'antd';
 import {getProduct} from "../../api/products.ts"; // Import Ant Design components
 import Reviews from '../Store/reviews.jsx';
-
+import FeedbackForm from '../shared/FeedBackForm/FeedbackForm.jsx';
+import { getProductReviews, addReviewToProduct, addRatingToProduct } from '../../api/products.ts';
 const { Title, Paragraph } = Typography;
 
 const ProductDetails = ({setFlag}) => {
@@ -17,7 +18,20 @@ const ProductDetails = ({setFlag}) => {
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
   const user = JSON.parse(localStorage.getItem("user"));
-  // Fetch product details from the API
+  const onSubmit = async (values: any) => {
+    try {
+      // console.log("Feedback Form submit values: ", values);
+      if (!product?._id) {
+        throw new Error("Itinerary ID is missing");
+      }
+      console.log(`onSubmit product id: ${product._id}`)
+      await addReviewToProduct(product._id, values.comment);
+      await addRatingToProduct(product._id, values.rating);
+      console.log("Comment added successfully");
+    } catch (error) {
+      console.error("Failed to add comment:", error);
+    }
+  };
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -119,8 +133,9 @@ const ProductDetails = ({setFlag}) => {
             </Button>
 
         </Link>
-        <Reviews />
-      </div>
+        {/* <Reviews /> */}
+        <FeedbackForm entity={product} onSubmit={onSubmit}/>
+      </div> 
       
   );
   
