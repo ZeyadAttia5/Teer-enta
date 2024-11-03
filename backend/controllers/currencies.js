@@ -14,11 +14,11 @@ exports.getAllCurrencies = async (req, res) => {
 exports.getMyCurrency = async (req, res) => {
     try {
         if (!req.user)
-            return res.status(200).json({rate: 1, code: 'USD'});
+            return res.status(200).json({rate: 1, code: 'USD' , name:'United States Dollar'});
         const userId = req.user._id;
         const user = await User.findById(userId).populate('currency');
         if (!user.currency)
-            return res.status(200).json({rate: 1, code: 'USD'});
+            return res.status(200).json({rate: 1, code: 'USD' , name:'United States Dollar'});
         const currency = user.currency;
         return res.status(200).json({rate: currency.rate, code: currency.code});
     } catch (err) {
