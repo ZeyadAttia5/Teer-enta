@@ -25,6 +25,13 @@ const getMyActivities = async () => {
 const getUpcomingActivities = async () =>
   await axios.get<TActivity[]>(`${API_BASE_URL}/activity/upcoming`);
 
+const getBookedActivities = async () =>
+    await axios.get<TActivity[]>(`${API_BASE_URL}/activity/booked`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+
 const createActivity = async (activity: TActivity) =>
   // console.log(activity)
   await axios.post<TActivity>(`${API_BASE_URL}/activity/create`, activity, {
@@ -121,6 +128,7 @@ export {
   deleteActivity,
   getUpcomingActivities,
   getMyActivities,
+    getBookedActivities,
   getActivity,
     getTouristActivities ,
     bookActivity ,

@@ -21,6 +21,16 @@ export const getMyItineraries = async (): Promise<TItinerary[]> => {
     // console.log('response', response.data);
     return response.data;
 }
+
+export const getBookedItineraries = async (): Promise<TItinerary[]> => {
+    const response = await axios.get(`${API_BASE_URL}/itinerary/booked`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+    return response.data;
+}
+
 export const createItinerary = async (itinerary: Partial<TItinerary>): Promise<TItinerary> => {
     const response = await axios.post(`${API_BASE_URL}/itinerary/create`, itinerary,{
         headers: {
