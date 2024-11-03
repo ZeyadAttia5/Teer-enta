@@ -82,7 +82,7 @@ export const addRatingToItinerary = async (itineraryId, rating) => {
         { rating }, 
         {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
         });
     return response.data;
@@ -98,7 +98,7 @@ export const addCommentToItinerary = async (itineraryId, comment) => {
         { comment }, 
         {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
         });
     return response.data;
