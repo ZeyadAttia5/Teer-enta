@@ -14,8 +14,6 @@ import {
   Avatar,
   Alert,
   Badge,
-  Button,
-  message,
 } from "antd";
 import {
   EnvironmentOutlined,
@@ -27,12 +25,9 @@ import {
   PercentageOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
-  ShareAltOutlined,
-  CopyOutlined, MailOutlined,
 } from "@ant-design/icons";
-import MapContainer from "../shared/GoogleMaps/GoogleMaps";
-import { TActivity } from "../../types/Activity/Activity";
 import StaticMap from "../shared/GoogleMaps/ViewLocation";
+import { TActivity } from "../../types/Activity/Activity";
 import { getActivity } from "../../api/activity.ts";
 
 const { Title, Text } = Typography;
@@ -42,6 +37,7 @@ const ActivityDetails: React.FC = () => {
   const [activity, setActivity] = useState<TActivity | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null); // State to track which card is hovered
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -66,117 +62,62 @@ const ActivityDetails: React.FC = () => {
   if (!activity) return <Alert type="warning" message="Activity not found" />;
 // hello
   const averageRating =
-      activity.ratings.length > 0
-          ? Number(
-              (
-                  activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
-                  activity.ratings.length
-              ).toFixed(1)
-          )
-          : 0;
+    activity.ratings.length > 0
+      ? Number(
+          (
+            activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
+            activity.ratings.length
+          ).toFixed(1)
+        )
+      : 0;
 
-  const handleShareEmail = () => {
-    const subject = `Check out this activity: ${activity?.name}`;
-    const body = `
-      Activity Details:
-      - Name: ${activity?.name}
-      - Date: ${new Date(activity?.date).toLocaleDateString()}
-      - Time: ${activity?.time}
-      - Location: ${
-        activity?.location
-            ? `Latitude: ${activity.location.lat}, Longitude: ${activity.location.lng}`
-            : "Location not specified"
-    }
-      - Price Range: ${
-        activity?.price?.min && activity?.price?.max
-            ? `$${activity.price.min} - $${activity.price.max}`
-            : "Not specified"
-    }
-      - Category: ${activity?.category?.category || "No category"}
-      - Tags: ${
-        activity?.preferenceTags.length > 0
-            ? activity.preferenceTags.map((tag) => tag.tag).join(", ")
-            : "No tags"
-    }
-
-      Special Discounts:
-      ${
-        activity?.specialDiscounts.length > 0
-            ? activity.specialDiscounts
-                .map(
-                    (discount, index) =>
-                        `${index + 1}. ${discount.discount}% OFF - ${
-                            discount.Description
-                        } (${discount.isAvailable ? "Available" : "Not Available"})`
-                )
-                .join("\n")
-            : "No special discounts"
-    }
-
-      Ratings:
-      - Total Ratings: ${activity?.ratings.length}
-      - Average Rating: ${
-        activity?.ratings.length
-            ? (
-                activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
-                activity.ratings.length
-            ).toFixed(1)
-            : "No ratings yet"
-    }
-
-      More details and booking: ${window.location.origin}/activity/${ActivityId}
-    `;
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(
-        subject
-    )}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
+  const cardStyle = {
+    borderRadius: "10px",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+    backgroundColor: "#FFFFFF",
+    color: "#496989",
+    cursor: "pointer",
   };
 
-  const handleCopyLink = () => {
-    const link = `${window.location.origin}/activity/${ActivityId}`;
-    navigator.clipboard.writeText(link).then(
-        () => message.success("Link copied to clipboard!"),
-        () => message.error("Failed to copy the link")
-    );
+  const hoverCardStyle = {
+    backgroundColor: "#E2F4C5", // hover color
+    transform: "scale(1.05)",
+    boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
   };
 
   return (
-      <Space
-          direction="vertical"
-          size="large"
-          style={{ width: "100%", margin: "0 auto", padding: 24 }}
-      >
+    <div style={{ backgroundColor: "#496989", minHeight: "100vh", padding: "24px" }}>
+      <Space direction="vertical" size="large" style={{ width: "100%", margin: "0 auto" }}>
         {/* Header Section */}
-        <Card>
+        <Card
+          style={{
+            ...cardStyle,
+            ...(hoveredCard === "header" ? hoverCardStyle : {}),
+          }}
+          onMouseEnter={() => setHoveredCard("header")}
+          onMouseLeave={() => setHoveredCard(null)}
+        >
           <Row justify="space-between" align="middle">
             <Col>
-              <Title level={2}>{activity.name}</Title>
+              <Title level={2} style={{ color: "#496989" }}>{activity.name}</Title>
               <Space size="small">
                 <Badge
-                    status={activity.isActive ? "success" : "error"}
-                    text={activity.isActive ? "Active" : "Inactive"}
+                  status={activity.isActive ? "success" : "error"}
+                  text={activity.isActive ? "Active" : "Inactive"}
                 />
                 <Badge
-                    status={activity.isBookingOpen ? "processing" : "default"}
-                    text={activity.isBookingOpen ? "Booking Open" : "Booking Closed"}
+                  status={activity.isBookingOpen ? "processing" : "default"}
+                  text={activity.isBookingOpen ? "Booking Open" : "Booking Closed"}
                 />
               </Space>
             </Col>
             <Col>
               <Space direction="vertical" align="end">
                 <Rate disabled value={averageRating} allowHalf />
-                <Text type="secondary">{activity.ratings.length} ratings</Text>
-                <Space>
-                  <Button icon={<CopyOutlined />} onClick={handleCopyLink}>
-                    Copy Link
-                  </Button>
-                  <Button
-                      icon={<MailOutlined />}
-                      onClick={handleShareEmail}
-                  >
-                    Share via Email
-                  </Button>
-                </Space>
+                <Text type="secondary" style={{ color: "#58A399" }}>
+                  {activity.ratings.length} ratings
+                </Text>
               </Space>
             </Col>
           </Row>
@@ -184,58 +125,71 @@ const ActivityDetails: React.FC = () => {
 
         {/* Location and Basic Info Section */}
         <Row gutter={[24, 24]}>
+          {/* Left Column - Basic Information */}
           <Col xs={24} lg={12}>
             <Space direction="vertical" style={{ width: "100%" }} size="large">
-              <Card title="Basic Information">
+              <Card
+                title="Basic Information"
+                style={{
+                  ...cardStyle,
+                  ...(hoveredCard === "basicInfo" ? hoverCardStyle : {}),
+                }}
+                onMouseEnter={() => setHoveredCard("basicInfo")}
+                onMouseLeave={() => setHoveredCard(null)}
+              >
                 <Row gutter={[24, 24]}>
                   <Col span={12}>
                     <Statistic
-                        title="Date"
-                        value={new Date(activity.date).toLocaleDateString()}
-                        prefix={<CalendarOutlined />}
+                      title={<Text style={{ color: "#58A399" }}>Date</Text>}
+                      value={new Date(activity.date).toLocaleDateString()}
+                      prefix={<CalendarOutlined />}
+                      valueStyle={{ color: "#496989" }}
                     />
                   </Col>
                   <Col span={12}>
                     <Statistic
-                        title="Time"
-                        value={activity.time}
-                        prefix={<ClockCircleOutlined />}
+                      title={<Text style={{ color: "#58A399" }}>Time</Text>}
+                      value={activity.time}
+                      prefix={<ClockCircleOutlined />}
+                      valueStyle={{ color: "#496989" }}
                     />
                   </Col>
                   <Col span={24}>
                     <Statistic
-                        title="Price Range"
-                        value={
-                          activity.price.min && activity.price.max
-                              ? `$${activity.price.min} - $${activity.price.max}`
-                              : "Price not specified"
-                        }
-                        prefix={<DollarOutlined />}
+                      title={<Text style={{ color: "#58A399" }}>Price Range</Text>}
+                      value={
+                        activity.price.min && activity.price.max
+                          ? `$${activity.price.min} - $${activity.price.max}`
+                          : "Price not specified"
+                      }
+                      prefix={<DollarOutlined />}
+                      valueStyle={{ color: "#496989" }}
                     />
                   </Col>
                 </Row>
               </Card>
 
               <Card
-                  title={
-                    <Space>
-                      <TagOutlined />
-                      <span>Category & Tags</span>
-                    </Space>
-                  }
+                title={<Space><TagOutlined style={{ color: "#58A399" }} /><span>Category & Tags</span></Space>}
+                style={{
+                  ...cardStyle,
+                  ...(hoveredCard === "categoryTags" ? hoverCardStyle : {}),
+                }}
+                onMouseEnter={() => setHoveredCard("categoryTags")}
+                onMouseLeave={() => setHoveredCard(null)}
               >
                 <Space direction="vertical">
                   <div>
-                    <Text strong>Category: </Text>
+                    <Text strong style={{ color: "#496989" }}>Category: </Text>
                     <Tag color="blue">{activity.category?.category}</Tag>
                   </div>
                   <div>
-                    <Text strong>Preference Tags: </Text>
+                    <Text strong style={{ color: "#496989" }}>Preference Tags: </Text>
                     <Space wrap>
                       {activity.preferenceTags.map((tag) => (
-                          <Tag key={tag._id} color="green">
-                            {tag.tag}
-                          </Tag>
+                        <Tag key={tag._id} color="green">
+                          {tag.tag}
+                        </Tag>
                       ))}
                     </Space>
                   </div>
@@ -247,13 +201,15 @@ const ActivityDetails: React.FC = () => {
           {/* Right Column - Map */}
           <Col xs={24} lg={12}>
             <Card
-                title={
-                  <Space>
-                    <EnvironmentOutlined />
-                    <span>Location</span>
-                  </Space>
-                }
-                bodyStyle={{ padding: 0, height: "400px" }}
+              title={<Space><EnvironmentOutlined style={{ color: "#58A399" }} /><span>Location</span></Space>}
+              bodyStyle={{ padding: 0, height: "400px" }}
+              style={{
+                ...cardStyle,
+                overflow: "hidden",
+                ...(hoveredCard === "location" ? hoverCardStyle : {}),
+              }}
+              onMouseEnter={() => setHoveredCard("location")}
+              onMouseLeave={() => setHoveredCard(null)}
             >
               <StaticMap longitude={activity.location.lng} latitude={activity.location.lat} />
             </Card>
@@ -262,79 +218,66 @@ const ActivityDetails: React.FC = () => {
 
         {/* Special Discounts */}
         {activity.specialDiscounts.length > 0 && (
-            <Card
-                title={
-                  <Space>
-                    <PercentageOutlined />
-                    <span>Special Discounts</span>
-                  </Space>
-                }
-            >
-              <List
-                  dataSource={activity.specialDiscounts}
-                  renderItem={(discount) => (
-                      <List.Item
-                          extra={
-                            discount.isAvailable ? (
-                                <Tag color="success" icon={<CheckCircleOutlined />}>
-                                  Available
-                                </Tag>
-                            ) : (
-                                <Tag color="error" icon={<CloseCircleOutlined />}>
-                                  Not Available
-                                </Tag>
-                            )
-                          }
-                      >
-                        <List.Item.Meta
-                            title={`${discount.discount}% OFF`}
-                            description={discount.Description}
-                        />
-                      </List.Item>
+          <Card
+            title={<Space><PercentageOutlined style={{ color: "#58A399" }} /><span>Special Discounts</span></Space>}
+            style={{
+              ...cardStyle,
+              ...(hoveredCard === "specialDiscounts" ? hoverCardStyle : {}),
+            }}
+            onMouseEnter={() => setHoveredCard("specialDiscounts")}
+            onMouseLeave={() => setHoveredCard(null)}
+          >
+            <List
+              dataSource={activity.specialDiscounts}
+              renderItem={(discount) => (
+                <List.Item
+                  extra={discount.isAvailable ? (
+                    <Tag color="success" icon={<CheckCircleOutlined />}>
+                      Available
+                    </Tag>
+                  ) : (
+                    <Tag color="error" icon={<CloseCircleOutlined />}>
+                      Not Available
+                    </Tag>
                   )}
-              />
-            </Card>
+                >
+                  <List.Item.Meta
+                    title={<Text style={{ color: "#58A399" }}>{`${discount.discount}% OFF`}</Text>}
+                    description={<Text style={{ color: "#496989" }}>{discount.Description}</Text>}
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
         )}
 
         {/* Comments */}
         {activity.comments.length > 0 && (
-            <Card
-                title={
-                  <Space>
-                    <UserOutlined />
-                    <span>Comments</span>
-                  </Space>
-                }
-            >
-              <List
-                  itemLayout="horizontal"
-                  dataSource={activity.comments}
-                  renderItem={(comment) => (
-                      <List.Item>
-                        <List.Item.Meta
-                            avatar={<Avatar icon={<UserOutlined />} />}
-                            title={comment.createdBy.mobileNumber}
-                            description={comment.comment}
-                        />
-                      </List.Item>
-                  )}
-              />
-            </Card>
+          <Card
+            title={<Space><UserOutlined style={{ color: "#58A399" }} /><span>User Comments</span></Space>}
+            style={{
+              ...cardStyle,
+              ...(hoveredCard === "comments" ? hoverCardStyle : {}),
+            }}
+            onMouseEnter={() => setHoveredCard("comments")}
+            onMouseLeave={() => setHoveredCard(null)}
+          >
+            <List
+              dataSource={activity.comments}
+              renderItem={(comment) => (
+                <List.Item>
+                  <List.Item.Meta
+                    avatar={<Avatar>{comment.user[0]}</Avatar>}
+                    title={<Text strong style={{ color: "#496989" }}>{comment.user}</Text>}
+                    description={<Text>{comment.text}</Text>}
+                  />
+                </List.Item>
+              )}
+            />
+          </Card>
         )}
-
-        {/* Footer Information */}
-        <Card size="small">
-          <Space direction="vertical" size="small">
-            <Text type="secondary">Created by: {activity.createdBy.companyName}</Text>
-            <Text type="secondary">
-              Created: {new Date(activity.createdAt).toLocaleDateString()}
-            </Text>
-            <Text type="secondary">
-              Last updated: {new Date(activity.updatedAt).toLocaleDateString()}
-            </Text>
-          </Space>
-        </Card>
       </Space>
+    </div>
   );
 };
 
