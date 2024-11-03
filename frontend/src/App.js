@@ -69,7 +69,7 @@ function App() {
         {(
           <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  ">
             <TouristNavBar
-              setModalOpen={setModalOpen}
+              setModalOpen ={setModalOpen}
               isNavigate={isNavigate}
               setIsNavigate={setIsNavigate}
             />
