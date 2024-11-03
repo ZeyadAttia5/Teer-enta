@@ -72,7 +72,7 @@ function Login({ setFlag, flag }) {
       navigate("/");
       setFlag(false);
     } catch (error) {
-      // message.error()
+      setIsLoading(false);
       setMessage(error.response.data.message || "Login failed");
       return false;
     }
