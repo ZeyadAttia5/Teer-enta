@@ -76,7 +76,7 @@ export const getProductReviews = async (productId) => {
 
 export const addReviewToProduct = async (productId, review) => {
     const response = await axios.post(`${API_BASE_URL}/product/${productId}/review`, 
-        { review }, 
+        { "review":review }, 
         {
             headers: {
                 Authorization: `Bearer ${token}`,

@@ -129,7 +129,7 @@ const AdminProductGrid = ({ setFlag }) => {
                 <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
                   <img
                       className="w-full h-48 object-cover"
-                      src={product.image || "defaultImageUrl.jpg"}
+                      src={product.image ? product.image:product.imageUrl}
                       alt={product.name}
                       loading="lazy"
                   />

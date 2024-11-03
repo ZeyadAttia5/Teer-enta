@@ -198,6 +198,7 @@ exports.getRatingsForProduct = async (req, res) => {
 
 exports.addReviewToProduct = async (req, res) => {
     try {
+        console.log(req.body.review) ;
         const { id } = req.params; 
         const { review } = req.body; 
 

@@ -40,7 +40,8 @@ const Reviews = () => {
         console.log("Product ID:", id);
         console.log("Review:", newReview);
       await addReviewToProduct(id, newReview);
-      
+
+
       setReviews([...reviews, newReview]); // Update local state with the new review
       setNewReview(''); // Clear the input field
       message.success("Review posted successfully!");
