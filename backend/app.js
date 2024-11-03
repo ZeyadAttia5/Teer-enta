@@ -22,6 +22,7 @@ const orderRoutes = require('./routes/order');
 const tourGuideRoutes = require('./routes/tourGuide')
 const transportationRoutes = require('./routes/transportation');
 const flightsRoutes = require('./routes/flights');
+const hotelsRoutes = require('./routes/hotels');
 const paymentRoutes = require('./routes/payment');
 const complaintRoutes = require('./routes/complaint');
 const currencyRoutes = require('./routes/currency') ;
@@ -72,6 +73,7 @@ app.use("/order",orderRoutes)
 app.use("/tourGuide",tourGuideRoutes);
 app.use("/transportation",transportationRoutes);
 app.use("/flights", flightsRoutes);
+app.use("/hotels", hotelsRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/complaint", complaintRoutes);
 app.use("/upload" , fileRoutes ) ;

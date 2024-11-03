@@ -89,6 +89,20 @@ exports.getUpcomingItineraries = async (req, res, next) => {
     }
 };
 
+exports.getBookedItineraries = async (req, res, next) => {
+    try{
+        const userId = req.user._id;
+        const bookedItineraries = await BookedItinerary.find({createdBy: userId,isActive: true})
+            .populate('itinerary').populate('createdBy');
+        if(bookedItineraries.length === 0){
+            return res.status(404).json({message: "No booked itineraries found"});
+        }
+        res.status(200).json(bookedItineraries);
+    }catch (err){
+        errorHandler.SendError(res, err);
+    }
+}
+
 exports.createItinerary = async (req, res, next) => {
     try {
         // req.user = {_id: '66f6564440ed4375b2abcdfb'};
@@ -154,7 +168,7 @@ exports.deleteItinerary = async (req, res, next) => {
         await Itinerary.findByIdAndDelete(id);
         res
             .status(200)
-            .json({message: "Itinerary deleted successfully", data: itinerary});
+            .json({message: "Itinerary deleted successfully ", data: itinerary});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -187,7 +201,7 @@ exports.flagInappropriate = async (req, res) => {
             { _id: { $in: userIds } },  // Find users with IDs in userIds array
             { $inc: { wallet: itineraryPrice } }  // Increment the wallet by the itinerary price
         );
-
+        //
         return res.status(200).json({ message: "Itinerary flagged inappropriate and users refunded successfully" });
     } catch (err) {
         errorHandler.SendError(res, err);
