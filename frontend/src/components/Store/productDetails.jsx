@@ -28,7 +28,6 @@ const ProductDetails = ({ setFlag }) => {
         setLoading(false);
       }
     };
-
     fetchProductDetails();
   }, [id]);
 
