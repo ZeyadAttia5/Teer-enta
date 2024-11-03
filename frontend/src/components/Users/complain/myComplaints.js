@@ -1,149 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { Table, Button, Modal, Tag } from "antd";
-// import { getMyComplaints } from "../../../api/complaint.ts";
-// import CreateComplaint from "./createComplaint"; // Adjust the import path as necessary
-
-// const MyComplaints = () => {
-//   const [complaints, setComplaints] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [modalVisible, setModalVisible] = useState(false);
-//   const [selectedComplaint, setSelectedComplaint] = useState(null);
-//   const [createModalVisible, setCreateModalVisible] = useState(false);
-
-//   useEffect(() => {
-//     const fetchComplaints = async () => {
-//       try {
-//         const response = await getMyComplaints();
-//         setComplaints(response.data);
-//       } catch (error) {
-//         console.error("Failed to fetch complaints:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchComplaints();
-//   }, []);
-
-//   const handleViewDetails = (complaint) => {
-//     setSelectedComplaint(complaint);
-//     setModalVisible(true);
-//   };
-
-//   const handleCloseModal = () => {
-//     setModalVisible(false);
-//     setSelectedComplaint(null);
-//   };
-
-//   const handleCreateComplaint = () => {
-//     setCreateModalVisible(true);
-//   };
-
-//   const handleCloseCreateModal = () => {
-//     setCreateModalVisible(false);
-//   };
-
-//   const columns = [
-//     {
-//       title: "Title",
-//       dataIndex: "title",
-//       key: "title",
-//     },
-//     {
-//       title: "Date",
-//       dataIndex: "date",
-//       key: "date",
-//       render: (date) => formatDate(date),
-//     },
-//     {
-//       title: "Status",
-//       dataIndex: "status",
-//       key: "status",
-//       render: (status) => (
-//         <Tag color={status === "Pending" ? "orange" : "green"}>{status}</Tag>
-//       ),
-//     },
-//     {
-//       title: "Reply",
-//       dataIndex: "reply",
-//       key: "reply",
-//       render: (reply) => (reply ? "Yes" : "No"),
-//     },
-//     {
-//       title: "Action",
-//       key: "action",
-//       render: (_, record) => (
-//         <Button type="primary" onClick={() => handleViewDetails(record)}>
-//           View
-//         </Button>
-//       ),
-//     },
-//   ];
-
-//   const formatDate = (dateString) => {
-//     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-//     return new Date(dateString).toLocaleDateString(undefined, options);
-//   };
-
-//   return (
-//     <div>
-//       <Button
-//         type="primary"
-//         onClick={handleCreateComplaint}
-//         style={{ marginBottom: 16, marginRight: 16 }}
-//       >
-//         Create Complaint
-//       </Button>
-//       <Table
-//         columns={columns}
-//         dataSource={complaints}
-//         loading={loading}
-//         rowKey="id"
-//       />
-//       <Modal
-//         title="Complaint Details"
-//         visible={modalVisible}
-//         onCancel={handleCloseModal}
-//         footer={[
-//           <Button key="close" onClick={handleCloseModal}>
-//             Close
-//           </Button>,
-//         ]}
-//       >
-//         {selectedComplaint && (
-//           <div>
-//             <p>
-//               <strong>Title:</strong> {selectedComplaint.title}
-//             </p>
-//             <p>
-//               <strong>Body:</strong> {selectedComplaint.body}
-//             </p>
-
-//             <p>
-//               <strong>Date Submitted:</strong>{" "}
-//               {formatDate(selectedComplaint.date)}
-//             </p>
-
-//             <p>
-//               <strong>Status:</strong> {selectedComplaint.status}
-//             </p>
-//             <p>
-//               <strong>Reply:</strong>{" "}
-//               {selectedComplaint.reply
-//                 ? selectedComplaint.reply
-//                 : "No reply yet"}
-//             </p>
-//           </div>
-//         )}
-//       </Modal>
-
-//       <CreateComplaint onClose={handleCloseCreateModal} />
-//     </div>
-//   );
-// };
-
-// export default MyComplaints;
-
 import React, { useEffect, useState } from "react";
 import { Table, Form, Input, Button, Modal, Tag, message } from "antd";
 import {
@@ -262,17 +116,15 @@ const MyComplaints = () => {
   ];
 
   return (
-    <div>
+    <div className="p-4 text-right">
+      <h2 className="text-3xl font-bold text-center mb-8 text-blue-600">
+        My Complaints
+      </h2>
       <Button
-        type="primary"
+        type="danger"
         onClick={handleCreateComplaint}
-        style={{
-          backgroundColor: "#ff4d4f",
-          borderColor: "#ff4d4f",
-          marginBottom: 16,
-          marginRight: 16,
-          marginTop: 16,
-        }}
+        className="bg-red-500 text-white hover:bg-red-600 mb-4 mr-4 mt-4"
+        style={{ marginRight: "125px" }}
       >
         Create Complaint
       </Button>
@@ -281,49 +133,84 @@ const MyComplaints = () => {
         dataSource={complaints}
         loading={loading}
         rowKey="id"
+        className="mb-4"
       />
+      {complaints.length === 0 && !loading && (
+        <div className="text-center text-gray-500">
+          <p>
+            No complaints here! Looks like everything is running smoothly. 🎉
+          </p>
+        </div>
+      )}
       <Modal
-        title="Complaint Details"
+        title={<h2 className="font-bold text-center">Complaint Details</h2>}
         visible={modalVisible}
         onCancel={handleCloseModal}
         footer={[
-          <Button key="close" onClick={handleCloseModal}>
+          <Button
+            key="close"
+            onClick={handleCloseModal}
+            className="bg-gray-500 text-white hover:bg-gray-600"
+          >
             Close
           </Button>,
         ]}
+        className="top-5 p-5 h-4/5"
+        bodyStyle={{
+          fontFamily: "Arial, sans-serif",
+          fontSize: "16px",
+          lineHeight: "1.5",
+          height: "calc(100% - 55px)",
+        }}
       >
         {selectedComplaint && (
           <div>
-            <p>
+            <p style={{ marginBottom: "1rem" }}>
               <strong>Title:</strong> {selectedComplaint.title}
             </p>
-            <p>
+            <p style={{ marginBottom: "1rem" }}>
               <strong>Body:</strong> {selectedComplaint.body}
             </p>
-
-            <p>
+            <p style={{ marginBottom: "1rem" }}>
               <strong>Date Submitted:</strong>{" "}
               {formatDate(selectedComplaint.date)}
             </p>
-
-            <p>
-              <strong>Status:</strong> {selectedComplaint.status}
+            <p style={{ marginBottom: "1rem" }}>
+              <strong>Status:</strong>{" "}
+              <Tag
+                color={
+                  selectedComplaint.status === "Pending" ? "orange" : "green"
+                }
+              >
+                {selectedComplaint.status}
+              </Tag>
             </p>
-            <p>
+            <p style={{ marginBottom: "1rem" }}>
               <strong>Reply:</strong>{" "}
-              {selectedComplaint.reply
-                ? selectedComplaint.reply
-                : "No reply yet"}
+              {selectedComplaint.reply ? (
+                <span style={{ color: "grey", fontStyle: "italic" }}>
+                  {selectedComplaint.reply}
+                </span>
+              ) : (
+                "No reply yet"
+              )}
             </p>
           </div>
         )}
       </Modal>
 
       <Modal
-        title="Create Complaint"
+        title={<h2 className="font-bold text-center">Create Complaint</h2>}
         visible={createModalVisible}
         onCancel={handleCloseCreateModal}
         footer={null}
+        className="top-5 p-5 h-4/5"
+        bodyStyle={{
+          fontFamily: "Arial, sans-serif",
+          fontSize: "16px",
+          lineHeight: "1.5",
+          height: "calc(100% - 55px)",
+        }}
       >
         {
           <Form layout="vertical" onFinish={onFinish} form={form}>
@@ -343,7 +230,11 @@ const MyComplaints = () => {
               <TextArea rows={6} />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="bg-blue-500 text-white hover:bg-blue-600"
+              >
                 Submit
               </Button>
             </Form.Item>
