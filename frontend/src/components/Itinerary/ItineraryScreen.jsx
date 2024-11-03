@@ -13,6 +13,8 @@ import {
   message,
   Card,
   notification,
+  Badge,
+  Tooltip,
 } from "antd";
 import {
   MinusCircleOutlined,
@@ -20,6 +22,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
+  FlagFilled,
 } from "@ant-design/icons";
 import {
   getItineraries,
@@ -27,6 +30,7 @@ import {
   updateItinerary,
   deleteItinerary,
   getMyItineraries,
+  flagIternaary,
 } from "../../api/itinerary.ts";
 import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
@@ -355,50 +359,84 @@ const ItineraryScreen = ({ setFlag }) => {
       title: "Actions",
       key: "actions",
       render: (text, record) => (
-          console.log("record", record.availableDates[0]),
-          console.log("user", user._id),
-        <>
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() => showViewModal(record)}
-            className="mr-2"
-            style={{
-              backgroundColor: "#02735F",
-              color: "#fff",
-              border: "none",
-            }}
-          >
-            View
-          </Button>
-          {user && user._id === record.createdBy && (
-              console.log("record", record),
-            <>
-              <Button
-                icon={<EditOutlined />}
-                onClick={() => showModal(record)}
-                className="mr-2"
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
-              >
-                Edit
-              </Button>
-              <Button
-                icon={<DeleteOutlined />}
-                onClick={() => handleDelete(record._id)}
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
-              >
-                Delete
-              </Button>
-            </>
-          )}
-        </>
+        console.log("record", record.availableDates[0]),
+        console.log("user", user._id),
+        (
+          <>
+            <Button
+              icon={<EyeOutlined />}
+              onClick={() => showViewModal(record)}
+              className="mr-2"
+              style={{
+                backgroundColor: "#02735F",
+                color: "#fff",
+                border: "none",
+              }}
+            >
+              View
+            </Button>
+
+            {user &&
+              user._id === record.createdBy &&
+              (console.log("record", record),
+              (
+                <>
+                  <Button
+                    icon={<EditOutlined />}
+                    onClick={() => showModal(record)}
+                    className="mr-2"
+                    style={{
+                      backgroundColor: "#02735F",
+                      color: "#fff",
+                      border: "none",
+                    }}
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDelete(record._id)}
+                    style={{
+                      backgroundColor: "#02735F",
+                      color: "#fff",
+                      border: "none",
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </>
+              ))}
+            <Badge count={0} offset={[-5, 5]}>
+              <Tooltip title={"Flag this item as Inappropriate"}>
+                <Button
+                  danger
+                  icon={<FlagFilled />}
+                  onClick={async () => {
+                    try {
+                      setLoading(true);
+                      await flagIternaary(record._id);
+                      message.success("Item flagged as inappropriate");
+                      await fetchItineraries();
+                    } catch (error) {
+                      message.error("Failed to flag item as inappropriate");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  shape="circle"
+                  style={{
+                    button: {
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                  }}
+                />
+              </Tooltip>
+            </Badge>
+          </>
+        )
       ),
     },
   ];
@@ -523,7 +561,7 @@ const ItineraryScreen = ({ setFlag }) => {
           </div>
         </div>
       </div>
-      {(user===null || user.userRole === "Tourist") ? (
+      {user === null || user.userRole === "Tourist" ? (
         <main className="flex flex-wrap gap-2 py-10">
           {sortedItineraries?.map((itinerary, index) => {
             return (
@@ -955,15 +993,25 @@ const ItineraryScreen = ({ setFlag }) => {
 
             <Divider />
             <Form.Item label="Available Dates">
-              {viewingItinerary.availableDates.map((date, index) => (
-                  console.log("date", date),console.log("time", date.Times),
-                <div key={index}>
-                  <Input
-                      value={`${moment(date.Date).format('dddd, MMMM D, YYYY')} ${moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm").format('hh:mm A')}`}
-                      disabled
-                  />
-                </div>
-              ))}
+              {viewingItinerary.availableDates.map(
+                (date, index) => (
+                  console.log("date", date),
+                  console.log("time", date.Times),
+                  (
+                    <div key={index}>
+                      <Input
+                        value={`${moment(date.Date).format(
+                          "dddd, MMMM D, YYYY"
+                        )} ${moment(
+                          `${date.Date} ${date.Times}`,
+                          "YYYY-MM-DD HH:mm"
+                        ).format("hh:mm A")}`}
+                        disabled
+                      />
+                    </div>
+                  )
+                )
+              )}
             </Form.Item>
 
             <Divider />
