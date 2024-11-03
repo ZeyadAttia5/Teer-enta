@@ -144,6 +144,20 @@ const Sidebar = ({ visible, onClose }) => {
             {/* Add more admin options here if needed */}
           </Menu.SubMenu>
         )}
+
+        {user && user.userRole === "Tourist" && (
+          <Menu.SubMenu key="sub5" title="Flights">
+            <Menu.Item key="20" onClick={() => handleClick("/flight/bookFlight")}>
+              Book Flight
+            </Menu.Item>
+            {/* <Menu.Item key="21" onClick={() => handleClick("/addUser")}>
+              Add User
+            </Menu.Item>
+            <Menu.Item key="22" onClick={() => handleClick("/pendingUsers")}>
+              Pending Users
+            </Menu.Item> */}
+          </Menu.SubMenu>
+          )}
       </Menu>
     </Drawer>
   );

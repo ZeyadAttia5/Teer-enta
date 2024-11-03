@@ -35,6 +35,7 @@ import DeleteAccountButton from "./components/Profile/DeleteAccountButton.js";
 import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
 import MyComplaints from "./components/Users/complain/myComplaints.js";
 import ShowDocuments from "./components/Users/pendingUsers/ShowDocuments.js";
+import BookFlight from "./components/Flight/BookFlight.jsx";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -173,6 +174,17 @@ function App() {
                 <Route
                   path="iternaryDetails/:id"
                   element={<IternaryDetails setFlag={setFlag} />}
+                />
+              </Routes>
+            }
+          />
+          <Route
+            path="/flight/*"
+            element={
+              <Routes>
+                <Route
+                  path="bookFlight"
+                  element={<BookFlight setFlag={setFlag} />}
                 />
               </Routes>
             }
