@@ -114,6 +114,41 @@ export const addCommentToActivity = async (activityId, comment) => {
     return response.data;
 };
 
+
+export const flagActivity = async (activityId) => {
+    const response = await axios.patch(
+      `${API_BASE_URL}/activity/flagInappropriate/${activityId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+}
+
+// getFlaggedActivities
+export const getFlaggedActivities = async () => {
+    const response = await axios.get(`${API_BASE_URL}/activity/flagged`);
+    return response.data;
+};
+
+// unFlagActivity
+export const UnFlagActivity = async (activityId) => {
+    const response = await axios.patch(
+      `${API_BASE_URL}/activity/UnFlagInappropriate/${activityId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      }
+    );
+    return response.data;
+}
+
+
 export {
   getActivities,
   createActivity,

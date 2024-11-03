@@ -18,6 +18,35 @@ exports.getActivities = async (req, res, next) => {
     }
 }
 
+
+exports.getFlaggedActivities = async (req, res, next) => {
+    try {
+        const activities = await Activity.find({isActive: false})
+            .populate('category')
+            .populate('preferenceTags');
+       
+        res.status(200).json(activities);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.UnFlagInappropriate = async (req, res) => {
+    try {
+        const id = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({message: "invalid object id "});
+        }
+        const activity = await Activity.findByIdAndUpdate(id, {isActive: true}, {new: true});
+        if (!activity) {
+            return res.status(404).json({message: "activity not found"});
+        }
+        return res.status(200).json({message: "activity unflagged successfully"});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
 exports.getActivity = async (req, res, next) => {
     try {
         const {id} = req.params;
@@ -139,8 +168,8 @@ exports.deleteActivity = async (req, res, next) => {
 exports.flagInappropriate = async (req, res) => {
     try {
         const id = req.params.id;
-        if (!mongoose.Types.objectId.isValid(id)) {
-            return res.status(400).json({message: "invalid object id "});
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+          return res.status(400).json({ message: "invalid object id " });
         }
         const activity = await Activity.findByIdAndUpdate(id, {isActive: false}, {new: true});
         if (!activity) {

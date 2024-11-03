@@ -32,6 +32,8 @@ import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
 import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
 import ChangePassword from "./components/Profile/ChangePassword.js";
 import DeleteAccountButton from "./components/Profile/DeleteAccountButton.js";
+import FlaggedIternary from "./components/Itinerary/FlaggedIternary.jsx";
+import FlaggedActivities from "./components/Activity/FlaggedActivities.jsx";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -66,7 +68,7 @@ function App() {
             drawerVisible={visible}
           />
         )}
-        {(
+        {
           <div className=" relative bg-[#075B4C] z-10 size-full flex flex-col items-center  ">
             <TouristNavBar
               setModalOpen={setModalOpen}
@@ -74,7 +76,7 @@ function App() {
               setIsNavigate={setIsNavigate}
             />
           </div>
-        )}
+        }
         <ConfirmationModal
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
@@ -93,6 +95,10 @@ function App() {
           <Route
             path="/activities"
             element={<AllActivitiesCRUD setFlag={setFlag} />}
+          />
+          <Route
+            path="/flaggedActivities"
+            element={<FlaggedActivities setFlag={setFlag} />}
           />
           <Route
             path="/activities/my"
@@ -163,6 +169,10 @@ function App() {
                   element={<IternaryScreen setFlag={setFlag} />}
                 />
                 <Route
+                  path="flaggedIternaries"
+                  element={<FlaggedIternary setFlag={setFlag} />}
+                />
+                <Route
                   path="iternaryDetails/:id"
                   element={<IternaryDetails setFlag={setFlag} />}
                 />
@@ -179,13 +189,13 @@ function App() {
             element={<TouristActivity setFlag={setFlag} />}
           />
           <Route
-          path="/changePassword"
-          element={<ChangePassword setFlag={setFlag} />}
-        />
+            path="/changePassword"
+            element={<ChangePassword setFlag={setFlag} />}
+          />
           <Route
-          path="/requestAccountDeletion"
-          element={<DeleteAccountButton setFlag={setFlag} />}
-        />
+            path="/requestAccountDeletion"
+            element={<DeleteAccountButton setFlag={setFlag} />}
+          />
         </Routes>
         <Toaster />
       </Router>
