@@ -4,6 +4,7 @@ import axios from 'axios';
 import StarRating from '../shared/starRating'; // Import StarRating component
 import { Button, Typography, Spin, Divider } from 'antd';
 import {getProduct} from "../../api/products.ts"; // Import Ant Design components
+import Reviews from '../Store/reviews.jsx';
 
 const { Title, Paragraph } = Typography;
 
@@ -118,8 +119,11 @@ const ProductDetails = ({setFlag}) => {
             </Button>
 
         </Link>
+        <Reviews />
       </div>
+      
   );
+  
 };
 
 export default ProductDetails;
