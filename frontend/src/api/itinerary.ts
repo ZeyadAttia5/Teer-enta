@@ -113,3 +113,39 @@ export const addCommentToItinerary = async (itineraryId, comment) => {
         });
     return response.data;
 };
+
+
+export const flagIternaary = async (itineraryId: String | Number) => {
+  const response = await axios.patch(
+    `${API_BASE_URL}/itinerary/flagInappropriate/${itineraryId}/`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    }
+  );
+  return response.data;
+};
+
+export const getFlaggedItineraries = async () => {
+  const response = await axios.get(`${API_BASE_URL}/itinerary/flagged`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
+  return response.data;
+};
+
+export const unflagIternaary = async (itineraryId: String | Number) => {
+  const response = await axios.patch(
+    `${API_BASE_URL}/itinerary/unflagInappropriate/${itineraryId}/`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    }
+  );
+};
+

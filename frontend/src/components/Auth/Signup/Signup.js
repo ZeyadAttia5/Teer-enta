@@ -568,7 +568,7 @@ function Signup({ setFlag }) {
                 selectedRole !== "Tourist" ? "hidden" : ""
               }`}
             >
-              <div style={{ width: "100%", margin: "auto" }} className="h-">
+              <div style={{ width: "100%", margin: "auto" }}>
                 <Select
                   className=""
                   options={options}
@@ -635,7 +635,7 @@ function Signup({ setFlag }) {
                 type="tel"
                 placeholder="Enter your mobile number"
                 required
-                value={!mobileNumber}
+                value={mobileNumber}
                 onChange={handleMobileNumberChange}
               />
             </label>
