@@ -18,9 +18,9 @@ const touristSchema = new mongoose.Schema({
     complaints: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Complain'
-    }] ,
+    }],
     addresses: [
-        {type:String }
+        {type: String}
     ],
     wishList: [
         {
@@ -34,6 +34,7 @@ const touristSchema = new mongoose.Schema({
             quantity: {type: Number}
         }
     ],
+    currency: {type: mongoose.Schema.Types.ObjectId, ref: 'Currency'}
 }, {timestamps: true});
 
 // Use discriminator to extend User schema
