@@ -13,6 +13,8 @@ import {
   message,
   Card,
   notification,
+  Badge,
+  Tooltip,
 } from "antd";
 import {
   MinusCircleOutlined,
@@ -20,6 +22,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
+  FlagFilled,
 } from "@ant-design/icons";
 import {
   getItineraries,
@@ -27,6 +30,7 @@ import {
   updateItinerary,
   deleteItinerary,
   getMyItineraries,
+  flagIternaary,
 } from "../../api/itinerary.ts";
 import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
@@ -355,56 +359,90 @@ const ItineraryScreen = ({ setFlag }) => {
       title: "Actions",
       key: "actions",
       render: (text, record) => (
-          console.log("record", record.availableDates[0]),
-          console.log("user", user._id),
-        <>
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() => showViewModal(record)}
-            className="mr-2"
-            style={{
-              backgroundColor: "#02735F",
-              color: "#fff",
-              border: "none",
-            }}
-          >
-            View
-          </Button>
-          {user && user._id === record.createdBy && (
-              console.log("record", record),
-            <>
-              <Button
-                icon={<EditOutlined />}
-                onClick={() => showModal(record)}
-                className="mr-2"
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
-              >
-                Edit
-              </Button>
-              <Button
-                icon={<DeleteOutlined />}
-                onClick={() => handleDelete(record._id)}
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
-              >
-                Delete
-              </Button>
-            </>
-          )}
-        </>
+        console.log("record", record.availableDates[0]),
+        console.log("user", user._id),
+        (
+          <>
+            <Button
+              icon={<EyeOutlined />}
+              onClick={() => showViewModal(record)}
+              className="mr-2"
+              style={{
+                backgroundColor: "#02735F",
+                color: "#fff",
+                border: "none",
+              }}
+            >
+              View
+            </Button>
+
+            {user &&
+              user._id === record.createdBy &&
+              (console.log("record", record),
+              (
+                <>
+                  <Button
+                    icon={<EditOutlined />}
+                    onClick={() => showModal(record)}
+                    className="mr-2"
+                    style={{
+                      backgroundColor: "#02735F",
+                      color: "#fff",
+                      border: "none",
+                    }}
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDelete(record._id)}
+                    style={{
+                      backgroundColor: "#02735F",
+                      color: "#fff",
+                      border: "none",
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </>
+              ))}
+            <Badge count={0} offset={[-5, 5]}>
+              <Tooltip title={"Flag this item as Inappropriate"}>
+                <Button
+                  danger
+                  icon={<FlagFilled />}
+                  onClick={async () => {
+                    try {
+                      setLoading(true);
+                      await flagIternaary(record._id);
+                      message.success("Item flagged as inappropriate");
+                      await fetchItineraries();
+                    } catch (error) {
+                      message.error("Failed to flag item as inappropriate");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  shape="circle"
+                  style={{
+                    button: {
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                  }}
+                />
+              </Tooltip>
+            </Badge>
+          </>
+        )
       ),
     },
   ];
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-white min-h-screen">
       <h1 className="text-2xl font-bold mb-4">Itineraries</h1>
       {user && user.userRole === "TourGuide" && (
         <Button
@@ -523,95 +561,28 @@ const ItineraryScreen = ({ setFlag }) => {
           </div>
         </div>
       </div>
-      {(user===null || user.userRole === "Tourist") ? (
-     <main className="flex flex-wrap gap-4 py-10 width=device-width initial-scale=1">
-     {sortedItineraries?.map((itinerary, index) => (
-       <div
-         key={index}
-         className="relative w-full md:w-1/3 lg:w-1/4 group transition-transform transform hover:scale-105"
-       >
-        <Card
-  hoverable
-  onClick={() => navigate(`itineraryDetails/${itinerary._id}`)}
-  className="rounded-lg shadow-lg p-6 m-4 transform transition-all duration-300 ease-in-out hover:rotate-6 hover:skew-y-3 hover:shadow-2xl hover:bg-gradient-to-r from-[#E2F4C5] via-[#A8CD9F] to-[#58A399] hover:text-white"
-  style={{ backgroundColor: '#E2F4C5' }} // Default Card background color
->
-  <Card.Meta
-    title={
-      <span className="font-bold text-3xl mb-4 transition-transform duration-500 ease-out hover:scale-110" style={{ color: '#496989' }}>
-        {itinerary.name}
-      </span>
-    }
-    description={
-      <div style={{ color: '#496989' }}>
-        <div className="flex justify-between items-center mb-1">
-          <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-            🌐 {itinerary.language}
-          </span>
-          <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-            💲 {itinerary.price ? `$${itinerary.price}` : "N/A"}
-          </span>
-        </div>
-
-        <p className="font-medium mb-2">
-          <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-            ♿ {itinerary.accessibility || "N/A"}
-          </span>
-        </p>
-
-        <div className="flex justify-between items-center mb-1">
-          <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-            📍 Pickup: {itinerary.pickupLocation}
-          </span>
-          <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-            📍 Drop Off: {itinerary.dropOffLocation}
-          </span>
-        </div>
-      </div>
-    }
-  />
-</Card>
-
-
-
-         {/* Overlay with route symbol and additional information */}
-         <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-80 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-           <div className="text-center p-6">
-           <div className="text-5xl mb-4 relative animate-[growCar_2.5s_ease-in-out_infinite]">🚖</div>
-           <style>{`
-  @keyframes growCar {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.5); /* Grow larger */
-    }
-      70%{
-      transform: scale(2); 
-      }
-    100% {
-      transform: scale(4); 
-    }
-  }
-`}</style>
-
-
-
-             <h3 className="text-xl font-semibold mb-2">
-               {itinerary.name}
-             </h3>
-             <p className="text-sm mb-4">{itinerary.description}</p>
-             <button
-               onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}
-               className="px-4 py-2 bg-green-600 rounded-lg shadow-lg hover:bg-green-500 transition-colors duration-200"
-             >
-               View Details
-             </button>
-           </div>
-         </div>
-       </div>
-     ))}
-   </main>
+      {user === null || user.userRole === "Tourist" ? (
+        <main className="flex flex-wrap gap-2 py-10">
+          {sortedItineraries?.map((itinerary, index) => {
+            return (
+              <Card
+                hoverable
+                style={{ width: "33%" }}
+                key={index}
+                onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}
+              >
+                <Card.Meta
+                  title={itinerary.name}
+                  description={itinerary.language}
+                />
+                <p>Price: {itinerary.price}</p>
+                <p>Accessibility: {itinerary.accessibility}</p>
+                <p>Pickup Location: {itinerary.pickupLocation}</p>
+                <p>Drop Off Location: {itinerary.dropOffLocation}</p>
+              </Card>
+            );
+          })}
+        </main>
       ) : (
         <Table
           dataSource={sortedItineraries}
@@ -1022,15 +993,25 @@ const ItineraryScreen = ({ setFlag }) => {
 
             <Divider />
             <Form.Item label="Available Dates">
-              {viewingItinerary.availableDates.map((date, index) => (
-                  console.log("date", date),console.log("time", date.Times),
-                <div key={index}>
-                  <Input
-                      value={`${moment(date.Date).format('dddd, MMMM D, YYYY')} ${moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm").format('hh:mm A')}`}
-                      disabled
-                  />
-                </div>
-              ))}
+              {viewingItinerary.availableDates.map(
+                (date, index) => (
+                  console.log("date", date),
+                  console.log("time", date.Times),
+                  (
+                    <div key={index}>
+                      <Input
+                        value={`${moment(date.Date).format(
+                          "dddd, MMMM D, YYYY"
+                        )} ${moment(
+                          `${date.Date} ${date.Times}`,
+                          "YYYY-MM-DD HH:mm"
+                        ).format("hh:mm A")}`}
+                        disabled
+                      />
+                    </div>
+                  )
+                )
+              )}
             </Form.Item>
 
             <Divider />

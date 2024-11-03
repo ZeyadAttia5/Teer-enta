@@ -32,6 +32,8 @@ import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
 import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
 import ChangePassword from "./components/Profile/ChangePassword.js";
 import DeleteAccountButton from "./components/Profile/DeleteAccountButton.js";
+import FlaggedIternary from "./components/Itinerary/FlaggedIternary.jsx";
+import FlaggedActivities from "./components/Activity/FlaggedActivities.jsx";
 import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
 import MyComplaints from "./components/Users/complain/myComplaints.js";
 import ShowDocuments from "./components/Users/pendingUsers/ShowDocuments.js";
@@ -102,6 +104,10 @@ function App() {
             element={<AllActivitiesCRUD setFlag={setFlag} />}
           />
           <Route
+            path="/flaggedActivities"
+            element={<FlaggedActivities setFlag={setFlag} />}
+          />
+          <Route
             path="/activities/my"
             element={<AllActivitiesCRUD setFlag={setFlag} />}
           />
@@ -169,6 +175,10 @@ function App() {
                 <Route
                   path="/"
                   element={<IternaryScreen setFlag={setFlag} />}
+                />
+                <Route
+                  path="flaggedIternaries"
+                  element={<FlaggedIternary setFlag={setFlag} />}
                 />
                 <Route
                   path="iternaryDetails/:id"

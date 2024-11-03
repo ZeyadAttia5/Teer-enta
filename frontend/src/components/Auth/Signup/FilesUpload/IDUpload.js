@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const IDUpload = ({ setID, onChange }) => {
+const IDUpload = ({ setID }) => {
   const [file, setFile] = useState(null);
 
   const handleFileChange = (event) => {

@@ -15,6 +15,9 @@ import {
   Row,
   Col,
   Card,
+  Badge,
+  Tooltip,
+  message,
 } from "antd";
 import {
   getActivities,
@@ -22,6 +25,7 @@ import {
   updateActivity,
   deleteActivity,
   getMyActivities,
+  flagActivity,
 } from "../../api/activity.ts"; // Replace with actual API path
 import { getActivityCategories } from "../../api/activityCategory.ts";
 import {
@@ -29,6 +33,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
+  FlagFilled,
 } from "@ant-design/icons";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 
@@ -258,12 +263,16 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       title: "Special Discounts",
       dataIndex: "specialDiscounts",
       key: "specialDiscounts",
-      width:'20%',
+      width: "20%",
       render: (discounts) => (
-        <Row className='w-full'>
+        <Row className="w-full">
           {discounts.map((discount, index) => (
             <Col key={index} md={10} lg={10}>
-              <Card className='w-full' style={{width:'100%'}} title={`${discount.discount}%`} >
+              <Card
+                className="w-full"
+                style={{ width: "100%" }}
+                title={`${discount.discount}%`}
+              >
                 <p>{discount.Description}</p>
                 <p>
                   <strong>Status:</strong>{" "}
@@ -286,8 +295,9 @@ const AllActivitiesCRUD = ({ setFlag }) => {
           />
           {user &&
             user.userRole === "Advertiser" &&
-            user._id === record.createdBy && (
-                console.log(record.createdBy),
+            user._id === record.createdBy &&
+            (console.log(record.createdBy),
+            (
               <div>
                 <Button
                   icon={<EditOutlined />}
@@ -300,7 +310,34 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                   <Button icon={<DeleteOutlined />} danger />
                 </Popconfirm>
               </div>
-            )}
+            ))}
+          <Badge count={0} offset={[-5, 5]}>
+            <Tooltip title={"Flag this item as Inappropriate"}>
+              <Button
+                danger
+                icon={<FlagFilled />}
+                onClick={async () => {
+                  try {
+                    setLoading(true);
+                    await flagActivity(record._id);
+                    message.success("Item flagged as inappropriate");
+                    await fetchActivities();
+                  } catch (error) {
+                    message.error("Failed to flag item as inappropriate");
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                shape="circle"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: '5px',
+                }}
+              />
+            </Tooltip>
+          </Badge>
         </span>
       ),
     },
