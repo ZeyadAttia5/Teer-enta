@@ -154,7 +154,7 @@ exports.deleteItinerary = async (req, res, next) => {
         await Itinerary.findByIdAndDelete(id);
         res
             .status(200)
-            .json({message: "Itinerary deleted successfully", data: itinerary});
+            .json({message: "Itinerary deleted successfully ", data: itinerary});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
