@@ -2,6 +2,7 @@ const router = require('express').Router();
 const upload = require('multer')() ;
 const accountController = require('../controllers/account');
 const isAuth = require('../middlewares/isAuth');
+const decodeToken = require('../middlewares/decodeToken');
 
 
 router.get('/accepted', isAuth ,accountController.getAllAcceptedUsers);
@@ -17,7 +18,7 @@ router.patch('/upload/idCard' ,accountController.uploadId);
 router.patch('/upload/taxationCard',isAuth ,accountController.uploadTaxationRegistery);
 router.patch('/upload/certificates' , isAuth   , accountController.uploadCertificates);
 router.patch('/redeemPoints',isAuth, accountController.redeemPoints);
-router.patch('/chooseCurrecny' , isAuth , accountController.chooseMyCurrency) ;
+router.patch('/chooseCurrency/:id' , isAuth , accountController.chooseMyCurrency) ;
 router.delete('/requestAccountDeletion', isAuth, accountController.requestMyAccountDeletion) ;
 router.delete('/delete/:id',isAuth, accountController.deleteAccount);
 
