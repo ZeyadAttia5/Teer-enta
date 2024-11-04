@@ -14,12 +14,15 @@ import { uploadFile, uploadFiles } from "../../../api/account.ts";
 import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/logo/logo.jpeg";
+import SelectPrefrences from "../../shared/SelectPrefrences.jsx";
 
 function Signup({ setFlag }) {
   setFlag(true);
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const handleUsernameChange = (event) => {
     setUsername(event.target.value); // Update the username state
   };
@@ -375,6 +378,10 @@ function Signup({ setFlag }) {
             nationality: selectedNationality.label,
             dateOfBirth: dob,
             occupation: jobTitle,
+            preferences:{
+              activityCategories: selectedCategories,
+              preferenceTags: selectedTags
+            }
           };
           break;
         case "TourGuide":
@@ -507,19 +514,19 @@ function Signup({ setFlag }) {
       </div>
 
       <div className="flex flex-col justify-center items-center w-[43%]">
-      <span className="ml-8 text-lg leading-7">
-        <div className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
-          {/* Logo Link */}
-          <Link to={"/"} className="ring-0">
-            <img
-              src={logo}
-              alt="Logo"
-              width={120}
-              className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
-            />
-          </Link>
-        </div>
-      </span>
+        <span className="ml-8 text-lg leading-7">
+          <div className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
+            {/* Logo Link */}
+            <Link to={"/"} className="ring-0">
+              <img
+                src={logo}
+                alt="Logo"
+                width={120}
+                className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
+              />
+            </Link>
+          </div>
+        </span>
         <p className="text-[rgba(88,87,87,0.822)] font-bold text-1xl">
           Signup now and get full access to our app.
         </p>
@@ -772,6 +779,14 @@ function Signup({ setFlag }) {
               />
               {/* Role Change */}
             </label>
+            {selectedRole === "Tourist" && (
+              <SelectPrefrences
+                selectedCategories={selectedCategories}
+                selectedTags={selectedTags}
+                onCategoriesChange={setSelectedCategories}
+                onTagsChange={setSelectedTags}
+              />
+            )}
 
             <PasswordRestrictions
               password={password}
