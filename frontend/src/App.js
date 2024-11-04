@@ -37,9 +37,11 @@ import FlaggedActivities from "./components/Activity/FlaggedActivities.jsx";
 import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
 import MyComplaints from "./components/Users/complain/myComplaints.js";
 import ShowDocuments from "./components/Users/pendingUsers/ShowDocuments.js";
+import BookHotel from "./components/Hotel/BookHotel.jsx";
 import CreateTransportation from "./components/Transportation/CreateTransportation.jsx";
 import BookTransportation from "./components/Transportation/BookTransportation.jsx";
 import BookFlight from "./components/Flight/BookFlight.jsx";
+
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -191,6 +193,17 @@ function App() {
             }
           />
           <Route
+            path="/hotel/*"
+            element={
+              <Routes>
+                <Route
+                  path="book/"
+                  element={<BookHotel setFlag={setFlag} />}
+                />
+                
+              </Routes>
+            }
+          />
             path="/transportation/*"
             element={
               <Routes>
