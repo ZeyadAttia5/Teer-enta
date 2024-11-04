@@ -78,7 +78,7 @@ const ReadHistoriaclPlaces = ({ setFlag }) => {
   );
 
   return (
-    <div className="p-16 bg-gray-100">
+    <div className="p-16 bg-[#E0F0EE]">
       <div className="mb-6">
         <input
           type="text"

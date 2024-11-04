@@ -38,6 +38,10 @@ import ComplaintsManagement from "./components/Users/complain/complaintsManageme
 import MyComplaints from "./components/Users/complain/myComplaints.js";
 import ShowDocuments from "./components/Users/pendingUsers/ShowDocuments.js";
 import BookHotel from "./components/Hotel/BookHotel.jsx";
+import CreateTransportation from "./components/Transportation/CreateTransportation.jsx";
+import BookTransportation from "./components/Transportation/BookTransportation.jsx";
+import BookFlight from "./components/Flight/BookFlight.jsx";
+
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -200,9 +204,27 @@ function App() {
               </Routes>
             }
           />
-
-
-
+            path="/transportation/*"
+            element={
+              <Routes>
+                <Route
+                  path="create"
+                  element={<CreateTransportation setFlag={setFlag} />}
+                />
+                <Route
+                  path="book"
+                  element={<BookTransportation setFlag={setFlag} />}
+                />
+            path="/flight/*"
+            element={
+              <Routes>
+                <Route
+                  path="bookFlight"
+                  element={<BookFlight setFlag={setFlag} />}
+                />
+              </Routes>
+            }
+          />
 
           <Route
             path="/itinerary/my"
