@@ -33,6 +33,10 @@ exports.signup = async (req, res) => {
                     nationality: req.body.nationality,
                     dateOfBirth: req.body.dateOfBirth,
                     occupation: req.body.occupation,
+                    preferences:{
+                        preferenceTags: req.body.preferenceTags,
+                        activityCategories: req.body.activityCategories
+                    },
                     hasProfile: true
                 });
                 await tourist.save();
