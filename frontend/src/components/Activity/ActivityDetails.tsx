@@ -14,6 +14,8 @@ import {
   Avatar,
   Alert,
   Badge,
+  Button,
+  message,
 } from "antd";
 import {
   EnvironmentOutlined,
@@ -25,9 +27,12 @@ import {
   PercentageOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
+  ShareAltOutlined,
+  CopyOutlined, MailOutlined,
 } from "@ant-design/icons";
-import StaticMap from "../shared/GoogleMaps/ViewLocation";
+import MapContainer from "../shared/GoogleMaps/GoogleMaps";
 import { TActivity } from "../../types/Activity/Activity";
+import StaticMap from "../shared/GoogleMaps/ViewLocation";
 import { getActivity } from "../../api/activity.ts";
 
 const { Title, Text } = Typography;
@@ -37,7 +42,7 @@ const ActivityDetails: React.FC = () => {
   const [activity, setActivity] = useState<TActivity | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null); // State to track which card is hovered
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -62,14 +67,79 @@ const ActivityDetails: React.FC = () => {
   if (!activity) return <Alert type="warning" message="Activity not found" />;
 // hello
   const averageRating =
-    activity.ratings.length > 0
-      ? Number(
-          (
-            activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
-            activity.ratings.length
-          ).toFixed(1)
-        )
-      : 0;
+      activity.ratings.length > 0
+          ? Number(
+              (
+                  activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
+                  activity.ratings.length
+              ).toFixed(1)
+          )
+          : 0;
+
+  const handleShareEmail = () => {
+    const subject = `Check out this activity: ${activity?.name}`;
+    const body = `
+      Activity Details:
+      - Name: ${activity?.name}
+      - Date: ${new Date(activity?.date).toLocaleDateString()}
+      - Time: ${activity?.time}
+      - Location: ${
+        activity?.location
+            ? `Latitude: ${activity.location.lat}, Longitude: ${activity.location.lng}`
+            : "Location not specified"
+    }
+      - Price Range: ${
+        activity?.price?.min && activity?.price?.max
+            ? `$${activity.price.min} - $${activity.price.max}`
+            : "Not specified"
+    }
+      - Category: ${activity?.category?.category || "No category"}
+      - Tags: ${
+        activity?.preferenceTags.length > 0
+            ? activity.preferenceTags.map((tag) => tag.tag).join(", ")
+            : "No tags"
+    }
+
+      Special Discounts:
+      ${
+        activity?.specialDiscounts.length > 0
+            ? activity.specialDiscounts
+                .map(
+                    (discount, index) =>
+                        `${index + 1}. ${discount.discount}% OFF - ${
+                            discount.Description
+                        } (${discount.isAvailable ? "Available" : "Not Available"})`
+                )
+                .join("\n")
+            : "No special discounts"
+    }
+
+      Ratings:
+      - Total Ratings: ${activity?.ratings.length}
+      - Average Rating: ${
+        activity?.ratings.length
+            ? (
+                activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
+                activity.ratings.length
+            ).toFixed(1)
+            : "No ratings yet"
+    }
+
+      More details and booking: ${window.location.origin}/activity/${ActivityId}
+    `;
+    const mailtoLink = `mailto:?subject=${encodeURIComponent(
+        subject
+    )}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+  };
+
+  const handleCopyLink = () => {
+    const link = `${window.location.origin}/activity/${ActivityId}`;
+    navigator.clipboard.writeText(link).then(
+        () => message.success("Link copied to clipboard!"),
+        () => message.error("Failed to copy the link")
+    );
+  };
 
   const cardStyle = {
     borderRadius: "10px",
@@ -113,11 +183,20 @@ const ActivityDetails: React.FC = () => {
               </Space>
             </Col>
             <Col>
-              <Space direction="vertical" align="end">
+            <Space direction="vertical" align="end">
                 <Rate disabled value={averageRating} allowHalf />
-                <Text type="secondary" style={{ color: "#58A399" }}>
-                  {activity.ratings.length} ratings
-                </Text>
+                <Text type="secondary">{activity.ratings.length} ratings</Text>
+                <Space>
+                  <Button icon={<CopyOutlined />} onClick={handleCopyLink}>
+                    Copy Link
+                  </Button>
+                  <Button
+                      icon={<MailOutlined />}
+                      onClick={handleShareEmail}
+                  >
+                    Share via Email
+                  </Button>
+                </Space>
               </Space>
             </Col>
           </Row>
@@ -276,6 +355,17 @@ const ActivityDetails: React.FC = () => {
             />
           </Card>
         )}
+        <Card size="small">
+          <Space direction="vertical" size="small">
+            <Text type="secondary">Created by: {activity.createdBy.companyName}</Text>
+            <Text type="secondary">
+              Created: {new Date(activity.createdAt).toLocaleDateString()}
+            </Text>
+            <Text type="secondary">
+              Last updated: {new Date(activity.updatedAt).toLocaleDateString()}
+            </Text>
+          </Space>
+        </Card>
       </Space>
     </div>
   );

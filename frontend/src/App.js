@@ -39,6 +39,7 @@ import MyComplaints from "./components/Users/complain/myComplaints.js";
 import ShowDocuments from "./components/Users/pendingUsers/ShowDocuments.js";
 import CreateTransportation from "./components/Transportation/CreateTransportation.jsx";
 import BookTransportation from "./components/Transportation/BookTransportation.jsx";
+import BookFlight from "./components/Flight/BookFlight.jsx";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -201,7 +202,13 @@ function App() {
                   path="book"
                   element={<BookTransportation setFlag={setFlag} />}
                 />
-                
+            path="/flight/*"
+            element={
+              <Routes>
+                <Route
+                  path="bookFlight"
+                  element={<BookFlight setFlag={setFlag} />}
+                />
               </Routes>
             }
           />

@@ -17,30 +17,32 @@ export const getAirports = async (keyword: string, countryCode: string) => {
     );
 }
 export const getFlightOffers = async (origin, destination, departureDate, adults) => {
-    return await axios.get(`${API_BASE_URL}/getFlightOffers`,
-        {
-            params: {
-                origin: origin,
-                destination: destination,
-                departureDate: departureDate,
-                // returnDate: returnDate,
-                adults: adults,
-                // children: children,
-                // infants: infants
-            },
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            }
-        }
-    );
+    return await axios.get(`${API_BASE_URL}/getFlightOffers`, {
+      params: {
+        departureAirport: origin,
+        destinationAirport: destination,
+        departureDate: departureDate,
+        // returnDate: returnDate,
+        adults: adults,
+        // children: children,
+        // infants: infants
+      },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    });
 }
 export const bookFlight = async (flightOffer, travelers) => {
-    return await axios.post(`${API_BASE_URL}/bookFlight`, {
-        flightOffer: flightOffer,
-        travelers: travelers
-    }, {
+    return await axios.post(
+      `${API_BASE_URL}/bookFlight`,
+      {
+        offer: flightOffer,
+        travelers: travelers,
+      },
+      {
         headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        }
-    });
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      }
+    );
 }
