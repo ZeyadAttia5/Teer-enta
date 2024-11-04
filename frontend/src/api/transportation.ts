@@ -11,11 +11,15 @@ export const getTransportation = async (transportationId) => {
 }
 
 export const createTransportation = async (transportation) => {
-    return await axios.post(`${API_BASE_URL}/transportation`, transportation, {
+    return await axios.post(
+      `${API_BASE_URL}/transportation/create`,
+      transportation,
+      {
         headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
-    });
+      }
+    );
 }
 
 export const bookTransportation = async (transportationId) => {

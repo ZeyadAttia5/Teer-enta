@@ -85,6 +85,27 @@ const Sidebar = ({ visible, onClose }) => {
             )}
           </Menu.SubMenu>
         )}
+        {user && user.userRole === "Advertiser" && (
+          <Menu.SubMenu key="sub8" title="Transportation">
+            <Menu.Item
+              key="19"
+              onClick={() => handleClick("/transportation/create")}
+            >
+              Create Transportation
+            </Menu.Item>
+          </Menu.SubMenu>
+        )}
+        {user && user.userRole === "Tourist" && (
+          <Menu.SubMenu key="sub9" title="Transportation">
+            <Menu.Item
+              key="19"
+              onClick={() => handleClick("/transportation/book")}
+            >
+              Book Transportation
+            </Menu.Item>
+          </Menu.SubMenu>
+        )}
+
         {user &&
           user &&
           (user.userRole === "Advertiser" || user.userRole === "Admin") && (
@@ -146,12 +167,15 @@ const Sidebar = ({ visible, onClose }) => {
                   Add Product
                 </Menu.Item>
               )}
-            </Menu.SubMenu>
-          )}
-        {(user && (user.userRole === "Tourist" || user.userRole === "Admin")) && (
+          </Menu.SubMenu>
+        )}
+        {user && (user.userRole === "Tourist" || user.userRole === "Admin") && (
           <Menu.SubMenu key="sub7" title="Complaints">
             {user && user.userRole === "Admin" && (
-              <Menu.Item key="17" onClick={() => handleClick("/ComplaintsManagement")}>
+              <Menu.Item
+                key="17"
+                onClick={() => handleClick("/ComplaintsManagement")}
+              >
                 Complaints Management
               </Menu.Item>
             )}

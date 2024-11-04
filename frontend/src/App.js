@@ -37,6 +37,8 @@ import FlaggedActivities from "./components/Activity/FlaggedActivities.jsx";
 import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
 import MyComplaints from "./components/Users/complain/myComplaints.js";
 import ShowDocuments from "./components/Users/pendingUsers/ShowDocuments.js";
+import CreateTransportation from "./components/Transportation/CreateTransportation.jsx";
+import BookTransportation from "./components/Transportation/BookTransportation.jsx";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -184,6 +186,22 @@ function App() {
                   path="iternaryDetails/:id"
                   element={<IternaryDetails setFlag={setFlag} />}
                 />
+              </Routes>
+            }
+          />
+          <Route
+            path="/transportation/*"
+            element={
+              <Routes>
+                <Route
+                  path="create"
+                  element={<CreateTransportation setFlag={setFlag} />}
+                />
+                <Route
+                  path="book"
+                  element={<BookTransportation setFlag={setFlag} />}
+                />
+                
               </Routes>
             }
           />
