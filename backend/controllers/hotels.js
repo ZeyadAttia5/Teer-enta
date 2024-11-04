@@ -76,7 +76,8 @@ exports.bookHotel = async (req, res) => {
         console.log(hotelBooking.data);
         res.status(200).json(hotelBooking.data);
     } catch(err) {
-        if(err.statusCode === 401) {
+        // console.log("error status code: ", err.response.statusCode);
+        if(err.response.statusCode === 401) {
             try {
                 await BookedHotel.create({
                     hotel: {
@@ -89,7 +90,7 @@ exports.bookHotel = async (req, res) => {
                     },
                     checkInDate: offer.checkInDate,
                     checkOutDate: offer.checkOutDate,
-                    guests: guests,
+                    guests: guests.length,
                     price: offer.price.total,
                     // createdBy: req.user._id
                 });
