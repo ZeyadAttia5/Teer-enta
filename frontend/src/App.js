@@ -37,6 +37,7 @@ import FlaggedActivities from "./components/Activity/FlaggedActivities.jsx";
 import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
 import MyComplaints from "./components/Users/complain/myComplaints.js";
 import ShowDocuments from "./components/Users/pendingUsers/ShowDocuments.js";
+import BookHotel from "./components/Hotel/BookHotel.jsx";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -187,6 +188,21 @@ function App() {
               </Routes>
             }
           />
+          <Route
+            path="/hotel/*"
+            element={
+              <Routes>
+                <Route
+                  path="book/"
+                  element={<BookHotel setFlag={setFlag} />}
+                />
+                
+              </Routes>
+            }
+          />
+
+
+
 
           <Route
             path="/itinerary/my"
