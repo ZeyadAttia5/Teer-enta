@@ -14,6 +14,8 @@ const HistoricalPlaceSingleCard = ({ places }) => {
   const id = places._id;
   const accessToken = localStorage.getItem('accessToken');
 
+  
+
   const handleDeleteHistoricalPlace = async () => {
     try {
       const response =await deleteHistoricalPlace(id)

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react"; 
 import { Rate } from "antd";
 import { getGoogleMapsAddress } from "../../../api/googleMaps.ts";
 
@@ -11,12 +10,9 @@ const ActivityCard = ({
   location,
   price,
   category,
-  preferenceTags,
   specialDiscounts,
   ratings,
-  comments,
-  createdBy,
-  averageRating
+  averageRating,
 }) => {
   const [address, setAddress] = useState("");
 
@@ -36,57 +32,34 @@ const ActivityCard = ({
     fetchAddress();
   }, [location.lat, location.lng]);
 
-  useEffect(() => {
-    if (ratings && ratings.length > 0) {
-      const total = ratings.reduce((sum, rating) => sum + rating, 0);
-      const average = total / ratings.length;
-    }
-  }, [ratings]);
-
   return (
     <div className="flex justify-center items-center">
       <div className="max-w-3xl w-full rounded-lg shadow-lg p-6 m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-gradient-to-r from-[#E2F4C5] via-[#A8CD9F] to-[#58A399] hover:text-white"
-           style={{ backgroundColor: "#E2F4C5" }}>
+           style={{ backgroundColor: "#ffffff" }}>
         
         {/* Activity Name */}
-        <h2 className="font-bold text-3xl mb-4 transition-transform duration-500 ease-out hover:scale-110" style={{ color: "#496989" }}>{name}</h2>
+        <h2 className="font-bold text-7xl mb-4" style={{ color: "#496989" }}>{name}</h2>
 
-        {/* Date and Time with Symbols and Creative Styling */}
-        <div className="flex items-center mb-4">
-          <span className="inline-block text-sm px-3 py-1 rounded-full mr-4 transition-all duration-300 ease-in-out" style={{ backgroundColor: "#58A399", color: "#ffffff" }}>
-            📅 {new Date(date).toLocaleDateString()}
-          </span>
-          <span className="inline-block text-sm px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: "#58A399", color: "#ffffff" }}>
-            🕒 {time}
-          </span>
-        </div>
-
-        {/* Category */}
-        <p className="mb-4">
-          <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: "#58A399", color: "#ffffff" }}>
-            📂 {category || "Uncategorized"}
-          </span>
-        </p>
-
-        {/* Price Range with Creative Styling */}
-        <p className="mb-4">
-          <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: "#58A399", color: "#ffffff" }}>
-            💲 {price?.min ? `$${price.min}` : "N/A"} - {price?.max ? `$${price.max}` : "N/A"}
-          </span>
+        {/* Displaying details in bold and under each other */}
+        <p style={{ color: "#496989" }} className="font-bold mb-2">📅 {new Date(date).toLocaleDateString()}</p>
+        <p style={{ color: "#496989" }} className="font-bold mb-2">🕒 {time}</p>
+        <p style={{ color: "#496989" }} className="font-bold mb-2">📂 {category || "Uncategorized"}</p>
+        <p style={{ color: "#496989" }} className="font-bold mb-2">
+          💲 {price?.min ? `$${price.min}` : "N/A"} - {price?.max ? `$${price.max}` : "N/A"}
         </p>
 
         {/* Average Rating */}
         <div className="flex items-center mb-4">
           <span className="font-semibold" style={{ color: "#496989" }}>Rating:</span>
-          <Rate allowHalf disabled value={averageRating} className="ml-2 transition-transform duration-300 hover:scale-110" />
-          <span className="ml-2 transition-transform duration-300 ease-out" style={{ color: "#496989" }}>{averageRating.toFixed(1)}</span>
+          <Rate allowHalf disabled value={averageRating} className="ml-2" />
+          <span className="ml-2" style={{ color: "#496989" }}>{averageRating.toFixed(1)}</span>
         </div>
 
         {/* Special Discounts */}
         {specialDiscounts?.length > 0 &&
           specialDiscounts.map((discount, index) =>
             discount.isAvailable ? (
-              <div key={index} className="mb-4 p-3 rounded-lg transition-colors duration-300 ease-in-out" style={{ backgroundColor: "#E2F4C5", color: "#496989" }}>
+              <div key={index} className="mb-4 p-3 rounded-lg" style={{ backgroundColor: "#E2F4C5", color: "#496989" }}>
                 <p className="font-semibold">
                   Special Discount: {discount.discount}% OFF - {discount.Description}
                 </p>
@@ -106,8 +79,7 @@ const ActivityCard = ({
         </a>
 
         {/* Booking Status */}
-        <p className={`font-semibold mt-4 bg-white p-2 rounded-lg ${isBookingOpen ? "text-green-600" : "text-red-600"} transition-transform duration-300 ease-in-out hover:scale-105`}
-          style={{ color: isBookingOpen ? "#496989" : "#496989" }}>
+        <p className={`font-semibold mt-4 bg-white p-2 rounded-lg ${isBookingOpen ? "text-green-600" : "text-red-600"}`}>
           🎟️ {isBookingOpen ? "Booking is Open!" : "Fully Booked! :("}
         </p>
       </div>
@@ -116,3 +88,4 @@ const ActivityCard = ({
 };
 
 export default ActivityCard;
+

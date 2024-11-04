@@ -442,8 +442,8 @@ const ItineraryScreen = ({ setFlag }) => {
   ];
 
   return (
-    <div className="p-6 bg-white min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">Itineraries</h1>
+    <div className="p-6 bg-[#E0F0EE] min-h-screen">
+      <h1 className="text-9xl font-bold mb-4 text-[#496989]">Itineraries</h1>
       {user && user.userRole === "TourGuide" && (
         <Button
           type="primary"
@@ -455,7 +455,7 @@ const ItineraryScreen = ({ setFlag }) => {
           Add Itinerary
         </Button>
       )}
-      <div className="p-8 bg-gray-100">
+      <div className="p-8 bg-[#E0F0EE]">
         <div className="mb-6">
           <input
             type="text"
@@ -562,68 +562,44 @@ const ItineraryScreen = ({ setFlag }) => {
         </div>
       </div>
       {(user===null || user.userRole === "Tourist") ? (
-       <main className="flex flex-wrap gap-4 py-10">
-       {sortedItineraries?.map((itinerary, index) => (
-         <div
-           key={index}
-           className="relative m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-gradient-to-r from-[#E2F4C5] via-[#A8CD9F] to-[#58A399] hover:text-white"
-           onClick={() => navigate(`iternaryDetails/${itinerary._id}`)} // Set the click handler here
-           style={{ cursor: 'pointer' }} // Ensure the cursor changes to pointer
-         >
-           <Card
-             className="rounded-lg shadow-lg p-6"
-             style={{ backgroundColor: '#E2F4C5' }} // Default Card background color
-           >
-             <Card.Meta
-               title={
-                 <span className="font-bold text-3xl mb-4 transition-transform duration-500 ease-out hover:scale-110" style={{ color: '#496989' }}>
-                   {itinerary.name}
-                 </span>
-               }
-               description={
-                 <div style={{ color: '#496989' }}>
-                   <div className="flex justify-between items-center mb-1">
-                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-                       🌐 {itinerary.language}
-                     </span>
-                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-                       💲 {itinerary.price ? `$${itinerary.price}` : "N/A"}
-                     </span>
-                   </div>
-     
-                   <p className="font-medium mb-2">
-                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-                       ♿ {itinerary.accessibility || "N/A"}
-                     </span>
-                   </p>
-     
-                   <div className="flex justify-between items-center mb-1">
-                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-                       📍 Pickup: {itinerary.pickupLocation}
-                     </span>
-                     <span className="inline-block text-xs px-3 py-1 rounded-full transition-all duration-300 ease-in-out" style={{ backgroundColor: '#58A399', color: '#ffffff' }}>
-                       📍 Drop Off: {itinerary.dropOffLocation}
-                     </span>
-                   </div>
-                 </div>
-               }
-             />
-           </Card>
-     
-           {/* Overlay with route symbol and additional information */}
-           <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-80 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-             <div className="text-center p-6">
-               <h3 className="text-xl font-semibold mb-2">
-                 {itinerary.name}
-               </h3>
-               <p className="text-sm mb-4">{itinerary.description}</p>
-             </div>
-           </div>
-         </div>
-       ))}
-     </main>
-     
-     
+        <main className="flex flex-wrap gap-4 py-10 "> 
+        {sortedItineraries?.map((itinerary, index) => (
+          <div
+            key={index}
+            className="relative m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-[#E2F4C5]" // Keep this class for the animation
+            onClick={() => navigate(`iternaryDetails/${itinerary._id}`)} // Set the click handler here
+            style={{ cursor: 'pointer' }} // Ensure the cursor changes to pointer
+          >
+            <Card
+              className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:text-white" // Change background to #E2F4C5 on hover
+              style={{ backgroundColor: '#ffffff' }} // Set a default background color for better visibility
+            >
+              <Card.Meta
+                title={
+                  <span className="font-bold text-7xl mb-2 transition-transform duration-500 ease-out hover:scale-150 " style={{ color: '#496989' }}>
+                    {itinerary.name}
+                  </span>
+                }
+                description={
+                  <div className="flex flex-col space-y-2" style={{ color: '#496989' }}> {/* Keep the text color consistent */}
+                    <span className="font-bold text-lg hover:text-[#58A399]">🌐 {itinerary.language}</span>
+                    <span className="font-bold text-lg hover:text-[#58A399]">💲 {itinerary.price ? `${itinerary.price}` : "N/A"}</span>
+                    <span className="font-bold text-lg hover:text-[#58A399]">♿ {itinerary.accessibility || "N/A"}</span>
+                    <span className="font-bold text-lg hover:text-[#58A399]">📍 from: {itinerary.pickupLocation}</span>
+                    <span className="font-bold text-lg hover:text-[#58A399]">📍 to: {itinerary.dropOffLocation}</span>
+                  </div>
+                }
+              />
+            </Card>
+      
+           
+                
+              </div>
+           
+        ))}
+      </main>
+      
+
      
       ) : (
         <Table

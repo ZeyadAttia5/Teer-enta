@@ -86,7 +86,7 @@ const AdminProductGrid = ({ setFlag }) => {
   };
 
   return (
-    <div className="w-full p-1 relative bg-[#B7E1D6]">
+    <div className="w-full p-1 relative bg-[#E0F0EE]">
       <div className="flex justify-between items-center mt-24 mb-5">
         <div className="flex justify-center items-center gap-4 mx-auto">
           <Input

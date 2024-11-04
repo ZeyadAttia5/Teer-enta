@@ -57,7 +57,7 @@ const ProductDetails = ({setFlag}) => {
 
   // Render product details
   return (
-    <div className="w-full min-h-screen bg-[#B7E1D6] py-16 px-5">
+    <div className="w-full min-h-screen bg-[#E0F0EE] py-16 px-5">
       <div className="flex flex-col md:flex-row bg-[#496989] shadow-lg rounded-lg overflow-hidden">
         {/* Product Image */}
         <div className="md:w-1/2">
