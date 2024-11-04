@@ -7,6 +7,10 @@ const API_BASE_URL = process.env.REACT_APP_BACKEND_URL;
 export const getHotels = async ({ city, checkInDate, checkOutDate, adults }) => {
   return await axios.get(`${API_BASE_URL}/hotels/getHotelOffers`, {
     params: { city, checkInDate, checkOutDate, adults },
+
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
   });
 };
 

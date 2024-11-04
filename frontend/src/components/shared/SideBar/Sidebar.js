@@ -119,12 +119,13 @@ const Sidebar = ({ visible, onClose }) => {
             </Menu.SubMenu>
           )}
 
-
+        {(user === null || (user && user.userRole === "Tourist")) && (
           <Menu.SubMenu key="sub8" title="Hotel">
             <Menu.Item key="19" onClick={() => handleClick("/hotel/book")}>
               Book Hotel
             </Menu.Item>
           </Menu.SubMenu>
+        )}
         {(user === null || (user && user.userRole === "Tourist")) && (
           <Menu.SubMenu key="sub10" title="Activities">
             <Menu.Item
@@ -153,12 +154,15 @@ const Sidebar = ({ visible, onClose }) => {
                   Add Product
                 </Menu.Item>
               )}
-            </Menu.SubMenu>
-          )}
-        {(user && (user.userRole === "Tourist" || user.userRole === "Admin")) && (
+          </Menu.SubMenu>
+        )}
+        {user && (user.userRole === "Tourist" || user.userRole === "Admin") && (
           <Menu.SubMenu key="sub7" title="Complaints">
             {user && user.userRole === "Admin" && (
-              <Menu.Item key="17" onClick={() => handleClick("/ComplaintsManagement")}>
+              <Menu.Item
+                key="17"
+                onClick={() => handleClick("/ComplaintsManagement")}
+              >
                 Complaints Management
               </Menu.Item>
             )}
