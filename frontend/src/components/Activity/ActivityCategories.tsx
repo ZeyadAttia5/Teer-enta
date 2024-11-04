@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Switch, notification, Popconfirm } from 'antd';
-import { getActivityCategories, createActivityCategory, updateActivityCategory, deleteActivityCategory } from '../../api/activityCategory.ts'; // Update this path based on your actual file structure
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-
+import { Table, Button, Modal, Form, Input, Switch, notification } from 'antd';
+import { getActivityCategories, createActivityCategory, updateActivityCategory, deleteActivityCategory } from '../../api/activityCategory.ts';
+import { PlusOutlined } from '@ant-design/icons';
 
 const { Item } = Form;
 
-const ActivityCategories = ({setFlag}) => {
+const ActivityCategories = ({ setFlag }) => {
     setFlag(false);
     const user = JSON.parse(localStorage.getItem("user"));
     const userRole = user?.userRole;
@@ -17,7 +16,6 @@ const ActivityCategories = ({setFlag}) => {
     const [currentCategory, setCurrentCategory] = useState(null);
     const [form] = Form.useForm();
 
-    // Fetch categories when the component loads
     useEffect(() => {
         fetchCategories();
     }, []);
@@ -38,13 +36,6 @@ const ActivityCategories = ({setFlag}) => {
         setIsEditing(false);
         setCurrentCategory(null);
         form.resetFields();
-        setIsModalVisible(true);
-    };
-
-    const handleEditCategory = (category) => {
-        setIsEditing(true);
-        setCurrentCategory(category);
-        form.setFieldsValue(category);
         setIsModalVisible(true);
     };
 
@@ -83,34 +74,22 @@ const ActivityCategories = ({setFlag}) => {
     const columns = [
         { title: 'Category', dataIndex: 'category', key: 'category' },
         { title: 'Description', dataIndex: 'description', key: 'description' },
-        { title: 'Active', dataIndex: 'isActive', key: 'isActive', render: (text, record) => <Switch checked={record.isActive} disabled /> },
-        // { title: 'Created At', dataIndex: 'createdAt', key: 'createdAt' },
         {
-            title: userRole === "Admin" ? 'Actions' : "",
-            key: 'actions',
-            render: (text, record) => (
-                <>
-                    {userRole === "Admin" &&
-                        <div>
-                            <Button type="link" icon={<EditOutlined />} onClick={() => handleEditCategory(record)} />
-                            <Popconfirm title="Are you sure?" onConfirm={() => handleDeleteCategory(record._id)}>
-                                <Button type="link" icon={<DeleteOutlined />} />
-                            </Popconfirm>
-                        </div>
-                    }
-                </>
-            )
-        }
+            title: 'Active',
+            dataIndex: 'isActive',
+            key: 'isActive',
+            render: (text, record) => <Switch checked={record.isActive} disabled />,
+        },
     ];
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold text-green-600">Activity Categories</h1>
-                {userRole === "Admin" &&(   
-                <Button type="primary" icon={<PlusOutlined />} className="bg-green-600" onClick={handleCreateCategory}>
-                    Create Category
-                </Button>
+                {userRole === "Admin" && (
+                    <Button type="primary" icon={<PlusOutlined />} className="bg-green-600" onClick={handleCreateCategory}>
+                        Create Category
+                    </Button>
                 )}
             </div>
 
@@ -119,7 +98,15 @@ const ActivityCategories = ({setFlag}) => {
                 dataSource={categories}
                 rowKey={(record) => record._id}
                 loading={loading}
-                className="bg-white shadow-md"
+                className="custom-table bg-white border border-gray-300 shadow-md"
+                pagination={false}
+                scroll={{ y: 300 }} // Adjust based on your needs
+                style={{
+                    width: '100%',
+                    marginBottom: '20px',
+                    border: '1px solid #ddd', // Outlined table
+                    borderRadius: '4px', // Rounded corners
+                }}
             />
 
             <Modal
@@ -148,6 +135,18 @@ const ActivityCategories = ({setFlag}) => {
                     </div>
                 </Form>
             </Modal>
+
+            <style jsx>{`
+                .custom-table .ant-table-thead > tr > th {
+                    background-color: #e0f5e0; /* Change to your desired color */
+                    font-weight: bold;
+                    font-size: 18px; /* Larger font size for column titles */
+                    border: 0.5px solid #000000; /* Thicker border for header */
+                }
+                .custom-table .ant-table-tbody > tr > td {
+                    border: 0.5px solid #000000; /* Border for table body */
+                }
+            `}</style>
         </div>
     );
 };

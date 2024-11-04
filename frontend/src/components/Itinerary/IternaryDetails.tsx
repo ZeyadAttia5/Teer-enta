@@ -11,7 +11,6 @@ import {
   Row,
   Col,
   message,
-  Button,
 } from "antd";
 import {
   EnvironmentOutlined,
@@ -21,8 +20,6 @@ import {
   CalendarOutlined,
   UserOutlined,
   CheckCircleOutlined,
-  CopyOutlined,
-  MailOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { getIternary } from "../../api/itinerary.ts";
@@ -31,97 +28,44 @@ import { TItinerary } from "../../types/Itinerary/Itinerary";
 const { Title, Text } = Typography;
 
 const ItineraryDetails: React.FC = () => {
-  const { id: itineraryId } = useParams<{ id: string }>();
+  const { id: iternaryId } = useParams<{ id: string }>();
   const [itinerary, setItinerary] = useState<TItinerary>();
   const navigate = useNavigate();
 
   useEffect(() => {
-    getIternary(itineraryId ?? -1)
-        .then((res) => {
-          console.log(res.data);
-          setItinerary(res.data);
-        })
-        .catch((error) => {
-          console.error(error);
-          message.error("Failed to fetch itinerary details");
-        });
-  }, [itineraryId]);
+    getIternary(iternaryId ?? -1)
+      .then((res) => {
+        setItinerary(res.data);
+      })
+      .catch((error) => {
+        message.error("Failed to fetch itinerary details");
+      });
+  }, [iternaryId]);
 
   const averageRating = React.useMemo(() => {
     if (itinerary?.ratings.length === 0) return 0;
     return Number(
-        (
-            (itinerary?.ratings ?? []).reduce((acc, curr) => acc + curr.rating, 0) /
-            (itinerary?.ratings?.length || 1)
-        ).toFixed(1)
+      (
+        (itinerary?.ratings ?? []).reduce((acc, curr) => acc + curr.rating, 0) /
+        (itinerary?.ratings?.length || 1)
+      ).toFixed(1)
     );
   }, [itinerary?.ratings]);
 
-  // Copy Link function
-  const handleCopyLink = () => {
-    const url = `${window.location.origin}/itinerary/iternaryDetails/${itineraryId}`;
-    navigator.clipboard.writeText(url).then(
-        () => message.success("Link copied to clipboard!"),
-        () => message.error("Failed to copy link")
-    );
-  };
-
-  // Share via Email function
-  const handleShareEmail = () => {
-    const subject = `Check out this itinerary: ${itinerary?.name}`;
-    const body = `
-    Itinerary Details:
-    - Name: ${itinerary?.name}
-    - Language: ${itinerary?.language}
-    - Price: $${itinerary?.price}
-    - Active: ${itinerary?.isActive ? "Yes" : "No"}
-    - Pickup Location: ${itinerary?.pickupLocation || "N/A"}
-    - Drop-off Location: ${itinerary?.dropOffLocation || "N/A"}
-    - Available Dates: ${
-        itinerary?.availableDates
-            .map((date) => `${new Date(date.Date).toLocaleDateString()} at ${date.Times}`)
-            .join(", ") || "No dates available"
-    }
-    - Accessibility: ${itinerary?.accessibility || "Not specified"}
-
-    Activities:
-    ${itinerary?.activities
-        .map(
-            (activity, index) =>
-                `  ${index + 1}. ${activity.activity.name} - ${activity.duration} mins`
-        )
-        .join("\n") || "No activities listed"}
-
-    Ratings: ${itinerary?.ratings.length} ratings
-    Average Rating: ${
-        itinerary?.ratings.length
-            ? (
-                itinerary.ratings.reduce((sum, r) => sum + r.rating, 0) /
-                itinerary.ratings.length
-            ).toFixed(1)
-            : "No ratings yet"
-    }
-
-    Check out more details and book here: ${window.location.origin}/itinerary/iternaryDetails/${itineraryId}
-  `;
-
-    const mailtoLink = `mailto:?subject=${encodeURIComponent(
-        subject
-    )}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
-  };
-
-
   return (
-    <div className="bg-[#496989] min-h-screen flex items-center justify-center p-0 overflow-hidden w-full">
-      <Space direction="vertical" size="large" className="relative w-full p-8">
+    <div className="bg-[#496989] min-h-screen flex items-center justify-center p-6 overflow-hidden">
+      <Space
+        direction="vertical"
+        size="large"
+        className="relative w-full max-w-4xl p-8"
+      >
         <div className="absolute top-1 left-8 animate-bounce">
           <EnvironmentOutlined className="text-5xl text-white" />
         </div>
-  
-        {/* First Card for Itinerary Details */}
-        <Card
-          bordered={false}
+
+        {/* First Card */}
+        <Card 
+          bordered={false} 
           className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
         >
           <Row justify="center" className="text-center mb-1">
@@ -154,26 +98,18 @@ const ItineraryDetails: React.FC = () => {
               <Space direction="vertical" align="center">
                 <Rate disabled value={averageRating} allowHalf />
                 <Text type="secondary" className="text-[#58A399]">
-                  {itinerary?.ratings.length} ratings
+                  {itinerary?.ratings.length} reviews
                 </Text>
-                <Space>
-                  <Button icon={<CopyOutlined />} onClick={handleCopyLink}>
-                    Copy Link
-                  </Button>
-                  <Button icon={<MailOutlined />} onClick={handleShareEmail}>
-                    Share via Email
-                  </Button>
-                </Space>
               </Space>
             </Col>
           </Row>
         </Card>
-  
-        {/* Combined Row for Locations, Activities, Timeline, and Available Dates */}
+
+        {/* Row with Two Cards for Location and Activities */}
         <Row gutter={[16, 16]}>
-          {/* Locations Card */}
+          {/* Location Card */}
           {(itinerary?.pickupLocation || itinerary?.dropOffLocation) && (
-            <Col xs={24} sm={12} md={6}>
+            <Col span={12}>
               <Card
                 title={
                   <Space>
@@ -181,7 +117,7 @@ const ItineraryDetails: React.FC = () => {
                     <span>Locations</span>
                   </Space>
                 }
-                className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
+                className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105"
               >
                 {itinerary?.pickupLocation && (
                   <div>
@@ -198,9 +134,9 @@ const ItineraryDetails: React.FC = () => {
               </Card>
             </Col>
           )}
-  
+
           {/* Activities Card */}
-          <Col xs={24} sm={12} md={6}>
+          <Col span={12}>
             <Card
               title={
                 <Space>
@@ -208,7 +144,7 @@ const ItineraryDetails: React.FC = () => {
                   <span>Activities</span>
                 </Space>
               }
-              className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
+              className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105"
             >
               <List
                 dataSource={itinerary?.activities}
@@ -224,9 +160,12 @@ const ItineraryDetails: React.FC = () => {
               />
             </Card>
           </Col>
-  
+        </Row>
+
+        {/* Row with Two Cards for Timeline and Available Dates */}
+        <Row gutter={[16, 16]}>
           {/* Timeline Card */}
-          <Col xs={24} sm={12} md={6}>
+          <Col span={12}>
             <Card
               title={
                 <Space>
@@ -234,14 +173,14 @@ const ItineraryDetails: React.FC = () => {
                   <span>Timeline</span>
                 </Space>
               }
-              className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
+              className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105"
             >
               <Timeline>
                 {itinerary?.timeline.map((item, index) => (
                   <Timeline.Item key={index}>
                     <Text strong className="text-[#58A399]">{item.activity?.name}</Text>
                     {item.startTime && (
-                      <Text type="secondary" className="text-[#58A399]"> Starts at {item.startTime}</Text>
+                      <Text type="secondary" className="text-[#58A399]"> at {item.startTime}</Text>
                     )}
                     {item.duration && <Tag color="blue">{item.duration} min</Tag>}
                   </Timeline.Item>
@@ -249,9 +188,9 @@ const ItineraryDetails: React.FC = () => {
               </Timeline>
             </Card>
           </Col>
-  
+
           {/* Available Dates Card */}
-          <Col xs={24} sm={12} md={6}>
+          <Col span={12}>
             <Card
               title={
                 <Space>
@@ -259,7 +198,7 @@ const ItineraryDetails: React.FC = () => {
                   <span>Available Dates</span>
                 </Space>
               }
-              className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
+              className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105"
             >
               <List
                 grid={{ gutter: 16, column: 2 }}
@@ -278,7 +217,7 @@ const ItineraryDetails: React.FC = () => {
             </Card>
           </Col>
         </Row>
-  
+
         {/* Last Full-Width Card for Comments */}
         {(itinerary?.comments.length ?? 0) > 0 && (
           <Card
@@ -288,23 +227,19 @@ const ItineraryDetails: React.FC = () => {
                 <span>Comments</span>
               </Space>
             }
-            className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#ffffff] hover:scale-105 w-full"
+            className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full"
           >
             <List
               itemLayout="horizontal"
               dataSource={itinerary?.comments}
               renderItem={(comment) => (
-                <List.Item className="transition-transform duration-300 hover:bg-[#496989] hover:scale-105 hover:text-white">
+                <List.Item>
                   <List.Item.Meta
                     avatar={<Avatar icon={<UserOutlined />} />}
-                    title={
-                      <span className="text-gray-700 hover:text-white">Traveler's feedback</span>
-                    }
+                    title="Traveler's feedback"
                     description={
-                      <Space>
-                        <Text className="text-[#58A399] hover:text-white">
-                          {comment.comment}
-                        </Text>
+                      <Space className="text-[#58A399]">
+                        <Text>{comment.comment}</Text>
                       </Space>
                     }
                   />
@@ -313,11 +248,11 @@ const ItineraryDetails: React.FC = () => {
             />
           </Card>
         )}
-  
+
         {/* Footer Information */}
-        <Card className="text-center mt-4 bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105 w-full">
+        <Card className="text-center mt-4 bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#E2F4C5] hover:scale-105">
           <Space direction="vertical" size="small">
-            <Text type="secondary" className="text-[#58A399]">Created by: {itinerary?.createdBy.username}</Text>
+            <Text type="secondary" className="text-[#58A399]">Created by: Unknown</Text>
             <Text type="secondary" className="text-[#58A399]">
               Created: {new Date(itinerary?.createdAt ?? "").toLocaleDateString()}
             </Text>
@@ -330,6 +265,4 @@ const ItineraryDetails: React.FC = () => {
     </div>
   );
 };
-  export default ItineraryDetails;
-  
-  
+export default ItineraryDetails;

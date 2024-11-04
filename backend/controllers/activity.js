@@ -101,7 +101,12 @@ exports.getBookedActivities = async (req, res, next) => {
     try {
         const userId = req.user._id;
         const bookedActivities = await BookedActivity.find({createdBy: userId, isActive: true})
-            .populate('activity').populate('createdBy');
+            .populate({
+                path: 'activity', // Populate the itinerary field
+                populate: {
+                    path: 'createdBy' // Populate the createdBy field of the itinerary
+                }
+            }).populate('createdBy');
         if (bookedActivities.length === 0) {
             return res.status(404).json({message: 'No booked ActivityList found'});
         }
