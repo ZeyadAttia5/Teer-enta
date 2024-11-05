@@ -119,7 +119,7 @@ exports.checkOutOrder = async (req, res) => {
             products,
             totalPrice,
             deliveryAddress,
-            status: paymentMethod === 'wallet' ? 'Paid' : 'Pending', // Update status based on payment method
+            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
             isActive: true,
         });
 

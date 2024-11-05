@@ -155,6 +155,7 @@ exports.bookFlight = async (req, res) => {
             noOfPassengers: travelers.length,
             price: totalPrice,
             createdBy: userId,
+            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
         });
 
         // Send success response

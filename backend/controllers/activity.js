@@ -298,7 +298,7 @@ exports.bookActivity = async (req, res) => {
         const newBooking = await BookedActivity.create({
             activity: id,
             createdBy: userId,
-            status: paymentMethod === 'wallet' ? 'Completed' : 'Pending', // Update status based on payment method
+            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
             date: activity.date
         });
 

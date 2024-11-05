@@ -369,7 +369,7 @@ exports.bookItinerary = async (req, res) => {
             itinerary: id,
             createdBy: userId,
             date: new Date(date),
-            status: paymentMethod === 'wallet' ? 'Completed' : 'Pending'
+            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
         });
 
         return res.status(200).json({
