@@ -235,6 +235,8 @@ exports.bookActivity = async (req, res) => {
             date: activity.date
         });
 
+
+
         return res.status(200).json({ message: "Activity booked successfully" });
     } catch (err) {
         errorHandler.SendError(res, err);
