@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"; 
 import { Rate } from "antd";
 import { getGoogleMapsAddress } from "../../../api/googleMaps.ts";
+import {getCurrency} from "../../../api/account.ts";
 
 const ActivityCard = ({
   name,
@@ -15,6 +16,7 @@ const ActivityCard = ({
   averageRating,
 }) => {
   const [address, setAddress] = useState("");
+  const [currency, setCurrency] = useState(null);
 
   // Fetch address from Google Maps API based on latitude and longitude
   useEffect(() => {
@@ -32,6 +34,19 @@ const ActivityCard = ({
     fetchAddress();
   }, [location.lat, location.lng]);
 
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
+    }
+  }
+  useEffect(() => {
+    fetchCurrency();
+  }, []);
+
   return (
     <div className="flex justify-center items-center">
       <div className="max-w-3xl w-full rounded-lg shadow-lg p-6 m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-gradient-to-r from-[#E2F4C5] via-[#A8CD9F] to-[#58A399] hover:text-white"
@@ -45,7 +60,7 @@ const ActivityCard = ({
         <p style={{ color: "#496989" }} className="font-bold mb-2">🕒 {time}</p>
         <p style={{ color: "#496989" }} className="font-bold mb-2">📂 {category || "Uncategorized"}</p>
         <p style={{ color: "#496989" }} className="font-bold mb-2">
-          💲 {price?.min ? `$${price.min}` : "N/A"} - {price?.max ? `$${price.max}` : "N/A"}
+          💲 {currency?.code} {price?.min ? `${currency?.rate*price.min}` : "N/A"} - {price?.max ? `${currency?.rate*price.max}` : "N/A"}
         </p>
 
         {/* Average Rating */}
