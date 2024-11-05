@@ -35,6 +35,7 @@ import DeleteAccountButton from "./components/Profile/DeleteAccountButton.js";
 import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
 import MyComplaints from "./components/Users/complain/myComplaints.js";
 import ShowDocuments from "./components/Users/pendingUsers/ShowDocuments.js";
+import NewProfile from "./components/Profile/NewProfile.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -197,6 +198,10 @@ function App() {
           <Route
             path="/ComplaintsManagement"
             element={<ComplaintsManagement />}
+          />
+          <Route
+            path="/newProfile"
+            element={<NewProfile />}
           />
           <Route path="/myComplaints" element={<MyComplaints />} />
         </Routes>
