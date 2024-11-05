@@ -121,7 +121,7 @@ exports.bookFlight = async (req, res) => {
             arrivalAirport: offer.itineraries[0].segments[0].arrival.iataCode,
             noOfPassengers: travelers.length,
             price: offer.price.total,
-            // createdBy: req.user._id
+            createdBy: req.user._id
         });
         res.status(200).json({message: "Successfully booked a Flight", booking: booking.data});
 
