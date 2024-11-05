@@ -7,6 +7,7 @@ import { TActivityCategory } from "../../types/Activity/ActivityCategory.ts";
 import { TTag } from "../../types/Tag.ts";
 import Filter from "../shared/Filter.jsx";
 import {TPreferenceTag} from "../../types/Itinerary/PreferenceTag";
+import { CalendarOutlined, ClockCircleOutlined, EnvironmentOutlined, DollarOutlined, TagOutlined, CommentOutlined, StarOutlined, GiftOutlined } from "@ant-design/icons";
 
 // Tactivity keys are the dataIndex of each object in the data array
 const columns = [
@@ -202,21 +203,38 @@ const ActivityList = ({setFlag}) => {
   }, [activities]);
 
   return (
-    <main className="size-full p-16">
-      <Form.Item label="Show Upcoming Activities">
-        <Switch checked={upcoming} onChange={() => setUpcoming(!upcoming)} />
-      </Form.Item>
-      <Table<TActivity>
-        scroll={{
-          x: "max-content",
-        }}
-        bordered
-        className="h-full"
-        dataSource={activities}
-        columns={columns}
-      />
+    <main className="p-8 bg-gray-50 min-h-screen flex flex-col items-center">
+      <div className="flex items-center justify-between w-full max-w-7xl mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">Activity List</h1>
+        <Form.Item label="Upcoming Activities" className="flex items-center">
+          <Switch
+            checked={upcoming}
+            onChange={() => setUpcoming(!upcoming)}
+            className="ml-2 transform scale-90"
+          />
+        </Form.Item>
+      </div>
+      <div className="w-full max-w-7xl bg-white rounded-lg shadow-xl overflow-hidden">
+        <Table
+          scroll={{ x: "max-content" }}
+          bordered
+          className="table-auto w-full"
+          dataSource={activities}
+          columns={columns.map((col) => ({
+            ...col,
+            className: "p-4 text-gray-700 text-sm font-medium text-center",
+            title: <span className="font-semibold text-gray-600">{col.title}</span>,
+          }))}
+          pagination={{
+            pageSize: 10,
+            showTotal: (total) => `Total ${total} items`,
+            showSizeChanger: true,
+          }}
+        />
+      </div>
     </main>
   );
+  
 };
 
 export default ActivityList;

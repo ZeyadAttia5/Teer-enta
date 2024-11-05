@@ -86,65 +86,64 @@ const AdminProductGrid = ({ setFlag }) => {
   };
 
   return (
-      <div className="container mx-auto p-5 relative">
-        <div className="flex justify-between items-center mt-24 mb-5">
-          <div className="flex justify-center items-center gap-4 mx-auto">
-            <Input
-                placeholder="Search for products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-72 border-customGreen rounded-full border-2 focus:border-customGreen transition-colors duration-300"
-            />
-            <FilterDropdown
-                filters={filters}
-                onFilterChange={handleFilterChange}
-            />
-          </div>
-          {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
-              <Link to="/products/create">
-                <Button
-                    type="primary"
-                    className="bg-customGreen hover:bg-darkerGreen transition duration-300 mr-14"
-                >
-                  Add Product
-                </Button>
-              </Link>
-          )}
+    <div className="w-full p-1 relative bg-[#E0F0EE]">
+      <div className="flex justify-between items-center mt-24 mb-5">
+        <div className="flex justify-center items-center gap-4 mx-auto">
+          <Input
+            placeholder="Search for products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-72 border-[#58A399] rounded-full border-2 focus:border-[#58A399] transition-colors duration-300"
+          />
+          <FilterDropdown
+            filters={filters}
+            onFilterChange={handleFilterChange}
+          />
         </div>
-
-        <Row gutter={[16, 16]} className="mt-5">
-          {filteredProducts.map((product) => (
-              <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
-                <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
-                  <img
-                      className="w-full h-48 object-cover"
-                      src={product.image || "defaultImageUrl.jpg"}
-                      alt={product.name}
-                      loading="lazy"
-                  />
-                  <div className="p-4">
-                    <h2 className="font-bold text-xl">{product.name}</h2>
-                    <p className="text-gray-700">${product.price.toFixed(2)}</p>
-                    <StarRating rating={calculateAverageRating(product.ratings)} />
-                    <Link to={`/products/${product._id}`}>
-                      <Button
-                          className="bg-customGreen hover:bg-darkerGreen text-white mt-2"
-                      >
-                        View Details
-                      </Button>
-                    </Link>
-                    {user && (user._id === product.createdBy )&&(user.userRole === "Admin" || user.userRole === "Seller") && (
-                        <Link to={`/products/edit/${product._id}`}>
-                          <FaEdit className="text-customGreen mt-2 cursor-pointer" />
-                        </Link>
-                    )}
-                  </div>
-                </div>
-              </Col>
-          ))}
-        </Row>
+        {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
+          <Link to="/products/create">
+            <Button
+              type="primary"
+              className="bg-[#58A399] hover:bg-[#496989] transition duration-300 mr-14"
+            >
+              Add Product
+            </Button>
+          </Link>
+        )}
       </div>
+
+      <Row gutter={[16, 16]} className="mt-5">
+        {filteredProducts.map((product) => (
+          <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
+            <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white hover:bg-[#E2F4C5] hover:scale-105 transition duration-300 ease-in-out m-4">
+              <img
+                className="w-full h-48 object-cover"
+                src={product.image || "defaultImageUrl.jpg"}
+                alt={product.name}
+                loading="lazy"
+              />
+              <div className="p-4">
+                <h2 className="font-bold text-xl text-[#58A399]">{product.name}</h2>
+                <p className="text-[#496989]">${product.price.toFixed(2)}</p>
+                <StarRating rating={calculateAverageRating(product.ratings)} />
+                <Link to={`/products/${product._id}`}>
+                  <Button
+                    className="bg-[#58A399] hover:bg-[#496989] text-white mt-2 transition duration-300"
+                  >
+                    View Details
+                  </Button>
+                </Link>
+                {user && (user._id === product.createdBy) && (user.userRole === "Admin" || user.userRole === "Seller") && (
+                  <Link to={`/products/edit/${product._id}`}>
+                    <FaEdit className="text-[#58A399] mt-2 cursor-pointer hover:text-[#496989] transition duration-300" />
+                  </Link>
+                )}
+              </div>
+            </div>
+          </Col>
+        ))}
+      </Row>
+    </div>
   );
 };
-
 export default AdminProductGrid;
