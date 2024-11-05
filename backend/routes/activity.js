@@ -22,6 +22,7 @@ router.post('/deactivate/:id' , activityController.deactivateActivity);
 router.post("/book/:id",isAuth , activityController.bookActivity);
 router.post("/:id/rate",isAuth , activityController.addRatingToActivity);
 router.post('/:id/comment',isAuth , activityController.addCommentToActivity);
+router.post('/makeAllActivitesAppropriate' , activityController.makeAllActivitiesAppropriate) ;
 router.put("/update/:id"  ,activityController.updateActivity);
 router.patch("/flagInappropriate/:id" ,isAuth , activityController.flagInappropriate);
 router.patch("/UnFlagInappropriate/:id",isAuth , activityController.UnFlagInappropriate);
