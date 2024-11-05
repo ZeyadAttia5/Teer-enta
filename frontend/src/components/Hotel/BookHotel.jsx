@@ -68,6 +68,7 @@ const HotelOfferCard = ({ offer,setLoading }) => {
       console.log("Hotel booked:", data);
         message.success("Hotel booked successfully!");
     } catch (error) {
+      console.log("Error booking hotel:", error);
       message.error(error.response.data.message);
     } finally {
       setLoading(false);
