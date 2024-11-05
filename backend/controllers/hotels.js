@@ -73,6 +73,22 @@ exports.bookHotel = async (req, res) => {
             return res.status(404).json({ message: "Tourist not found." });
         }
 
+        // Check if the user has already booked the same hotel with the same dates
+        const existingBooking = await BookedHotel.findOne({
+            createdBy: userId,
+            hotel: {
+                hotelId: hotel.hotelId,
+                name: hotel.name
+            },
+            checkInDate: offer.checkInDate,
+            checkOutDate: offer.checkOutDate ,
+            status: 'Pending'
+        });
+
+        if (existingBooking) {
+            return res.status(400).json({ message: "You have already booked this hotel for the selected dates." });
+        }
+
         // Payment handling based on the selected method
         if (paymentMethod === 'wallet') {
             // Wallet payment: Check if the tourist has enough balance
@@ -143,6 +159,7 @@ exports.bookHotel = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 };
+
 
 
 

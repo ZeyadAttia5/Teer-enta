@@ -66,7 +66,7 @@ exports.getFlightOffers = async (req, res) => {
 exports.bookFlight = async (req, res) => {
     const offer = req.body.offer;
     const travelers = req.body.travelers;
-    const paymentMethod = req.body.paymentMethod || 'wallet';  // Default payment method
+    const paymentMethod = req.body.paymentMethod || 'wallet'; // Default payment method
 
     try {
         // Get the pricing for the flight offer
@@ -81,6 +81,21 @@ exports.bookFlight = async (req, res) => {
 
         if (!pricingResponse.data || pricingResponse.data.length === 0) {
             return res.status(400).json({ error: "Flight offer pricing failed." });
+        }
+
+        // Check if the user has already booked the same flight (same offer, same dates)
+        const userId = req.user._id;
+        const existingBooking = await BookedFlight.findOne({
+            createdBy: userId,
+            departureDate: offer.itineraries[0].segments[0].departure.at,
+            arrivalDate: offer.itineraries[0].segments[0].arrival.at,
+            departureAirport: offer.itineraries[0].segments[0].departure.iataCode,
+            arrivalAirport: offer.itineraries[0].segments[0].arrival.iataCode ,
+            status: 'Pending'
+        });
+
+        if (existingBooking) {
+            return res.status(400).json({ message: "You have already booked this flight." });
         }
 
         // Create the flight booking in the Amadeus system
@@ -98,9 +113,7 @@ exports.bookFlight = async (req, res) => {
         const totalPrice = offer.price.total;
 
         // Handle payment method
-        const userId = req.user._id;
         const tourist = await Tourist.findById(userId);
-
         if (!tourist) {
             return res.status(404).json({ message: 'Tourist not found.' });
         }
@@ -114,7 +127,6 @@ exports.bookFlight = async (req, res) => {
             await tourist.save();
 
         } else if (paymentMethod === 'credit_card') {
-            // Here you would integrate with a payment gateway like Stripe (or another service)
             // Example for Stripe (uncomment and configure the actual integration):
             /*
             const paymentIntent = await stripe.paymentIntents.create({
