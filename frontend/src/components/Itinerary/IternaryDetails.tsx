@@ -131,7 +131,7 @@ const ItineraryDetails: React.FC = () => {
           </Row>
           <Row justify="center" className="text-center">
             <p className="text-[#58A399] text-lg font-medium mb-6">
-              {itinerary?.description || "Explore amazing travel experiences!"}
+              {"Explore amazing travel experiences!"}
             </p>
           </Row>
           <Row justify="space-between" align="middle" gutter={[16, 16]}>
