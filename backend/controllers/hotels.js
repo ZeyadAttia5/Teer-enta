@@ -56,53 +56,93 @@ exports.getHotelOffers = async (req, res) => {
     }
 }
 exports.bookHotel = async (req, res) => {
-    const {hotel, offer, guests, payments} = req.body;
-    if(!hotel || !offer || !guests || !payments) {
-        return res.status(400).json({error: "Invalid request body: required fields missing (hotel, offer, guests, payments)"});
+    const { hotel, offer, guests, payments } = req.body;
+    const paymentMethod = payments.paymentMethod || 'wallet'; // Default to wallet if not specified
+
+    if (!hotel || !offer || !guests || !payments) {
+        return res.status(400).json({ error: "Invalid request body: required fields missing (hotel, offer, guests, payments)" });
     }
+
     try {
-        // const hotelOfferDetails = await amadeus.shopping.hotelOfferSearch('VRWK38MO20').get();
-        // console.log(hotelOfferDetails.data);
+        const totalPrice = offer.price.total; // Get total price for the booking
+        const userId = req.user._id;
+
+        // Retrieve the tourist's details (e.g., wallet balance)
+        const tourist = await Tourist.findById(userId);
+        if (!tourist) {
+            return res.status(404).json({ message: "Tourist not found." });
+        }
+
+        // Payment handling based on the selected method
+        if (paymentMethod === 'wallet') {
+            // Wallet payment: Check if the tourist has enough balance
+            if (tourist.wallet < totalPrice) {
+                return res.status(400).json({ message: "Insufficient wallet balance." });
+            }
+
+            // Deduct the amount from the wallet
+            tourist.wallet -= totalPrice;
+            await tourist.save();
+
+        } else if (paymentMethod === 'credit_card') {
+            // Credit card payment: Integrate with payment provider (e.g., Stripe)
+            /*
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: totalPrice * 100, // Stripe expects amount in cents
+                currency: 'usd',  // Replace with your desired currency
+                payment_method: payments.paymentMethodId,  // Payment method ID from frontend
+                confirm: true,
+            });
+
+            if (!paymentIntent) {
+                return res.status(500).json({ message: "Payment failed." });
+            }
+            */
+        } else if (paymentMethod === 'cash_on_delivery') {
+            // Cash on delivery: No payment is processed immediately, just proceed with the booking
+        } else {
+            return res.status(400).json({ message: "Invalid payment method selected." });
+        }
+
+        // Proceed with hotel booking in the external system (Amadeus or similar)
         const hotelBooking = await amadeus.booking.hotelBookings.post(
             JSON.stringify({
                 "data": {
-                    "offerId": offer.id, // The ID of the selected hotel offer
+                    "offerId": offer.id,
                     "guests": guests,
                     "payments": payments
                 }
             })
-        )
-        console.log(hotelBooking.data);
-        res.status(200).json(hotelBooking.data);
-    } catch(err) {
-        // console.log("error status code: ", err.response.statusCode);
-        if(err.response.statusCode === 401) {
-            try {
-                await BookedHotel.create({
-                    hotel: {
-                        hotelId: hotel.hotelId,
-                        name: hotel.name,
-                        chainCode: hotel.chainCode,
-                        cityCode: hotel.cityCode,
-                        latitude: hotel.latitude,
-                        longitude: hotel.longitude
-                    },
-                    checkInDate: offer.checkInDate,
-                    checkOutDate: offer.checkOutDate,
-                    guests: guests?.adults,
-                    price: offer.price.total,
-                    createdBy: req.user._id
-                });
-                return res.status(200).json({message: "Successfully booked!"});
-            } catch(e){
-                console.log(e);
-                return res.status(400).json(e);
-            }
+        );
+
+        if (hotelBooking.data) {
+            // Save the booking in your local database
+            await BookedHotel.create({
+                hotel: {
+                    hotelId: hotel.hotelId,
+                    name: hotel.name,
+                    chainCode: hotel.chainCode,
+                    cityCode: hotel.cityCode,
+                    latitude: hotel.latitude,
+                    longitude: hotel.longitude
+                },
+                checkInDate: offer.checkInDate,
+                checkOutDate: offer.checkOutDate,
+                guests: guests?.adults,
+                price: totalPrice,
+                createdBy: userId
+            });
+
+            return res.status(200).json({ message: "Successfully booked the hotel!", booking: hotelBooking.data });
+        } else {
+            return res.status(500).json({ message: "Hotel booking failed. Please try again later." });
         }
-        console.log(err);
+
+    } catch (err) {
+        console.error(err);
         errorHandler.SendError(res, err);
     }
-}
+};
 
 
 
