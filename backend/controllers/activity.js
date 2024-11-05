@@ -1,6 +1,7 @@
 const Activity = require('../models/Activity/Activity');
 const Itinerary = require('../models/Itinerary/Itinerary');
 const BookedActivity = require('../models/Booking/BookedActivitie');
+const Tourist = require('../models/Users/Tourist');
 const mongoose = require('mongoose')
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 
@@ -96,6 +97,32 @@ exports.getUpcomingActivities = async (req, res, next) => {
         errorHandler.SendError(res, err);
     }
 }
+
+exports.getUpcomingPaidActivities = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const currentDate = new Date();
+
+        const upcomingActivities = await BookedActivity.find({
+            createdBy: userId,
+            status: 'Completed',
+            date: { $gte: currentDate },
+            isActive: true
+        }).populate('activity'); // Populate the activity details
+
+        if (!upcomingActivities || upcomingActivities.length === 0) {
+            return res.status(404).json({ message: "No upcoming paid activities found." });
+        }
+
+        res.status(200).json({
+            message: "Upcoming paid activities retrieved successfully",
+            upcomingActivities
+        });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
 
 exports.getBookedActivities = async (req, res, next) => {
     try {
@@ -203,15 +230,15 @@ exports.flagInappropriate = async (req, res) => {
 
 exports.bookActivity = async (req, res) => {
     try {
-        const { id } = req.params;
-        const userId = req.user._id;
-
-
+        const { id } = req.params; // Activity ID
+        const userId = req.user._id; // Logged-in user ID (Tourist)
+        let { paymentMethod } = req.body; // Payment method: wallet, credit_card, or cash_on_delivery
+        paymentMethod = paymentMethod || 'wallet';
+        // Find the activity
         const activity = await Activity.findOne({ isActive: true, _id: id });
         if (!activity) {
             return res.status(404).json({ message: "Activity not found or inactive" });
         }
-
 
         const existingBooking = await BookedActivity.findOne({
             activity: id,
@@ -221,51 +248,112 @@ exports.bookActivity = async (req, res) => {
         }).populate('activity');
 
         if (existingBooking && existingBooking.date.toISOString().split('T')[0] === activity.date.toISOString().split('T')[0]) {
-            return res.status(400).json({ message: "You have already Pending booking on this activity on the same date" });
+            return res.status(400).json({ message: "You already have a pending booking for this activity on the same date" });
         }
 
+        // Retrieve the tourist's wallet balance if needed
+        const tourist = await Tourist.findById(userId);
 
-        await BookedActivity.create({
+        // Calculate the total cost of the activity
+        const totalPrice = activity.price.max; // TODO this should be reviewed
+
+        // Handle payment method
+        if (paymentMethod === 'wallet') {
+            // Wallet payment method
+            if (tourist.wallet < totalPrice) {
+                return res.status(400).json({ message: "Insufficient wallet balance" });
+            }
+            // Deduct the amount from the wallet
+            tourist.wallet -= totalPrice;
+            await tourist.save();
+
+        } else if (paymentMethod === 'credit_card') {
+            // Credit card payment method
+            // Here you would integrate with Stripe or another payment provider
+            // Uncomment and configure if using Stripe:
+            /*
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: totalPrice * 100, // Convert to cents if in USD
+                currency: 'usd', // Define currency
+                payment_method: req.body.paymentMethodId, // Payment method ID from frontend
+                confirm: true
+            });
+            if (!paymentIntent) {
+                return res.status(500).json({ message: "Credit card payment failed" });
+            }
+            */
+
+        } else if (paymentMethod === 'cash_on_delivery') {
+            // Cash on delivery method - no immediate payment action required
+            // The booking can proceed directly
+
+        } else {
+            return res.status(400).json({ message: "Invalid payment method selected" });
+        }
+
+        // Create a new booking
+        const newBooking = await BookedActivity.create({
             activity: id,
             createdBy: userId,
-            status: 'Pending',
+            status: paymentMethod === 'wallet' ? 'Completed' : 'Pending', // Update status based on payment method
             date: activity.date
         });
 
-        return res.status(200).json({ message: "Activity booked successfully" });
+        return res.status(200).json({
+            message: "Activity booked successfully",
+            booking: newBooking,
+            updatedWallet: paymentMethod === 'wallet' ? tourist.wallet : undefined // Show updated wallet balance if used
+        });
     } catch (err) {
         errorHandler.SendError(res, err);
     }
 };
+
 
 exports.cancelActivityBooking = async (req, res) => {
     try {
         const { id } = req.params;
         const userId = req.user._id;
 
-        const bookedActivity = await BookedActivity.findOne(
-            { _id: id, createdBy: userId , status : 'Pending' }).populate('activity');
+        const bookedActivity = await BookedActivity.findOne({
+            _id: id,
+            createdBy: userId,
+            isActive: true ,
+        }).populate('activity');
+
         if (!bookedActivity) {
             return res.status(404).json({ message: "Booking not found" });
         }
 
+        if(bookedActivity.status === 'Cancelled') {
+            return res.status(400).json({ message: "Booking already cancelled" });
+        }
+
         const currentDate = new Date();
-        const date = new Date(bookedActivity.date);
-        const hoursDifference = (date - currentDate) / (1000 * 60 * 60);
+        const activityDate = new Date(bookedActivity.date);
+        const hoursDifference = (activityDate - currentDate) / (1000 * 60 * 60);
 
         if (hoursDifference < 48) {
             return res.status(400).json({ message: "Cannot cancel the booking less than 48 hours before the activity" });
         }
-
+        const tourist = await Tourist.findById(userId);
+        if(bookedActivity.status === 'Completed') {
+            tourist.wallet += bookedActivity.activity.price.max; //TODO Price not always max
+            await tourist.save();
+        }
         bookedActivity.status = 'Cancelled';
         await bookedActivity.save();
 
-        return res.status(200).json({ message: "Booking cancelled successfully" });
+        return res.status(200).json({
+            message: "Booking cancelled successfully. Amount refunded to wallet",
+            updatedWallet: tourist.wallet
+        });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "An error occurred while cancelling the booking" });
     }
 };
+
 
 exports.deactivateActivity = async (req, res) => {
     try {

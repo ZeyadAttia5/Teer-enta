@@ -1,6 +1,7 @@
 const Itinerary = require("../models/Itinerary/Itinerary");
 const BookedItinerary = require("../models/Booking/BookedItinerary");
 const User = require("../models/Users/User");
+const Tourist = require("../models/Users/Tourist");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const mongoose = require("mongoose"); // Ensure mongoose is required
 
@@ -136,6 +137,30 @@ exports.getBookedItineraries = async (req, res, next) => {
         }
 
         res.status(200).json(bookedItineraries);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+exports.getUpcomingPaidItineraries = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const currentDate = new Date();
+
+        const upcomingItineraries = await BookedItinerary.find({
+            createdBy: userId,
+            status: 'Completed', // Only fetch completed (paid) bookings
+            date: { $gte: currentDate }, // Only fetch itineraries with dates in the future
+            isActive: true
+        }).populate('itinerary'); // Populate the itinerary details
+
+        if (!upcomingItineraries || upcomingItineraries.length === 0) {
+            return res.status(404).json({ message: "No upcoming paid itineraries found." });
+        }
+
+        res.status(200).json({
+            message: "Upcoming paid itineraries retrieved successfully",
+            upcomingItineraries
+        });
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -292,15 +317,13 @@ exports.deactivateItinerary = async (req, res) => {
 exports.bookItinerary = async (req, res) => {
     try {
         const { id } = req.params;
-        const { date } = req.body;
+        const { date, paymentMethod = 'wallet' } = req.body; // Default to 'wallet' if payment method is not provided
         const userId = req.user._id;
-
 
         const itinerary = await Itinerary.findOne({ isActive: true, _id: id });
         if (!itinerary) {
             return res.status(404).json({ message: "Itinerary not found or inactive" });
         }
-
 
         const existingBooking = await BookedItinerary.findOne({
             itinerary: id,
@@ -310,18 +333,48 @@ exports.bookItinerary = async (req, res) => {
         });
 
         if (existingBooking) {
-            return res.status(400).json({ message: "You have already Pending booking on this itinerary on the selected date" });
+            return res.status(400).json({ message: "You already have a pending booking for this itinerary on the selected date" });
         }
 
+        const tourist = await Tourist.findById(userId);
+        const totalPrice = itinerary.price; // Adjust this if needed to dynamically handle different prices
 
-        await BookedItinerary.create({
+        if (paymentMethod === 'wallet') {
+            if (tourist.wallet < totalPrice) {
+                return res.status(400).json({ message: "Insufficient wallet balance" });
+            }
+            tourist.wallet -= totalPrice;
+            await tourist.save();
+        } else if (paymentMethod === 'credit_card') {
+            // Implement credit card payment handling with a provider like Stripe here
+            // Uncomment and configure if using Stripe:
+            /*
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: totalPrice * 100, // Convert to cents if in USD
+                currency: 'usd',
+                payment_method: req.body.paymentMethodId, // Payment method ID from frontend
+                confirm: true
+            });
+            if (!paymentIntent) {
+                return res.status(500).json({ message: "Credit card payment failed" });
+            }
+            */
+        } else if (paymentMethod !== 'cash_on_delivery') {
+            return res.status(400).json({ message: "Invalid payment method selected" });
+        }
+
+        const newBooking = await BookedItinerary.create({
             itinerary: id,
             createdBy: userId,
             date: new Date(date),
-            status: "Pending",
+            status: paymentMethod === 'wallet' ? 'Completed' : 'Pending'
         });
 
-        return res.status(200).json({ message: "Itinerary booked successfully" });
+        return res.status(200).json({
+            message: "Itinerary booked successfully",
+            booking: newBooking,
+            updatedWallet: paymentMethod === 'wallet' ? tourist.wallet : undefined
+        });
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -332,26 +385,44 @@ exports.cancelItineraryBooking = async (req, res) => {
         const { id } = req.params;
         const userId = req.user._id;
 
-        const bookedItinerary = await BookedItinerary.findOne(
-            { _id: id, createdBy: userId ,status : 'Pending'}).populate('itinerary');
+        const bookedItinerary = await BookedItinerary.findOne({
+            _id: id,
+            createdBy: userId,
+            isActive: true
+        }).populate('itinerary');
+
         if (!bookedItinerary) {
             return res.status(404).json({ message: "Booking not found" });
         }
 
+        if (bookedItinerary.status === 'Cancelled') {
+            return res.status(400).json({ message: "Booking already cancelled" });
+        }
+
         const currentDate = new Date();
-        const date = new Date(bookedItinerary.date);
-        const hoursDifference = (date - currentDate) / (1000 * 60 * 60);
+        const itineraryDate = new Date(bookedItinerary.date);
+        const hoursDifference = (itineraryDate - currentDate) / (1000 * 60 * 60);
 
         if (hoursDifference < 48) {
             return res.status(400).json({ message: "Cannot cancel the booking less than 48 hours before the itinerary" });
         }
 
+        const tourist = await Tourist.findById(userId);
+        if (bookedItinerary.status === 'Completed') {
+            tourist.wallet += bookedItinerary.itinerary.price; // Adjust as needed for different price structures
+            await tourist.save();
+        }
+
         bookedItinerary.status = 'Cancelled';
         await bookedItinerary.save();
 
-        return res.status(200).json({ message: "Booking cancelled successfully" });
+        return res.status(200).json({
+            message: "Booking cancelled successfully. Amount refunded to wallet",
+            updatedWallet: tourist.wallet
+        });
     } catch (err) {
-        errorHandler.SendError(res, err);
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred while cancelling the booking" });
     }
 };
 

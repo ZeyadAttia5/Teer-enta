@@ -4,7 +4,6 @@ const errorHandler = require("../Util/ErrorHandler/errorSender");
 
 module.exports = async (req, res, next) => {
     const authHeader = req.headers["authorization"];
-    console.log("hey"+authHeader);
     if (!authHeader) {
         return res.status(401).json({ message: "Not Authenticated" });
     }

@@ -10,6 +10,7 @@ const isAuth = require("../middlewares/isAuth");
 router.get("/", activityController.getActivities);
 router.get("/my",isAuth , activityController.getMyActivities);
 router.get("/upcoming", activityController.getUpcomingActivities);
+router.get("/upcoming/paid",isAuth,activityController.getUpcomingPaidActivities);  //MS3 64
 router.get("/flagged", activityController.getFlaggedActivities);
 router.get("/one/:id", activityController.getActivity);
 router.get("/:id/ratings", activityController.getRatingsForActivity);

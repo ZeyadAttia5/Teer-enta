@@ -6,10 +6,12 @@ const itineraryController = require("../controllers/Itinerary");
 
 const isAuth = require("../middlewares/isAuth");
 
+
 router.get("/", itineraryController.getItineraries);
 router.get("/one/:id", itineraryController.getItinerary);
 router.get("/my",isAuth , itineraryController.getMyItineraries);
 router.get("/upcoming", itineraryController.getUpcomingItineraries);
+router.get("/upcoming/paid",isAuth,itineraryController.getUpcomingPaidItineraries);  //MS3 64
 router.get("/flagged", itineraryController.getFlaggedItineraries);
 router.get("/:id/comments", itineraryController.getCommentsForItinerary);
 router.get("/:id/ratings", itineraryController.getRatingsForItinerary);

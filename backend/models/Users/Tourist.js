@@ -15,6 +15,10 @@ const touristSchema = new mongoose.Schema({
         preferenceTags: [{type: mongoose.Schema.Types.ObjectId, ref: 'PreferenceTag'}],
         activityCategories: [{type: mongoose.Schema.Types.ObjectId, ref: 'ActivityCategory'}],
     },
+    savedActivities: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Activity'
+    }],
     complaints: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Complain'
