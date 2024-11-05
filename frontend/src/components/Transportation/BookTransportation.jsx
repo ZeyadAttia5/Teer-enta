@@ -23,6 +23,7 @@ import {
   bookTransportation,
   getTransportations,
 } from "../../api/transportation.ts";
+import {getCurrency} from "../../api/account.ts";
 
 const { Text } = Typography;
 
@@ -42,6 +43,7 @@ const getVehicleIcon = (type) => {
 const BookTransportation = ({}) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currency, setCurrency] = useState(null);
   const fetchTransportation = async () => {
     setLoading(true);
     try {
@@ -65,6 +67,19 @@ const BookTransportation = ({}) => {
   useEffect(() => {
     fetchTransportation();
   }, []);
+
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
+    }
+  }
+    useEffect(() => {
+        fetchCurrency();
+    }, []);
 
   return (
     <List
@@ -121,7 +136,9 @@ const BookTransportation = ({}) => {
 
                 <Space>
                   <DollarOutlined />
-                  <Text strong>{`$${item.price.toFixed(2)}`}</Text>
+                  <Text strong>
+                    {currency && currency?.code} {(item.price * currency?.rate).toFixed(2)}
+                  </Text>
                 </Space>
 
                 <Space>
