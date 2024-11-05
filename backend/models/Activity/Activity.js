@@ -10,6 +10,7 @@ const ActivitySchema = new mongoose.Schema({
         lng: {type: Number, required: true}
     },
     isActive: {type: Boolean, default: true},
+    isAppropriate :{type:Boolean , default:true} ,
     price: {
         min: Number,
         max: Number
