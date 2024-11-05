@@ -1,8 +1,9 @@
 export type TCurrency = {
     _id: string;
-    currency: string;
+    code: string;
+    name:string ;
     rate: number;
-    isActive: boolean;
     createdAt: string;
     updatedAt: string;
 };
+
