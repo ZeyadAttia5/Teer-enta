@@ -82,47 +82,50 @@ const PendingUsers = ({ setFlag }) => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <div>
-          <Button
-            type="primary"
-            onClick={() => acceptUserr(record._id)}
-            style={{ marginRight: 8 }}
-          >
-            Accept
-          </Button>
-          <Button
-            type="danger"
-            onClick={() => rejectUserr(record._id)}
-            style={{ marginRight: 8 }}
-          >
-            Reject
-          </Button>
-          <Button onClick={() => showDocuments(record._id)}>
-            Show Documents
-          </Button>
-        </div>
+          <div>
+            <Button
+                type="primary"
+                onClick={() => acceptUserr(record._id)}
+                style={{marginRight: 8}}
+            >
+              Accept
+            </Button>
+            <Button
+                type="danger"
+                onClick={() => rejectUserr(record._id)}
+                style={{marginRight: 8}}
+            >
+              Reject
+            </Button>
+            <Button onClick={() => showDocuments(record._id)}>
+              Show Documents
+            </Button>
+
+            <iframe src={"https://res.cloudinary.com/dctx9ueru/image/upload/v1730832567/Teer-Enta%20assets/cycydun2lljfai0vky7q.pdf"}></iframe>
+
+          </div>
       ),
     },
   ];
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin size="large" />
-      </div>
+        <div className="flex justify-center items-center h-screen">
+          <Spin size="large"/>
+        </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold text-center mb-4">User Actions</h2>
-      <Table
-        columns={columns}
-        dataSource={users}
-        rowKey="_id" // Ensure _id is correct
-        bordered
-      />
-    </div>
+      <div className="p-6">
+        <h2 className="text-2xl font-semibold text-center mb-4">User Actions</h2>
+        <Table
+            columns={columns}
+            dataSource={users}
+            rowKey="_id" // Ensure _id is correct
+            bordered
+        />
+      </div>
   );
 };
 

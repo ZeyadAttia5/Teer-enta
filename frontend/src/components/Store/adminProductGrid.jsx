@@ -5,7 +5,7 @@ import FilterDropdown from "./filterDropdown";
 import StarRating from "../shared/starRating";
 import { Input, Row, Col, Button } from "antd";
 import { FaEdit } from "react-icons/fa";
-import { getProducts } from "../../api/products.ts";
+import {getProducts} from "../../api/products.ts";
 
 const AdminProductGrid = ({ setFlag }) => {
   setFlag(false);
@@ -55,8 +55,11 @@ const AdminProductGrid = ({ setFlag }) => {
   }
 
   let filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPrice = product.price >= filters.minPrice && product.price <= filters.maxPrice;
+    const matchesSearch = product.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+    const matchesPrice =
+        product.price >= filters.minPrice && product.price <= filters.maxPrice;
     return matchesSearch && matchesPrice;
   });
 
@@ -83,7 +86,7 @@ const AdminProductGrid = ({ setFlag }) => {
   };
 
   return (
-    <div className="w-full p-1 relative bg-[#496989]">
+    <div className="w-full p-1 relative bg-[#E0F0EE]">
       <div className="flex justify-between items-center mt-24 mb-5">
         <div className="flex justify-center items-center gap-4 mx-auto">
           <Input
@@ -112,7 +115,7 @@ const AdminProductGrid = ({ setFlag }) => {
       <Row gutter={[16, 16]} className="mt-5">
         {filteredProducts.map((product) => (
           <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
-            <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white hover:bg-[#E2F4C5] transition duration-300 ease-in-out m-4">
+            <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white hover:bg-[#E2F4C5] hover:scale-105 transition duration-300 ease-in-out m-4">
               <img
                 className="w-full h-48 object-cover"
                 src={product.image || "defaultImageUrl.jpg"}
@@ -143,5 +146,4 @@ const AdminProductGrid = ({ setFlag }) => {
     </div>
   );
 };
-
 export default AdminProductGrid;

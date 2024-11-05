@@ -6,7 +6,8 @@ const errorHandler = require('../Util/ErrorHandler/errorSender');
 
 exports.getActivities = async (req, res, next) => {
     try {
-        const activities = await Activity.find({isActive: true , isBookingOpen: true})
+        const activities = await Activity
+            .find({isActive: true , isBookingOpen: true , isAppropriate:true})
             .populate('category')
             .populate('preferenceTags');
         if (activities.length === 0) {
@@ -21,7 +22,7 @@ exports.getActivities = async (req, res, next) => {
 
 exports.getFlaggedActivities = async (req, res, next) => {
     try {
-        const activities = await Activity.find({isActive: false})
+        const activities = await Activity.find({isAppropriate: false})
             .populate('category')
             .populate('preferenceTags');
        
@@ -37,7 +38,7 @@ exports.UnFlagInappropriate = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({message: "invalid object id "});
         }
-        const activity = await Activity.findByIdAndUpdate(id, {isActive: true}, {new: true});
+        const activity = await Activity.findByIdAndUpdate(id, {isAppropriate: true}, {new: true});
         if (!activity) {
             return res.status(404).json({message: "activity not found"});
         }
@@ -65,7 +66,7 @@ exports.getActivity = async (req, res, next) => {
 exports.getMyActivities = async (req, res, next) => {
     try {
         const createdBy = req.user._id;
-        const activities = await Activity.find({createdBy})
+        const activities = await Activity.find({createdBy:createdBy})
             .populate('category')
             .populate('preferenceTags');
         console.log(activities);
@@ -84,7 +85,8 @@ exports.getUpcomingActivities = async (req, res, next) => {
         const activities = await Activity.find(
             {
                 date: {$gte: today},
-                isActive: true
+                isAppropriate:true ,
+                isActive:true
             })
             .populate('category')
             .populate('preferenceTags');
@@ -100,7 +102,8 @@ exports.getUpcomingActivities = async (req, res, next) => {
 exports.getBookedActivities = async (req, res, next) => {
     try {
         const userId = req.user._id;
-        const bookedActivities = await BookedActivity.find({createdBy: userId, isActive: true})
+        const bookedActivities = await BookedActivity
+            .find({createdBy: userId, isAppropriate: true})
             .populate({
                 path: 'activity', // Populate the itinerary field
                 populate: {
@@ -190,7 +193,7 @@ exports.flagInappropriate = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
           return res.status(400).json({ message: "invalid object id " });
         }
-        const activity = await Activity.findByIdAndUpdate(id, {isActive: false}, {new: true});
+        const activity = await Activity.findByIdAndUpdate(id, {isAppropriate: false}, {new: true});
         if (!activity) {
             return res.status(404).json({message: "activity not found"});
         }
@@ -405,8 +408,33 @@ exports.getCommentsForActivity = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 };
-  
 
+
+exports.makeAllActivitiesAppropriate = async (req, res) => {
+    try {
+        const result = await Activity.updateMany(
+            {}, // Empty filter means all documents
+            { $set: { isAppropriate: true } } // Set "isAppropriate" to true
+        );
+
+        // Log the entire result to understand its structure
+        console.log('Update Result:', result);
+
+        // Check if any documents were modified
+        if (result.modifiedCount === 0) {
+            return res.status(200).json({ message: 'No activities were updated (they may already be set as appropriate).' });
+        }
+
+        // Return a response indicating how many documents were modified
+        return res.status(200).json({
+            message: `Updated ${result.modifiedCount} activities.`,
+            totalMatched: result.matchedCount // Optional: show how many were matched
+        });
+    } catch (err) {
+        console.error('Error updating activities:', err); // Log the error for debugging
+        return errorHandler.SendError(res, err);
+    }
+};
 
 
 

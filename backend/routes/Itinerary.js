@@ -20,6 +20,7 @@ router.post('/activate/:id' , itineraryController.activateItinerary) ;
 router.post('/deactivated/:id' , itineraryController.deactivateItinerary) ;
 router.post('/:id/comment',isAuth , itineraryController.addCommentToItinerary) ;
 router.post('/:id/rating',isAuth , itineraryController.rateItinerary) ;
+router.post('/makeAllActivitesAppropriate' , itineraryController.makeAllItineraryAppropriate) ;
 router.put("/update/:id",isAuth , itineraryController.updateItinerary);
 router.patch("/flagInappropriate/:id" , isAuth ,itineraryController.flagInappropriate)
 router.patch("/UnFlagInappropriate/:id", itineraryController.UnFlagInappropriate);

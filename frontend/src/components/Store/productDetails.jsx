@@ -1,26 +1,26 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import StarRating from '../shared/starRating'; 
+import StarRating from '../shared/starRating'; // Import StarRating component
 import { Button, Typography, Spin, Divider } from 'antd';
-import { getProduct } from "../../api/products.ts"; 
+import {getProduct} from "../../api/products.ts"; // Import Ant Design components
 
 const { Title, Paragraph } = Typography;
 
-const ProductDetails = ({ setFlag }) => {
+const ProductDetails = ({setFlag}) => {
   setFlag(false);
-  const { id } = useParams(); 
+  const { id } = useParams(); // Get the product ID from the URL parameters
   const backURL = process.env.REACT_APP_BACKEND_URL;
 
-  const [product, setProduct] = useState(null); 
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null); 
+  const [product, setProduct] = useState(null); // State for the product
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
   const user = JSON.parse(localStorage.getItem("user"));
-
+  // Fetch product details from the API
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await getProduct(id);
+        const response = await getProduct(id) // Replace with your API endpoint
         setProduct(response.data);
       } catch (err) {
         setError(err.message);
@@ -31,29 +31,34 @@ const ProductDetails = ({ setFlag }) => {
     fetchProductDetails();
   }, [id]);
 
+  // Function to calculate average rating
   const calculateAverageRating = (ratings) => {
-    if (!ratings || ratings.length === 0) return 0;
-    const total = ratings.reduce((acc, rating) => acc + rating.rating, 0);
-    return total / ratings.length;
+    if (!ratings || ratings.length === 0) return 0; // If no ratings, return 0
+    const total = ratings.reduce((acc, rating) => acc + rating.rating, 0); // Sum all ratings
+    return total / ratings.length; // Calculate average
   };
 
+  // Handle loading state
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin size="large" />
-      </div>
+        <div className="flex justify-center items-center h-screen">
+          <Spin size="large" />
+        </div>
     );
   }
 
+  // Handle error state
   if (error) {
     return <div className="text-center mt-24 text-red-500">Error: {error}</div>;
   }
 
+  // Calculate the average rating for the product
   const averageRating = calculateAverageRating(product.ratings);
 
+  // Render product details
   return (
-    <div className="w-full min-h-screen bg-[#496989] py-16 px-5">
-      <div className="flex flex-col md:flex-row bg-[#E2F4C5] shadow-lg rounded-lg overflow-hidden">
+    <div className="w-full min-h-screen bg-[#E0F0EE] py-16 px-5">
+      <div className="flex flex-col md:flex-row bg-[#496989] shadow-lg rounded-lg overflow-hidden">
         {/* Product Image */}
         <div className="md:w-1/2">
           <img
@@ -105,7 +110,7 @@ const ProductDetails = ({ setFlag }) => {
       <Link to="/products" className="block mt-8 text-center">
         <Button
           type="default"
-          className="bg-[#E2F4C5] text-[#58A399] hover:bg-[#A8CD9F] hover:text-[#496989] border-none rounded-lg transition duration-300 ease-in-out px-6 py-3"
+          className="bg-[#496989] text-[#ffffff] hover:bg-[#A8CD9F] hover:text-[#496989] border-none rounded-lg transition duration-300 ease-in-out px-6 py-3"
         >
           Back to Products
         </Button>

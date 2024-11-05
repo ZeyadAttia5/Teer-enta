@@ -135,8 +135,8 @@ const TouristActivity = ({ setFlag }) => {
   }, []);
 
   return (
-      <div className="p-16 bg-gray-100">
-        <p className="font-bold text-4xl mb-8">Activities</p>
+      <div className="p-16 bg-[#E0F0EE]">
+        <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p>
 
         {/* Search Input */}
         <Search
