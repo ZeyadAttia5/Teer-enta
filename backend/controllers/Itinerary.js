@@ -369,8 +369,40 @@ exports.bookItinerary = async (req, res) => {
             itinerary: id,
             createdBy: userId,
             date: new Date(date),
-            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
+            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
         });
+
+// Logic for assigning loyalty points based on the tourist's current level
+        let loyaltyPoints = 0;
+        if (tourist.level === 'LEVEL1') {
+            loyaltyPoints = totalPrice * 0.5;
+        } else if (tourist.level === 'LEVEL2') {
+            loyaltyPoints = totalPrice * 1;
+        } else if (tourist.level === 'LEVEL3') {
+            loyaltyPoints = totalPrice * 1.5;
+        }
+
+// Update loyalty points for the tourist
+        tourist.loyalityPoints += loyaltyPoints;
+
+// Check if level needs to be updated based on the new loyalty points
+        let newLevel;
+        if (tourist.loyalityPoints <= 100000) {
+            newLevel = 'LEVEL1';
+        } else if (tourist.loyalityPoints <= 500000) {
+            newLevel = 'LEVEL2';
+        } else {
+            newLevel = 'LEVEL3';
+        }
+
+// Only update and save if the level has changed
+        if (tourist.level !== newLevel) {
+            tourist.level = newLevel;
+        }
+
+// Save the tourist document with updated points and possibly a new level
+        await tourist.save();
+
 
         return res.status(200).json({
             message: "Itinerary booked successfully",

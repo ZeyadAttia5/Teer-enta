@@ -104,7 +104,7 @@ exports.bookTransportation = async (req, res) => {
         await BookedTransportation.create({
             transportation: id,
             createdBy: userId,
-            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
+            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
             date: transportation.date
         });
 

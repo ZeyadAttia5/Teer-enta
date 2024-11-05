@@ -18,6 +18,7 @@ router.patch('/upload/idCard' ,accountController.uploadId);
 router.patch('/upload/taxationCard',isAuth ,accountController.uploadTaxationRegistery);
 router.patch('/upload/certificates' , isAuth   , accountController.uploadCertificates);
 router.patch('/redeemPoints',isAuth, accountController.redeemPoints);
+router.patch('/receiveBadge',isAuth, accountController.receiveBadge);
 router.patch('/chooseCurrency/:id' , isAuth , accountController.chooseMyCurrency) ;
 router.delete('/requestAccountDeletion', isAuth, accountController.requestMyAccountDeletion) ;
 router.delete('/delete/:id',isAuth, accountController.deleteAccount);

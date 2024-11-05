@@ -7,7 +7,7 @@ const touristSchema = new mongoose.Schema({
     nationality: {type: String, required: true},
     dateOfBirth: {type: Date, required: true},
     occupation: {type: String, required: true},// Job or Student
-    level: {type: String},
+    level: {type: String ,default: "LEVEL1"},
     loyalityPoints: {type: Number, default: 0},
     isActive: {type: Boolean, default: true},
     wallet: {type: Number, default: 0},

@@ -221,7 +221,7 @@ exports.chooseMyPreferences = async (req, res, next) => {
 exports.redeemPoints = async (req, res) => {
     try {
         const userId = req.user._id;
-        const user = await User.findById(userId);
+        const user = await Tourist.findById(userId);
         if (!user) {
             return res.status(404).json({message: 'Tourist not found'});
         }
@@ -236,16 +236,11 @@ exports.redeemPoints = async (req, res) => {
         user.wallet += toRedeem * 100;
         user.loyalityPoints -= toRedeem * 10000;
 
-        await Tourist.findOneAndUpdate(
-            {_id: userId},
-            {$set: {wallet: user.wallet, loyaltyPoints: user.loyalityPoints}},
-            {new: true, upsert: true, runValidators: true}
-        );
-
+        console.log(user.loyalityPoints);
         if (!user.hasProfile) {
             user.hasProfile = true;
-            await user.save();
         }
+        await user.save();
         return res.status(200).json({
             message: "Successfully redeemed points",
             redeemedPoints: toRedeem * 10000,
@@ -256,6 +251,48 @@ exports.redeemPoints = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+
+exports.receiveBadge = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // Find the tourist
+        const tourist = await Tourist.findById(userId);
+        if (!tourist) {
+            return res.status(404).json({ message: "Tourist not found." });
+        }
+
+        // Determine level based on loyalty points
+        const loyaltyPoints = tourist.loyalityPoints;
+        let newLevel;
+
+        if (loyaltyPoints <= 100000) {
+            newLevel = 'LEVEL1';
+        } else if (loyaltyPoints <= 500000) {
+            newLevel = 'LEVEL2';
+        } else {
+            newLevel = 'LEVEL3';
+        }
+
+        // Check if the level needs to be updated
+        if (tourist.level !== newLevel) {
+            tourist.level = newLevel;
+            await tourist.save();
+            return res.status(200).json({
+                message: `Congratulations! You've been upgraded to ${newLevel}.`,
+                newLevel: newLevel
+            });
+        } else {
+            return res.status(200).json({
+                message: `You are already at ${tourist.level}. Keep collecting points for the next level!`
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "An error occurred while updating the badge level.", error: err.message });
+    }
+};
+
 
 exports.chooseMyCurrency = async (req,res)=>{
     try {
