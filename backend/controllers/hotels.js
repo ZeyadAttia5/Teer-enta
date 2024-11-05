@@ -1,5 +1,6 @@
 const Amadeus = require('amadeus');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
+const Tourist = require("../models/Users/Tourist");
 const { getCityCodes } = require("../Util/LocationCodes");
 const BookedHotel = require("../models/Booking/BookedHotel");
 
@@ -51,7 +52,7 @@ exports.getHotelOffers = async (req, res) => {
 
         res.status(200).json(hotelSearch.data);
     } catch(err) {
-        console.log(err);
+        // console.log(err);
         errorHandler.SendError(res, err);
     }
 }
@@ -131,36 +132,38 @@ exports.bookHotel = async (req, res) => {
             })
         );
 
-        if (hotelBooking.data) {
-            // Save the booking in your local database
-            await BookedHotel.create({
-                hotel: {
-                    hotelId: hotel.hotelId,
-                    name: hotel.name,
-                    chainCode: hotel.chainCode,
-                    cityCode: hotel.cityCode,
-                    latitude: hotel.latitude,
-                    longitude: hotel.longitude
-                },
-                checkInDate: offer.checkInDate,
-                checkOutDate: offer.checkOutDate,
-                guests: guests?.adults,
-                price: totalPrice,
-                createdBy: userId,
-                status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
-            });
-
-            return res.status(200).json({ message: "Successfully booked the hotel!", booking: hotelBooking.data });
-        } else {
-            return res.status(500).json({ message: "Hotel booking failed. Please try again later." });
+        console.log(hotelBooking.data);
+        res.status(200).json(hotelBooking.data);
+    } catch(err) {
+        // console.log("error status code: ", err.response.statusCode);
+        if(err.response.statusCode === 401) {
+            try {
+                await BookedHotel.create({
+                    hotel: {
+                        hotelId: hotel.hotelId,
+                        name: hotel.name,
+                        chainCode: hotel.chainCode,
+                        cityCode: hotel.cityCode,
+                        latitude: hotel.latitude,
+                        longitude: hotel.longitude
+                    },
+                    checkInDate: offer.checkInDate,
+                    checkOutDate: offer.checkOutDate,
+                    guests: guests?.adults,
+                    price: offer.price.total,
+                    createdBy: req.user._id,
+                    status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
+                });
+                return res.status(200).json({message: "Successfully booked!"});
+            } catch(e){
+                console.log(e);
+                return res.status(400).json(e);
+            }
         }
-
-    } catch (err) {
-        console.error(err);
+        console.log(err);
         errorHandler.SendError(res, err);
     }
-};
-
+}
 
 
 

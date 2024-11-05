@@ -59,7 +59,7 @@ const BookTransportation = ({}) => {
       message.success("Transportation booked successfully");
     } catch (error) {
       console.error("Book transportation error:", error);
-      message.error("Failed to book transportation");
+      message.error(error.response.data.message);
     }
   };
   useEffect(() => {

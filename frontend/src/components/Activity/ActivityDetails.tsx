@@ -125,7 +125,7 @@ const ActivityDetails: React.FC = () => {
             : "No ratings yet"
     }
 
-      More details and booking: ${window.location.origin}/activity/${ActivityId}
+      More details and booking: ${window.location.origin}/itinerary/activityDetails/${ActivityId}
     `;
     const mailtoLink = `mailto:?subject=${encodeURIComponent(
         subject
@@ -134,7 +134,7 @@ const ActivityDetails: React.FC = () => {
   };
 
   const handleCopyLink = () => {
-    const link = `${window.location.origin}/activity/${ActivityId}`;
+    const link = `${window.location.origin}/itinerary/activityDetails/${ActivityId}`;
     navigator.clipboard.writeText(link).then(
         () => message.success("Link copied to clipboard!"),
         () => message.error("Failed to copy the link")

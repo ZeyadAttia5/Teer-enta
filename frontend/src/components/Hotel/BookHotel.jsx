@@ -68,7 +68,8 @@ const HotelOfferCard = ({ offer,setLoading }) => {
       console.log("Hotel booked:", data);
         message.success("Hotel booked successfully!");
     } catch (error) {
-      message.error("Error searching for hotels. Please try again later.");
+      console.log("Error booking hotel:", error);
+      message.error(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -135,11 +136,13 @@ const HotelOfferCard = ({ offer,setLoading }) => {
 
         {/* Price and Room Section */}
         <Row justify="space-between" align="bottom">
-          <Col>
-            <Text type="secondary">Room Type</Text>
-            <br />
-            <Text strong>{mainOffer.room.typeEstimated.bedType} Bed</Text>
-          </Col>
+          {mainOffer.room?.typeEstimated && (
+            <Col>
+              <Text type="secondary">Room Type</Text>
+              <br />
+              <Text strong>{mainOffer.room?.typeEstimated.bedType} Bed</Text>
+            </Col>
+          )}
           <Col>
             <Text type="secondary">Total Price</Text>
             <br />
@@ -153,7 +156,7 @@ const HotelOfferCard = ({ offer,setLoading }) => {
         </Row>
 
         {/* Cancellation Policy */}
-        {mainOffer.policies.cancellations[0]?.description && (
+        {(mainOffer.policies.cancellations && mainOffer.policies.cancellations[0]?.description) && (
           <Text type="danger" style={{ fontSize: 12 }}>
             {mainOffer.policies.cancellations[0]?.description?.text}
           </Text>
@@ -165,7 +168,7 @@ const HotelOfferCard = ({ offer,setLoading }) => {
           block
           onClick={(e) => {
             // e.stopPropagation();
-            book()
+            book();
           }}
         >
           Book
@@ -280,6 +283,9 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
             className="w-full border shadow-sm p-2 rounded"
             apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
             onPlaceSelected={(place) => {
+             console.log("Place selected:", !place);
+             if (!place?.address_components)
+               return message.error("Invalid city selected");
               let destinationCity = place?.address_components[0].long_name;
 
               form.setFieldsValue({

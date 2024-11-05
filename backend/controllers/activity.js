@@ -307,6 +307,7 @@ exports.bookActivity = async (req, res) => {
             booking: newBooking,
             updatedWallet: paymentMethod === 'wallet' ? tourist.wallet : undefined // Show updated wallet balance if used
         });
+
     } catch (err) {
         errorHandler.SendError(res, err);
     }
