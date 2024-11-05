@@ -63,7 +63,6 @@ exports.bookHotel = async (req, res) => {
     try {
         // const hotelOfferDetails = await amadeus.shopping.hotelOfferSearch('VRWK38MO20').get();
         // console.log(hotelOfferDetails.data);
-
         const hotelBooking = await amadeus.booking.hotelBookings.post(
             JSON.stringify({
                 "data": {
@@ -76,7 +75,8 @@ exports.bookHotel = async (req, res) => {
         console.log(hotelBooking.data);
         res.status(200).json(hotelBooking.data);
     } catch(err) {
-        if(err.statusCode === 401) {
+        // console.log("error status code: ", err.response.statusCode);
+        if(err.response.statusCode === 401) {
             try {
                 await BookedHotel.create({
                     hotel: {
@@ -89,9 +89,9 @@ exports.bookHotel = async (req, res) => {
                     },
                     checkInDate: offer.checkInDate,
                     checkOutDate: offer.checkOutDate,
-                    guests: guests,
+                    guests: guests?.adults,
                     price: offer.price.total,
-                    // createdBy: req.user._id
+                    createdBy: req.user._id
                 });
                 return res.status(200).json({message: "Successfully booked!"});
             } catch(e){

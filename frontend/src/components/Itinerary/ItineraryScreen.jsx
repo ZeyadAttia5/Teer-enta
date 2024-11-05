@@ -13,6 +13,8 @@ import {
   message,
   Card,
   notification,
+  Badge,
+  Tooltip,
 } from "antd";
 import {
   MinusCircleOutlined,
@@ -20,6 +22,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
+  FlagFilled,
 } from "@ant-design/icons";
 import {
   getItineraries,
@@ -27,6 +30,7 @@ import {
   updateItinerary,
   deleteItinerary,
   getMyItineraries,
+  flagIternaary,
 } from "../../api/itinerary.ts";
 import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
@@ -355,57 +359,91 @@ const ItineraryScreen = ({ setFlag }) => {
       title: "Actions",
       key: "actions",
       render: (text, record) => (
-          console.log("record", record.availableDates[0]),
-          console.log("user", user._id),
-        <>
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() => showViewModal(record)}
-            className="mr-2"
-            style={{
-              backgroundColor: "#02735F",
-              color: "#fff",
-              border: "none",
-            }}
-          >
-            View
-          </Button>
-          {user && user._id === record.createdBy && (
-              console.log("record", record),
-            <>
-              <Button
-                icon={<EditOutlined />}
-                onClick={() => showModal(record)}
-                className="mr-2"
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
-              >
-                Edit
-              </Button>
-              <Button
-                icon={<DeleteOutlined />}
-                onClick={() => handleDelete(record._id)}
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
-              >
-                Delete
-              </Button>
-            </>
-          )}
-        </>
+        console.log("record", record.availableDates[0]),
+        console.log("user", user._id),
+        (
+          <>
+            <Button
+              icon={<EyeOutlined />}
+              onClick={() => showViewModal(record)}
+              className="mr-2"
+              style={{
+                backgroundColor: "#02735F",
+                color: "#fff",
+                border: "none",
+              }}
+            >
+              View
+            </Button>
+
+            {user &&
+              user._id === record.createdBy &&
+              (console.log("record", record),
+              (
+                <>
+                  <Button
+                    icon={<EditOutlined />}
+                    onClick={() => showModal(record)}
+                    className="mr-2"
+                    style={{
+                      backgroundColor: "#02735F",
+                      color: "#fff",
+                      border: "none",
+                    }}
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDelete(record._id)}
+                    style={{
+                      backgroundColor: "#02735F",
+                      color: "#fff",
+                      border: "none",
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </>
+              ))}
+            <Badge count={0} offset={[-5, 5]}>
+              <Tooltip title={"Flag this item as Inappropriate"}>
+                <Button
+                  danger
+                  icon={<FlagFilled />}
+                  onClick={async () => {
+                    try {
+                      setLoading(true);
+                      await flagIternaary(record._id);
+                      message.success("Item flagged as inappropriate");
+                      await fetchItineraries();
+                    } catch (error) {
+                      message.error("Failed to flag item as inappropriate");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  shape="circle"
+                  style={{
+                    button: {
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                  }}
+                />
+              </Tooltip>
+            </Badge>
+          </>
+        )
       ),
     },
   ];
 
   return (
-    <div className="p-6 bg-white min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">Itineraries</h1>
+    <div className="p-6 bg-[#E0F0EE] min-h-screen">
+      <h1 className="text-9xl font-bold mb-4 text-[#496989]">Itineraries</h1>
       {user && user.userRole === "TourGuide" && (
         <Button
           type="primary"
@@ -417,7 +455,7 @@ const ItineraryScreen = ({ setFlag }) => {
           Add Itinerary
         </Button>
       )}
-      <div className="p-8 bg-gray-100">
+      <div className="p-8 bg-[#E0F0EE]">
         <div className="mb-6">
           <input
             type="text"
@@ -524,27 +562,45 @@ const ItineraryScreen = ({ setFlag }) => {
         </div>
       </div>
       {(user===null || user.userRole === "Tourist") ? (
-        <main className="flex flex-wrap gap-2 py-10">
-          {sortedItineraries?.map((itinerary, index) => {
-            return (
-              <Card
-                hoverable
-                style={{ width: "33%" }}
-                key={index}
-                onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}
-              >
-                <Card.Meta
-                  title={itinerary.name}
-                  description={itinerary.language}
-                />
-                <p>Price: {itinerary.price}</p>
-                <p>Accessibility: {itinerary.accessibility}</p>
-                <p>Pickup Location: {itinerary.pickupLocation}</p>
-                <p>Drop Off Location: {itinerary.dropOffLocation}</p>
-              </Card>
-            );
-          })}
-        </main>
+        <main className="flex flex-wrap gap-4 py-10 "> 
+        {sortedItineraries?.map((itinerary, index) => (
+          <div
+            key={index}
+            className="relative m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-[#E2F4C5]" // Keep this class for the animation
+            onClick={() => navigate(`iternaryDetails/${itinerary._id}`)} // Set the click handler here
+            style={{ cursor: 'pointer' }} // Ensure the cursor changes to pointer
+          >
+            <Card
+              className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:text-white" // Change background to #E2F4C5 on hover
+              style={{ backgroundColor: '#ffffff' }} // Set a default background color for better visibility
+            >
+              <Card.Meta
+                title={
+                  <span className="font-bold text-7xl mb-2 transition-transform duration-500 ease-out hover:scale-150 " style={{ color: '#496989' }}>
+                    {itinerary.name}
+                  </span>
+                }
+                description={
+                  <div className="flex flex-col space-y-2" style={{ color: '#496989' }}> {/* Keep the text color consistent */}
+                    <span className="font-bold text-lg hover:text-[#58A399]">🌐 {itinerary.language}</span>
+                    <span className="font-bold text-lg hover:text-[#58A399]">💲 {itinerary.price ? `${itinerary.price}` : "N/A"}</span>
+                    <span className="font-bold text-lg hover:text-[#58A399]">♿ {itinerary.accessibility || "N/A"}</span>
+                    <span className="font-bold text-lg hover:text-[#58A399]">📍 from: {itinerary.pickupLocation}</span>
+                    <span className="font-bold text-lg hover:text-[#58A399]">📍 to: {itinerary.dropOffLocation}</span>
+                  </div>
+                }
+              />
+            </Card>
+      
+           
+                
+              </div>
+           
+        ))}
+      </main>
+      
+
+     
       ) : (
         <Table
           dataSource={sortedItineraries}
@@ -955,15 +1011,25 @@ const ItineraryScreen = ({ setFlag }) => {
 
             <Divider />
             <Form.Item label="Available Dates">
-              {viewingItinerary.availableDates.map((date, index) => (
-                  console.log("date", date),console.log("time", date.Times),
-                <div key={index}>
-                  <Input
-                      value={`${moment(date.Date).format('dddd, MMMM D, YYYY')} ${moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm").format('hh:mm A')}`}
-                      disabled
-                  />
-                </div>
-              ))}
+              {viewingItinerary.availableDates.map(
+                (date, index) => (
+                  console.log("date", date),
+                  console.log("time", date.Times),
+                  (
+                    <div key={index}>
+                      <Input
+                        value={`${moment(date.Date).format(
+                          "dddd, MMMM D, YYYY"
+                        )} ${moment(
+                          `${date.Date} ${date.Times}`,
+                          "YYYY-MM-DD HH:mm"
+                        ).format("hh:mm A")}`}
+                        disabled
+                      />
+                    </div>
+                  )
+                )
+              )}
             </Form.Item>
 
             <Divider />

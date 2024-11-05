@@ -21,6 +21,32 @@ exports.getItineraries = async (req, res, next) => {
     }
 };
 
+exports.getFlaggedItineraries = async (req, res, next) => {
+    try {
+        const flaggedItineraries = await Itinerary.find({isActive: false});
+        // if (flaggedItineraries.length === 0) {
+        //     return res.status(404).json({message: "No flagged itineraries found"});
+        // }
+        res.status(200).json(flaggedItineraries);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+// UnFlagInappropriate
+exports.UnFlagInappropriate = async (req, res, next) => {
+    try {
+        const {id} = req.params;
+        const itinerary = await Itinerary
+            .findByIdAndUpdate(id, {isActive: true}, {new: true});
+        if (!itinerary) {
+            return res.status(404).json({message: "Itinerary not found"});
+        }
+        res.status(200).json({message: "Itinerary unflagged successfully", itinerary});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
 exports.getItinerary = async (req, res, next) => {
     try {
         const {id} = req.params;
@@ -90,18 +116,31 @@ exports.getUpcomingItineraries = async (req, res, next) => {
 };
 
 exports.getBookedItineraries = async (req, res, next) => {
-    try{
+    try {
         const userId = req.user._id;
-        const bookedItineraries = await BookedItinerary.find({createdBy: userId,isActive: true})
-            .populate('itinerary').populate('createdBy');
-        if(bookedItineraries.length === 0){
-            return res.status(404).json({message: "No booked itineraries found"});
+
+        const bookedItineraries = await BookedItinerary.find({
+            createdBy: userId,
+            isActive: true
+        })
+            .populate({
+                path: 'itinerary', // Populate the itinerary field
+                populate: {
+                    path: 'createdBy' // Populate the createdBy field of the itinerary
+                }
+            })
+            .populate('createdBy'); // Populate the createdBy field of the booked itinerary
+
+        if (bookedItineraries.length === 0) {
+            return res.status(404).json({ message: "No booked itineraries found" });
         }
+
         res.status(200).json(bookedItineraries);
-    }catch (err){
+    } catch (err) {
         errorHandler.SendError(res, err);
     }
-}
+};
+
 
 exports.createItinerary = async (req, res, next) => {
     try {

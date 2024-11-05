@@ -57,68 +57,68 @@ const ProductDetails = ({setFlag}) => {
 
   // Render product details
   return (
-      <div className="container mx-auto py-16 px-5 max-w-7xl">
-        <div className="flex flex-col md:flex-row bg-white shadow-lg rounded-lg overflow-hidden">
-          {/* Product Image */}
-          <div className="md:w-1/2">
-            <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover transition duration-300 ease-in-out transform hover:scale-105"
-            />
-          </div>
+    <div className="w-full min-h-screen bg-[#E0F0EE] py-16 px-5">
+      <div className="flex flex-col md:flex-row bg-[#496989] shadow-lg rounded-lg overflow-hidden">
+        {/* Product Image */}
+        <div className="md:w-1/2">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover transition duration-300 ease-in-out transform hover:scale-105"
+          />
+        </div>
 
-          {/* Product Details */}
-          <div className="md:w-1/2 p-6 flex flex-col justify-between">
-            <div>
-              <Title level={2} className="text-[#02735F]">
-                {product.name}
-              </Title>
-              <div className="flex items-center space-x-2 mb-4">
-                <StarRating rating={averageRating} /> {/* Display average rating */}
-                <span className="text-gray-600 text-lg">{averageRating.toFixed(1)} / 5</span>
-              </div>
+        {/* Product Details */}
+        <div className="md:w-1/2 p-6 flex flex-col justify-between bg-white">
+          <div>
+            <Title level={2} className="text-[#58A399]">
+              {product.name}
+            </Title>
+            <div className="flex items-center space-x-2 mb-4">
+              <StarRating rating={averageRating} />
+              <span className="text-[#58A399] text-lg">{averageRating.toFixed(1)} / 5</span>
+            </div>
 
-              <Divider />
+            <Divider />
 
-              <Paragraph className="text-lg font-semibold text-[#02735F]">
-                Price: <span className="text-xl">${product.price.toFixed(2)}</span>
-              </Paragraph>
-              <Paragraph className="text-lg font-semibold">
-                Available Quantity: <span className="text-[#02735F]">{product.quantity}</span>
-              </Paragraph>
-              <Paragraph className="text-lg font-semibold">
-                Seller: <span className="text-[#02735F]">{product.createdBy.userRole === 'Admin' ? "Teer Enta":product.createdBy.name }</span>
-              </Paragraph>
+            <Paragraph className="text-lg font-semibold text-[#58A399]">
+              Price: <span className="text-xl">${product.price.toFixed(2)}</span>
+            </Paragraph>
+            <Paragraph className="text-lg font-semibold">
+              Available Quantity: <span className="text-[#58A399]">{product.quantity}</span>
+            </Paragraph>
+            <Paragraph className="text-lg font-semibold">
+              Seller: <span className="text-[#58A399]">{product.createdBy.userRole === 'Admin' ? "Teer Enta" : product.createdBy.name}</span>
+            </Paragraph>
 
-              <Paragraph className="mt-4 text-gray-700 text-base">
-                {product.description}
-              </Paragraph>
-              {user && user.userRole === "Tourist" && (
+            <Paragraph className="mt-4 text-gray-700 text-base">
+              {product.description}
+            </Paragraph>
+            {user && user.userRole === "Tourist" && (
               <Button
-                  type="primary"
-                  className="mt-6 bg-[#02735F] text-white hover:bg-[#039F7B] w-full text-lg font-bold py-3 rounded-lg transition duration-300 ease-in-out"
+                type="primary"
+                className="mt-6 bg-[#58A399] text-white hover:bg-[#A8CD9F] w-full text-lg font-bold py-3 rounded-lg transition duration-300 ease-in-out"
               >
                 Add to Cart
               </Button>
-              )}
-            </div>
+            )}
           </div>
         </div>
-
-        {/* Back to Products Button */}
-        <Link to="/products" className="block mt-8 text-center">
-
-            <Button
-                type="default"
-                className="bg-[#F0F4F8] text-[#02735F] hover:bg-[#E0E8F0] hover:text-[#039F7B] border-none rounded-lg transition duration-300 ease-in-out px-6 py-3"
-            >
-              Back to Products
-            </Button>
-
-        </Link>
       </div>
+
+      {/* Back to Products Button */}
+      <Link to="/products" className="block mt-8 text-center">
+        <Button
+          type="default"
+          className="bg-[#496989] text-[#ffffff] hover:bg-[#A8CD9F] hover:text-[#496989] border-none rounded-lg transition duration-300 ease-in-out px-6 py-3"
+        >
+          Back to Products
+        </Button>
+      </Link>
+    </div>
   );
 };
 
 export default ProductDetails;
+
+

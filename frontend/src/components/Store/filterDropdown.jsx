@@ -38,7 +38,7 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
       >
-        <button className="bg-customGreen text-white py-2 px-4 rounded-md focus:outline-none">
+        <button className="bg-[#58A399] text-white py-2 px-4 rounded-md focus:outline-none">
           Filter & Sort ⌄
         </button>
         {isOpen && (
@@ -50,7 +50,7 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
                       type="number"
                       value={minPrice}
                       onChange={(e) => setMinPrice(Number(e.target.value))}
-                      className="w-16 p-1 border border-customGreen rounded focus:outline-none"
+                      className="w-16 p-1 border border-[#58A399] rounded focus:outline-none"
                   />
                 </label>
                 <label className="flex justify-between items-center">
@@ -114,7 +114,7 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
               </div>
 
               <button
-                  className="bg-customGreen text-white border-none rounded-md py-1 px-3 cursor-pointer transition-colors duration-300 hover:bg-darkerGreen"
+                  className="bg-[#58A399] text-white border-none rounded-md py-1 px-3 cursor-pointer transition-colors duration-300 hover:bg-darkerGreen"
                   onClick={handleApply}
               >
                 Apply
