@@ -382,7 +382,7 @@ const BookFlight = () => {
   const handleFinish = async (values) => {
     setLoading(true);
     try {
-      await bookFlight(selectedFlight, [
+      let data =await bookFlight(selectedFlight, [
         {
           id: 1,
           ...values.passenger,
@@ -398,10 +398,11 @@ const BookFlight = () => {
           },
         },
       ]);
+      console.log(data.data);
       message.success("Booking submitted successfully!");
     } catch (error) {
-      console.log("Error submitting booking:", error);
-      message.error("Failed to submit booking!");
+      console.log("Error submitting booking:", );
+      message.error(error.response.data.message);
     } finally {
       setLoading(false);
     }
