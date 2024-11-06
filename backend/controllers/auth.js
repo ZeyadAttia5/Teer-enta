@@ -158,3 +158,15 @@ exports.changePassword = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+
+exports.toggleFirstLoginAndUpdatePrefrences = async (req, res) => {
+    try {
+        const preferences=req.body.preferences;
+        const user = await Tourist.findById(req.user._id);
+        const updated= await Tourist.findByIdAndUpdate(req.user._id, {firstLogin: false,preferences}, {new: true});
+        res.status(200).json({message: 'First login status changed successfully.'});
+    }
+    catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}

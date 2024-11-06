@@ -18,3 +18,11 @@ export const changePassword = async (data) => {
         }
     });
 }
+
+export const toggleFirstLoginAndUpdatePrefrences = async ({prefrences,accessToken}) => {
+    return await axios.post(`${API_BASE_URL}/auth/toggleFirstLoginAndUpdatePrefrences`, {prefrences}, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+        }
+    });
+}
