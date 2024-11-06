@@ -99,6 +99,9 @@ const Sidebar = ({ visible, onClose }) => {
                         Activity Categories
                       </Menu.Item>
                   )}
+                  <Menu.Item key="7" onClick={() => handleClick("/activities")}>
+                    Activities
+                  </Menu.Item>
                   {user && user.userRole === "Admin" && (
                       <Menu.Item
                           key="16"
@@ -107,9 +110,6 @@ const Sidebar = ({ visible, onClose }) => {
                         Flagged Activity
                       </Menu.Item>
                   )}
-                  <Menu.Item key="7" onClick={() => handleClick("/activities")}>
-                    Activities
-                  </Menu.Item>
                   {user && user.userRole === "Advertiser" && (
                       <Menu.Item
                           key="8"

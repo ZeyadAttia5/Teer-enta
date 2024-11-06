@@ -251,7 +251,7 @@ exports.flagInappropriate = async (req, res) => {
         // Step 1: Flag itinerary as inactive
         const updatedItinerary = await Itinerary.findByIdAndUpdate(
             id,
-            {isActive: false},
+            {isAppropriate: false},
             {new: true}
         );
 
