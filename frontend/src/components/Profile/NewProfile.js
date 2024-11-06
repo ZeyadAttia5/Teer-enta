@@ -1,70 +1,150 @@
-import React from 'react';
-import { Button, Card, Descriptions, Tag } from 'antd';
-import { EditOutlined, LockOutlined, DeleteOutlined } from '@ant-design/icons';
-import {
-    getMyCurrency,
-    getProfile,
-    updateProfilee,
-  } from "../../api/profile.ts";
+import React, { useState, useEffect } from "react";
+import { Button, Input, Form, Modal, Switch, Spin, notification } from "antd";
+import CurrencyDropdown from "./Currency/CurrencyDropdown";
+import CurrencyDropdown1 from "./tmp";
+import { getProfile, updateProfilee } from "../../api/profile.ts";
 
-const TouristProfile = ({  }) => {
+const TouristProfile = () => {
+  const storedUser = localStorage.getItem("user");
+  const storedAccessToken = localStorage.getItem("accessToken");
+  const [loading, setLoading] = useState(false);
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const accessToken = storedAccessToken || null;
 
-    const tourist = {
-        mobileNumber: "123-456-7890",
-        nationality: "American",
-        dateOfBirth: "1990-01-01",
-        occupation: "Job",
-        level: "Silver",
-        loyaltyPoints: 200,
-        isActive: true,
-        wallet: 150,
-        addresses: ["123 Main St, New York, NY"],
-        currency: { code: "USD" },
-      };
+  const [fetchedData, setFetchedData] = useState([]);
+
+  const fetchData = async () => {
+    setLoading(true); // Show spinner
+    try {
+      const response = await getProfile(user._id);
+      // Assuming response is an array of { code, name, rate }
+      setFetchedData(response.data);
+      setLoading(false); // Show spinner
+    } catch (error) {
+      console.error("Error fetching currencies:", error);
+      setLoading(false); // Show spinner
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [currency, setCurrency] = useState("JOD");
+
+  const [profileData, setProfileData] = useState({});
+  const onEditClick = () => setIsEditing(true);
+
+  const onSaveClick = async () => {
+    setLoading(true); // Show spinner
+    try {
+      await updateProfilee({
+        ...fetchedData
+      }, user._id);
+      notification.success({ message: "Profile updated successfully!" });
+    } catch (error) {
+      notification.error({ message: "Failed to update profile." });
+    } finally {
+      setLoading(false); // Hide spinner
+      setIsEditing(false);
+    }
+  };
+
+  const onCancelEdit = () => setIsEditing(false);
+
+  const handleInputChange = (field, value) => {
+    setProfileData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleDeleteAccount = () => {
+    Modal.confirm({
+      title: "Are you sure you want to delete your account?",
+      // onOk: deleteAccount,
+    });
+  };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg mt-8">
-      <Card title="Tourist Profile" bordered={false}>
-        <Descriptions column={1} bordered>
-          <Descriptions.Item label="Mobile Number">{tourist.mobileNumber}</Descriptions.Item>
-          <Descriptions.Item label="Nationality">{tourist.nationality}</Descriptions.Item>
-          <Descriptions.Item label="Date of Birth">{new Date(tourist.dateOfBirth).toLocaleDateString()}</Descriptions.Item>
-          <Descriptions.Item label="Occupation">{tourist.occupation}</Descriptions.Item>
-          <Descriptions.Item label="Level">{tourist.level || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="Loyalty Points">{tourist.loyaltyPoints}</Descriptions.Item>
-          <Descriptions.Item label="Wallet Balance">{tourist.wallet}</Descriptions.Item>
-          <Descriptions.Item label="Status">
-            <Tag color={tourist.isActive ? 'green' : 'red'}>
-              {tourist.isActive ? 'Active' : 'Inactive'}
-            </Tag>
-          </Descriptions.Item>
-          <Descriptions.Item label="Addresses">
-            {tourist.addresses.length ? (
-              tourist.addresses.map((address, index) => (
-                <div key={index} className="mb-1">{address}</div>
-              ))
-            ) : (
-              'No addresses available'
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label="Currency">
-            {tourist.currency?.code ?? 'USD'}
-          </Descriptions.Item>
-        </Descriptions>
+    <Spin spinning={loading} tip="Updating Profile...">
+      <div className="max-w-xl mx-auto p-4 bg-white shadow-lg rounded-lg">
+        <h2 className="text-2xl font-bold mb-4">Tourist Profile</h2>
+        <Form layout="vertical">
+          <Form.Item label="Mobile Number">
+            <Input
+              value={fetchedData.mobileNumber}
+              disabled={!isEditing}
+              onChange={(e) =>
+                handleInputChange("mobileNumber", e.target.value)
+              }
+            />
+          </Form.Item>
+          <Form.Item label="Nationality">
+            <Input
+              value={fetchedData.nationality}
+              disabled={!isEditing}
+              onChange={(e) => handleInputChange("nationality", e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Date of Birth">
+            <Input
+              type="date"
+              value={fetchedData.dateOfBirth?.substring(0, 10)}
+              disabled={!isEditing}
+              onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Occupation">
+            <Input
+              value={fetchedData.occupation}
+              disabled={!isEditing}
+              onChange={(e) => handleInputChange("occupation", e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Loyalty Points">
+            <Input value={fetchedData.loyalityPoints} disabled />
+          </Form.Item>
+          <Form.Item label="Wallet">
+            <Input
+              prefix={currency}
+              value={fetchedData.wallet}
+              disabled={!isEditing}
+              onChange={(e) => handleInputChange("wallet", e.target.value)}
+            />
+          </Form.Item>
+          <CurrencyDropdown1 setCurrency={setCurrency} />
+          <Form.Item label="Active Status">
+            <Switch
+              checked={fetchedData.isActive}
+              disabled={!isEditing}
+              onChange={(checked) => handleInputChange("isActive", checked)}
+            />
+          </Form.Item>
+        </Form>
 
-        <div className="mt-8 flex justify-center space-x-4">
-          <Button type="primary" icon={<EditOutlined />} onClick={() => alert('Edit Profile')}>
-            Edit Profile
-          </Button>
-          <Button type="default" icon={<LockOutlined />} onClick={() => alert('Change Password')}>
+        <div className="flex gap-4 mt-4">
+          {!isEditing ? (
+            <Button type="primary" onClick={onEditClick}>
+              Edit Profile
+            </Button>
+          ) : (
+            <>
+              <Button type="primary" onClick={onSaveClick}>
+                Confirm
+              </Button>
+              <Button onClick={onCancelEdit}>Cancel</Button>
+            </>
+          )}
+          <Button
+          //  onClick={changePassword}
+          >
             Change Password
           </Button>
-          <Button type="danger" icon={<DeleteOutlined />} onClick={() => alert('Delete Account')}>
+          <Button type="danger" onClick={handleDeleteAccount}>
             Delete Account
           </Button>
         </div>
-      </Card>
-    </div>
+      </div>
+    </Spin>
   );
 };
 

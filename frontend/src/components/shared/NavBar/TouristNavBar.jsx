@@ -41,9 +41,11 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
       user &&
       (user.userRole === "Admin" || user.userRole === "TourismGovernor")
     ) {
-      return false;
+      navigate("/changePassword");
+    }else{
+      navigate(user ? "/profile" : "/login");
+      
     }
-    navigate(user ? "/profile" : "/login");
   };
 
   useEffect(() => {
@@ -92,10 +94,19 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
         }}
       >
         <div className="flex justify-end items-center lg:flex-1 mt-4">
-          <AccountButton
+          {(user && user.userRole !== "Admin") || !user && (
+            <AccountButton
             extra_tw="bg-green-600 hover:bg-green-700 transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
             onClick={onAccountClick}
           />
+          )}
+          {user && user.userRole === "Admin" && (
+            <AccountButton
+            extra_tw="bg-green-600 hover:bg-green-700 transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
+            onClick={onAccountClick}
+          />
+          )}
+
         </div>
 
         {/* Logout Button for Logged-in Users */}

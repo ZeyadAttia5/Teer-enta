@@ -1,6 +1,15 @@
 import { ReactComponent as AccountIcon } from "../../../assets/svgs/account.svg";
 
 const AccountButton = ({ extra_tw, onClick }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  var str;
+  if(!user){
+    str = "Login now";
+  }else if(user.userRole === "Admin" || user.userRole === "TourismGovernor"){
+    str = "Change password";
+  }else{
+    str = user.username;
+  }
   return (
     <div className={`flex ${extra_tw} items-center`}>
       <button
@@ -9,10 +18,7 @@ const AccountButton = ({ extra_tw, onClick }) => {
       >
         <AccountIcon className="w-6 h-6" />
         <span className="font-bold ml-2 text-lg leading-5">
-          {localStorage.getItem("user") &&
-          JSON.parse(localStorage.getItem("user"))
-            ? JSON.parse(localStorage.getItem("user")).username
-            : "Login now"}
+          {str}
         </span>
       </button>
     </div>
