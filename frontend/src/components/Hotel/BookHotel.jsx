@@ -48,25 +48,30 @@ const HotelOfferCard = ({ offer,setLoading }) => {
   const book = async () => {
     setLoading(true);
     try {
+      const user = localStorage.getItem("user");
+      if(user){
         const payments= [
-        {
+          {
             "method": "creditCard",
             "card": {
-                "vendorCode": "VI",
-                "cardNumber": "4111111111111111",
-                "expiryDate": "2024-10",
-                "holderName": "John Doe"
+              "vendorCode": "VI",
+              "cardNumber": "4111111111111111",
+              "expiryDate": "2024-10",
+              "holderName": "John Doe"
             }
-        }
-    ]
-      let { data } = await bookHotel({
-        hotel: hotel,
-        offer: mainOffer,
-        guests: mainOffer.guests,
-        payments
-      });
-      console.log("Hotel booked:", data);
+          }
+        ]
+        let { data } = await bookHotel({
+          hotel: hotel,
+          offer: mainOffer,
+          guests: mainOffer.guests,
+          payments
+        });
+        console.log("Hotel booked:", data);
         message.success("Hotel booked successfully!");
+      }else{
+        message.error("You need to login first");
+      }
     } catch (error) {
       console.log("Error booking hotel:", error);
       message.error(error.response.data.message);

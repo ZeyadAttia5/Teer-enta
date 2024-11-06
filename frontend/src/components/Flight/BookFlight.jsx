@@ -382,24 +382,29 @@ const BookFlight = () => {
   const handleFinish = async (values) => {
     setLoading(true);
     try {
-      let data =await bookFlight(selectedFlight, [
-        {
-          id: 1,
-          ...values.passenger,
-          dateOfBirth: values.passenger.dateOfBirth.format("YYYY-MM-DD"),
-          contact: {
-            ...values.passenger.contact,
-            phones: [
-              {
-                deviceType: "MOBILE",
-                ...values.passenger.contact.phones[0],
-              },
-            ],
+      const user = localStorage.getItem("user");
+      if(user){
+        let data =await bookFlight(selectedFlight, [
+          {
+            id: 1,
+            ...values.passenger,
+            dateOfBirth: values.passenger.dateOfBirth.format("YYYY-MM-DD"),
+            contact: {
+              ...values.passenger.contact,
+              phones: [
+                {
+                  deviceType: "MOBILE",
+                  ...values.passenger.contact.phones[0],
+                },
+              ],
+            },
           },
-        },
-      ]);
-      console.log(data.data);
-      message.success("Booking submitted successfully!");
+        ]);
+        console.log(data.data);
+        message.success("Booking submitted successfully!");
+        }else{
+            message.error("Please login to book a flight");
+        }
     } catch (error) {
       console.log("Error submitting booking:", );
       message.error(error.response.data.message);
