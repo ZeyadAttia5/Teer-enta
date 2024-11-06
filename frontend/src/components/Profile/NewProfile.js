@@ -14,6 +14,7 @@ import { redeemPoints } from "../../api/account.ts";
 import DeleteAccountButton from "./ProfileComponents/DeleteAccountButton.js";
 import LevelBadge from "./ProfileComponents/LevelBadge.js";
 import WalletBalanceCard from "./ProfileComponents/WalletBalanceCard.js";
+import UserCard from "./ProfileComponents/UserCard.js";
 
 const TouristProfile = () => {
   const storedUser = localStorage.getItem("user");
@@ -36,7 +37,10 @@ const TouristProfile = () => {
       // Assuming response is an array of { code, name, rate }
       setFetchedData(response.data);
       console.log("Fetched Data: ", response.data);
-      const extractedLevel = parseInt(response.data.level.replace(/\D/g, ""), 10);
+      const extractedLevel = parseInt(
+        response.data.level.replace(/\D/g, ""),
+        10
+      );
       console.log("Levelllllllllll: ", extractedLevel);
       setLevel(extractedLevel);
       console.log("Level: ", extractedLevel);
@@ -82,8 +86,6 @@ const TouristProfile = () => {
     setFetchedData((prev) => ({ ...prev, [field]: value }));
   };
 
-  
-
   const handleRedeemPoints = async () => {
     setLoading(true); // Show spinner
 
@@ -106,56 +108,76 @@ const TouristProfile = () => {
 
   return (
     <Spin spinning={loading} tip="Updating Profile...">
-      <div className="max-w-xl mx-auto p-4 bg-white shadow-lg rounded-lg">
-        <div className="flex justify-between">
-        <h2 className="text-2xl font-bold mb-4">{fetchedData.username}</h2>
-        <LevelBadge level={level} />
-        </div>
-        <Form layout="vertical">
-          <Form.Item label="Phone Number">
-            <Input
-              value={fetchedData.mobileNumber}
-              disabled={!isEditing}
-              onChange={(e) =>
-                handleInputChange("mobileNumber", e.target.value)
-              }
-            />
-          </Form.Item>
-          <Form.Item label="Nationality">
-            <Input
-              value={fetchedData.nationality}
-              disabled={!isEditing}
-              onChange={(e) => handleInputChange("nationality", e.target.value)}
-            />
-          </Form.Item>
+      <div className="flex gap-32">
+        <UserCard
+          username={user.username}
+          wallet={fetchedData.wallet}
+          currency={currency}
+          points={fetchedData.loyalityPoints}
+          userRole={fetchedData.userRole}
+          rate={rate}
+          setCurrencyId={setCurrencyId}
+          isEditable={isEditing}
+        />
 
-          <Form.Item label="Occupation">
-            <Input
-              value={fetchedData.occupation}
-              disabled={!isEditing}
-              onChange={(e) => handleInputChange("occupation", e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item label="Email">
-            <Input
-              value={fetchedData.email}
-              disabled={!isEditing}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item label="Loyalty Points">
-            <Input
-              value={fetchedData.loyalityPoints}
-              onChange={(e) => handleInputChange("loyalityPoints", e.target.value)}
+        <div className="flex justify-center">
+          <div className="max-w-xl p-4 bg-white shadow-lg rounded-lg">
+            <div className="flex justify-between">
+              <h2 className="text-2xl font-bold mb-4">
+                {fetchedData.username}
+              </h2>
+              <LevelBadge level={level} />
+            </div>
+            <Form layout="vertical">
+              <Form.Item label="Phone Number">
+                <Input
+                  value={fetchedData.mobileNumber}
+                  disabled={!isEditing}
+                  onChange={(e) =>
+                    handleInputChange("mobileNumber", e.target.value)
+                  }
+                />
+              </Form.Item>
+              <Form.Item label="Nationality">
+                <Input
+                  value={fetchedData.nationality}
+                  disabled={!isEditing}
+                  onChange={(e) =>
+                    handleInputChange("nationality", e.target.value)
+                  }
+                />
+              </Form.Item>
 
-              disabled
-            />
-          </Form.Item>
+              <Form.Item label="Occupation">
+                <Input
+                  value={fetchedData.occupation}
+                  disabled={!isEditing}
+                  onChange={(e) =>
+                    handleInputChange("occupation", e.target.value)
+                  }
+                />
+              </Form.Item>
+              <Form.Item label="Email">
+                <Input
+                  value={fetchedData.email}
+                  disabled={!isEditing}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                />
+              </Form.Item>
+              {/* <Form.Item label="Loyalty Points">
+                <Input
+                  value={fetchedData.loyalityPoints}
+                  onChange={(e) =>
+                    handleInputChange("loyalityPoints", e.target.value)
+                  }
+                  disabled
+                />
+              </Form.Item> */}
 
-          <>
-            {/* Inline styles for the animation */}
-            <style>
-              {`
+              <>
+                {/* Inline styles for the animation */}
+                <style>
+                  {`
           @keyframes slowBounce {
             0%, 100% {
               transform: translateY(0);
@@ -168,34 +190,34 @@ const TouristProfile = () => {
             animation: slowBounce 3s ease-in-out infinite;
           }
         `}
-            </style>
+                </style>
 
-            <div className="flex">
-            <Button
-              type="primary"
-              disabled={!canRedeem}
-              onClick={handleRedeemPoints}
-              className={`transition ${
-                canRedeem
-                  ? "bg-yellow-500 hover:bg-yellow-600 shadow-lg slow-bounce" // Slow bounce animation
-                  : "bg-gray-300 cursor-not-allowed" // Disabled style
-              }`}
-            >
-              Redeem Points
-            </Button>
-            <p className="ml-2 mt-1 text-gray-500 text-xs">
-              {canRedeem
-                ? "You can redeem 10000 points for 100 pounds."
-                : "You need at least 10000 points to redeem."}
-            </p>
-            </div>
-          </>
+                <div className="flex">
+                  <Button
+                    type="primary"
+                    disabled={!canRedeem}
+                    onClick={handleRedeemPoints}
+                    className={`transition ${
+                      canRedeem
+                        ? "bg-yellow-500 hover:bg-yellow-600 shadow-lg slow-bounce" // Slow bounce animation
+                        : "bg-gray-300 cursor-not-allowed" // Disabled style
+                    }`}
+                  >
+                    Redeem Points
+                  </Button>
+                  <p className="ml-2 mt-1 text-gray-500 text-xs">
+                    {canRedeem
+                      ? "You can redeem 10000 points for 100 pounds."
+                      : "You need at least 10000 points to redeem."}
+                  </p>
+                </div>
+              </>
 
-          <div
-            style={{ display: "flex", alignItems: "center", gap: "10px" }}
-            className="mt-2"
-          >
-            {/* <Form.Item label="Wallet" style={{ flex: 1 }}>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                className="mt-2"
+              >
+                {/* <Form.Item label="Wallet" style={{ flex: 1 }}>
               <Input
                 prefix={currency}
                 value={fetchedData.wallet * rate || 0}
@@ -203,32 +225,33 @@ const TouristProfile = () => {
                 onChange={(e) => handleInputChange("wallet", e.target.value)}
               />
             </Form.Item> */}
-            <WalletBalanceCard currency={currency} value={fetchedData.wallet * rate || 0} />
 
-            <CurrencyDropdown1
-              setCurrencyId={setCurrencyId}
-              isEditable={isEditing}
-            />
+                {/* <CurrencyDropdown1
+                  setCurrencyId={setCurrencyId}
+                  isEditable={isEditing}
+                /> */}
+              </div>
+            </Form>
+
+            <div className="flex gap-4 mt-4">
+              {!isEditing ? (
+                <Button type="primary" onClick={() => setIsEditing(true)}>
+                  Edit Profile
+                </Button>
+              ) : (
+                <>
+                  <Button type="primary" onClick={onSaveClick}>
+                    Confirm
+                  </Button>
+                  <Button onClick={() => setIsEditing(false)}>Cancel</Button>
+                </>
+              )}
+              <Link to="/changePassword">
+                <Button>Change Password</Button>
+              </Link>
+              <DeleteAccountButton />
+            </div>
           </div>
-        </Form>
-
-        <div className="flex gap-4 mt-4">
-          {!isEditing ? (
-            <Button type="primary" onClick={() => setIsEditing(true)}>
-              Edit Profile
-            </Button>
-          ) : (
-            <>
-              <Button type="primary" onClick={onSaveClick}>
-                Confirm
-              </Button>
-              <Button onClick={() => setIsEditing(false)}>Cancel</Button>
-            </>
-          )}
-          <Link to="/changePassword">
-            <Button>Change Password</Button>
-          </Link>
-          <DeleteAccountButton />
         </div>
       </div>
     </Spin>
