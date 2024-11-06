@@ -72,18 +72,63 @@ const Sidebar = ({ visible, onClose }) => {
             <Menu.Item key="4" onClick={() => handleClick("/itinerary")}>
               Itinerary
             </Menu.Item>
+            {(user && user.userRole === "Admin") && (
             <Menu.Item
               key="15"
               onClick={() => handleClick("/itinerary/flaggedIternaries")}
             >
               Flagged Itinerary
             </Menu.Item>
+            )}
             {user && user.userRole === "TourGuide" && (
               <Menu.Item key="5" onClick={() => handleClick("/itinerary/my")}>
                 My Itinerary
               </Menu.Item>
             )}
           </Menu.SubMenu>
+        )}
+        {user &&
+            user &&
+            (user.userRole === "Advertiser" || user.userRole === "Admin") && (
+                <Menu.SubMenu key="sub3" title="Activities">
+                  {user && user.userRole === "Admin" && (
+                      <Menu.Item
+                          key="6"
+                          onClick={() => handleClick("/activity-categories")}
+                      >
+                        Activity Categories
+                      </Menu.Item>
+                  )}
+                  {user && user.userRole === "Admin" && (
+                      <Menu.Item
+                          key="16"
+                          onClick={() => handleClick("/flaggedActivities")}
+                      >
+                        Flagged Activity
+                      </Menu.Item>
+                  )}
+                  <Menu.Item key="7" onClick={() => handleClick("/activities")}>
+                    Activities
+                  </Menu.Item>
+                  {user && user.userRole === "Advertiser" && (
+                      <Menu.Item
+                          key="8"
+                          onClick={() => handleClick("/activities/my")}
+                      >
+                        My Activities
+                      </Menu.Item>
+                  )}
+                </Menu.SubMenu>
+            )}
+        {(user === null || (user && user.userRole === "Tourist")) && (
+            <Menu.SubMenu key="sub10" title="Activities">
+              <Menu.Item
+                  key="20"
+                  onClick={() => handleClick("/touristActivities")}
+              >
+                Activities
+              </Menu.Item>
+            </Menu.SubMenu>
         )}
         {user && user.userRole === "Advertiser" && (
           <Menu.SubMenu key="sub8" title="Transportation">
@@ -92,68 +137,6 @@ const Sidebar = ({ visible, onClose }) => {
               onClick={() => handleClick("/transportation/create")}
             >
               Create Transportation
-            </Menu.Item>
-          </Menu.SubMenu>
-        )}
-        {user && user.userRole === "Tourist" && (
-          <Menu.SubMenu key="sub9" title="Transportation">
-            <Menu.Item
-              key="19"
-              onClick={() => handleClick("/transportation/book")}
-            >
-              Book Transportation
-            </Menu.Item>
-          </Menu.SubMenu>
-        )}
-
-        {user &&
-          user &&
-          (user.userRole === "Advertiser" || user.userRole === "Admin") && (
-            <Menu.SubMenu key="sub3" title="Activities">
-              {user && user.userRole === "Admin" && (
-                <Menu.Item
-                  key="6"
-                  onClick={() => handleClick("/activity-categories")}
-                >
-                  Activity Categories
-                </Menu.Item>
-              )}
-              {user && user.userRole === "Admin" && (
-                <Menu.Item
-                  key="16"
-                  onClick={() => handleClick("/flaggedActivities")}
-                >
-                  Flagged Activity
-                </Menu.Item>
-              )}
-              <Menu.Item key="7" onClick={() => handleClick("/activities")}>
-                Activities
-              </Menu.Item>
-              {user && user.userRole === "Advertiser" && (
-                <Menu.Item
-                  key="8"
-                  onClick={() => handleClick("/activities/my")}
-                >
-                  My Activities
-                </Menu.Item>
-              )}
-            </Menu.SubMenu>
-          )}
-
-        {(user === null || (user && user.userRole === "Tourist")) && (
-          <Menu.SubMenu key="sub8" title="Hotel">
-            <Menu.Item key="19" onClick={() => handleClick("/hotel/book")}>
-              Book Hotel
-            </Menu.Item>
-          </Menu.SubMenu>
-        )}
-        {(user === null || (user && user.userRole === "Tourist")) && (
-          <Menu.SubMenu key="sub10" title="Activities">
-            <Menu.Item
-              key="20"
-              onClick={() => handleClick("/touristActivities")}
-            >
-              Activities
             </Menu.Item>
           </Menu.SubMenu>
         )}
@@ -177,23 +160,6 @@ const Sidebar = ({ visible, onClose }) => {
               )}
           </Menu.SubMenu>
         )}
-        {user && (user.userRole === "Tourist" || user.userRole === "Admin") && (
-          <Menu.SubMenu key="sub7" title="Complaints">
-            {user && user.userRole === "Admin" && (
-              <Menu.Item
-                key="17"
-                onClick={() => handleClick("/ComplaintsManagement")}
-              >
-                Complaints Management
-              </Menu.Item>
-            )}
-            {user && user.userRole === "Tourist" && (
-              <Menu.Item key="18" onClick={() => handleClick("/myComplaints")}>
-                My Complaints
-              </Menu.Item>
-            )}
-          </Menu.SubMenu>
-        )}
         {user && user.userRole === "Admin" && (
           <Menu.SubMenu key="sub2" title="Users">
             <Menu.Item key="9" onClick={() => handleClick("/allUsers")}>
@@ -208,14 +174,47 @@ const Sidebar = ({ visible, onClose }) => {
             {/* Add more admin options here if needed */}
           </Menu.SubMenu>
         )}
-
-        {user === null ||(user && user.userRole === "Tourist") && (
-          <Menu.SubMenu key="sub5" title="Flights">
-            <Menu.Item key="20" onClick={() => handleClick("/flight/bookFlight")}>
-              Book Flight
-            </Menu.Item>
-          </Menu.SubMenu>
-          )}
+        {(user === null || (user &&  user.userRole === "Tourist") )&& (
+            <Menu.SubMenu key="sub9" title="Transportation">
+              <Menu.Item
+                  key="19"
+                  onClick={() => handleClick("/transportation/book")}
+              >
+                Book Transportation
+              </Menu.Item>
+            </Menu.SubMenu>
+        )}
+        {(user === null || (user && user.userRole === "Tourist")) && (
+            <Menu.SubMenu key="sub8" title="Hotel">
+              <Menu.Item key="19" onClick={() => handleClick("/hotel/book")}>
+                Book Hotel
+              </Menu.Item>
+            </Menu.SubMenu>
+        )}
+        {(user === null || (user && user.userRole === "Tourist")) && (
+            <Menu.SubMenu key="sub66" title="Flight">
+              <Menu.Item key="66" onClick={() => handleClick("/flight/bookFlight")}>
+                Book Flight
+              </Menu.Item>
+            </Menu.SubMenu>
+        )}
+        {user && (user.userRole === "Tourist" || user.userRole === "Admin") && (
+            <Menu.SubMenu key="sub7" title="Complaints">
+              {user && user.userRole === "Admin" && (
+                  <Menu.Item
+                      key="17"
+                      onClick={() => handleClick("/ComplaintsManagement")}
+                  >
+                    Complaints Management
+                  </Menu.Item>
+              )}
+              {user && user.userRole === "Tourist" && (
+                  <Menu.Item key="18" onClick={() => handleClick("/myComplaints")}>
+                    My Complaints
+                  </Menu.Item>
+              )}
+            </Menu.SubMenu>
+        )}
       </Menu>
     </Drawer>
   );
