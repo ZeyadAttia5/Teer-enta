@@ -141,24 +141,26 @@ const Sidebar = ({ visible, onClose }) => {
           </Menu.SubMenu>
         )}
         {(user === null ||
-          (user &&
-            (user.userRole === "Seller" ||
-              user.userRole === "Tourist" ||
-              user.userRole === "Admin"))) && (
-          <Menu.SubMenu key="sub6" title="Products">
-            <Menu.Item key="13" onClick={() => handleClick("/products")}>
-              All Products
-            </Menu.Item>
-            {user &&
-              (user.userRole === "Seller" || user.userRole === "Admin") && (
-                <Menu.Item
-                  key="14"
-                  onClick={() => handleClick("/products/create")}
-                >
-                  Add Product
-                </Menu.Item>
+            (user &&
+                (user.userRole === "Seller" ||
+                    user.userRole === "Tourist" ||
+                    user.userRole === "Admin"))) && (
+            <Menu.SubMenu key="sub6" title="Products">
+              <Menu.Item key="13" onClick={() => handleClick("/products")}>
+                All Products
+              </Menu.Item>
+              {(user &&
+                  (user.userRole === "Seller" || user.userRole === "Admin")) && (
+                  <>
+                    <Menu.Item key="14" onClick={() => handleClick("/products/create")}>
+                      Add Product
+                    </Menu.Item>
+                    <Menu.Item key="21" onClick={() => handleClick("/products/quantity&sales")}>
+                      Quantity & Sales
+                    </Menu.Item>
+                  </>
               )}
-          </Menu.SubMenu>
+            </Menu.SubMenu>
         )}
         {user && user.userRole === "Admin" && (
           <Menu.SubMenu key="sub2" title="Users">

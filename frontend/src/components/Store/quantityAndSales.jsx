@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { viewAvailableQuantityAndSales } from "../../api/products.ts"; // Adjust path if needed
-import { Table } from "antd";
+import { Table, message } from "antd";
 
 const QuantityAndSales = () => {
   const [data, setData] = useState([]);
@@ -12,9 +12,10 @@ const QuantityAndSales = () => {
       try {
         const response = await viewAvailableQuantityAndSales();
         setData(response.data);
-        console.log(response.data)
+        message.success("Data loaded successfully!"); // Success message
       } catch (err) {
         setError("Failed to load data");
+        message.error(err.response.data.message); // Error message
       } finally {
         setLoading(false);
       }
@@ -41,22 +42,22 @@ const QuantityAndSales = () => {
     },
   ];
 
-  if (loading) {
-    return <div>Loading data...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading data...</div>;
+  // }
+  //
+  // if (error) {
+  //   return <div>{error}</div>;
+  // }
 
   return (
-    <Table 
-      dataSource={data} 
-      columns={columns} 
-      rowKey={(record) => record._id} 
-      pagination={{ pageSize: 10 }} 
-      className="mt-4"
-    />
+      <Table
+          dataSource={data}
+          columns={columns}
+          rowKey={(record) => record._id}
+          pagination={{ pageSize: 10 }}
+          className="mt-4"
+      />
   );
 };
 

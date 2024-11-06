@@ -39,12 +39,14 @@ exports.getArchivedProducts = async (req,res)=>{
 exports.viewAvailableQuantityAndSales = async (req, res) => {
     try {
         // Step 1: Fetch all active products created by the logged-in user
-        const products = await product.find({ isActive: true, createdBy: req.user._id });
-
+        const products = await product.find({createdBy: req.user._id });
+        console.log("Here",products);
         // Step 2: Fetch all orders that are confirmed (i.e., not canceled or pending)
         const orders = await Order.find({ status: { $ne: 'Cancelled' }, isActive: true }).populate('products.product');
-
         // Step 3: Manually calculate the total quantity sold and total sales for each product
+        if(products.length === 0) {
+            return res.status(400).json({ message: "You didn't create Any Product Yet" });
+        }
         const productSales = products.map(product => {
             let totalQuantitySold = 0;
             let totalSales = 0;
@@ -58,7 +60,6 @@ exports.viewAvailableQuantityAndSales = async (req, res) => {
                     }
                 });
             });
-
             // Return the product data with its available quantity, total quantity sold, and total sales
             return {
                 _id: product._id,
@@ -68,7 +69,7 @@ exports.viewAvailableQuantityAndSales = async (req, res) => {
                 totalSales: totalSales  // Total sales amount
             };
         });
-
+        console.log("Here",productSales);
         // Step 4: Return the result
         return res.status(200).json(productSales);
     } catch (err) {

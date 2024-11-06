@@ -108,7 +108,7 @@ function App() {
             <Route path="/activity-categories" element={<ActivityCategories setFlag={setFlag} />} />
             <Route path="/tags" element={<Tags setFlag={setFlag} />} />
             <Route path="/activity" element={<ActivityList setFlag={setFlag} />} />
-
+            <Route path="/touristActivities" element={<TouristActivity setFlag={setFlag} />}/>
             {/* Historical Places Routes */}
             <Route path="/historicalPlace" element={<ReadHistoriaclPlaces setFlag={setFlag} />} />
             <Route path="/historicalPlace/my" element={<ReadHistoriaclPlaces setFlag={setFlag} />} />
@@ -121,7 +121,9 @@ function App() {
             <Route path="/pendingUsers" element={<PendingUsers setFlag={setFlag} />} />
             <Route path="/showDocuments/:id" element={<ShowDocuments />} />
             <Route path="/addUser" element={<AddUser setFlag={setFlag} />} />
-
+            <Route path="/changePassword" element={<ChangePassword setFlag={setFlag} />}/>
+            <Route path="/requestAccountDeletion" element={<DeleteAccountButton setFlag={setFlag} />}/>
+            <Route path="/newProfile" element={<NewProfile />}/>
             {/* Product Management Routes */}
             <Route path="/products" element={<AdminProductGrid setFlag={setFlag} />} />
             <Route path="/products/:id" element={<ProductDetails setFlag={setFlag} />} />
@@ -137,6 +139,7 @@ function App() {
                 <Route path="iternaryDetails/:id" element={<IternaryDetails setFlag={setFlag} />} />
               </Routes>
             }/>
+            <Route path="/itinerary/my" element={<IternaryScreen setFlag={setFlag} />}/>
 
             {/* Hotel Routes */}
             <Route path="/hotel/*" element={
@@ -160,31 +163,8 @@ function App() {
               </Routes>
             }
           />
-
-          <Route
-            path="/itinerary/my"
-            element={<IternaryScreen setFlag={setFlag} />}
-          />
-          <Route
-            path="/touristActivities"
-            element={<TouristActivity setFlag={setFlag} />}
-          />
-          <Route
-            path="/changePassword"
-            element={<ChangePassword setFlag={setFlag} />}
-          />
-          <Route
-            path="/requestAccountDeletion"
-            element={<DeleteAccountButton setFlag={setFlag} />}
-          />
-          <Route
-            path="/ComplaintsManagement"
-            element={<ComplaintsManagement />}
-          />
-          <Route
-            path="/newProfile"
-            element={<NewProfile />}
-          />
+            {/* Complaints Routes */}
+          <Route path="/ComplaintsManagement" element={<ComplaintsManagement />}/>
           <Route path="/myComplaints" element={<MyComplaints />} />
         </Routes>
         <Toaster />

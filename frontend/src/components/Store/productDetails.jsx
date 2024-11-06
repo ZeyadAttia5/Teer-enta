@@ -103,7 +103,7 @@ const ProductDetails = ({setFlag}) => {
               Available Quantity: <span className="text-[#58A399]">{product.quantity}</span>
             </Paragraph>
             <Paragraph className="text-lg font-semibold">
-              Seller: <span className="text-[#58A399]">{product.createdBy.userRole === 'Admin' ? "Teer Enta" : product.createdBy.name}</span>
+              Seller: <span className="text-[#58A399]">{product.createdBy.userRole === 'Admin' ? "Teer Enta" : product.createdBy.username}</span>
             </Paragraph>
 
             <Paragraph className="mt-4 text-gray-700 text-base">
