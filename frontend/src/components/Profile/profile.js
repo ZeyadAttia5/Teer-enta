@@ -547,13 +547,7 @@ function Profile({ setFlag }) {
               <p className="text-lg font-semibold text-[#02735f]">
                 {userRole === "TourGuide" ? "Tour Guide" : userRole}
               </p>
-              <p className="text-lg text-[#02735f]">
-                {user.loyalityPoints <= 100000
-                  ? "Bronze"
-                  : user.loyalityPoints <= 500000
-                  ? "Silver"
-                  : "Gold"}
-              </p>
+              
             </div>
             {userRole === "Advertiser" && (
               <div className="">

@@ -34,7 +34,10 @@ const TouristProfile = () => {
       const response = await getProfile(user._id);
       // Assuming response is an array of { code, name, rate }
       setFetchedData(response.data);
-      setLevel(response.data.level);
+      const extractedLevel = parseInt(response.data.level.replace(/\D/g, ""), 10);
+
+      setLevel(extractedLevel);
+      console.log("Level: ", extractedLevel);
       setCanRedeem(response.data.loyalityPoints >= 10000);
       setCurrencyId(response.data.currency);
       const gettingCurrency = await getMyCurrency();

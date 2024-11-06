@@ -5,25 +5,29 @@ module.exports = {
     extend: {
       colors: {
         customGreen: '#02735F', // Your custom green color
-        darkerGreen: '#075B4C'
+        darkerGreen: '#075B4C',
+        first: "#496989",
+        second: "#58A399",
+        third: "#A8CD9F",
+        fourth: "#E2F4C5",
       },
       keyframes: {
         "tourist-background-keyframe": {
           "0%": {
             "background-image":
-                'linear-gradient(to bottom,rgba(7, 91, 76, 0) 70%,rgba(7, 91, 76, 1) 100%),url("assets/WelcomePhotos/mosque3.jpeg")',
+                'linear-gradient(to bottom,rgba(73, 105, 137, 0) 70%,rgba(73, 105, 137, 1) 100%),url("assets/WelcomePhotos/mosque3.jpeg")',
           },
           '25%': { 'opacity': '0.8' },
 
           "50%": {
             "background-image":
-                'linear-gradient(to bottom,rgba(7, 91, 76, 0) 70%,rgba(7, 91, 76, 1) 100%),url("assets/WelcomePhotos/sky.jpeg")',
+                'linear-gradient(to bottom,rgba(73, 105, 137, 0) 70%,rgba(73, 105, 137, 1) 100%),url("assets/WelcomePhotos/sky.jpeg")',
             'opacity': '1'
           },
           '75%': { 'opacity': '0.8' },
           "100%": {
             "background-image":
-                'linear-gradient(to bottom,rgba(7, 91, 76, 0) 70%,rgba(7, 91, 76, 1) 100%),url("assets/WelcomePhotos/mosque3.jpeg")',
+                'linear-gradient(to bottom,rgba(73, 105, 137, 0) 70%,rgba(73, 105, 137, 1) 100%),url("assets/WelcomePhotos/mosque3.jpeg")',
             'opacity': '1'
           },
         },

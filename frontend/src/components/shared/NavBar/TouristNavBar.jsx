@@ -33,6 +33,7 @@ const SideBar = ({ children, classNames }) => {
 
 const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
   const navigate = useNavigate();
+  const size = useMediaQuery();
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
 
@@ -42,9 +43,9 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
       (user.userRole === "Admin" || user.userRole === "TourismGovernor")
     ) {
       navigate("/changePassword");
-    }else if(user && user.userRole === "Tourist"){
+    } else if (user && user.userRole === "Tourist") {
       navigate("/newProfile");
-    }else {
+    } else {
       navigate(user ? "/profile" : "/login");
     }
   };
@@ -57,16 +58,16 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
   }, [isNavigate]);
 
   return (
-    <div className="w-full flex flex-row justify-between items-center bg-gradient-to-b from-green-600 to-teal-700% shadow-2xl p-6 z-10 h-20 text-white font-bold space-x-8">
+    <div className="w-full flex justify-between items-center bg-first to-teal-700% shadow-2xl p-6 z-10 h-20 text-white font-bold space-x-8">
       {/* Logo Section */}
-      <span className="ml-8 text-lg leading-7">
-        <div className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
+      <span className="ml-16 text-lg leading-7">
+        <div className="cursor-pointer w-fit border border-transparent  p-2 rounded-md transition-all duration-300 hover:scale-105">
           {/* Logo Link */}
           <Link to={"/"} className="ring-0">
             <img
               src={logo}
               alt="Logo"
-              width={120}
+              width={115}
               className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
             />
           </Link>
@@ -87,30 +88,54 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
         ))}
       </div>
 
-      {/* Sidebar Section */}
-      <SideBar
-        classNames={{
-          body: "bg-[#075B4C] text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
-          header: "bg-[#075B4C] text-white font-bold text-lg p-4",
-        }}
-      >
-        <div className="flex justify-end items-center lg:flex-1 mt-4">
-            <AccountButton
-            extra_tw="bg-green-600 hover:bg-green-700 transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
-            onClick={onAccountClick}
-          />
-        </div>
+        
 
-        {user && (
-          <button
-            onClick={() => setModalOpen(true)}
-            className="flex items-center justify-center mt-4 p-2 bg-red-600 hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
-            aria-label="Logout"
-          >
-            <FiLogOut className="w-6 h-6" />
-          </button>
-        )}
-      </SideBar>
+      {!["xs", "sm", "md"].includes(size) && (
+        <div className="flex items-center gap-5">
+        
+          <div className="flex justify-end items-center lg:flex-1 mt-4">
+            <AccountButton
+              extra_tw="bg-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
+              onClick={onAccountClick}
+            />
+          </div>
+
+          {user && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className="flex items-center justify-center mt-4 p-2 bg-first hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
+              aria-label="Logout"
+            >
+              <FiLogOut className="w-6 h-6" />
+            </button>
+          )}
+        </div>
+      )}
+      {["xs", "sm", "md"].includes(size) && (
+        <SideBar
+          classNames={{
+            body: "bg-[#075B4C] text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
+            header: "bg-[#075B4C] text-white font-bold text-lg p-4",
+          }}
+        >
+          <div className="flex justify-end items-center lg:flex-1 mt-4">
+            <AccountButton
+              extra_tw="bg-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
+              onClick={onAccountClick}
+            />
+          </div>
+
+          {user && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className="flex items-center justify-center mt-4 p-2 bg-first hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
+              aria-label="Logout"
+            >
+              <FiLogOut className="w-6 h-6" />
+            </button>
+          )}
+        </SideBar>
+      )}
     </div>
   );
 };
