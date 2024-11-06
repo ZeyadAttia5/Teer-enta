@@ -1,16 +1,18 @@
 import React from "react";
 
 const LevelBadge = ({ level }) => {
+  const extractedLevel = parseInt(level.replace(/\D/g, ""), 10);
+
   const getLevelText = (level) => {
     switch (level) {
       case 1:
-        return "Beginner";
+        return "Alpha male";
       case 2:
-        return "Intermediate";
+        return "Beta male";
       case 3:
-        return "Advanced";
+        return "Sigma male";
       default:
-        return "null";
+        return "Unknown Level";
     }
   };
 
@@ -33,15 +35,15 @@ const LevelBadge = ({ level }) => {
       </style>
       <div
         className={`relative inline-flex items-center justify-center w-fit p-2 h-12 text-white font-bold rounded-full ${
-          level === 1
+          extractedLevel === 1
             ? "bg-green-500"
-            : level === 2
+            : extractedLevel === 2
             ? "bg-blue-500"
             : "bg-purple-500"
         } custom-pulse`}
         style={{ border: "2px solid black" }}
       >
-        <span className="text-md">{getLevelText(level)}</span>
+        <span className="text-md">{getLevelText(extractedLevel)}</span>
       </div>
     </>
   );

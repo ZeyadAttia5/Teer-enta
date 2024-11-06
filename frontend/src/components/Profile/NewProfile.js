@@ -26,6 +26,7 @@ const TouristProfile = () => {
   const [rate, setRate] = useState(0);
   const [canRedeem, setCanRedeem] = useState(false);
   const [fetchedData, setFetchedData] = useState([]);
+  const [level, setLevel] = useState(0);
 
   const fetchData = async () => {
     setLoading(true); // Show spinner
@@ -33,6 +34,7 @@ const TouristProfile = () => {
       const response = await getProfile(user._id);
       // Assuming response is an array of { code, name, rate }
       setFetchedData(response.data);
+      setLevel(response.data.level);
       setCanRedeem(response.data.loyalityPoints >= 10000);
       setCurrencyId(response.data.currency);
       const gettingCurrency = await getMyCurrency();
@@ -102,7 +104,7 @@ const TouristProfile = () => {
       <div className="max-w-xl mx-auto p-4 bg-white shadow-lg rounded-lg">
         <div className="flex justify-between">
         <h2 className="text-2xl font-bold mb-4">{fetchedData.username}</h2>
-        <LevelBadge level={1} />
+        <LevelBadge level={level} />
         </div>
         <Form layout="vertical">
           <Form.Item label="Phone Number">
