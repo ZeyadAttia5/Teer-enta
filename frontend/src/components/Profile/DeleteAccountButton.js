@@ -21,7 +21,7 @@ const DeleteAccountButton = () => {
   return (
     <div>
       <button
-        className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
+        className="flex text-sm gap-2 items-center justify-center px-3 py-1.5 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-400 transition duration-300"
         onClick={() => setModalOpen(true)}
       >
         <svg
@@ -30,7 +30,7 @@ const DeleteAccountButton = () => {
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="size-6"
+          class="size-4"
         >
           <path
             stroke-linecap="round"

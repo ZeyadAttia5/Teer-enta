@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Select } from "antd";
-import { getAllCurrencies, chooseMyCurrency } from "../../api/profile.ts";
+import { chooseMyCurrency, getAllCurrencies } from "../../api/profile.ts";
 
 const { Option } = Select;
 
-const CurrencyDropdown1 = ({ setCurrency }) => {
+const CurrencyDropdown1 = ({ setCurrencyId, isEditable }) => {
   const [currencies, setCurrencies] = useState([]);
-  const [selectedCurrency, setSelectedCurrency] = useState("EGY");
-
 
   const fetchCurrencies = async () => {
     try {
@@ -28,26 +26,23 @@ const CurrencyDropdown1 = ({ setCurrency }) => {
     fetchCurrencies();
   }, []);
 
-  const handleChange = async (curr) => {
-    setSelectedCurrency(curr);
-    setCurrency(curr);
-    try {
-      const response = await chooseMyCurrency(curr._id);
-    } catch (err) {
-      console.error("Error choosing currency:", err);
-    }
+  const handleChange = async (id) => {
+    // setSelectedCurrency(curr);
+    // setCurrency(curr);
+    setCurrencyId(id);
   };
 
   return (
-    <Select onChange={handleChange} style={{ width: 250 }}>
-      <Option key={selectedCurrency._id} value={selectedCurrency.code}>
-          {selectedCurrency.name}
-        </Option>
-      {currencies.map((currency) => (
-        <Option key={currency._id} value={currency.code}>
-          {"("+currency.code+")"+ " "+ currency.name}
-        </Option>
-      ))}
+    <Select onChange={handleChange} style={{ width: 250 }}
+      disabled={!isEditable}
+      className="mt-1"
+    >
+      {isEditable &&
+        currencies.map((currency) => (
+          <Option key={currency._id} value={currency._id}>
+            {"(" + currency.code + ")" + " " + currency.name}
+          </Option>
+        ))}
     </Select>
   );
 };

@@ -378,10 +378,10 @@ function Signup({ setFlag }) {
             nationality: selectedNationality.label,
             dateOfBirth: dob,
             occupation: jobTitle,
-            preferences:{
+            preferences: {
               activityCategories: selectedCategories,
-              preferenceTags: selectedTags
-            }
+              preferenceTags: selectedTags,
+            },
           };
           break;
         case "TourGuide":
@@ -480,40 +480,10 @@ function Signup({ setFlag }) {
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex justify-center my-8">
       {isLoading && <LoadingCircle />}
-      <div className="relative w-[57%] h-screen overflow-hidden">
-        {images.map((image, index) => (
-          <img
-            key={index}
-            src={image}
-            alt={`Slide ${index + 1}`}
-            className={`absolute top-0 cursor-pointer left-0 w-full h-full transition-opacity duration-1000 ${
-              index === currentImageIndex ? "opacity-100" : "opacity-0"
-            }`}
-            onMouseDown={handleMouseDown} // Pause when clicked and held
-            onMouseUp={handleMouseUp} // Resume when released
-            onClick={handleImageClick} // Change image on click
-          />
-        ))}
 
-        {/* Dots indicator */}
-        {!isPaused && (
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-            {images.map((_, index) => (
-              <span
-                key={index}
-                className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
-                  currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
-                }`}
-                onClick={() => setCurrentImageIndex(index)} // Click on dot to go to a specific image
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="flex flex-col justify-center items-center w-[43%]">
+      <div className="flex flex-col justify-center items-center w-full">
         <span className="ml-8 text-lg leading-7">
           <div className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
             {/* Logo Link */}
@@ -527,296 +497,306 @@ function Signup({ setFlag }) {
             </Link>
           </div>
         </span>
-        <p className="text-[rgba(88,87,87,0.822)] font-bold text-1xl">
-          Signup now and get full access to our app.
-        </p>
-        <div className="flex justify-center items-center">
-          <form
-            className="form w-full p-[10px] pt-[5px] flex flex-col gap-1.5 max-w-[350px] bg-white relative   outline-none border border-[rgba(105,105,105,0.397)] rounded-[10px]
-       left-[10px] top-[15px] text-gray-500 text-[0.9em] cursor-text transition ease-linear duration-300 shadow-lg"
-          >
-            <Toggle selectedRole={handleRoleChange} setMessage={setMessage} />
-
-            <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
-              <span>Username</span>
-              {isFormSubmitted && !username && (
-                <span className="text-red-500 font-normal text-xs">
-                  This field is required
-                </span>
-              )}
-            </h6>
-            <label className="relative labelsignup">
-              <input
-                className="inputsignup"
-                type="text"
-                placeholder="Enter your username"
-                onChange={handleUsernameChange}
-                required
-                value={username}
-              />
-            </label>
-            {selectedRole === "Tourist" && (
-              <h6
-                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                  selectedRole !== "Tourist" ? "hidden" : ""
-                }`}
+        <div className="w-full">
+        <div className="flex justify-center">
+          <p className="text-[rgba(88,87,87,0.822)] font-bold text-1xl">
+            Signup now and get full access to our app.
+          </p>
+          </div>
+          <div className="flex justify-center">
+            <div className="flex justify-center items-center w-1/4">
+              <form
+                className="form w-full p-[10px] pt-[5px] flex flex-col gap-1.5 bg-white relative   outline-none border border-[rgba(105,105,105,0.397)] rounded-[10px]
+        top-[15px] text-gray-500 text-[0.9em] transition ease-linear duration-300 shadow-lg"
               >
-                <span>Nationality</span>
-                {isFormSubmitted && !selectedNationality && (
-                  <span className="text-red-500 font-normal text-xs">
-                    This field is required
-                  </span>
-                )}
-              </h6>
-            )}
-
-            <div
-              className={`relative ${
-                selectedRole !== "Tourist" ? "hidden" : ""
-              }`}
-            >
-              <div style={{ width: "100%", margin: "auto" }}>
-                <Select
-                  className=""
-                  options={options}
-                  value={selectedNationality}
-                  onChange={handleNationalityChange}
-                  isSearchable={true} // Enable search functionality
-                  placeholder="Select a country"
-                  styles={customStyles} // Applying the custom styles
+                <Toggle
+                  selectedRole={handleRoleChange}
+                  setMessage={setMessage}
                 />
-              </div>
-            </div>
-            <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
-              <span>Email</span>
-              {isFormSubmitted && !email && !isValidEmail && (
-                <span className="text-red-500 font-normal text-xs">
-                  This field is required
-                </span>
-              )}
-            </h6>
 
-            <label className="relative labelsignup">
-              <input
-                className="inputsignup"
-                type="email"
-                placeholder="Enter your email"
-                required
-                value={email}
-                onChange={handleEmailChange}
-              />
-              {!isValidEmail && email.length > 0 && (
-                <FaExclamationCircle
-                  style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: "red",
-                  }}
-                />
-              )}
-            </label>
-
-            {selectedRole === "Tourist" && (
-              <h6
-                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                  selectedRole !== "Tourist" ? "hidden" : ""
-                }`}
-              >
-                <span>Mobile Number</span>
-                {isFormSubmitted && !mobileNumber && (
-                  <span className="text-red-500 font-normal text-xs">
-                    This field is required
-                  </span>
-                )}
-              </h6>
-            )}
-            <label
-              className={`relative labelsignup ${
-                selectedRole !== "Tourist" ? "hidden" : ""
-              }`}
-            >
-              <input
-                className="inputsignup"
-                type="tel"
-                placeholder="Enter your mobile number"
-                required
-                value={mobileNumber}
-                onChange={handleMobileNumberChange}
-              />
-            </label>
-            {selectedRole === "Tourist" && (
-              <h6
-                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                  selectedRole !== "Tourist" ? "hidden" : ""
-                }`}
-              >
-                <span>Job Title</span>
-                {isFormSubmitted && (!jobTitle || jobTitle === "") && (
-                  <span className="text-red-500 font-normal text-xs">
-                    This field is required
-                  </span>
-                )}
-              </h6>
-            )}
-
-            <label
-              className={`relative labelsignup ${
-                selectedRole !== "Tourist" ? "hidden" : ""
-              }`}
-            >
-              <input
-                className="inputsignup"
-                type="Job Title"
-                placeholder="Enter your job title"
-                required
-                value={jobTitle}
-                onChange={handleJobTitleChange}
-              />
-            </label>
-
-            <div
-              className={`relative labelsignup ${
-                selectedRole !== "Tourist" ? "hidden" : ""
-              }`}
-            >
-              <h6
-                className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                  selectedRole !== "Tourist" ? "hidden" : ""
-                }`}
-              >
-                <span>Date of Birth</span>
-                {isFormSubmitted && !dob && !isDobValid && (
-                  <span className="text-red-500 font-normal text-xs">
-                    This field is required
-                  </span>
-                )}
-              </h6>
-              <div className="mt-1">
-                <input
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  type="date"
-                  name="dob"
-                  value={dob}
-                  required
-                  onChange={handleDobChange}
-                />
-              </div>
-            </div>
-
-            {selectedRole !== "Tourist" && (
-              <div>
-                <h6 className="text-sm mb-2 font-medium text-gray-700 flex justify-between items-center ">
-                  <span>ID</span>
-                  {isFormSubmitted && !ID && (
+                <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
+                  <span>Username</span>
+                  {isFormSubmitted && !username && (
                     <span className="text-red-500 font-normal text-xs">
                       This field is required
                     </span>
                   )}
                 </h6>
-                {selectedRole !== "Tourist" && <IDUpload setID={setID} />}
-              </div>
-            )}
+                <label className="relative labelsignup">
+                  <input
+                    className="inputsignup"
+                    type="text"
+                    placeholder="Enter your username"
+                    onChange={handleUsernameChange}
+                    required
+                    value={username}
+                  />
+                </label>
+                {selectedRole === "Tourist" && (
+                  <h6
+                    className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                      selectedRole !== "Tourist" ? "hidden" : ""
+                    }`}
+                  >
+                    <span>Nationality</span>
+                    {isFormSubmitted && !selectedNationality && (
+                      <span className="text-red-500 font-normal text-xs">
+                        This field is required
+                      </span>
+                    )}
+                  </h6>
+                )}
 
-            {(selectedRole === "Advertiser" || selectedRole === "Seller") && (
-              <div>
-                <h6 className="text-sm mb-2 font-medium text-gray-700 flex justify-between items-center ">
-                  <span>Taxation registry card</span>
-                  {isFormSubmitted && !secondID && (
+                <div
+                  className={`relative ${
+                    selectedRole !== "Tourist" ? "hidden" : ""
+                  }`}
+                >
+                  <div style={{ width: "100%", margin: "auto" }}>
+                    <Select
+                      className=""
+                      options={options}
+                      value={selectedNationality}
+                      onChange={handleNationalityChange}
+                      isSearchable={true} // Enable search functionality
+                      placeholder="Select a country"
+                      styles={customStyles} // Applying the custom styles
+                    />
+                  </div>
+                </div>
+                <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
+                  <span>Email</span>
+                  {isFormSubmitted && !email && !isValidEmail && (
                     <span className="text-red-500 font-normal text-xs">
                       This field is required
                     </span>
                   )}
                 </h6>
 
-                <IDUpload setID={setSecondID} />
-              </div>
-            )}
+                <label className="relative labelsignup">
+                  <input
+                    className="inputsignup"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
+                    value={email}
+                    onChange={handleEmailChange}
+                  />
+                  {!isValidEmail && email.length > 0 && (
+                    <FaExclamationCircle
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        color: "red",
+                      }}
+                    />
+                  )}
+                </label>
 
-            {selectedRole === "TourGuide" && (
-              <div>
+                {selectedRole === "Tourist" && (
+                  <h6
+                    className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                      selectedRole !== "Tourist" ? "hidden" : ""
+                    }`}
+                  >
+                    <span>Mobile Number</span>
+                    {isFormSubmitted && !mobileNumber && (
+                      <span className="text-red-500 font-normal text-xs">
+                        This field is required
+                      </span>
+                    )}
+                  </h6>
+                )}
+                <label
+                  className={`relative labelsignup ${
+                    selectedRole !== "Tourist" ? "hidden" : ""
+                  }`}
+                >
+                  <input
+                    className="inputsignup"
+                    type="tel"
+                    placeholder="Enter your mobile number"
+                    required
+                    value={mobileNumber}
+                    onChange={handleMobileNumberChange}
+                  />
+                </label>
+                {selectedRole === "Tourist" && (
+                  <h6
+                    className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                      selectedRole !== "Tourist" ? "hidden" : ""
+                    }`}
+                  >
+                    <span>Job Title</span>
+                    {isFormSubmitted && (!jobTitle || jobTitle === "") && (
+                      <span className="text-red-500 font-normal text-xs">
+                        This field is required
+                      </span>
+                    )}
+                  </h6>
+                )}
+
+                <label
+                  className={`relative labelsignup ${
+                    selectedRole !== "Tourist" ? "hidden" : ""
+                  }`}
+                >
+                  <input
+                    className="inputsignup"
+                    type="Job Title"
+                    placeholder="Enter your job title"
+                    required
+                    value={jobTitle}
+                    onChange={handleJobTitleChange}
+                  />
+                </label>
+
+                <div
+                  className={`relative labelsignup ${
+                    selectedRole !== "Tourist" ? "hidden" : ""
+                  }`}
+                >
+                  <h6
+                    className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                      selectedRole !== "Tourist" ? "hidden" : ""
+                    }`}
+                  >
+                    <span>Date of Birth</span>
+                    {isFormSubmitted && !dob && !isDobValid && (
+                      <span className="text-red-500 font-normal text-xs">
+                        This field is required
+                      </span>
+                    )}
+                  </h6>
+                  <div className="mt-1">
+                    <input
+                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      type="date"
+                      name="dob"
+                      value={dob}
+                      required
+                      onChange={handleDobChange}
+                    />
+                  </div>
+                </div>
+
+                {selectedRole !== "Tourist" && (
+                  <div>
+                    <h6 className="text-sm mb-2 font-medium text-gray-700 flex justify-between items-center ">
+                      <span>ID</span>
+                      {isFormSubmitted && !ID && (
+                        <span className="text-red-500 font-normal text-xs">
+                          This field is required
+                        </span>
+                      )}
+                    </h6>
+                    {selectedRole !== "Tourist" && <IDUpload setID={setID} />}
+                  </div>
+                )}
+
+                {(selectedRole === "Advertiser" ||
+                  selectedRole === "Seller") && (
+                  <div>
+                    <h6 className="text-sm mb-2 font-medium text-gray-700 flex justify-between items-center ">
+                      <span>Taxation registry card</span>
+                      {isFormSubmitted && !secondID && (
+                        <span className="text-red-500 font-normal text-xs">
+                          This field is required
+                        </span>
+                      )}
+                    </h6>
+
+                    <IDUpload setID={setSecondID} />
+                  </div>
+                )}
+
+                {selectedRole === "TourGuide" && (
+                  <div>
+                    <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
+                      <span>Certificates</span>
+                      {isFormSubmitted && certificates.length === 0 && (
+                        <span className="text-red-500 font-normal text-xs">
+                          This field is required
+                        </span>
+                      )}
+                    </h6>
+                    <FileUploadForm setCertificates={setCertificates} />
+                  </div>
+                )}
+
                 <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
-                  <span>Certificates</span>
-                  {isFormSubmitted && certificates.length === 0 && (
+                  <span>Password</span>
+                  {isFormSubmitted && !password && (
                     <span className="text-red-500 font-normal text-xs">
                       This field is required
                     </span>
                   )}
                 </h6>
-                <FileUploadForm setCertificates={setCertificates} />
-              </div>
-            )}
 
-            <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
-              <span>Password</span>
-              {isFormSubmitted && !password && (
-                <span className="text-red-500 font-normal text-xs">
-                  This field is required
-                </span>
-              )}
-            </h6>
+                <label className="relative labelsignup">
+                  <input
+                    className="inputsignup"
+                    type="password"
+                    placeholder="Enter your password"
+                    required
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                </label>
 
-            <label className="relative labelsignup">
-              <input
-                className="inputsignup"
-                type="password"
-                placeholder="Enter your password"
-                required
-                value={password}
-                onChange={handlePasswordChange}
-              />
-            </label>
+                <label className="relative labelsignup">
+                  <input
+                    className="inputsignup"
+                    type="password"
+                    placeholder="Confirm password"
+                    required
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                  />
+                  {/* Role Change */}
+                </label>
+                {selectedRole === "Tourist" && (
+                  <SelectPrefrences
+                    selectedCategories={selectedCategories}
+                    selectedTags={selectedTags}
+                    onCategoriesChange={setSelectedCategories}
+                    onTagsChange={setSelectedTags}
+                  />
+                )}
 
-            <label className="relative labelsignup">
-              <input
-                className="inputsignup"
-                type="password"
-                placeholder="Confirm password"
-                required
-                value={confirmPassword}
-                onChange={handleConfirmPasswordChange}
-              />
-              {/* Role Change */}
-            </label>
-            {selectedRole === "Tourist" && (
-              <SelectPrefrences
-                selectedCategories={selectedCategories}
-                selectedTags={selectedTags}
-                onCategoriesChange={setSelectedCategories}
-                onTagsChange={setSelectedTags}
-              />
-            )}
+                <PasswordRestrictions
+                  password={password}
+                  confirmPassword={confirmPassword}
+                  setIsValidVariable={setIsValidVariable}
+                  isSubmitted={isSubmitted}
+                />
 
-            <PasswordRestrictions
-              password={password}
-              confirmPassword={confirmPassword}
-              setIsValidVariable={setIsValidVariable}
-              isSubmitted={isSubmitted}
-            />
+                {!passwordMatch && (
+                  <p className="text-red-500 text-xs">Passwords do not match</p>
+                )}
 
-            {!passwordMatch && (
-              <p className="text-red-500 text-xs">Passwords do not match</p>
-            )}
+                {passwordMatch && <p className="my-1.5"></p>}
 
-            {passwordMatch && <p className="my-1.5"></p>}
-
-            <button
-              className="border-none mt-4 bg-[#02735f] outline-none bg-royalblue p-2.5 rounded-[10px] text-white text-[16px] transition-transform ease duration-300"
-              onClick={handleButtonClick}
-              type="submit"
-            >
-              Submit
-            </button>
-            <p className="text-[rgba(88,87,87,0.822)] text-sm text-center">
-              Already have an account?
-              <a className=" text-[#02735f] hover:underline" href="/login">
-                {" "}
-                Sign in
-              </a>
-            </p>
-            <p className="text-red-500">{message}</p>
-          </form>
+                <button
+                  className="border-none mt-4 bg-[#02735f] outline-none bg-royalblue p-2.5 rounded-[10px] text-white text-[16px] transition-transform ease duration-300"
+                  onClick={handleButtonClick}
+                  type="submit"
+                >
+                  Submit
+                </button>
+                <p className="text-[rgba(88,87,87,0.822)] text-sm text-center">
+                  Already have an account?
+                  <a className=" text-[#02735f] hover:underline" href="/login">
+                    {" "}
+                    Sign in
+                  </a>
+                </p>
+                <p className="text-red-500">{message}</p>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>

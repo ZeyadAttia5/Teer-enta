@@ -1,5 +1,6 @@
 import React from "react";
 import { changePassword } from "../../api/auth.ts";
+import Button from "antd";
 import PasswordRestrictions from "../Auth/Signup/PasswordRestrictions.js";
 const ChangePassword = () => {
   const [newPassword, setNewPassword] = React.useState("");
@@ -52,6 +53,12 @@ const ChangePassword = () => {
     <section>
       <div class="bg-white relative items-center w-full px-5 py-12 mx-auto md:px-12 lg:px-20 max-w-7xl">
         <div class="w-full max-w-md mx-auto md:max-w-sm md:px-0 md:w-96 sm:px-4">
+          <button
+            className="mb-4 text-blue-500 hover:underline"
+            onClick={() => window.history.back()}
+          >
+            <span className=" text-2xl">←</span>Back
+          </button>
           <div class="flex flex-col">
             <div>
               <h2 class="text-4xl text-black">Reset password</h2>

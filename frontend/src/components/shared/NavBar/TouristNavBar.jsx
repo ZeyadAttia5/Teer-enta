@@ -42,9 +42,10 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
       (user.userRole === "Admin" || user.userRole === "TourismGovernor")
     ) {
       navigate("/changePassword");
-    }else{
+    }else if(user && user.userRole === "Tourist"){
+      navigate("/newProfile");
+    }else {
       navigate(user ? "/profile" : "/login");
-      
     }
   };
 
@@ -94,22 +95,12 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
         }}
       >
         <div className="flex justify-end items-center lg:flex-1 mt-4">
-          {/* {!user || (user && user.userRole !== "Admin") && ( */}
             <AccountButton
             extra_tw="bg-green-600 hover:bg-green-700 transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
             onClick={onAccountClick}
           />
-          {/* )} */}
-          {/* {user && user.userRole === "Admin" && (
-            <AccountButton
-            extra_tw="bg-green-600 hover:bg-green-700 transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
-            onClick={onAccountClick}
-          />
-          )} */}
-
         </div>
 
-        {/* Logout Button for Logged-in Users */}
         {user && (
           <button
             onClick={() => setModalOpen(true)}
