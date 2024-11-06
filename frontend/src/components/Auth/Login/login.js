@@ -199,7 +199,7 @@ function Login({ setFlag, flag }) {
           </div>
           <button
             type="submit"
-            className="buttonlogin bg-[#02735f] block pt-3 pb-3 pl-5 pr-5 text-white text-sm leading-5 font-medium w-full rounded-lg uppercase"
+            className="buttonlogin bg-second block pt-3 pb-3 pl-5 pr-5 text-white text-sm leading-5 font-medium w-full rounded-lg uppercase"
             onClick={handleLoginSubmission}
           >
             Login

@@ -780,7 +780,7 @@ function Signup({ setFlag }) {
                 {passwordMatch && <p className="my-1.5"></p>}
 
                 <button
-                  className="border-none mt-4 bg-[#02735f] outline-none bg-royalblue p-2.5 rounded-[10px] text-white text-[16px] transition-transform ease duration-300"
+                  className="border-none mt-4 bg-first outline-none bg-royalblue p-2.5 rounded-[10px] text-white text-[16px] transition-transform ease duration-300"
                   onClick={handleButtonClick}
                   type="submit"
                 >
@@ -788,7 +788,7 @@ function Signup({ setFlag }) {
                 </button>
                 <p className="text-[rgba(88,87,87,0.822)] text-sm text-center">
                   Already have an account?
-                  <a className=" text-[#02735f] hover:underline" href="/login">
+                  <a className=" text-first hover:underline" href="/login">
                     {" "}
                     Sign in
                   </a>
