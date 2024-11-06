@@ -26,6 +26,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.1.7",
     "stripe": "^17.2.0",
+    "winston": "^3.16.0",
     "yarn": "^1.22.22"
   }
 }
