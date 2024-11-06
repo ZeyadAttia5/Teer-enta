@@ -57,6 +57,11 @@ const BookTransportation = ({}) => {
   };
   const handleClick = async (id) => {
     try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if(!user){
+        message.error("Please login to book transportation");
+        return;
+      }
       await bookTransportation(id);
       message.success("Transportation booked successfully");
     } catch (error) {
