@@ -21,8 +21,7 @@ function Signup({ setFlag }) {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
+ 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value); // Update the username state
   };
@@ -378,10 +377,7 @@ function Signup({ setFlag }) {
             nationality: selectedNationality.label,
             dateOfBirth: dob,
             occupation: jobTitle,
-            preferences: {
-              activityCategories: selectedCategories,
-              preferenceTags: selectedTags,
-            },
+            
           };
           break;
         case "TourGuide":
@@ -757,14 +753,7 @@ function Signup({ setFlag }) {
                   />
                   {/* Role Change */}
                 </label>
-                {selectedRole === "Tourist" && (
-                  <SelectPrefrences
-                    selectedCategories={selectedCategories}
-                    selectedTags={selectedTags}
-                    onCategoriesChange={setSelectedCategories}
-                    onTagsChange={setSelectedTags}
-                  />
-                )}
+                
 
                 <PasswordRestrictions
                   password={password}
