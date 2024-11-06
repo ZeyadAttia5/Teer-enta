@@ -34,8 +34,9 @@ const TouristProfile = () => {
       const response = await getProfile(user._id);
       // Assuming response is an array of { code, name, rate }
       setFetchedData(response.data);
+      console.log("Fetched Data: ", response.data);
       const extractedLevel = parseInt(response.data.level.replace(/\D/g, ""), 10);
-
+      console.log("Levelllllllllll: ", extractedLevel);
       setLevel(extractedLevel);
       console.log("Level: ", extractedLevel);
       setCanRedeem(response.data.loyalityPoints >= 10000);

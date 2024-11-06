@@ -108,7 +108,7 @@ exports.login = async (req, res) => {
         }
 
         // Check and update level if user is a tourist
-        if (user.role === 'Tourist') {  // Ensure this applies only to tourists
+        if (user.userRole === 'Tourist') {  // Ensure this applies only to tourists
             const tourist = await Tourist.findById(user._id);
             const loyaltyPoints = tourist.loyalityPoints;
             let newLevel;
@@ -120,6 +120,7 @@ exports.login = async (req, res) => {
             } else {
                 newLevel = 'LEVEL3';
             }
+            console.log('New level:', newLevel);
             // Update level only if necessary
             if (tourist.level !== newLevel) {
                 tourist.level = newLevel;
