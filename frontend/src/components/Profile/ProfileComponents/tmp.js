@@ -33,7 +33,7 @@ const CurrencyDropdown1 = ({ setCurrencyId, isEditable }) => {
   };
 
   return (
-    <Select onChange={handleChange} style={{ width: 250 }}
+    <Select onChange={handleChange} style={{ width: "100%" }}
       disabled={!isEditable}
       className="mt-1"
     >

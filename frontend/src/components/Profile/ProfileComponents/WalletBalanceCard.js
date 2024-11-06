@@ -2,7 +2,7 @@ import React from "react";
 
 const WalletBalanceCard = ({currency, value}) => {
   return (
-    <div className="flex items-center justify-start w-1/2 gap-3 p-3 bg-[#1c1f2f] rounded-lg">
+    <div className="flex items-center justify-start mt-4 gap-3 p-3 bg-[#2f3e89] rounded-lg">
       {/* SVG Wrapper */}
       <div className="w-7 flex items-center justify-center">
         <svg
