@@ -277,6 +277,36 @@ function Login({ setFlag, flag }) {
           </form>
         </div>
       )}
+              {showPassword ? (
+                <FaEyeSlash color="gray" />
+              ) : (
+                <FaEye color="gray" />
+              )}
+            </span>
+          </div>
+          <div className="flex justify-between mt-1 mb-4">
+            <span className="text-red-500 text-xs ml-4">{message}</span>
+            <a className="hover:underline text-[#474bca] text-xs" href="">
+              Forgot password?
+            </a>
+          </div>
+          <button
+            type="submit"
+            className="buttonlogin bg-second block pt-3 pb-3 pl-5 pr-5 text-white text-sm leading-5 font-medium w-full rounded-lg uppercase"
+            onClick={handleLoginSubmission}
+          >
+            Login
+          </button>
+
+          <p class="text-xs text-center">
+            No account?
+            <a href="/signup" className="text-[#474bca] hover:underline">
+              {" "}
+              Sign up
+            </a>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

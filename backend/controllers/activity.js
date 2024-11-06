@@ -87,7 +87,8 @@ exports.getUpcomingActivities = async (req, res, next) => {
             {
                 date: {$gte: today},
                 isAppropriate:true ,
-                isActive:true
+                isActive:true ,
+                isBookingOpen:true
             })
             .populate('category')
             .populate('preferenceTags');
@@ -148,7 +149,6 @@ exports.getBookedActivities = async (req, res, next) => {
 
 exports.createActivity = async (req, res, next) => {
     try {
-
         const activity = await Activity.create(req.body);
         console.log(activity);
         res.status(201).json({message: 'ActivityList created successfully', activity});

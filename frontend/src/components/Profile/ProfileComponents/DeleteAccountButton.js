@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { requestAccountDeletion } from "../../api/account.ts";
-import ConfirmationModal from "../shared/ConfirmationModal.js";
+import { requestAccountDeletion } from "../../../api/account.ts";
+import ConfirmationModal from "../../shared/ConfirmationModal.js";
 
 const DeleteAccountButton = () => {
     const storedUser = localStorage.getItem("user");

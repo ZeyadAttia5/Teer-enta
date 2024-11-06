@@ -9,6 +9,7 @@ import {
   Tooltip,
   Badge,
   message,
+  Button,
 } from "antd";
 import {
   CarOutlined,
@@ -100,7 +101,7 @@ const BookTransportation = ({}) => {
       dataSource={data}
       loading={loading}
       renderItem={(item,index) => (
-        <List.Item key={index} onClick={()=>handleClick(item._id)}>
+        <List.Item key={index} >
           <Badge.Ribbon
             text={item.isActive ? "Active" : "Inactive"}
             color={item.isActive ? "green" : "red"}
@@ -188,8 +189,18 @@ const BookTransportation = ({}) => {
                   Created: {dayjs(item.createdAt).format("MMM D, YYYY")}
                 </Text>
               </Space>
+              <Button
+                type="primary"
+                block
+                onClick={() => handleClick(item._id)}
+              >
+                Book
+              </Button>
             </Card>
           </Badge.Ribbon>
+          {/* create a booking button using ant design */}
+          
+          
         </List.Item>
       )}
     />

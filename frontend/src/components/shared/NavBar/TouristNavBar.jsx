@@ -77,14 +77,16 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
       {/* Navigation Links */}
       <div className="flex flex-row gap-10 items-center">
         {["Equipment", "About Us", "Blog"].map((item, index) => (
-          <span
+          
+          <Link
             key={index}
             className="text-lg leading-5 cursor-pointer relative group hover:text-yellow-300 transition duration-300 ease-in-out"
+            to={item === "About Us" ? "/aboutUs" : ``}
           >
             {item}
             {/* Fancy Underline Animation */}
             <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-yellow-300 transition-all duration-300 group-hover:w-full"></span>
-          </span>
+          </Link>
         ))}
       </div>
 

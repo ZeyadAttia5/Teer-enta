@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
     const authHeader = req.headers["authorization"];
 
     if (!authHeader) {
-       next() ;
+        next();
     }
     const token = authHeader.split(" ")[1];
     let decodedToken;
@@ -14,12 +14,12 @@ module.exports = async (req, res, next) => {
     try {
         decodedToken = jwt.verify(token, process.env.JWT_SECRET_ACCESS);
         if (!decodedToken) {
-            return res.status(401).json({ message: "Token is Not Correct" });
+            return res.status(401).json({message: "Token is Not Correct"});
         }
 
-        const checkToken = await Token.findOne({ token: token });
+        const checkToken = await Token.findOne({token: token});
         if (!checkToken) {
-            return res.status(403).json({ message: "Login first" });
+            return res.status(403).json({message: "Login first"});
         }
 
         if (checkToken.blackListedToken) {
@@ -31,10 +31,10 @@ module.exports = async (req, res, next) => {
         req.user = {
             _id: decodedToken.userId,
             hasProfile: decodedToken.hasProfile,
-            role: decodedToken.userRole ,
+            role: decodedToken.userRole,
             accessToken: token
         };
-        req.body.createdBy = req.user._id ;
+        req.body.createdBy = req.user._id;
         next();
 
     } catch (err) {

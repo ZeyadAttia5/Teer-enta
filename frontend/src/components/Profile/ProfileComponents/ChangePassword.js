@@ -1,7 +1,7 @@
 import React from "react";
-import { changePassword } from "../../api/auth.ts";
+import { changePassword } from "../../../api/auth.ts";
 import Button from "antd";
-import PasswordRestrictions from "../Auth/Signup/PasswordRestrictions.js";
+import PasswordRestrictions from "../../Auth/Signup/PasswordRestrictions.js";
 const ChangePassword = () => {
   const [newPassword, setNewPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
@@ -126,7 +126,7 @@ const ChangePassword = () => {
             <div class="col-span-full">
               <button
                 type="submit"
-                className="items-center mt-4 justify-center w-full px-6 py-2.5 text-center text-white duration-200 bg-black border-2 border-black rounded-full nline-flex hover:bg-[#444]  hover:text-white focus:outline-none focus-visible:outline-black text-sm focus-visible:ring-black"
+                className="items-center mt-4 justify-center w-full px-6 py-2.5 text-center text-white duration-200 bg-second border-2 rounded-full nline-flex hover:bg-third  hover:text-white focus:outline-none focus-visible:outline-black text-sm focus-visible:ring-black"
                 onClick={handleSubmit}
               >
                 {" "}
