@@ -21,8 +21,7 @@ function Signup({ setFlag }) {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
+ 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value); // Update the username state
   };
@@ -378,10 +377,7 @@ function Signup({ setFlag }) {
             nationality: selectedNationality.label,
             dateOfBirth: dob,
             occupation: jobTitle,
-            preferences: {
-              activityCategories: selectedCategories,
-              preferenceTags: selectedTags,
-            },
+            
           };
           break;
         case "TourGuide":
@@ -757,14 +753,7 @@ function Signup({ setFlag }) {
                   />
                   {/* Role Change */}
                 </label>
-                {selectedRole === "Tourist" && (
-                  <SelectPrefrences
-                    selectedCategories={selectedCategories}
-                    selectedTags={selectedTags}
-                    onCategoriesChange={setSelectedCategories}
-                    onTagsChange={setSelectedTags}
-                  />
-                )}
+                
 
                 <PasswordRestrictions
                   password={password}
@@ -780,7 +769,7 @@ function Signup({ setFlag }) {
                 {passwordMatch && <p className="my-1.5"></p>}
 
                 <button
-                  className="border-none mt-4 bg-[#02735f] outline-none bg-royalblue p-2.5 rounded-[10px] text-white text-[16px] transition-transform ease duration-300"
+                  className="border-none mt-4 bg-first outline-none bg-royalblue p-2.5 rounded-[10px] text-white text-[16px] transition-transform ease duration-300"
                   onClick={handleButtonClick}
                   type="submit"
                 >
@@ -788,7 +777,7 @@ function Signup({ setFlag }) {
                 </button>
                 <p className="text-[rgba(88,87,87,0.822)] text-sm text-center">
                   Already have an account?
-                  <a className=" text-[#02735f] hover:underline" href="/login">
+                  <a className=" text-first hover:underline" href="/login">
                     {" "}
                     Sign in
                   </a>

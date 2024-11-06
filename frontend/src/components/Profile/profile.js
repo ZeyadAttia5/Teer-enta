@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaExclamationCircle } from "react-icons/fa";
-import SocialMediaIcons from "./SocialMediaIcons";
-import AddPreviousWork from "./AddPreviousWork";
-import PreviousWorksList from "./PreviousWorksList";
+import SocialMediaIcons from "./ProfileComponents/SocialMediaIcons";
+import AddPreviousWork from "./ProfileComponents/AddPreviousWork";
+import PreviousWorksList from "./ProfileComponents/PreviousWorksList";
 import {
   getMyCurrency,
   getProfile,
   updateProfilee,
 } from "../../api/profile.ts";
 import ImageProfile from "./ImageProfile/ImageProfile.js";
-import DeleteAccountButton from "./DeleteAccountButton.js";
+import DeleteAccountButton from "./ProfileComponents/DeleteAccountButton.js";
 import CurrencyDropdown from "./Currency/CurrencyDropdown.js";
 
 async function updateProfile(

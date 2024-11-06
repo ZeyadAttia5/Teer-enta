@@ -46,6 +46,7 @@ import {
   parseISO,
 } from "date-fns";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getCurrency } from "../../api/account.ts";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -76,6 +77,8 @@ const ItineraryScreen = ({ setFlag }) => {
   // New state variables for viewing itinerary
   const [viewingItinerary, setViewingItinerary] = useState(null);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+
+  const [currency, setCurrency] = useState(null);
 
   const location = useLocation();
 
@@ -196,6 +199,18 @@ const ItineraryScreen = ({ setFlag }) => {
       message.error("Failed to fetch preference tags");
     }
   };
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
+    }
+  };
+  useEffect(() => {
+    fetchCurrency();
+  }, []);
 
   const showModal = async (itinerary = null) => {
     setEditingItinerary(itinerary);
@@ -339,7 +354,7 @@ const ItineraryScreen = ({ setFlag }) => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (price) => `$${price}`,
+      render: (price) => `${price * currency?.rate} ${currency?.code}`,
     },
     {
       title: "Accessibility",
@@ -408,7 +423,7 @@ const ItineraryScreen = ({ setFlag }) => {
                   </Button>
                 </>
               ))}
-            {user && user.userRole === "Admin"&& (
+            {user && user.userRole === "Admin" && (
               <Badge count={0} offset={[-5, 5]}>
                 <Tooltip title={"Flag this item as Inappropriate"}>
                   <Button
@@ -1061,7 +1076,6 @@ const ItineraryScreen = ({ setFlag }) => {
                 ))}
               </Select>
             </Form.Item>
-
             <Form.Item
               label="Booking Open"
               name="isBookingOpen"

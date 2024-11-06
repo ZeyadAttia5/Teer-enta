@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Input, Form, Modal, Switch, Spin, notification } from "antd";
 import CurrencyDropdown from "./Currency/CurrencyDropdown";
-import CurrencyDropdown1 from "./tmp";
+import CurrencyDropdown1 from "./ProfileComponents/tmp";
 import {
   chooseMyCurrency,
   getMyCurrency,
@@ -11,8 +11,9 @@ import {
 import { Link } from "react-router-dom";
 import { set } from "date-fns";
 import { redeemPoints } from "../../api/account.ts";
-import DeleteAccountButton from "./DeleteAccountButton.js";
-import LevelBadge from "./LevelBadge.js";
+import DeleteAccountButton from "./ProfileComponents/DeleteAccountButton.js";
+import LevelBadge from "./ProfileComponents/LevelBadge.js";
+import WalletBalanceCard from "./ProfileComponents/WalletBalanceCard.js";
 
 const TouristProfile = () => {
   const storedUser = localStorage.getItem("user");
@@ -21,8 +22,8 @@ const TouristProfile = () => {
   const user = storedUser ? JSON.parse(storedUser) : null;
   const accessToken = storedAccessToken || null;
   const [isEditing, setIsEditing] = useState(false);
-  const [currency, setCurrency] = useState(null);
-  const [currencyId, setCurrencyId] = useState(null);
+  const [currency, setCurrency] = useState("");
+  const [currencyId, setCurrencyId] = useState("");
   const [rate, setRate] = useState(0);
   const [canRedeem, setCanRedeem] = useState(false);
   const [fetchedData, setFetchedData] = useState([]);
@@ -194,14 +195,15 @@ const TouristProfile = () => {
             style={{ display: "flex", alignItems: "center", gap: "10px" }}
             className="mt-2"
           >
-            <Form.Item label="Wallet" style={{ flex: 1 }}>
+            {/* <Form.Item label="Wallet" style={{ flex: 1 }}>
               <Input
                 prefix={currency}
                 value={fetchedData.wallet * rate || 0}
                 disabled={true}
                 onChange={(e) => handleInputChange("wallet", e.target.value)}
               />
-            </Form.Item>
+            </Form.Item> */}
+            <WalletBalanceCard currency={currency} value={fetchedData.wallet * rate || 0} />
 
             <CurrencyDropdown1
               setCurrencyId={setCurrencyId}

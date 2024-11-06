@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ConfirmationModal from "../shared/ConfirmationModal";
+import ConfirmationModal from "../../shared/ConfirmationModal";
 
 const AddPreviousWork = ({ onAddWork, cancelWork }) => {
   const [jobTitle, setJobTitle] = useState("");

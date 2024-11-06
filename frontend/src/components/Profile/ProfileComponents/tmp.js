@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Select } from "antd";
-import { chooseMyCurrency, getAllCurrencies } from "../../api/profile.ts";
+import { chooseMyCurrency, getAllCurrencies } from "../../../api/profile.ts";
 
 const { Option } = Select;
 

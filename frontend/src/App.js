@@ -26,13 +26,14 @@ import ActivityCategories from "./components/Activity/ActivityCategories.tsx";
 import Tags from "./components/Tags/Tags.tsx";
 import DrawerBar from "./components/shared/SideBar/Drawer.js";
 import TouristNavBar from "./components/shared/NavBar/TouristNavBar.jsx";
+import AboutUs from "./components/shared/NavBar/AboutUs/AboutUs.js";
 import AllActivitiesCRUD from "./components/Activity/AllActivitiesCRUD.tsx";
 import ConfirmationModal from "./components/shared/ConfirmationModal.js";
 import IternaryDetails from "./components/Itinerary/IternaryDetails.tsx";
 import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
 import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
-import ChangePassword from "./components/Profile/ChangePassword.js";
-import DeleteAccountButton from "./components/Profile/DeleteAccountButton.js";
+import ChangePassword from "./components/Profile/ProfileComponents/ChangePassword.js";
+import DeleteAccountButton from "./components/Profile/ProfileComponents/DeleteAccountButton.js";
 import FlaggedIternary from "./components/Itinerary/FlaggedIternary.jsx";
 import FlaggedActivities from "./components/Activity/FlaggedActivities.jsx";
 import ComplaintsManagement from "./components/Users/complain/complaintsManagement.js";
@@ -166,6 +167,8 @@ function App() {
             {/* Complaints Routes */}
           <Route path="/ComplaintsManagement" element={<ComplaintsManagement />}/>
           <Route path="/myComplaints" element={<MyComplaints />} />
+          <Route path="/aboutUs" element={<AboutUs />} />
+
         </Routes>
         <Toaster />
       </Router>
