@@ -15,6 +15,7 @@ import {
   notification,
   Badge,
   Tooltip,
+  Switch,
 } from "antd";
 import {
   MinusCircleOutlined,
@@ -563,46 +564,57 @@ const ItineraryScreen = ({ setFlag }) => {
           </div>
         </div>
       </div>
-      {(user===null || user.userRole === "Tourist") ? (
-        <main className="flex flex-wrap gap-4 py-10 "> 
-        {sortedItineraries?.map((itinerary, index) => (
-          <div
-            key={index}
-            className="relative m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-[#E2F4C5]" // Keep this class for the animation
-            onClick={() => navigate(`iternaryDetails/${itinerary._id}`)} // Set the click handler here
-            style={{ cursor: 'pointer' }} // Ensure the cursor changes to pointer
-          >
-            <Card
-              className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:text-white" // Change background to #E2F4C5 on hover
-              style={{ backgroundColor: '#ffffff' }} // Set a default background color for better visibility
+      {user === null || user.userRole === "Tourist" ? (
+        <main className="flex flex-wrap gap-4 py-10 ">
+          {sortedItineraries?.map((itinerary, index) => (
+            <div
+              key={index}
+              className="relative m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-[#E2F4C5]" // Keep this class for the animation
+              onClick={() => navigate(`iternaryDetails/${itinerary._id}`)} // Set the click handler here
+              style={{ cursor: "pointer" }} // Ensure the cursor changes to pointer
             >
-              <Card.Meta
-                title={
-                  <span className="font-bold text-7xl mb-2 transition-transform duration-500 ease-out hover:scale-150 " style={{ color: '#496989' }}>
-                    {itinerary.name}
-                  </span>
-                }
-                description={
-                  <div className="flex flex-col space-y-2" style={{ color: '#496989' }}> {/* Keep the text color consistent */}
-                    <span className="font-bold text-lg hover:text-[#58A399]">🌐 {itinerary.language}</span>
-                    <span className="font-bold text-lg hover:text-[#58A399]">💲 {itinerary.price ? `${itinerary.price}` : "N/A"}</span>
-                    <span className="font-bold text-lg hover:text-[#58A399]">♿ {itinerary.accessibility || "N/A"}</span>
-                    <span className="font-bold text-lg hover:text-[#58A399]">📍 from: {itinerary.pickupLocation}</span>
-                    <span className="font-bold text-lg hover:text-[#58A399]">📍 to: {itinerary.dropOffLocation}</span>
-                  </div>
-                }
-              />
-            </Card>
-      
-           
-                
-              </div>
-           
-        ))}
-      </main>
-      
-
-     
+              <Card
+                className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:text-white" // Change background to #E2F4C5 on hover
+                style={{ backgroundColor: "#ffffff" }} // Set a default background color for better visibility
+              >
+                <Card.Meta
+                  title={
+                    <span
+                      className="font-bold text-7xl mb-2 transition-transform duration-500 ease-out hover:scale-150 "
+                      style={{ color: "#496989" }}
+                    >
+                      {itinerary.name}
+                    </span>
+                  }
+                  description={
+                    <div
+                      className="flex flex-col space-y-2"
+                      style={{ color: "#496989" }}
+                    >
+                      {" "}
+                      {/* Keep the text color consistent */}
+                      <span className="font-bold text-lg hover:text-[#58A399]">
+                        🌐 {itinerary.language}
+                      </span>
+                      <span className="font-bold text-lg hover:text-[#58A399]">
+                        💲 {itinerary.price ? `${itinerary.price}` : "N/A"}
+                      </span>
+                      <span className="font-bold text-lg hover:text-[#58A399]">
+                        ♿ {itinerary.accessibility || "N/A"}
+                      </span>
+                      <span className="font-bold text-lg hover:text-[#58A399]">
+                        📍 from: {itinerary.pickupLocation}
+                      </span>
+                      <span className="font-bold text-lg hover:text-[#58A399]">
+                        📍 to: {itinerary.dropOffLocation}
+                      </span>
+                    </div>
+                  }
+                />
+              </Card>
+            </div>
+          ))}
+        </main>
       ) : (
         <Table
           dataSource={sortedItineraries}
@@ -1048,6 +1060,17 @@ const ItineraryScreen = ({ setFlag }) => {
                   </Option>
                 ))}
               </Select>
+            </Form.Item>
+
+            <Form.Item
+              label="Booking Open"
+              name="isBookingOpen"
+              valuePropName="checked"
+            >
+              <Switch disabled={true} value={viewingItinerary.isBookingOpen} />
+            </Form.Item>
+            <Form.Item label="Active" name="isActive" valuePropName="checked">
+              <Switch disabled={true} value={viewingItinerary.isActive} />
             </Form.Item>
           </Form>
         )}
