@@ -311,33 +311,35 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                 </Popconfirm>
               </div>
             ))}
+          {user && user.userRole === "Admin"&& (
           <Badge count={0} offset={[-5, 5]}>
-            <Tooltip title={"Flag this item as Inappropriate"}>
-              <Button
-                danger
-                icon={<FlagFilled />}
-                onClick={async () => {
-                  try {
-                    setLoading(true);
-                    await flagActivity(record._id);
-                    message.success("Item flagged as inappropriate");
-                    await fetchActivities();
-                  } catch (error) {
-                    message.error("Failed to flag item as inappropriate");
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-                shape="circle"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: '5px',
-                }}
-              />
-            </Tooltip>
-          </Badge>
+              <Tooltip title={"Flag this item as Inappropriate"}>
+                <Button
+                  danger
+                  icon={<FlagFilled />}
+                  onClick={async () => {
+                    try {
+                      setLoading(true);
+                      await flagActivity(record._id);
+                      message.success("Item flagged as inappropriate");
+                      await fetchActivities();
+                    } catch (error) {
+                      message.error("Failed to flag item as inappropriate");
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  shape="circle"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: '5px',
+                  }}
+                />
+              </Tooltip>
+            </Badge>
+          )}
         </span>
       ),
     },

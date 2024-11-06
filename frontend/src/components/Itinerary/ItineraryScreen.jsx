@@ -407,34 +407,36 @@ const ItineraryScreen = ({ setFlag }) => {
                   </Button>
                 </>
               ))}
-            <Badge count={0} offset={[-5, 5]}>
-              <Tooltip title={"Flag this item as Inappropriate"}>
-                <Button
-                  danger
-                  icon={<FlagFilled />}
-                  onClick={async () => {
-                    try {
-                      setLoading(true);
-                      await flagIternaary(record._id);
-                      message.success("Item flagged as inappropriate");
-                      await fetchItineraries();
-                    } catch (error) {
-                      message.error("Failed to flag item as inappropriate");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  shape="circle"
-                  style={{
-                    button: {
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    },
-                  }}
-                />
-              </Tooltip>
-            </Badge>
+            {user && user.userRole === "Admin"&& (
+              <Badge count={0} offset={[-5, 5]}>
+                <Tooltip title={"Flag this item as Inappropriate"}>
+                  <Button
+                    danger
+                    icon={<FlagFilled />}
+                    onClick={async () => {
+                      try {
+                        setLoading(true);
+                        await flagIternaary(record._id);
+                        message.success("Item flagged as inappropriate");
+                        await fetchItineraries();
+                      } catch (error) {
+                        message.error("Failed to flag item as inappropriate");
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    shape="circle"
+                    style={{
+                      button: {
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      },
+                    }}
+                  />
+                </Tooltip>
+              </Badge>
+            )}
           </>
         )
       ),
