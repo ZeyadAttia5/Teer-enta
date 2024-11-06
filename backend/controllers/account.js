@@ -4,6 +4,8 @@ const BookedActivity = require('../models/Booking/BookedActivitie');
 const BookedItinerary = require('../models/Booking/BookedItinerary');
 const BookedTransportation = require('../models/Booking/BookedTransportation');
 const Activity = require('../models/Activity/Activity') ;
+const BookedFlight = require('../models/Booking/BookedFlight');
+const BookedHotel = require('../models/Booking/BookedHotel');
 const Transportation = require('../models/Transportation');
 const Itinerary = require('../models/Itinerary/Itinerary');
 const Product = require('../models/Product/Product');
@@ -161,6 +163,14 @@ exports.requestMyAccountDeletion = async (req, res) => {
             const bookedTransportation = await BookedTransportation.find({createdBy: userId, status: "Pending"});
             if (bookedTransportation.length > 0) {
                 return res.status(400).json({message: "You have upcoming transportation, you can't delete your account"});
+            }
+            const bookedFlights = await BookedFlight.find({createdBy: userId, status: "Pending"});
+            if(bookedFlights.length > 0){
+                return res.status(400).json({message: "You have upcoming flights, you can't delete your account"});
+            }
+            const bookedHotels = await BookedHotel.find({createdBy: userId, status: "Pending"});
+            if (bookedHotels.length > 0) {
+                return res.status(400).json({message: "You have upcoming hotels, you can't delete your account"});
             }
         }
 
