@@ -76,7 +76,7 @@ exports.viewAvailableQuantityAndSales = async (req, res) => {
         return res.status(500).json({ message: "An error occurred while fetching product sales data." });
     }
 };
-;
+
 
 exports.getProduct = async (req, res) => {
     try {
@@ -85,6 +85,7 @@ exports.getProduct = async (req, res) => {
             return res.status(400).send({message: 'Invalid product id'});
         }
         const foundProduct = await product.findById(productId).populate('createdBy');
+        console.log("Hereeee",foundProduct.createdBy);
         if (!foundProduct) {
             return res.status(404).send({message: 'Product not found'});
         }

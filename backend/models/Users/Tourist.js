@@ -7,7 +7,7 @@ const touristSchema = new mongoose.Schema({
     nationality: {type: String, required: true},
     dateOfBirth: {type: Date, required: true},
     occupation: {type: String, required: true},// Job or Student
-    level: {type: String},
+    level: {type: String ,default: "LEVEL1"},
     loyalityPoints: {type: Number, default: 0},
     isActive: {type: Boolean, default: true},
     wallet: {type: Number, default: 0},
@@ -15,12 +15,16 @@ const touristSchema = new mongoose.Schema({
         preferenceTags: [{type: mongoose.Schema.Types.ObjectId, ref: 'PreferenceTag'}],
         activityCategories: [{type: mongoose.Schema.Types.ObjectId, ref: 'ActivityCategory'}],
     },
+    savedActivities: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Activity'
+    }],
     complaints: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Complain'
-    }] ,
+    }],
     addresses: [
-        {type:String }
+        {type: String}
     ],
     wishList: [
         {
@@ -34,6 +38,7 @@ const touristSchema = new mongoose.Schema({
             quantity: {type: Number}
         }
     ],
+    currency: {type: mongoose.Schema.Types.ObjectId, ref: 'Currency', default: null}
 }, {timestamps: true});
 
 // Use discriminator to extend User schema

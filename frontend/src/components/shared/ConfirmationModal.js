@@ -1,30 +1,28 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { requestAccountDeletion } from "../../api/account.ts";
+import { useNavigate } from "react-router-dom";
 
 function ConfirmationModal({ isOpen, onClose, onConfirm, message }) {
+  const navigate = useNavigate();
   if (!isOpen) return null;
-
   const handleModalClick = async (e) => {
     onConfirm();
 
-    if (
-      
-      message === "Are you sure you want to delete your account?"
-    ) {
+    if (message === "Are you sure you want to delete your account?") {
       const reponse = await requestAccountDeletion();
       localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("isAuthenticated");
-      window.location.reload();
-      window.location.href = "/";
+      navigate("/");
+      // window.location.reload();
     }
-    if(message === "Are you sure you want to log out?"){
+    if (message === "Are you sure you want to log out?") {
       localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("isAuthenticated");
-      window.location.reload();
-      window.location.href = "/";
+      navigate("/");
+      // window.location.reload();
     }
   };
 

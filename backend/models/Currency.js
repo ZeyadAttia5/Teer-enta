@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose') ;
 
-const currienciesSchema = new mongoose.Schema({
-    currency: { type: String, required: true },
-    rate: { type: Number, required:true},
-    isActive: { type: Boolean, default: true }
-}, { timestamps: true });
+const currencySchema = new mongoose.Schema({
+    name:{type:String , required:true} ,
+    code:{type:String , required:true} ,
+    rate:{type:Number , required:true}
+} , {timestamps:true})
 
-
-module.exports = mongoose.model('Currency', currienciesSchema);
+module.exports = mongoose.model('Currency' , currencySchema) ;

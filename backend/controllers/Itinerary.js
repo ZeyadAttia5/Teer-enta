@@ -1,12 +1,15 @@
 const Itinerary = require("../models/Itinerary/Itinerary");
 const BookedItinerary = require("../models/Booking/BookedItinerary");
 const User = require("../models/Users/User");
+const Tourist = require("../models/Users/Tourist");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
-const mongoose = require("mongoose"); // Ensure mongoose is required
+const mongoose = require("mongoose");
+const Activity = require("../models/Activity/Activity"); // Ensure mongoose is required
 
 exports.getItineraries = async (req, res, next) => {
     try {
-        const itineraries = await Itinerary.find({isActive: true , isBookingOpen: true})
+        const itineraries = await Itinerary
+            .find({isActive: true, isBookingOpen: true, isAppropriate: true})
             .populate("activities.activity")
             .populate("preferenceTags")
             .populate("timeline.activity");
@@ -21,12 +24,39 @@ exports.getItineraries = async (req, res, next) => {
     }
 };
 
+exports.getFlaggedItineraries = async (req, res, next) => {
+    try {
+        const flaggedItineraries = await Itinerary.find({isAppropriate: false});
+        // if (flaggedItineraries.length === 0) {
+        //     return res.status(404).json({message: "No flagged itineraries found"});
+        // }
+        res.status(200).json(flaggedItineraries);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+// UnFlagInappropriate
+exports.UnFlagInappropriate = async (req, res, next) => {
+    try {
+        const {id} = req.params;
+        const itinerary = await Itinerary
+            .findByIdAndUpdate(id, {isAppropriate: true}, {new: true});
+        if (!itinerary) {
+            return res.status(404).json({message: "Itinerary not found"});
+        }
+        res.status(200).json({message: "Itinerary unflagged successfully", itinerary});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
 exports.getItinerary = async (req, res, next) => {
     try {
         const {id} = req.params;
         const itinerary = await Itinerary.findOne({
             _id: id,
             isActive: true,
+            isAppropriate: true
         }).populate({
             path: "activities.activity",
             populate: [
@@ -54,7 +84,7 @@ exports.getMyItineraries = async (req, res, next) => {
     try {
         // req.user = { _id: '66f6564440ed4375b2abcdfb' };
         const createdBy = req.user._id;
-        const itineraries = await Itinerary.find({createdBy})
+        const itineraries = await Itinerary.find({createdBy: createdBy})
             .populate("activities.activity")
             .populate("preferenceTags");
         if (itineraries.length === 0) {
@@ -88,6 +118,57 @@ exports.getUpcomingItineraries = async (req, res, next) => {
         errorHandler.SendError(res, err);
     }
 };
+
+exports.getBookedItineraries = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+
+        const bookedItineraries = await BookedItinerary.find({
+            createdBy: userId,
+            isActive: true
+        })
+            .populate({
+                path: 'itinerary', // Populate the itinerary field
+                populate: {
+                    path: 'createdBy' // Populate the createdBy field of the itinerary
+                }
+            })
+            .populate('createdBy'); // Populate the createdBy field of the booked itinerary
+
+        if (bookedItineraries.length === 0) {
+            return res.status(404).json({message: "No booked itineraries found"});
+        }
+
+        res.status(200).json(bookedItineraries);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+exports.getUpcomingPaidItineraries = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const currentDate = new Date();
+
+        const upcomingItineraries = await BookedItinerary.find({
+            createdBy: userId,
+            status: 'Completed', // Only fetch completed (paid) bookings
+            date: { $gte: currentDate }, // Only fetch itineraries with dates in the future
+            isActive: true
+        }).populate('itinerary'); // Populate the itinerary details
+
+        if (!upcomingItineraries || upcomingItineraries.length === 0) {
+            return res.status(404).json({ message: "No upcoming paid itineraries found." });
+        }
+
+        res.status(200).json({
+            message: "Upcoming paid itineraries retrieved successfully",
+            upcomingItineraries
+        });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
 
 exports.createItinerary = async (req, res, next) => {
     try {
@@ -154,7 +235,7 @@ exports.deleteItinerary = async (req, res, next) => {
         await Itinerary.findByIdAndDelete(id);
         res
             .status(200)
-            .json({message: "Itinerary deleted successfully", data: itinerary});
+            .json({message: "Itinerary deleted successfully ", data: itinerary});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -164,31 +245,31 @@ exports.flagInappropriate = async (req, res) => {
     try {
         const id = req.params.id;
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid object id" });
+            return res.status(400).json({message: "Invalid object id"});
         }
 
         // Step 1: Flag itinerary as inactive
         const updatedItinerary = await Itinerary.findByIdAndUpdate(
             id,
-            { isActive: false },
-            { new: true }
+            {isActive: false},
+            {new: true}
         );
 
         if (!updatedItinerary) {
-            return res.status(404).json({ message: "Itinerary not found" });
+            return res.status(404).json({message: "Itinerary not found"});
         }
 
         const itineraryPrice = updatedItinerary.price;
-        const bookedItineraries = await BookedItinerary.find({ itinerary: id });
+        const bookedItineraries = await BookedItinerary.find({itinerary: id});
 
         const userIds = bookedItineraries.map(booking => booking.createdBy);
 
         await User.updateMany(
-            { _id: { $in: userIds } },  // Find users with IDs in userIds array
-            { $inc: { wallet: itineraryPrice } }  // Increment the wallet by the itinerary price
+            {_id: {$in: userIds}},  // Find users with IDs in userIds array
+            {$inc: {wallet: itineraryPrice}}  // Increment the wallet by the itinerary price
         );
-
-        return res.status(200).json({ message: "Itinerary flagged inappropriate and users refunded successfully" });
+        //
+        return res.status(200).json({message: "Itinerary flagged inappropriate and users refunded successfully"});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -198,17 +279,17 @@ exports.activateItinerary = async (req, res) => {
     try {
         const id = req.params.id;
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid object id" });
+            return res.status(400).json({message: "Invalid object id"});
         }
         const updatedItinerary = await Itinerary.findByIdAndUpdate(
             id,
-            { isActive: true },
-            { new: true }
+            {isActive: true},
+            {new: true}
         );
         if (!updatedItinerary) {
-            return res.status(404).json({ message: "Itinerary not found" });
+            return res.status(404).json({message: "Itinerary not found"});
         }
-        return res.status(200).json({ message: "Itinerary activated successfully" });
+        return res.status(200).json({message: "Itinerary activated successfully"});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -218,36 +299,33 @@ exports.deactivateItinerary = async (req, res) => {
     try {
         const id = req.params.id;
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid object id" });
+            return res.status(400).json({message: "Invalid object id"});
         }
         const updatedItinerary = await Itinerary.findByIdAndUpdate(
             id,
-            { isActive: false },
-            { new: true }
+            {isActive: false},
+            {new: true}
         );
         if (!updatedItinerary) {
-            return res.status(404).json({ message: "Itinerary not found" });
+            return res.status(404).json({message: "Itinerary not found"});
         }
-        return res.status(200).json({ message: "Itinerary deactivated successfully" });
+        return res.status(200).json({message: "Itinerary deactivated successfully"});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
 }
 
 
-
 exports.bookItinerary = async (req, res) => {
     try {
         const { id } = req.params;
-        const { date } = req.body;
+        const { date, paymentMethod = 'wallet' } = req.body; // Default to 'wallet' if payment method is not provided
         const userId = req.user._id;
-
 
         const itinerary = await Itinerary.findOne({ isActive: true, _id: id });
         if (!itinerary) {
-            return res.status(404).json({ message: "Itinerary not found or inactive" });
+            return res.status(404).json({message: "Itinerary not found or inactive"});
         }
-
 
         const existingBooking = await BookedItinerary.findOne({
             itinerary: id,
@@ -257,18 +335,80 @@ exports.bookItinerary = async (req, res) => {
         });
 
         if (existingBooking) {
-            return res.status(400).json({ message: "You have already Pending booking on this itinerary on the selected date" });
+            return res.status(400).json({ message: "You already have a pending booking for this itinerary on the selected date" });
         }
 
+        const tourist = await Tourist.findById(userId);
+        const totalPrice = itinerary.price; // Adjust this if needed to dynamically handle different prices
 
-        await BookedItinerary.create({
+        if (paymentMethod === 'wallet') {
+            if (tourist.wallet < totalPrice) {
+                return res.status(400).json({ message: "Insufficient wallet balance" });
+            }
+            tourist.wallet -= totalPrice;
+            await tourist.save();
+        } else if (paymentMethod === 'credit_card') {
+            // Implement credit card payment handling with a provider like Stripe here
+            // Uncomment and configure if using Stripe:
+            /*
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: totalPrice * 100, // Convert to cents if in USD
+                currency: 'usd',
+                payment_method: req.body.paymentMethodId, // Payment method ID from frontend
+                confirm: true
+            });
+            if (!paymentIntent) {
+                return res.status(500).json({ message: "Credit card payment failed" });
+            }
+            */
+        } else if (paymentMethod !== 'cash_on_delivery') {
+            return res.status(400).json({ message: "Invalid payment method selected" });
+        }
+
+        const newBooking = await BookedItinerary.create({
             itinerary: id,
             createdBy: userId,
             date: new Date(date),
-            status: "Pending",
+            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
         });
 
-        return res.status(200).json({ message: "Itinerary booked successfully" });
+// Logic for assigning loyalty points based on the tourist's current level
+        let loyaltyPoints = 0;
+        if (tourist.level === 'LEVEL1') {
+            loyaltyPoints = totalPrice * 0.5;
+        } else if (tourist.level === 'LEVEL2') {
+            loyaltyPoints = totalPrice * 1;
+        } else if (tourist.level === 'LEVEL3') {
+            loyaltyPoints = totalPrice * 1.5;
+        }
+
+// Update loyalty points for the tourist
+        tourist.loyalityPoints += loyaltyPoints;
+
+// Check if level needs to be updated based on the new loyalty points
+        let newLevel;
+        if (tourist.loyalityPoints <= 100000) {
+            newLevel = 'LEVEL1';
+        } else if (tourist.loyalityPoints <= 500000) {
+            newLevel = 'LEVEL2';
+        } else {
+            newLevel = 'LEVEL3';
+        }
+
+// Only update and save if the level has changed
+        if (tourist.level !== newLevel) {
+            tourist.level = newLevel;
+        }
+
+// Save the tourist document with updated points and possibly a new level
+        await tourist.save();
+
+
+        return res.status(200).json({
+            message: "Itinerary booked successfully",
+            booking: newBooking,
+            updatedWallet: paymentMethod === 'wallet' ? tourist.wallet : undefined
+        });
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -279,24 +419,41 @@ exports.cancelItineraryBooking = async (req, res) => {
         const { id } = req.params;
         const userId = req.user._id;
 
-        const bookedItinerary = await BookedItinerary.findOne(
-            { _id: id, createdBy: userId ,status : 'Pending'}).populate('itinerary');
+        const bookedItinerary = await BookedItinerary.findOne({
+            _id: id,
+            createdBy: userId,
+            isActive: true
+        }).populate('itinerary');
+
         if (!bookedItinerary) {
-            return res.status(404).json({ message: "Booking not found" });
+            return res.status(404).json({message: "Booking not found"});
+        }
+
+        if (bookedItinerary.status === 'Cancelled') {
+            return res.status(400).json({ message: "Booking already cancelled" });
         }
 
         const currentDate = new Date();
-        const date = new Date(bookedItinerary.date);
-        const hoursDifference = (date - currentDate) / (1000 * 60 * 60);
+        const itineraryDate = new Date(bookedItinerary.date);
+        const hoursDifference = (itineraryDate - currentDate) / (1000 * 60 * 60);
 
         if (hoursDifference < 48) {
-            return res.status(400).json({ message: "Cannot cancel the booking less than 48 hours before the itinerary" });
+            return res.status(400).json({message: "Cannot cancel the booking less than 48 hours before the itinerary"});
+        }
+
+        const tourist = await Tourist.findById(userId);
+        if (bookedItinerary.status === 'Completed') {
+            tourist.wallet += bookedItinerary.itinerary.price; // Adjust as needed for different price structures
+            await tourist.save();
         }
 
         bookedItinerary.status = 'Cancelled';
         await bookedItinerary.save();
 
-        return res.status(200).json({ message: "Booking cancelled successfully" });
+        return res.status(200).json({
+            message: "Booking cancelled successfully. Amount refunded to wallet",
+            updatedWallet: tourist.wallet
+        });
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -305,140 +462,166 @@ exports.cancelItineraryBooking = async (req, res) => {
 
 exports.addCommentToItinerary = async (req, res) => {
     try {
-      const { id } = req.params; 
-      const { comment } = req.body; 
-      const userId = req.user._id; 
-  
-      
-      const itinerary = await Itinerary.findById(id).populate('createdBy');
-  
-      if (!itinerary || !itinerary.isActive) {
-        return res.status(404).json({ message: "Itinerary not found or inactive" });
-      }
-
-  
-      const creator = itinerary.createdBy;
-      if (creator.userRole !== 'TourGuide') {
-        return res.status(400).json({ message: "This itinerary is not made by a tour guide" });
-      }
-  
-      const booking = await BookedItinerary.findOne({ 
-        itinerary: id,
-        createdBy: userId,
-        isActive: true,
-        status: 'Completed'
-      });
-  
-      if (!booking) {
-        return res.status(400).json({ message: "You haven't followed this itinerary" });
-      }
-  
-      itinerary.comments.push({
-        createdBy: userId,
-        comment: comment,
-      });
-  
-  
-      await itinerary.save();
-  
-      res.status(200).json({ message: "Comment added successfully", itinerary });
-    } catch (err) {
-      errorHandler.SendError(res, err);
-    }
-  };
-  
-
-  exports.getCommentsForItinerary = async (req, res) => {
-    try {
-      const { id } = req.params; 
-  
-      const itinerary = await Itinerary.findById(id)
-      .populate( 'comments.createdBy', 'username' )
-      .populate('createdBy');
-  
-      if (!itinerary || !itinerary.isActive) {
-        return res.status(404).json({ message: "Itinerary not found or inactive" });
-      }
-
-      if(itinerary.createdBy.userRole !== 'TourGuide'){
-        return res.status(400).json({ message: "This itinerary is not made by a tour guide" });
-      }
-  
-      res.status(200).json({ comments: itinerary.comments });
-    } catch (err) {
-      errorHandler.SendError(res, err);
-    }
-  };
+        const {id} = req.params;
+        const {comment} = req.body;
+        const userId = req.user._id;
 
 
-  exports.rateItinerary = async (req, res) => {
-    try {
-      const { id } = req.params; 
-      const { rating } = req.body; 
-      const userId = req.user._id; 
-  
-      const itinerary = await Itinerary.findById(id).populate('createdBy');
-  
-      if (!itinerary || !itinerary.isActive) {
-        return res.status(404).json({ message: "Itinerary not found or inactive" });
-      }
-  
-      const creator = itinerary.createdBy;
-      if (creator.userRole !== 'TourGuide') {
-        return res.status(400).json({ message: "This itinerary is not made by a tour guide" });
-      }
-  
-      const booking = await BookedItinerary.findOne({
-        itinerary: id,
-        createdBy: userId,
-        isActive: true,
-        status: 'Completed'
-      });
-  
-      if (!booking) {
-        return res.status(400).json({ message: "You haven't completed this itinerary" });
-      }
-  
-      const existingRating = itinerary.ratings.find((r) => r.createdBy.toString() === userId);
-  
-      if (existingRating) {
-        existingRating.rating = rating;
-      } else {
-        itinerary.ratings.push({
-          createdBy: userId,
-          rating: rating,
+        const itinerary = await Itinerary.findById(id).populate('createdBy');
+
+        if (!itinerary || !itinerary.isActive) {
+            return res.status(404).json({message: "Itinerary not found or inactive"});
+        }
+
+
+        const creator = itinerary.createdBy;
+        if (creator.userRole !== 'TourGuide') {
+            return res.status(400).json({message: "This itinerary is not made by a tour guide"});
+        }
+
+        const booking = await BookedItinerary.findOne({
+            itinerary: id,
+            createdBy: userId,
+            isActive: true,
+            status: 'Completed'
         });
-      }
-  
-      await itinerary.save();
-  
-      res.status(200).json({ message: "Rating added successfully", itinerary });
+
+        if (!booking) {
+            return res.status(400).json({message: "You haven't followed this itinerary"});
+        }
+
+        itinerary.comments.push({
+            createdBy: userId,
+            comment: comment,
+        });
+
+
+        await itinerary.save();
+
+        res.status(200).json({message: "Comment added successfully", itinerary});
     } catch (err) {
-      errorHandler.SendError(res, err);
+        errorHandler.SendError(res, err);
     }
-  };
+};
 
 
-  exports.getRatingsForItinerary = async (req, res) => {
+exports.getCommentsForItinerary = async (req, res) => {
     try {
-      const { id } = req.params;
-  
-      const itinerary = await Itinerary.findById(id)
-        .populate('ratings.createdBy', 'username')
-        .populate('createdBy'); 
-  
-      if (!itinerary || !itinerary.isActive) {
-        return res.status(404).json({ message: "Itinerary not found or inactive" });
-      }
-  
-      if (itinerary.createdBy.userRole !== 'TourGuide') {
-        return res.status(400).json({ message: "This itinerary is not made by a tour guide" });
-      }
-  
-      res.status(200).json({ ratings: itinerary.ratings });
+        const {id} = req.params;
+
+        const itinerary = await Itinerary.findById(id)
+            .populate('comments.createdBy', 'username')
+            .populate('createdBy');
+
+        if (!itinerary || !itinerary.isActive) {
+            return res.status(404).json({message: "Itinerary not found or inactive"});
+        }
+
+        if (itinerary.createdBy.userRole !== 'TourGuide') {
+            return res.status(400).json({message: "This itinerary is not made by a tour guide"});
+        }
+
+        res.status(200).json({comments: itinerary.comments});
     } catch (err) {
-      errorHandler.SendError(res, err);
+        errorHandler.SendError(res, err);
     }
-  };
+};
+
+
+exports.rateItinerary = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const {rating} = req.body;
+        const userId = req.user._id;
+
+        const itinerary = await Itinerary.findById(id).populate('createdBy');
+
+        if (!itinerary || !itinerary.isActive) {
+            return res.status(404).json({message: "Itinerary not found or inactive"});
+        }
+
+        const creator = itinerary.createdBy;
+        if (creator.userRole !== 'TourGuide') {
+            return res.status(400).json({message: "This itinerary is not made by a tour guide"});
+        }
+
+        const booking = await BookedItinerary.findOne({
+            itinerary: id,
+            createdBy: userId,
+            isActive: true,
+            status: 'Completed'
+        });
+
+        if (!booking) {
+            return res.status(400).json({message: "You haven't completed this itinerary"});
+        }
+
+        const existingRating = itinerary.ratings.find((r) => r.createdBy.toString() === userId);
+
+        if (existingRating) {
+            existingRating.rating = rating;
+        } else {
+            itinerary.ratings.push({
+                createdBy: userId,
+                rating: rating,
+            });
+        }
+
+        await itinerary.save();
+
+        res.status(200).json({message: "Rating added successfully", itinerary});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+
+exports.getRatingsForItinerary = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const itinerary = await Itinerary.findById(id)
+            .populate('ratings.createdBy', 'username')
+            .populate('createdBy');
+
+        if (!itinerary || !itinerary.isActive) {
+            return res.status(404).json({message: "Itinerary not found or inactive"});
+        }
+
+        if (itinerary.createdBy.userRole !== 'TourGuide') {
+            return res.status(400).json({message: "This itinerary is not made by a tour guide"});
+        }
+
+        res.status(200).json({ratings: itinerary.ratings});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+exports.makeAllItineraryAppropriate = async (req, res) => {
+    try {
+        const result = await Itinerary.updateMany(
+            {}, // Empty filter means all documents
+            { $set: { isAppropriate: true } } // Set "isAppropriate" to true
+        );
+
+        // Log the entire result to understand its structure
+        console.log('Update Result:', result);
+
+        // Check if any documents were modified
+        if (result.modifiedCount === 0) {
+            return res.status(200).json({ message: 'No it were updated (they may already be set as appropriate).' });
+        }
+
+        // Return a response indicating how many documents were modified
+        return res.status(200).json({
+            message: `Updated ${result.modifiedCount} iter.`,
+            totalMatched: result.matchedCount // Optional: show how many were matched
+        });
+    } catch (err) {
+        console.error('Error updating activities:', err); // Log the error for debugging
+        return errorHandler.SendError(res, err);
+    }
+};
   
   

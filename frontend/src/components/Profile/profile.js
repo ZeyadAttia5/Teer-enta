@@ -4,9 +4,14 @@ import { FaExclamationCircle } from "react-icons/fa";
 import SocialMediaIcons from "./SocialMediaIcons";
 import AddPreviousWork from "./AddPreviousWork";
 import PreviousWorksList from "./PreviousWorksList";
-import { getProfile, updateProfilee } from "../../api/profile.ts";
+import {
+  getMyCurrency,
+  getProfile,
+  updateProfilee,
+} from "../../api/profile.ts";
 import ImageProfile from "./ImageProfile/ImageProfile.js";
 import DeleteAccountButton from "./DeleteAccountButton.js";
+import CurrencyDropdown from "./Currency/CurrencyDropdown.js";
 
 async function updateProfile(
   user,
@@ -41,7 +46,11 @@ async function updateProfile(
   setCompanySize
 ) {
   try {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const ded = localStorage.getItem("user");
+    if (!ded) {
+      throw new Error("User not found in local storage");
+    }
+    const user = JSON.parse(ded);
     const accessToken = localStorage.getItem("accessToken");
     console.log("user id is: " + user._id);
     const response = await getProfile(user._id);
@@ -149,6 +158,8 @@ function Profile({ setFlag }) {
 
   const [profileImage, setProfileImage] = useState(null);
 
+  const [currency, setCurrency] = useState(null);
+
   const [addWork, setAddWork] = useState(false);
   const [message, setMessage] = useState("");
   const [userRole, setUserRole] = useState("");
@@ -162,7 +173,7 @@ function Profile({ setFlag }) {
   const [dob, setDob] = useState("");
   const [nationality, setNationality] = useState("");
   const [age, setAge] = useState("");
-  const [wallet, setWallet] = useState(1400);
+  const [wallet, setWallet] = useState(0);
   const [complaints, setComplaints] = useState("");
   const [ageInput, setAgeInput] = useState(age);
   const [nationalityInput, setNationalityInput] = useState(nationality);
@@ -227,6 +238,15 @@ function Profile({ setFlag }) {
   const handleEdit = () => {
     setIsReadOnly(!isReadOnly);
   };
+  const getMyCurrencyFunction = async () => {
+    const response = await getMyCurrency();
+    setCurrency(response.data);
+    console.log(response.data);
+  };
+  useEffect(() => {
+    getMyCurrencyFunction();
+    
+  }, []);
 
   const handleWallet = () => {
     // getWalletData();
@@ -272,7 +292,6 @@ function Profile({ setFlag }) {
 
     switch (userRole) {
       case "Tourist":
-        console.log("hey1 " + nationalityInput);
         data = {
           mobileNumber: mobileNumberInput,
           nationality: nationalityInput,
@@ -284,7 +303,6 @@ function Profile({ setFlag }) {
 
         break;
       case "Advertiser":
-        console.log("size is: " + companySize);
         data = {
           website: linkInput,
           hotline: mobileNumberInput,
@@ -355,7 +373,7 @@ function Profile({ setFlag }) {
       setIsLoading(true);
       try {
         const response = await updateProfilee(data, user._id);
-        
+
         setMessage(response.data.message);
       } catch (error) {
         setMessage(error.response.data.message || "Updating Profile failed");
@@ -365,7 +383,7 @@ function Profile({ setFlag }) {
       setIsLoading(true);
       try {
         const response = await updateProfilee(data, user._id);
-        
+
         setMessage(response.data.message);
       } catch (error) {
         setMessage(error.response.data.message || "Updating Profile failed");
@@ -437,7 +455,7 @@ function Profile({ setFlag }) {
 
   return (
     <div className="flex justify-center">
-    {isLoading && (<LoadingCircle />)}
+      {isLoading && <LoadingCircle />}
       <div className="flex m-16 gap-16">
         {!userRole && (
           <div className="container mx-auto">
@@ -498,15 +516,21 @@ function Profile({ setFlag }) {
 
               {userRole === "Tourist" && (
                 <div className="max-w-sm mx-auto mt-10">
+                  <CurrencyDropdown setCurrency={setCurrency} />
                   <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                      My Wallet
-                    </h2>
                     <div className="text-gray-600 text-lg">
                       Available Credit
                     </div>
                     <div className="text-4xl font-bold text-[#02735f] mt-2">
-                      ${wallet}
+                      {wallet}
+                      <span> </span>
+                      {currency.code}
+                    </div>
+                  </div>
+                  <div className="bg-white shadow-lg rounded-lg p-6 border my-4 border-gray-200">
+                    <div className="text-gray-600 text-lg">Total points</div>
+                    <div className="text-4xl font-bold text-[#02735f] mt-2">
+                      {user.loyalityPoints}
                     </div>
                   </div>
                 </div>
@@ -522,6 +546,13 @@ function Profile({ setFlag }) {
               </h6>
               <p className="text-lg font-semibold text-[#02735f]">
                 {userRole === "TourGuide" ? "Tour Guide" : userRole}
+              </p>
+              <p className="text-lg text-[#02735f]">
+                {user.loyalityPoints <= 100000
+                  ? "Bronze"
+                  : user.loyalityPoints <= 500000
+                  ? "Silver"
+                  : "Gold"}
               </p>
             </div>
             {userRole === "Advertiser" && (

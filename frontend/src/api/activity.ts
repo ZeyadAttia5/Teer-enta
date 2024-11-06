@@ -25,6 +25,13 @@ const getMyActivities = async () => {
 const getUpcomingActivities = async () =>
   await axios.get<TActivity[]>(`${API_BASE_URL}/activity/upcoming`);
 
+const getBookedActivities = async () =>
+    await axios.get<TActivity[]>(`${API_BASE_URL}/activity/booked`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+
 const createActivity = async (activity: TActivity) =>
   // console.log(activity)
   await axios.post<TActivity>(`${API_BASE_URL}/activity/create`, activity, {
@@ -114,6 +121,41 @@ export const addCommentToActivity = async (activityId, comment) => {
     return response.data;
 };
 
+
+export const flagActivity = async (activityId) => {
+    const response = await axios.patch(
+      `${API_BASE_URL}/activity/flagInappropriate/${activityId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+}
+
+// getFlaggedActivities
+export const getFlaggedActivities = async () => {
+    const response = await axios.get(`${API_BASE_URL}/activity/flagged`);
+    return response.data;
+};
+
+// unFlagActivity
+export const UnFlagActivity = async (activityId) => {
+    const response = await axios.patch(
+      `${API_BASE_URL}/activity/UnFlagInappropriate/${activityId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      }
+    );
+    return response.data;
+}
+
+
 export {
   getActivities,
   createActivity,
@@ -121,6 +163,7 @@ export {
   deleteActivity,
   getUpcomingActivities,
   getMyActivities,
+    getBookedActivities,
   getActivity,
     getTouristActivities ,
     bookActivity ,

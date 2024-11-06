@@ -1,50 +1,174 @@
 const Order = require('../models/Product/Order')
+const Tourist = require('../models/Users/Tourist')
 const Product = require('../models/Product/Product')
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 
-exports.createOrder = async (req, res) => {
+exports.getOrders = async (req, res) => {
     try {
-        const { products} = req.body;
-        let totalPrice = 0 ;
+        const userId = req.user._id;
+        const orders = await Order.find({ createdBy: userId }).populate('products.product');
+        if(!orders){
+            return res.status(404).json({message: 'No orders found'});
+        }
+        res.status(200).json(orders);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
 
-        if (!products || products.length === 0) {
-            return res.status(400).json({ message: 'No products in the order' });
+exports.getCurrentOrders = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const orders = await Order.find({
+            createdBy: userId,
+            status: 'Pending'
+        }).populate('products.product');
+        if (!orders) {
+            return res.status(404).json({message: 'No orders found'});
+        }
+        res.status(200).json(orders);
+    }catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.getOrdersHistory = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const orders = await Order.find({
+            createdBy: userId,
+            status: { $ne: 'Pending' }
+        }).populate('products.product');
+        if(!orders){
+            return res.status(404).json({message: 'No orders found'});
+        }
+        res.status(200).json(orders);
+    }catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.getOrder = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const orderId = req.params.id;
+        const order = await Order.findOne({_id: orderId, createdBy: userId}).populate('products.product');
+        if (!order) {
+            return res.status(404).json({message: 'Order not found'});
+        }
+        res.status(200).json(order);
+    }catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+
+
+exports.checkOutOrder = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const deliveryAddress = req.body.deliveryAddress;
+        const paymentMethod = req.body.paymentMethod; // wallet, credit card, or cash on delivery
+
+        const user = await Tourist.findById(userId).populate('cart.product');
+
+        if (!user || !user.cart || user.cart.length === 0) {
+            return res.status(400).json({ message: 'No products in the cart to create an order.' });
         }
 
-        for (const productOrder of products) {
-            const product = await Product.findById(productOrder.product);
+        let totalPrice = 0;
+        const products = [];
+
+        for (const cartItem of user.cart) {
+            const product = cartItem.product;
 
             if (!product) {
-                return res.status(404).json({ message: `Product with ID ${productOrder.product} not found` });
+                return res.status(404).json({ message: 'Product not found in cart.' });
             }
-            if (productOrder.quantity > product.quantity) {
+
+            if (cartItem.quantity > product.quantity) {
                 return res.status(400).json({ message: `Insufficient stock for product: ${product.name}` });
             }
-            // add price of each product to products array of objects
-            productOrder.price = product.price;
-            totalPrice += productOrder.quantity * product.price;
+
+            products.push({
+                product: product._id,
+                quantity: cartItem.quantity,
+                price: product.price
+            });
+            totalPrice += cartItem.quantity * product.price;
+        }
+
+        if (paymentMethod === 'wallet') {
+            if (user.wallet < totalPrice) {
+                return res.status(400).json({ message: 'Insufficient funds in wallet.' });
+            }
+            console.log(totalPrice);
+            user.wallet -= totalPrice; // Deduct from wallet
+        } else if (paymentMethod === 'credit_card') {
+            // Here you would integrate with Stripe or your payment provider
+            // For example, you can create a payment intent with Stripe and handle it accordingly
+            // await stripe.paymentIntents.create({ amount: totalPrice, currency: 'usd', ... });
+        } else if (paymentMethod === 'cash_on_delivery') {
+            // No immediate payment processing required, just proceed with the order
+        } else {
+            return res.status(400).json({ message: 'Invalid payment method selected.' });
         }
 
         const newOrder = new Order({
-            createdBy: req.user._id,  // Assuming req.user._id contains the authenticated user's ID
+            createdBy: userId,
             products,
             totalPrice,
-            status: 'Pending',  // Default status is 'Pending'
+            deliveryAddress,
+            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
             isActive: true,
         });
 
-        await newOrder.save();  // Save the order
+        await newOrder.save();
 
-        // Step 4: Update the stock of products (reduce the quantity)
-        for (const productOrder of products) {
-            const product = await Product.findById(productOrder.product);
-            product.quantity -= productOrder.quantity;
+        for (const cartItem of user.cart) {
+            const product = cartItem.product;
+            product.quantity -= cartItem.quantity; // Update stock
             await product.save();
         }
 
-        res.status(201).json({ message: 'Order created successfully', order: newOrder });
+        user.cart = [];
+        await user.save();
+
+        res.status(201).json({ message: 'Order created successfully', order: newOrder, updatedWallet: user.wallet });
     } catch (err) {
-        console.log(err);
         errorHandler.SendError(res, err);
     }
 };
+
+
+exports.cancelOrder = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const orderId = req.params.id;
+
+        const order = await Order.findOne({_id: orderId, createdBy: userId});
+        if (!order) {
+            return res.status(404).json({message: 'Order not found'});
+        }
+
+        if (order.status === 'Cancelled') {
+            return res.status(400).json({message: 'Order already cancelled'});
+        }
+
+        const amountToRefund = order.totalPrice;
+        order.status = 'Cancelled';
+        await order.save();
+
+        const tourist = await Tourist.findById(userId);
+        tourist.wallet += amountToRefund;
+        await tourist.save();
+
+        res.status(200).json({message: 'Order cancelled successfully', order, walletAmount: tourist.wallet});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+
+
+

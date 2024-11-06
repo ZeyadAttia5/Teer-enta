@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Spin, message, Button, Modal, Input } from "antd";
+import { Table, Spin, message, Button, Modal, Input, Switch, Tag } from "antd";
 import {
   getComplaints,
   getComplaint,
@@ -86,23 +86,26 @@ const ComplaintsManagement = () => {
 
   const updateStatus = async (complaint_id, status) => {
     try {
-      //save it in a variable to use it later
-      const complaint = await getComplaint(complaint_id);
-
+      // Update the complaint status on the backend
       await updateComplaint({
-        ...complaint.data,
+        ...selectedComplaint,
         status: status,
       });
 
-      //refetch the whole complaints list
-      const response = await getComplaints();
-      setComplaints(response.data);
+      // Update the complaint status locally
+      setComplaints((prevComplaints) =>
+        prevComplaints.map((complaint) =>
+          complaint._id === complaint_id ? { ...complaint, status } : complaint
+        )
+      );
+
       if (modalVisible) {
-        const updatedComplaint = response.data.find(
-          (c) => c._id === complaint_id
-        );
-        setSelectedComplaint(updatedComplaint);
+        setSelectedComplaint((prevComplaint) => ({
+          ...prevComplaint,
+          status,
+        }));
       }
+
       message.success("Status updated successfully");
     } catch (error) {
       message.error("Failed to update status");
@@ -111,27 +114,37 @@ const ComplaintsManagement = () => {
 
   const updateReply = async (complaint_id) => {
     try {
-      //save it in a variable to use it later
-      const complaint = await getComplaint(complaint_id);
-
+      // Update the complaint reply on the backend
       await updateComplaint({
-        ...complaint.data,
+        ...selectedComplaint,
         reply: replyText,
       });
 
-      //refetch the whole complaints list
-      const response = await getComplaints();
-      setComplaints(response.data);
+      // Update the complaint reply locally
+      setComplaints((prevComplaints) =>
+        prevComplaints.map((complaint) =>
+          complaint._id === complaint_id
+            ? { ...complaint, reply: replyText }
+            : complaint
+        )
+      );
+
       if (modalVisible) {
-        const updatedComplaint = response.data.find(
-          (c) => c._id === complaint_id
-        );
-        setSelectedComplaint(updatedComplaint);
+        setSelectedComplaint((prevComplaint) => ({
+          ...prevComplaint,
+          reply: replyText,
+        }));
       }
+
       message.success("Reply submitted successfully");
     } catch (error) {
       message.error("Failed to submit reply");
     }
+  };
+
+  const handleStatusChange = async (checked) => {
+    const newStatus = checked ? "Resolved" : "Pending";
+    await updateStatus(selectedComplaint._id, newStatus);
   };
 
   const columns = [
@@ -149,12 +162,14 @@ const ComplaintsManagement = () => {
       render: (_, record) => (
         <div>
           <Button
+            type="primary"
             onClick={() => showComplaintDetails(record._id)}
             style={{ marginRight: 8 }}
           >
             View Details
           </Button>
-          <Button
+
+          {/* <Button
             onClick={() => updateStatus(record._id, "Pending")}
             disabled={record.status === "Pending"}
             style={{ marginRight: 8 }}
@@ -168,27 +183,30 @@ const ComplaintsManagement = () => {
           >
             Resolved
           </Button>
-          <Button onClick={() => showReplyModal(record._id)}>Reply</Button>
+          <Button onClick={() => showReplyModal(record._id)}>Reply</Button> */}
         </div>
       ),
     },
   ];
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold text-center mb-4">
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h2 className="text-3xl font-bold text-center mb-8 text-blue-600">
         Complaints Management
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div className="flex flex-col">
-          <label htmlFor="statusFilter" className="font-semibold mb-1">
+          <label
+            htmlFor="statusFilter"
+            className="font-semibold mb-2 text-gray-700"
+          >
             Filter by Status:
           </label>
           <select
             id="statusFilter"
             value={selectedStatus}
             onChange={(e) => setselectedStatus(e.target.value)}
-            className="p-2 border border-slate-700 rounded-md"
+            className="p-3 border border-gray-300 rounded-md shadow-sm"
           >
             <option value="">All Statuses</option>
             <option value="Pending">Pending</option>
@@ -196,14 +214,14 @@ const ComplaintsManagement = () => {
           </select>
         </div>
         <div className="flex flex-col">
-          <label htmlFor="sortBy" className="font-semibold mb-1">
+          <label htmlFor="sortBy" className="font-semibold mb-2 text-gray-700">
             Sort By:
           </label>
           <select
             id="sortBy"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="p-2 border border-slate-700 rounded-md"
+            className="p-3 border border-gray-300 rounded-md shadow-sm"
           >
             <option value="">Select an option</option>
             <option value="Date ascending">Date (Ascending)</option>
@@ -222,27 +240,53 @@ const ComplaintsManagement = () => {
           dataSource={sortedComplaints}
           rowKey="_id"
           bordered
+          className="bg-white shadow-md rounded-lg"
         />
       )}
       <Modal
-        title="Complaint Details"
-        open={modalVisible}
+        title={<h2 className="font-bold text-center">Complaint Details</h2>}
+        visible={modalVisible}
         onCancel={() => setModalVisible(false)}
-        footer={null}
-        style={{ top: 20, padding: "20px" }}
+        footer={[
+          <Button
+            key="close"
+            onClick={() => setModalVisible(false)}
+            className="bg-gray-500 text-white hover:bg-gray-600"
+          >
+            Close
+          </Button>,
+        ]}
+        className="top-5 p-5 h-4/5"
+        bodyStyle={{
+          fontFamily: "Arial, sans-serif",
+          fontSize: "16px",
+          lineHeight: "1.5",
+          height: "calc(100% - 55px)",
+        }}
       >
         {selectedComplaint && (
-          <div className="complaint-details">
-            <p>
+          <div>
+            <p style={{ marginBottom: "1rem" }}>
               <strong>Title:</strong> {selectedComplaint.title}
             </p>
-            <p>
+            <p style={{ marginBottom: "1rem" }}>
               <strong>Body:</strong> {selectedComplaint.body}
             </p>
-            <p>
-              <strong>Status:</strong> {selectedComplaint.status}
+            <p style={{ marginBottom: "1rem" }}>
+              <strong>User:</strong>{" "}
+              {selectedComplaint.createdBy.username || "Unknown"}
             </p>
-            <p>
+            <p style={{ marginBottom: "1rem" }}>
+              <strong>Status:</strong>{" "}
+              <Tag
+                color={
+                  selectedComplaint.status === "Pending" ? "orange" : "green"
+                }
+              >
+                {selectedComplaint.status}
+              </Tag>
+            </p>
+            <p style={{ marginBottom: "1rem" }}>
               <strong>Date Submitted:</strong>{" "}
               {new Date(selectedComplaint.date).toLocaleDateString()}
             </p>
@@ -253,43 +297,55 @@ const ComplaintsManagement = () => {
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Enter your reply here"
+                className="mt-2 w-full"
               />
             </div>
 
-            <div style={{ marginTop: 20 }}>
+            <div className="mt-5 flex items-center gap-2">
+              <Switch
+                checked={selectedComplaint.status === "Resolved"}
+                onChange={handleStatusChange}
+                checkedChildren="Resolved"
+                unCheckedChildren="Pending"
+                className={`${
+                  selectedComplaint.status === "Resolved"
+                    ? "bg-green-500"
+                    : "bg-red-500"
+                }`}
+                style={{ height: 30 }}
+              />
               <Button
-                onClick={() => updateStatus(selectedComplaint._id, "Pending")}
-                disabled={selectedComplaint.status === "Pending"}
-                style={{ marginRight: 8 }}
+                onClick={() => updateReply(selectedComplaint._id)}
+                type="primary"
+                className="ml-2"
+                style={{ alignSelf: "center" }}
               >
-                Pending
-              </Button>
-              <Button
-                onClick={() => updateStatus(selectedComplaint._id, "Resolved")}
-                disabled={selectedComplaint.status === "Resolved"}
-                style={{ marginRight: 8 }}
-              >
-                Resolved
-              </Button>
-              <Button onClick={() => updateReply(selectedComplaint._id)}>
                 Reply
               </Button>
             </div>
           </div>
         )}
       </Modal>
+
       <Modal
         title="Reply to Complaint"
         open={replyModalVisible}
         onCancel={() => setReplyModalVisible(false)}
         onOk={handleReplySubmit}
         okText="Send Reply"
+        bodyStyle={{
+          padding: "20px",
+          fontFamily: "Arial, sans-serif",
+          fontSize: "16px",
+          lineHeight: "1.5",
+        }}
       >
         <Input.TextArea
           rows={4}
           value={replyText}
           onChange={(e) => setReplyText(e.target.value)}
           placeholder="Enter your reply here"
+          className="mt-2 w-full"
         />
       </Modal>
     </div>

@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react"; 
 import { Rate } from "antd";
-import {getGoogleMapsAddress} from "../../../api/googleMaps.ts";
-
+import { getGoogleMapsAddress } from "../../../api/googleMaps.ts";
+import {getCurrency} from "../../../api/account.ts";
 
 const ActivityCard = ({
-                        name,
-                        date,
-                        time,
-                        isBookingOpen,
-                        location,
-                        price,
-                        category,
-                        preferenceTags,
-                        specialDiscounts,
-                        ratings, // Assuming this is an array of rating values
-                        comments,
-                        createdBy,
-                        averageRating
-                      }) => {
+  name,
+  date,
+  time,
+  isBookingOpen,
+  location,
+  price,
+  category,
+  specialDiscounts,
+  ratings,
+  averageRating,
+}) => {
   const [address, setAddress] = useState("");
-  // const [averageRating, setAverageRating] = useState(0);
+  const [currency, setCurrency] = useState(null);
 
   // Fetch address from Google Maps API based on latitude and longitude
   useEffect(() => {
@@ -28,7 +24,7 @@ const ActivityCard = ({
       try {
         const response = await getGoogleMapsAddress(location);
         const formattedAddress =
-            response.data.results[0]?.formatted_address || "Address not found";
+          response.data.results[0]?.formatted_address || "Address not found";
         setAddress(formattedAddress);
       } catch (error) {
         console.error("Error fetching address:", error);
@@ -38,81 +34,71 @@ const ActivityCard = ({
     fetchAddress();
   }, [location.lat, location.lng]);
 
-  // Calculate the average rating
-  useEffect(() => {
-    if (ratings && ratings.length > 0) {
-      const total = ratings.reduce((sum, rating) => sum + rating, 0);
-      const average = total / ratings.length;
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
     }
-  }, [ratings]);
+  }
+  useEffect(() => {
+    fetchCurrency();
+  }, []);
 
-  
   return (
-      <div className="border-2 rounded border-gray-500 m-4">
-        <div className="border m-1 border-white">
-          <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white p-4 border-2 border-gray-500">
-            {/* Activity Details */}
-            <div className="mb-4">
-              <h2 className="text-xl font-bold mb-2">{name}</h2>
-              <p className="text-gray-700">
-                Date: {new Date(date).toLocaleDateString()}
-              </p>
-              <p className="text-gray-700">Time: {time}</p>
-              <p className="text-gray-700">
-                Category: {category || "Uncategorized"}
-              </p>
-              <p className="text-gray-700">
-                Price: {price?.min ? `$${price.min}` : "N/A"} -{" "}
-                {price?.max ? `$${price.max}` : "N/A"}
-              </p>
+    <div className="flex justify-center items-center">
+      <div className="max-w-3xl w-full rounded-lg shadow-lg p-6 m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-gradient-to-r from-[#E2F4C5] via-[#A8CD9F] to-[#58A399] hover:text-white"
+           style={{ backgroundColor: "#ffffff" }}>
+        
+        {/* Activity Name */}
+        <h2 className="font-bold text-7xl mb-4" style={{ color: "#496989" }}>{name}</h2>
 
-              {/* Display Average Rating */}
-              <div className="mt-4">
-                <span className="text-gray-700">Average Rating: </span>
-                <Rate allowHalf disabled value={averageRating} />
-                <span className="ml-2">{averageRating.toFixed(1)}</span>
-              </div>
-            </div>
+        {/* Displaying details in bold and under each other */}
+        <p style={{ color: "#496989" }} className="font-bold mb-2">📅 {new Date(date).toLocaleDateString()}</p>
+        <p style={{ color: "#496989" }} className="font-bold mb-2">🕒 {time}</p>
+        <p style={{ color: "#496989" }} className="font-bold mb-2">📂 {category || "Uncategorized"}</p>
+        <p style={{ color: "#496989" }} className="font-bold mb-2">
+          💲 {currency?.code} {price?.min ? `${currency?.rate*price.min}` : "N/A"} - {price?.max ? `${currency?.rate*price.max}` : "N/A"}
+        </p>
 
-
-
-            {/* Conditional Rendering for Special Discounts */}
-            {specialDiscounts?.length > 0 &&
-                specialDiscounts.map((discount, index) =>
-                    discount.isAvailable ? (
-                        <div
-                            key={index}
-                            className="mb-4 p-2 bg-green-100 text-green-700 rounded"
-                        >
-                          <p className="font-semibold">
-                            Special Discount: {discount.discount}% OFF -{" "}
-                            {discount.Description}
-                          </p>
-                        </div>
-                    ) : null
-                )}
-
-            {/* Google Maps Link */}
-            <a
-                href={`https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-            >
-              View on Google Maps
-            </a>
-
-            {/* Booking Status */}
-            <p
-                className={`mt-4 ${
-                    isBookingOpen ? "text-green-600" : "text-red-600"
-                }`}
-            >
-              {isBookingOpen ? "Booking is Open" : "Booking Closed"}
-            </p>
-          </div>
+        {/* Average Rating */}
+        <div className="flex items-center mb-4">
+          <span className="font-semibold" style={{ color: "#496989" }}>Rating:</span>
+          <Rate allowHalf disabled value={averageRating} className="ml-2" />
+          <span className="ml-2" style={{ color: "#496989" }}>{averageRating.toFixed(1)}</span>
         </div>
+
+        {/* Special Discounts */}
+        {specialDiscounts?.length > 0 &&
+          specialDiscounts.map((discount, index) =>
+            discount.isAvailable ? (
+              <div key={index} className="mb-4 p-3 rounded-lg" style={{ backgroundColor: "#E2F4C5", color: "#496989" }}>
+                <p className="font-semibold">
+                  Special Discount: {discount.discount}% OFF - {discount.Description}
+                </p>
+              </div>
+            ) : null
+          )}
+
+        {/* Google Maps Link */}
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-bold block mb-4 transition-all duration-300 ease-in-out hover:underline"
+          style={{ color: "#496989" }}
+        >
+          📍 View on Google Maps 
+        </a>
+
+        {/* Booking Status */}
+        <p className={`font-semibold mt-4 bg-white p-2 rounded-lg ${isBookingOpen ? "text-green-600" : "text-red-600"}`}>
+          🎟️ {isBookingOpen ? "Booking is Open!" : "Fully Booked! :("}
+        </p>
       </div>
+    </div>
   );
 };
 

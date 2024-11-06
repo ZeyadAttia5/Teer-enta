@@ -11,6 +11,7 @@ export type TOrder = {
     _id: string;
     createdBy: TTourist
     products: TOrderProduct[];
+    deliveryAddress: string;
     totalPrice: number;
     status: 'Pending' | 'Confirmed' | 'Delivered' | 'Cancelled';
     isActive: boolean;

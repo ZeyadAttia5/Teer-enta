@@ -12,12 +12,17 @@ import FileUploadForm from "./FilesUpload/FileUploadForm.js";
 import IDUpload from "./FilesUpload/IDUpload.js";
 import { uploadFile, uploadFiles } from "../../../api/account.ts";
 import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
+import { Link } from "react-router-dom";
+import logo from "../../../assets/logo/logo.jpeg";
+import SelectPrefrences from "../../shared/SelectPrefrences.jsx";
 
 function Signup({ setFlag }) {
   setFlag(true);
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const handleUsernameChange = (event) => {
     setUsername(event.target.value); // Update the username state
   };
@@ -373,6 +378,10 @@ function Signup({ setFlag }) {
             nationality: selectedNationality.label,
             dateOfBirth: dob,
             occupation: jobTitle,
+            preferences:{
+              activityCategories: selectedCategories,
+              preferenceTags: selectedTags
+            }
           };
           break;
         case "TourGuide":
@@ -416,7 +425,7 @@ function Signup({ setFlag }) {
         default:
           break;
       }
-      
+
       const response = await signup(data);
       setIsLoading(false);
 
@@ -472,8 +481,8 @@ function Signup({ setFlag }) {
 
   return (
     <div className="flex h-screen">
-    {isLoading && <LoadingCircle  />}
-      <div className="relative w-[66%] h-screen overflow-hidden">
+      {isLoading && <LoadingCircle />}
+      <div className="relative w-[57%] h-screen overflow-hidden">
         {images.map((image, index) => (
           <img
             key={index}
@@ -504,7 +513,20 @@ function Signup({ setFlag }) {
         )}
       </div>
 
-      <div className="flex flex-col justify-center items-center w-1/3">
+      <div className="flex flex-col justify-center items-center w-[43%]">
+        <span className="ml-8 text-lg leading-7">
+          <div className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
+            {/* Logo Link */}
+            <Link to={"/"} className="ring-0">
+              <img
+                src={logo}
+                alt="Logo"
+                width={120}
+                className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
+              />
+            </Link>
+          </div>
+        </span>
         <p className="text-[rgba(88,87,87,0.822)] font-bold text-1xl">
           Signup now and get full access to our app.
         </p>
@@ -553,7 +575,7 @@ function Signup({ setFlag }) {
                 selectedRole !== "Tourist" ? "hidden" : ""
               }`}
             >
-              <div style={{ width: "100%", margin: "auto" }} className="h-">
+              <div style={{ width: "100%", margin: "auto" }}>
                 <Select
                   className=""
                   options={options}
@@ -620,7 +642,7 @@ function Signup({ setFlag }) {
                 type="tel"
                 placeholder="Enter your mobile number"
                 required
-                value={!mobileNumber}
+                value={mobileNumber}
                 onChange={handleMobileNumberChange}
               />
             </label>
@@ -685,7 +707,7 @@ function Signup({ setFlag }) {
 
             {selectedRole !== "Tourist" && (
               <div>
-                <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
+                <h6 className="text-sm mb-2 font-medium text-gray-700 flex justify-between items-center ">
                   <span>ID</span>
                   {isFormSubmitted && !ID && (
                     <span className="text-red-500 font-normal text-xs">
@@ -699,7 +721,7 @@ function Signup({ setFlag }) {
 
             {(selectedRole === "Advertiser" || selectedRole === "Seller") && (
               <div>
-                <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
+                <h6 className="text-sm mb-2 font-medium text-gray-700 flex justify-between items-center ">
                   <span>Taxation registry card</span>
                   {isFormSubmitted && !secondID && (
                     <span className="text-red-500 font-normal text-xs">
@@ -757,6 +779,14 @@ function Signup({ setFlag }) {
               />
               {/* Role Change */}
             </label>
+            {selectedRole === "Tourist" && (
+              <SelectPrefrences
+                selectedCategories={selectedCategories}
+                selectedTags={selectedTags}
+                onCategoriesChange={setSelectedCategories}
+                onTagsChange={setSelectedTags}
+              />
+            )}
 
             <PasswordRestrictions
               password={password}

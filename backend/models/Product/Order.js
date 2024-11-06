@@ -8,9 +8,10 @@ const orderSchema = new mongoose.Schema({
         price: { type: Number, required: true },
     }],
     totalPrice: { type: Number, required: true },
+    deliveryAddress: { type: String, required: true },
     status: {
         type: String,
-        enum: ['Pending', 'Confirmed', 'Delivered', 'Cancelled'],
+        enum: ['Pending', 'Paid', 'Cancelled'],
         default: 'Pending'
     },
     isActive: { type: Boolean, default: true }

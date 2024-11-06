@@ -1,7 +1,5 @@
 const User = require("../models/Users/User");
-const Seller = require("../models/Users/Seller");
-const TourGuide = require("../models/Users/TourGuide");
-const Advertiser = require("../models/Users/Advertiser");
+const Activity = require("../models/Activity/Activity");
 const Tourist = require("../models/Users/Tourist");
 const userModel = require("../models/Users/userModels");
 const mongoose = require("mongoose");
@@ -123,6 +121,47 @@ exports.uploadPicture = async (req, res, next) => {
   }
 };
 
+exports.addAddress = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const { newAddress } = req.body;
+
+    if (!newAddress || typeof newAddress !== 'string') {
+      return res.status(400).json({ message: 'Invalid address provided.' });
+    }
+    const updatedTourist = await Tourist.findByIdAndUpdate(
+        userId,
+        { $push: { addresses: newAddress } },
+        { new: true }
+    );
+
+    if (!updatedTourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+
+    res.status(200).json({ message: 'Address added successfully.', tourist: updatedTourist });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error adding address', error: err.message });
+  }
+};
+
+exports.getAllAddresses = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+    res.status(200).json({ addresses: tourist.addresses });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching addresses', error: err.message });
+  }
+};
+
+
 exports.manageFieldNames = async (req, res, next) => {
   try {
     console.log("Here", req.fileUrl);
@@ -137,3 +176,59 @@ exports.manageFieldNames = async (req, res, next) => {
     errorHandler.SendError(res, err);
   }
 };
+
+exports.getSavedActivities = async (req, res) => {
+  try {
+    console.log(req.user);
+    const userId = req.user._id;
+    console.log(req.user._id);
+
+    const tourist = await Tourist.findById(userId).populate({
+      path: 'savedActivities', // Populate saved activities
+      model: 'Activity', // Assuming 'Activity' is the name of the model for activities
+      match: { isActive: true } // Optional: only include active activities
+    });
+
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+
+    res.status(200).json({ savedActivities: tourist.savedActivities });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching saved activities', error: err.message });
+  }
+};
+exports.addSavedActivity = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params; // Assuming the activity ID is sent in the request body
+
+    // Check if the tourist exists
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found.' });
+    }
+
+    // Check if the activity exists
+    const activity = await Activity.findOne({ _id: id, isActive: true });
+    if (!activity) {
+      return res.status(404).json({ message: 'Activity not found or inactive.' });
+    }
+
+    // Check if the activity is already saved
+    if (tourist.savedActivities.includes(id)) {
+      return res.status(400).json({ message: 'Activity already saved.' });
+    }
+
+    // Add the activity to the savedActivities list
+    tourist.savedActivities.push(id);
+    await tourist.save();
+
+    res.status(200).json({ message: 'Activity saved successfully.', savedActivities: tourist.savedActivities });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error saving activity', error: err.message });
+  }
+};
+

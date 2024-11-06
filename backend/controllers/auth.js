@@ -33,7 +33,11 @@ exports.signup = async (req, res) => {
                     nationality: req.body.nationality,
                     dateOfBirth: req.body.dateOfBirth,
                     occupation: req.body.occupation,
-                    hasProfile: true
+                    preferences:{
+                        preferenceTags: req.body.preferenceTags,
+                        activityCategories: req.body.activityCategories
+                    },
+                    hasProfile: true ,
                 });
                 await tourist.save();
                 return res.status(201).send({message: 'Tourist created successfully.'});
@@ -84,27 +88,48 @@ exports.signup = async (req, res) => {
     }
 }
 
+
 exports.login = async (req, res) => {
     try {
-        const {username, password} = req.body;
+        const { username, password } = req.body;
 
-        const user = await User.findOne({username});
-        if (!user) return res.status(404).json({message: 'User not found'});
+        const user = await User.findOne({ username });
+        if (!user) return res.status(404).json({ message: 'User not found' });
 
         const doMatch = await bcrypt.compare(password, user.password);
-        if (!doMatch) return res.status(401).json({message: "Wrong Password"});
+        if (!doMatch) return res.status(401).json({ message: "Wrong Password" });
 
         const status = user.isAccepted;
-
         if (status === "Pending") {
-            return res.status(401).json({message: "Your request is still pending "});
+            return res.status(401).json({ message: "Your request is still pending" });
         }
         if (status === "Rejected") {
-            return res.status(403).json({message: "Your request is rejected"})
+            return res.status(403).json({ message: "Your request is rejected" });
         }
 
-        const {token: accessToken, expiresIn: accessExpiresIn} = await TokenHandler.generateAccessToken(user);
-        const {token: refreshToken, expiresIn: refreshExpiresIn} = await TokenHandler.generateRefreshToken(user);
+        // Check and update level if user is a tourist
+        if (user.role === 'Tourist') {  // Ensure this applies only to tourists
+            const tourist = await Tourist.findById(user._id);
+            const loyaltyPoints = tourist.loyalityPoints;
+            let newLevel;
+
+            if (loyaltyPoints <= 100000) {
+                newLevel = 'LEVEL1';
+            } else if (loyaltyPoints <= 500000) {
+                newLevel = 'LEVEL2';
+            } else {
+                newLevel = 'LEVEL3';
+            }
+            // Update level only if necessary
+            if (tourist.level !== newLevel) {
+                tourist.level = newLevel;
+                await tourist.save();
+            }
+        }
+
+        // Generate tokens after level check
+        const { token: accessToken, expiresIn: accessExpiresIn } = await TokenHandler.generateAccessToken(user);
+        const { token: refreshToken, expiresIn: refreshExpiresIn } = await TokenHandler.generateRefreshToken(user);
 
         res.status(200).json({
             accessToken,
@@ -116,7 +141,8 @@ exports.login = async (req, res) => {
     } catch (err) {
         errorHandler.SendError(res, err);
     }
-}
+};
+
 
 exports.changePassword = async (req, res) => {
     try {
