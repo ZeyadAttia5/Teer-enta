@@ -77,7 +77,7 @@ const ProductDetails = ({setFlag}) => {
         {/* Product Image */}
         <div className="md:w-1/2">
           <img
-            src={product.image}
+            src={product.image || product.imageUrl}
             alt={product.name}
             className="w-full h-full object-cover transition duration-300 ease-in-out transform hover:scale-105"
           />

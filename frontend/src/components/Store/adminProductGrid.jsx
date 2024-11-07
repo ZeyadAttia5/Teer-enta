@@ -5,7 +5,7 @@ import FilterDropdown from "./filterDropdown";
 import StarRating from "../shared/starRating";
 import { Input, Row, Col, Button } from "antd";
 import { FaEdit } from "react-icons/fa";
-import {getProducts} from "../../api/products.ts";
+import { getProducts, archiveProduct, unArchiveProduct } from "../../api/products.ts"; 
 
 const AdminProductGrid = ({ setFlag }) => {
   setFlag(false);
@@ -81,6 +81,25 @@ const AdminProductGrid = ({ setFlag }) => {
     return filters.sortOrder === 'asc' ? comparison : -comparison;
   });
 
+  const handleArchiveToggle = async (productId, isActive) => {
+    try {
+      if (isActive) {
+        await archiveProduct(productId);
+      } else {
+        await unArchiveProduct(productId);
+      }
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product._id === productId
+            ? { ...product, isActive: !isActive }
+            : product
+        )
+      );
+    } catch (err) {
+      setError("Failed to update archive status");
+    }
+  };
+  
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
@@ -149,6 +168,14 @@ const AdminProductGrid = ({ setFlag }) => {
                           <FaEdit className="text-customGreen mt-2 cursor-pointer" />
                         </Link>
                     )}
+                      {user && (user._id === product.createdBy )&&(user.userRole === "Admin" || user.userRole === "Seller") &&(
+                        <Button
+                          className="bg-gray-500 text-white mt-2 ml-2"
+                          onClick={() => handleArchiveToggle(product._id, product.isActive)}
+                        >
+                          {product.isActive ? 'Archive' : 'Unarchive'}
+                        </Button>)
+                      }
                   </div>
                 </div>
               </Col>
