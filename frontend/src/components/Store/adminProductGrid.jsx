@@ -12,7 +12,7 @@ const AdminProductGrid = ({ setFlag }) => {
   const backURL = process.env.REACT_APP_BACKEND_URL;
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem("accessToken");
-
+  const [showArchived, setShowArchived] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     minPrice: 0,
@@ -27,8 +27,10 @@ const AdminProductGrid = ({ setFlag }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await getProducts();
-        console.log("Fetched Products:", response.data);
+        const response = showArchived
+          ? await axios.get(`${backURL}/product/archived`, { headers: { Authorization: `Bearer ${accessToken}` } })
+          : await getProducts();
+  
         setProducts(response.data);
       } catch (err) {
         setError(err.message);
@@ -36,9 +38,10 @@ const AdminProductGrid = ({ setFlag }) => {
         setLoading(false);
       }
     };
-
+  
     fetchProducts();
-  }, [backURL]);
+  }, [showArchived, backURL]);
+  
 
   const calculateAverageRating = (ratings) => {
     if (ratings.length === 0) return 0;
@@ -137,6 +140,15 @@ const AdminProductGrid = ({ setFlag }) => {
         Quantity and Sales
       </Button>
     </Link>
+      <Button
+    type="primary"
+    className="bg-customGreen hover:bg-darkerGreen transition duration-300 mr-4"
+    onClick={() => setShowArchived(!showArchived)}
+  >
+    {showArchived ? "Show Active Products" : "Show Archived Products"}
+  </Button>
+
+
   </>
 )}
 
