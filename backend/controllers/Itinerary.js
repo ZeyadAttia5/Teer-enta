@@ -5,6 +5,11 @@ const Tourist = require("../models/Users/Tourist");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const mongoose = require("mongoose");
 const Activity = require("../models/Activity/Activity"); // Ensure mongoose is required
+const BrevoService = require("../Util/mailsHandler/brevo/brevoService");
+const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
+const brevoService = new BrevoService(brevoConfig);
+const FlaggedItineraryTemplate = require("../Util/mailsHandler/mailTemplets/1FlaggedItineraryTemplate");
+const PaymentReceiptItemTemplate = require("../Util/mailsHandler/mailTemplets/2PaymentReceiptItemTemplate");
 
 exports.getItineraries = async (req, res, next) => {
     try {
@@ -253,7 +258,7 @@ exports.flagInappropriate = async (req, res) => {
             id,
             {isAppropriate: false},
             {new: true}
-        );
+        ).populate('createdBy');
 
         if (!updatedItinerary) {
             return res.status(404).json({message: "Itinerary not found"});
@@ -268,7 +273,16 @@ exports.flagInappropriate = async (req, res) => {
             {_id: {$in: userIds}},  // Find users with IDs in userIds array
             {$inc: {wallet: itineraryPrice}}  // Increment the wallet by the itinerary price
         );
-        //
+
+
+        const template = new FlaggedItineraryTemplate(
+            updatedItinerary.name ,
+            updatedItinerary.price,
+            updatedItinerary.createdBy.username
+        );
+
+        await brevoService.send(template,updatedItinerary.createdBy.email);
+
         return res.status(200).json({message: "Itinerary flagged inappropriate and users refunded successfully"});
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -402,7 +416,13 @@ exports.bookItinerary = async (req, res) => {
 
 // Save the tourist document with updated points and possibly a new level
         await tourist.save();
-
+        const template = new PaymentReceiptItemTemplate(
+            tourist.username,
+            itinerary.price ,
+            date,
+            "Itinerary"
+        )
+        await brevoService.send(template,tourist.email);
 
         return res.status(200).json({
             message: "Itinerary booked successfully",

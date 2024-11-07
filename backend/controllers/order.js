@@ -2,7 +2,11 @@ const Order = require('../models/Product/Order')
 const Tourist = require('../models/Users/Tourist')
 const Product = require('../models/Product/Product')
 const errorHandler = require("../Util/ErrorHandler/errorSender");
-
+const BrevoService = require("../Util/mailsHandler/brevo/brevoService");
+const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
+const brevoService = new BrevoService(brevoConfig);
+const ProductOutOfStockTemplate = require("../Util/mailsHandler/mailTemplets/6ProductOutOfStockTemplate");
+const FlaggedActivityTemplate = require("../Util/mailsHandler/mailTemplets/7FlaggedActivityTemplate");
 exports.getOrders = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -119,7 +123,7 @@ exports.checkOutOrder = async (req, res) => {
             products,
             totalPrice,
             deliveryAddress,
-            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Confirmed',
+            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
             isActive: true,
         });
 
@@ -128,6 +132,17 @@ exports.checkOutOrder = async (req, res) => {
         for (const cartItem of user.cart) {
             const product = cartItem.product;
             product.quantity -= cartItem.quantity; // Update stock
+            if(product.quantity === 0){
+                console.log(product)
+                const fProduct = await Product.findById(product._id).populate('createdBy');
+                const template = new ProductOutOfStockTemplate(
+                    fProduct.name ,
+                    fProduct.price,
+                    fProduct.description,
+                    fProduct.createdBy.username
+                );
+                await brevoService.send(template,fProduct.createdBy.email);
+            }
             await product.save();
         }
 

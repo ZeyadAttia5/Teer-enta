@@ -4,7 +4,11 @@ const BookedActivity = require('../models/Booking/BookedActivitie');
 const Tourist = require('../models/Users/Tourist');
 const mongoose = require('mongoose')
 const errorHandler = require('../Util/ErrorHandler/errorSender');
-
+const BrevoService = require("../Util/mailsHandler/brevo/brevoService");
+const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
+const brevoService = new BrevoService(brevoConfig);
+const FlaggedActivityTemplate = require("../Util/mailsHandler/mailTemplets/7FlaggedActivityTemplate")
+const PaymentReceiptItemTemplate = require("../Util/mailsHandler/mailTemplets/2PaymentReceiptItemTemplate")
 exports.getActivities = async (req, res, next) => {
     try {
         const activities = await Activity
@@ -220,10 +224,21 @@ exports.flagInappropriate = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
           return res.status(400).json({ message: "invalid object id " });
         }
-        const activity = await Activity.findByIdAndUpdate(id, {isAppropriate: false}, {new: true});
+        const activity = await Activity.
+            findByIdAndUpdate(id, {isAppropriate: false}, {new: true}).
+            populate('createdBy');
         if (!activity) {
             return res.status(404).json({message: "activity not found"});
         }
+        // console.log("here",activity.createdBy);
+        const template = new FlaggedActivityTemplate(
+            activity.name ,
+            activity.price.max,
+            activity.createdBy.username
+        );
+
+        await brevoService.send(template,activity.createdBy.email);
+
         //refunding the user to be handled
         return res.status(200).json({message: "activity flagged inappropriate successfully"});
     } catch (err) {
@@ -330,6 +345,14 @@ exports.bookActivity = async (req, res) => {
 
 // Save the tourist document with updated points and possibly a new level
         await tourist.save();
+
+        const template = new PaymentReceiptItemTemplate(
+            tourist.username,
+            activity.price.max ,
+            activity.date ,
+            "Activity"
+        )
+        await brevoService.send(template,tourist.email);
 
         return res.status(200).json({
             message: "Activity booked successfully",

@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema({
     deliveryAddress: { type: String, required: true },
     status: {
         type: String,
-        enum: ['Pending', 'Paid', 'Cancelled'],
+        enum: ['Pending', 'Completed', 'Cancelled'],
         default: 'Pending'
     },
     isActive: { type: Boolean, default: true }

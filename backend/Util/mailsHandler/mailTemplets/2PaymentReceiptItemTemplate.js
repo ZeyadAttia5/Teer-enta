@@ -1,7 +1,8 @@
 const BrevoTemplate = require("../model/BrevoTemplate");
 
+// Done
 class PaymentReceiptItemTemplate extends BrevoTemplate {
-    // text is the data related to what i paid for (event  or itineraries)
+    // text is the data related to what i paid for (event ,itinerary)
     constructor(userName ,amount ,date ,text) {
         super();
         this.userName = userName;
@@ -23,3 +24,5 @@ class PaymentReceiptItemTemplate extends BrevoTemplate {
         };
     }
 }
+
+module.exports = PaymentReceiptItemTemplate;
