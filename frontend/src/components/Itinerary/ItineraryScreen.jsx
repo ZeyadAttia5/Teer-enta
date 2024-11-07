@@ -953,6 +953,16 @@ const ItineraryScreen = ({ setFlag }) => {
               ))}
             </Select>
           </Form.Item>
+          <Form.Item
+              label="Booking Open"
+              name="isBookingOpen"
+              valuePropName="checked"
+            >
+              <Switch   />
+            </Form.Item>
+            <Form.Item label="Active" name="isActive" valuePropName="checked">
+              <Switch   />
+            </Form.Item>
 
           <Form.Item>
             <Button
