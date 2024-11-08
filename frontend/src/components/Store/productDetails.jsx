@@ -29,12 +29,16 @@ const ProductDetails = ({setFlag}) => {
       await addRatingToProduct(product._id, values.rating);
       console.log("Comment added successfully");
   
+      // Hide FeedbackForm after submitting
+      setHasReviewedOrRated(true);
+  
       // Toggle refreshReviews to force ProductReviews to reload
       setRefreshReviews(prev => !prev);
     } catch (error) {
       console.error("Failed to add comment:", error);
     }
   };
+  
   
   useEffect(() => {
     const fetchProductDetails = async () => {
