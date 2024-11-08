@@ -5,14 +5,15 @@ import FilterDropdown from "./filterDropdown";
 import StarRating from "../shared/starRating";
 import { Input, Row, Col, Button } from "antd";
 import { FaEdit } from "react-icons/fa";
-import {getProducts} from "../../api/products.ts";
+import { getProducts, archiveProduct, unArchiveProduct } from "../../api/products.ts"; 
 
 const AdminProductGrid = ({ setFlag }) => {
   setFlag(false);
   const backURL = process.env.REACT_APP_BACKEND_URL;
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem("accessToken");
-
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [showArchived, setShowArchived] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     minPrice: 0,
@@ -27,8 +28,10 @@ const AdminProductGrid = ({ setFlag }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await getProducts();
-        console.log("Fetched Products:", response.data);
+        const response = showArchived
+          ? await axios.get(`${backURL}/product/archived`, { headers: { Authorization: `Bearer ${accessToken}` } })
+          : await getProducts();
+  
         setProducts(response.data);
       } catch (err) {
         setError(err.message);
@@ -36,9 +39,10 @@ const AdminProductGrid = ({ setFlag }) => {
         setLoading(false);
       }
     };
-
+  
     fetchProducts();
-  }, [backURL]);
+  }, [showArchived, backURL]);
+  
 
   const calculateAverageRating = (ratings) => {
     if (ratings.length === 0) return 0;
@@ -81,12 +85,50 @@ const AdminProductGrid = ({ setFlag }) => {
     return filters.sortOrder === 'asc' ? comparison : -comparison;
   });
 
+  const handleArchiveToggle = async (productId, isActive) => {
+    try {
+      if (isActive) {
+        await archiveProduct(productId);
+        setFeedbackMessage("Product Successfully Archived");
+      } else {
+        await unArchiveProduct(productId);
+        setFeedbackMessage("Product Successfully Unarchived");
+      }
+  
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product._id === productId
+            ? { ...product, isActive: !isActive }
+            : product
+        )
+      );
+  
+      // Clear the message after 3 seconds
+      setTimeout(() => setFeedbackMessage(""), 3000);
+  
+    } catch (err) {
+      setError("Failed to update archive status");
+    }
+  };
+  
+  
+  
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
-
+  
+  
   return (
+
       <div className="container mx-auto p-5 relative">
+        {feedbackMessage && (
+    <div
+      className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg"
+      style={{ transition: "opacity 0.5s ease-in-out", zIndex: 9999 }}
+    >
+      {feedbackMessage}
+    </div>
+  )}
         <div className="flex justify-between items-center mt-24 mb-5">
           <div className="flex justify-center items-center gap-4 mx-auto">
             <Input
@@ -118,6 +160,15 @@ const AdminProductGrid = ({ setFlag }) => {
         Quantity and Sales
       </Button>
     </Link>
+      <Button
+    type="primary"
+    className="bg-customGreen hover:bg-darkerGreen transition duration-300 mr-4"
+    onClick={() => setShowArchived(!showArchived)}
+  >
+    {showArchived ? "Show Active Products" : "Show Archived Products"}
+  </Button>
+
+
   </>
 )}
 
@@ -149,6 +200,14 @@ const AdminProductGrid = ({ setFlag }) => {
                           <FaEdit className="text-customGreen mt-2 cursor-pointer" />
                         </Link>
                     )}
+                      {user && (user._id === product.createdBy )&&(user.userRole === "Admin" || user.userRole === "Seller") &&(
+                        <Button
+                          className="bg-gray-500 text-white mt-2 ml-2"
+                          onClick={() => handleArchiveToggle(product._id, product.isActive)}
+                        >
+                          {product.isActive ? 'Archive' : 'Unarchive'}
+                        </Button>)
+                      }
                   </div>
                 </div>
               </Col>

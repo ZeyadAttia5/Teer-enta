@@ -6,45 +6,67 @@ import { Button, Typography, Spin, Divider } from 'antd';
 import {getProduct} from "../../api/products.ts"; // Import Ant Design components
 import Reviews from '../Store/reviews.jsx';
 import FeedbackForm from '../shared/FeedBackForm/FeedbackForm.jsx';
-import { getProductReviews, addReviewToProduct, addRatingToProduct } from '../../api/products.ts';
+import { getProductReviews, getProductRatings, addReviewToProduct, addRatingToProduct } from '../../api/products.ts';
+import ProductReviews from '../Store/productReviews.jsx'; // Import the ProductReviews component
 const { Title, Paragraph } = Typography;
 
 const ProductDetails = ({setFlag}) => {
   setFlag(false);
   const { id } = useParams(); // Get the product ID from the URL parameters
   const backURL = process.env.REACT_APP_BACKEND_URL;
-
+  const [hasReviewedOrRated, setHasReviewedOrRated] = useState(false);
   const [product, setProduct] = useState(null); // State for the product
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const [refreshReviews, setRefreshReviews] = useState(false); // NEW STATE
   const user = JSON.parse(localStorage.getItem("user"));
   const onSubmit = async (values) => {
     try {
-      // console.log("Feedback Form submit values: ", values);
       if (!product?._id) {
-        throw new Error("Itinerary ID is missing");
+        throw new Error("Product ID is missing");
       }
-      console.log(`onSubmit product id: ${product._id}`)
       await addReviewToProduct(product._id, values.comment);
       await addRatingToProduct(product._id, values.rating);
       console.log("Comment added successfully");
+  
+      // Hide FeedbackForm after submitting
+      setHasReviewedOrRated(true);
+  
+      // Toggle refreshReviews to force ProductReviews to reload
+      setRefreshReviews(prev => !prev);
     } catch (error) {
       console.error("Failed to add comment:", error);
     }
   };
+  
+  
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await getProduct(id) // Replace with your API endpoint
+        const response = await getProduct(id);
         setProduct(response.data);
+  
+        const reviewsResponse = await getProductReviews(id);
+        const ratingsResponse = await getProductRatings(id);
+  
+        // Check if the user has reviewed or rated this product
+        const hasReviewed = reviewsResponse.reviews.some(
+          (review) => review.createdBy._id === user?._id
+        );
+        const hasRated = ratingsResponse.ratings.some(
+          (rating) => rating.createdBy._id === user?._id
+        );
+        setHasReviewedOrRated(hasReviewed || hasRated);
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
+  
     fetchProductDetails();
-  }, [id]);
+  }, [id, user?._id]);
+  
 
   // Function to calculate average rating
   const calculateAverageRating = (ratings) => {
@@ -77,7 +99,7 @@ const ProductDetails = ({setFlag}) => {
         {/* Product Image */}
         <div className="md:w-1/2">
           <img
-            src={product.image}
+            src={product.image || product.imageUrl}
             alt={product.name}
             className="w-full h-full object-cover transition duration-300 ease-in-out transform hover:scale-105"
           />
@@ -132,12 +154,15 @@ const ProductDetails = ({setFlag}) => {
             </Button>
 
         </Link>
-        {/* <Reviews /> */}
-        <FeedbackForm entity={product} onSubmit={onSubmit}/>
+        
+          {!hasReviewedOrRated && (
+    <FeedbackForm entity={product} onSubmit={onSubmit} />
+          )}
+        <ProductReviews productId={id} refresh={refreshReviews}/> 
       </div>
-
+    
   );
-
+  
 };
 
 export default ProductDetails;
