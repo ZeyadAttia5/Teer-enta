@@ -7,6 +7,7 @@ import {getProduct} from "../../api/products.ts"; // Import Ant Design component
 import Reviews from '../Store/reviews.jsx';
 import FeedbackForm from '../shared/FeedBackForm/FeedbackForm.jsx';
 import { getProductReviews, addReviewToProduct, addRatingToProduct } from '../../api/products.ts';
+import ProductReviews from '../Store/productReviews.jsx'; // Import the ProductReviews component
 const { Title, Paragraph } = Typography;
 
 const ProductDetails = ({setFlag}) => {
@@ -134,10 +135,11 @@ const ProductDetails = ({setFlag}) => {
         </Link>
         {/* <Reviews /> */}
         <FeedbackForm entity={product} onSubmit={onSubmit}/>
+        <ProductReviews productId={id} /> 
       </div>
-
+    
   );
-
+  
 };
 
 export default ProductDetails;
