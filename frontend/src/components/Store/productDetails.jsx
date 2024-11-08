@@ -18,21 +18,24 @@ const ProductDetails = ({setFlag}) => {
   const [product, setProduct] = useState(null); // State for the product
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const [refreshReviews, setRefreshReviews] = useState(false); // NEW STATE
   const user = JSON.parse(localStorage.getItem("user"));
   const onSubmit = async (values) => {
     try {
-      // console.log("Feedback Form submit values: ", values);
       if (!product?._id) {
-        throw new Error("Itinerary ID is missing");
+        throw new Error("Product ID is missing");
       }
-      console.log(`onSubmit product id: ${product._id}`)
       await addReviewToProduct(product._id, values.comment);
       await addRatingToProduct(product._id, values.rating);
       console.log("Comment added successfully");
+  
+      // Toggle refreshReviews to force ProductReviews to reload
+      setRefreshReviews(prev => !prev);
     } catch (error) {
       console.error("Failed to add comment:", error);
     }
   };
+  
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -135,7 +138,7 @@ const ProductDetails = ({setFlag}) => {
         </Link>
         {/* <Reviews /> */}
         <FeedbackForm entity={product} onSubmit={onSubmit}/>
-        <ProductReviews productId={id} /> 
+        <ProductReviews productId={id} refresh={refreshReviews}/> 
       </div>
     
   );
