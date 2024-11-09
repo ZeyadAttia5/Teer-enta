@@ -1,6 +1,6 @@
 import React from "react";
 import { changePassword } from "../../../api/auth.ts";
-import Button from "antd";
+import {message as messageAntDesign}from "antd";
 import PasswordRestrictions from "../../Auth/Signup/PasswordRestrictions.js";
 const ChangePassword = () => {
   const [newPassword, setNewPassword] = React.useState("");
@@ -20,8 +20,10 @@ const ChangePassword = () => {
         oldPassword: oldPassword,
         newPassword: newPassword,
       });
+      messageAntDesign.success(response.data.message);
     } catch (error) {
-      setMessage(error.response.data.message);
+        messageAntDesign.error(error.response.data.message);
+      // setMessage(error.response.data.message);
       return;
     }
 
