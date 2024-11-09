@@ -1,6 +1,7 @@
 const Transportation = require('../models/Transportation')
 const BookedTransportation = require('../models/Booking/BookedTransportation')
 const errorHandler = require("../Util/ErrorHandler/errorSender");
+const Tourist = require('../models/Users/Tourist');
 
 exports.getAllTransportations = async (req, res) => {
     try{

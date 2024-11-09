@@ -210,7 +210,7 @@ const AdminProductGrid = ({setFlag}) => {
                                             View Details
                                         </Button>
                                     </Link>
-                                    {user && (user._id === product.createdBy) && (user.userRole === "Admin" || user.userRole === "Seller") && (
+                                    {user && ((user._id === product.createdBy && user.userRole === "Seller" ) || (user.userRole === "Admin" )) && (
                                         <Button
                                             className="bg-gray-500 text-white mt-2 ml-2"
                                             onClick={() => handleArchiveToggle(product._id, product.isActive)}
