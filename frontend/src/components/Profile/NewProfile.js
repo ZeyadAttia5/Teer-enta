@@ -29,6 +29,8 @@ const TouristProfile = () => {
   const [canRedeem, setCanRedeem] = useState(false);
   const [fetchedData, setFetchedData] = useState([]);
   const [level, setLevel] = useState(0);
+  const [wallet, setWallet] = useState(0);
+  const [points, setPoints] = useState(0);
 
   const fetchData = async () => {
     setLoading(true); // Show spinner
@@ -36,6 +38,8 @@ const TouristProfile = () => {
       const response = await getProfile(user._id);
       // Assuming response is an array of { code, name, rate }
       setFetchedData(response.data);
+      setPoints(response.data.loyalityPoints);
+      setWallet(response.data.wallet);
       console.log("Fetched Data: ", response.data);
       const extractedLevel = parseInt(
         response.data.level.replace(/\D/g, ""),
@@ -98,6 +102,8 @@ const TouristProfile = () => {
         wallet: response.data.wallet,
       };
       setFetchedData(updatedData);
+      setPoints(response.data.remaining);
+      setWallet(response.data.wallet);
       notification.success({ message: "Points redeemed successfully!" });
     } catch (error) {
       notification.error({ message: "Failed to redeem points." });
@@ -111,9 +117,9 @@ const TouristProfile = () => {
       <div className="flex gap-32">
         <UserCard
           username={user.username}
-          wallet={fetchedData.wallet}
+          wallet={wallet}
           currency={currency}
-          points={fetchedData.loyalityPoints}
+          points={points}
           userRole={fetchedData.userRole}
           rate={rate}
           setCurrencyId={setCurrencyId}
