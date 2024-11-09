@@ -128,7 +128,7 @@ export const flagActivity = async (activityId) => {
       {},
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       }
     );

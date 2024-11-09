@@ -165,9 +165,10 @@ const BookTransportation = ({}) => {
                       icon={<UserOutlined />}
                     />
                     <Space direction="vertical" size={0}>
-                      <Text strong>{item.createdBy.companyName}</Text>
+                      <Text strong>Username: {item.createdBy.username ?? 'NA'}</Text>
+                      <Text strong>Company: {item.createdBy.companyName ?? 'NA'}</Text>
                       <Text type="secondary" style={{ fontSize: "12px" }}>
-                        {item.createdBy.industry}
+                        Industry: {item.createdBy.industry?? 'NA'}
                       </Text>
                       {item.createdBy.website && (
                         <Space size={4}>

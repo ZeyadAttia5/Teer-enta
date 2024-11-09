@@ -63,7 +63,7 @@ export const addRatingToProduct = async (productId, rating) => {
         { rating }, 
         {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
         });
     return response.data;
@@ -81,7 +81,7 @@ export const addReviewToProduct = async (productId, review) => {
         { "review":review }, 
         {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
         });
     return response.data;

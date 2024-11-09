@@ -1,5 +1,6 @@
 const BrevoTemplate = require("../model/BrevoTemplate");
 
+//Done
 class ProductOutOfStockTemplate extends BrevoTemplate {
     constructor(name , price,description ,userName) {
         super();
@@ -22,3 +23,5 @@ class ProductOutOfStockTemplate extends BrevoTemplate {
         };
     }
 }
+
+module.exports = ProductOutOfStockTemplate;

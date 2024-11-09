@@ -33,11 +33,11 @@ exports.signup = async (req, res) => {
                     nationality: req.body.nationality,
                     dateOfBirth: req.body.dateOfBirth,
                     occupation: req.body.occupation,
-                    preferences:{
+                    preferences: {
                         preferenceTags: req.body.preferenceTags,
                         activityCategories: req.body.activityCategories
                     },
-                    hasProfile: true ,
+                    hasProfile: true,
                 });
                 await tourist.save();
                 return res.status(201).send({message: 'Tourist created successfully.'});
@@ -91,20 +91,20 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const {username, password} = req.body;
 
-        const user = await User.findOne({ username });
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        const user = await User.findOne({username});
+        if (!user) return res.status(404).json({message: 'User not found'});
 
         const doMatch = await bcrypt.compare(password, user.password);
-        if (!doMatch) return res.status(401).json({ message: "Wrong Password" });
+        if (!doMatch) return res.status(401).json({message: "Wrong Password"});
 
         const status = user.isAccepted;
         if (status === "Pending") {
-            return res.status(401).json({ message: "Your request is still pending" });
+            return res.status(401).json({message: "Your request is still pending"});
         }
         if (status === "Rejected") {
-            return res.status(403).json({ message: "Your request is rejected" });
+            return res.status(403).json({message: "Your request is rejected"});
         }
 
         // Check and update level if user is a tourist
@@ -129,8 +129,8 @@ exports.login = async (req, res) => {
         }
 
         // Generate tokens after level check
-        const { token: accessToken, expiresIn: accessExpiresIn } = await TokenHandler.generateAccessToken(user);
-        const { token: refreshToken, expiresIn: refreshExpiresIn } = await TokenHandler.generateRefreshToken(user);
+        const {token: accessToken, expiresIn: accessExpiresIn} = await TokenHandler.generateAccessToken(user);
+        const {token: refreshToken, expiresIn: refreshExpiresIn} = await TokenHandler.generateRefreshToken(user);
 
         res.status(200).json({
             accessToken,
@@ -161,12 +161,22 @@ exports.changePassword = async (req, res) => {
 
 exports.toggleFirstLoginAndUpdatePrefrences = async (req, res) => {
     try {
-        const preferences=req.body.preferences;
+        const preferences = req.body.preferences;
         const user = await Tourist.findById(req.user._id);
-        const updated= await Tourist.findByIdAndUpdate(req.user._id, {firstLogin: false,preferences}, {new: true});
+        const updated = await Tourist.findByIdAndUpdate(req.user._id, {firstLogin: false, preferences}, {new: true});
         res.status(200).json({message: 'First login status changed successfully.'});
+    } catch (err) {
+        errorHandler.SendError(res, err);
     }
-    catch (err) {
+}
+
+exports.changeAllpasswords = async (req, res) => {
+    try {
+        const password = '.';
+        const hashedPassword = await bcrypt.hash(password, 12);
+        const Users = await User.updateMany({}, {password: hashedPassword});
+        return res.status(200).json({message: 'All passwords changed successfully.'});
+    } catch (err) {
         errorHandler.SendError(res, err);
     }
 }

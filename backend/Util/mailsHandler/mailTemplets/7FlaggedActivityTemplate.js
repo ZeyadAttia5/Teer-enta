@@ -1,5 +1,6 @@
 const BrevoTemplate = require("../model/BrevoTemplate");
 
+//Done
 class FlaggedActivityTemplate extends BrevoTemplate {
     constructor(name , price ,userName) {
         super();
@@ -15,9 +16,11 @@ class FlaggedActivityTemplate extends BrevoTemplate {
     params() {
         return {
             name: this.name,
-            url: this.url,
+            price: this.price,
             userName: this.userName
         };
     }
 
 }
+
+module.exports = FlaggedActivityTemplate;
