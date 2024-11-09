@@ -1,15 +1,147 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect ,useRef} from "react";
 import ActivityCard from "./ActivityCard";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-import { Input, Select, Slider, Row, Col, Checkbox } from "antd";
+import { Input, Select, Slider, Row, Col, Checkbox,Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { getTouristActivities } from "../../../api/activity.ts";
 import dayjs from "dayjs";
+import { Filter, SortAsc ,ChevronRight,Star} from 'lucide-react'
+import { ReloadOutlined } from '@ant-design/icons';
+import { FaLayerGroup } from "react-icons/fa";
+
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 const { Search } = Input;
 const { Option } = Select;
+
+const Button1 = ({ children, onClick, variant = 'default' }) => {
+  const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+  const variantClasses = variant === 'outline' 
+    ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
+    : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+  
+  return (
+    <button className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`} onClick={onClick}>
+      {children}
+    </button>
+  )
+}
+
+const Button2 = ({ children, onClick, variant = 'default' }) => {
+  const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+  const variantClasses = variant === 'outline' 
+    ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
+    : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+  
+  return (
+    <Button className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`} onClick={onClick} type="primary" 
+    danger
+    icon={<ReloadOutlined />}
+    >
+      {children}
+    </Button>
+  )
+}
+
+const DropdownMenu = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+
+  return (
+    <div className="relative inline-block text-left" ref={dropdownRef}>
+      {React.Children.map(children, child => 
+        React.cloneElement(child, { isOpen, setIsOpen })
+      )}
+    </div>
+  )
+}
+
+const DropdownMenuTrigger = ({ children, isOpen, setIsOpen }) => {
+  return React.cloneElement(children, {
+    onClick: () => setIsOpen(!isOpen),
+    'aria-expanded': isOpen,
+    'aria-haspopup': true,
+  })
+}
+
+const DropdownMenuContent = ({ children, isOpen }) => {
+  if (!isOpen) return null
+  return (
+    <div className="absolute right-0 left-0 mt-2 w-56 rounded-md shadow-lg bg-white text-gray-700 z-50">
+      <div className="py-1">{children}</div>
+    </div>
+  )
+}
+
+const DropdownMenuLabel = ({ children }) => <div className="px-3 py-2 text-sm font-semibold">{children}</div>
+const DropdownMenuSeparator = () => <hr className="my-1 border-border" />
+const DropdownMenuGroup = ({ children }) => <div>{children}</div>
+const DropdownMenuItem = ({ children, onSelect }) => (
+  <button
+    className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-default"
+    onClick={onSelect}
+  >
+    {children}
+  </button>
+)
+
+const DropdownMenuPortal = ({ children }) => {
+  return <div className="relative cursor-pointer">{children}</div>
+}
+
+const DropdownMenuSub = ({ trigger, children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+      >
+      <DropdownMenuSubTrigger onClick={() => setIsOpen(prev => !prev)}>
+        {trigger}
+      </DropdownMenuSubTrigger>
+      <DropdownMenuPortal>
+        <DropdownMenuSubContent isOpen={isOpen}>
+          {children}
+        </DropdownMenuSubContent>
+      </DropdownMenuPortal>
+    </div>
+  );
+};
+
+const DropdownMenuSubTrigger = ({ children, onClick }) => (
+  <button 
+    className="w-full text-left px-3 py-2 text-sm flex items-center justify-between hover:bg-accent hover:text-accent-foreground"
+    
+  >
+    {children}
+    <ChevronRight className="h-4 w-4" />
+  </button>
+);
+
+const DropdownMenuSubContent = ({ children, isOpen }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="absolute left-full top-1/2 -translate-y-10 w-56 rounded-md shadow-lg bg-white text-gray-700 z-50">
+      <div className="py-1 px-1 bg-white hover:bg-gray-100 hover:border-transparent rounded-md">{children}</div>
+    </div>
+  );
+};
 
 const TouristActivity = ({ setFlag }) => {
   setFlag(false);
@@ -24,7 +156,17 @@ const TouristActivity = ({ setFlag }) => {
   const [sortBy, setSortBy] = useState(""); // To track sorting preference
   const [showUpcoming, setShowUpcoming] = useState(false); // State for upcoming activities
 
+
   const location = useLocation();
+
+  const resetFilters = () => {
+    setBudget([0, 1000]);
+    setCategory("");
+    setRating("");
+    setSortBy("");
+    setShowUpcoming(false);
+    setSearchQuery("");
+  };
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -135,86 +277,146 @@ const TouristActivity = ({ setFlag }) => {
   }, []);
 
   return (
-      <div className="p-16 bg-[#E0F0EE]">
-        <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p>
+      <div className="p-16 bg-[#E0F0EE] ">
+        {/* <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p> */}
 
-        {/* Search Input */}
-        <Search
-            placeholder="Search by name, category, or tag"
-            onSearch={handleSearch}
-            enterButton={<SearchOutlined />}
-            size="large"
-            className="mb-8"
-            allowClear
-        />
+        <div className="flex flex-col items-center space-y-4 mb-8">
+  {/* Centered Search Bar */}
+  <Search
+    placeholder="Search by name, category, or tag"
+    onSearch={handleSearch}
+    enterButton={<SearchOutlined />}
+    className="p-2 rounded-md w-[400px]" 
+    allowClear
+  />
 
-        {/* Filters and Sorting */}
-        <Row gutter={[16, 16]} className="mb-8">
-          {/* Budget Filter */}
-          <Col xs={24} md={12} lg={6}>
-            <p className="mb-2">Budget: ${budget[0]} - ${budget[1]}</p>
-            <Slider
-                range
-                value={budget}
-                max={maxBudget}
-                onChange={(value) => setBudget(value)}
-                tooltipVisible
-                tooltipPlacement="bottom"
-            />
-          </Col>
+  {/* Centered Filters and Reset Button */}
+  <div className="flex flex-wrap justify-center space-x-4 items-center">
+    {/* Budget Filter Dropdown */}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button1 variant="outline">
+          <Filter className="mr-2 h-4 w-4" />
+          Budget
+        </Button1>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Budget Range</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <div className="p-4">
+          <p className="mb-2">Budget: ${budget[0]} - ${budget[1]}</p>
+          <Slider
+            range
+            value={budget}
+            max={maxBudget}
+            onChange={(value) => setBudget(value)}
+            tooltipVisible
+            tooltipPlacement="bottom"
+            className="mt-2"
+          />
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
 
-          {/* Category Filter */}
-          <Col xs={24} md={12} lg={6}>
-            <Select
-                placeholder="Select category"
-                onChange={(value) => setCategory(value)}
-                className="w-full"
-                allowClear
-                value={category || undefined}
-            >
-              <Option value="">All Categories</Option>
-              {uniqueCategories.map((cat) => (
-                  <Option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </Option>
-              ))}
-            </Select>
-          </Col>
+    {/* Category Filter Dropdown */}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button1 variant="outline">
+          <FaLayerGroup className="mr-2 h-4 w-4" />
+          Category
+        </Button1>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Select Category</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <div className="p-4">
+          <select
+            id="categoryFilter"
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+            value={category || undefined}
+          >
+            <option value="">All Categories</option>
+            {uniqueCategories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
 
-          {/* Rating Filter */}
-          <Col xs={24} md={12} lg={6}>
-            <Select
-                placeholder="Select minimum rating"
-                onChange={(value) => setRating(value)}
-                className="w-full"
-                allowClear
-                value={rating || undefined}
-            >
-              <Option value={0}>All Ratings</Option>
-              <Option value={4}>4 Stars & Above</Option>
-              <Option value={3}>3 Stars & Above</Option>
-              <Option value={2}>2 Stars & Above</Option>
-              <Option value={1}>1 Star & Above</Option>
-            </Select>
-          </Col>
+    {/* Rating Filter Dropdown */}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button1 variant="outline">
+          <Star className="mr-2 h-4 w-4" />
+          Rating
+        </Button1>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Minimum Rating</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <div className="p-4">
+          <select
+            id="ratingFilter"
+            onChange={(e) => setRating(e.target.value)}
+            className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+            value={rating || undefined}
+          >
+            <option value={0}>All Ratings</option>
+            <option value={4}>4 Stars & Above</option>
+            <option value={3}>3 Stars & Above</option>
+            <option value={2}>2 Stars & Above</option>
+            <option value={1}>1 Star & Above</option>
+          </select>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
 
-          {/* Sorting */}
-          <Col xs={24} md={12} lg={6}>
-            <Select
-                placeholder="Sort by"
-                onChange={(value) => setSortBy(value)}
-                className="w-full"
-                allowClear
-                value={sortBy || undefined}
-            >
-              <Option value="">No Sorting</Option>
-              <Option value="price">Price (Low to High)</Option>
-              <Option value="price_desc">Price (High to Low)</Option>
-              <Option value="rating">Rating (High to Low)</Option>
-              <Option value="rating_asc">Rating (Low to High)</Option>
-            </Select>
-          </Col>
-        </Row>
+    {/* Sorting Dropdown */}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button1 variant="outline">
+          <SortAsc className="mr-2 h-4 w-4" />
+          Sort
+        </Button1>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <div className="p-4">
+          <select
+            id="sortFilter"
+            onChange={(e) => setSortBy(e.target.value)}
+            className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+            value={sortBy || undefined}
+          >
+            <option value="">No Sorting</option>
+            <option value="price">Price (Low to High)</option>
+            <option value="price_desc">Price (High to Low)</option>
+            <option value="rating">Rating (High to Low)</option>
+            <option value="rating_asc">Rating (Low to High)</option>
+          </select>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
+
+    {/* Reset Button */}
+    <Button2
+      type="primary"
+      danger
+      icon={<ReloadOutlined />}
+      onClick={resetFilters}
+      className="h-9"
+    >
+      Reset
+    </Button2>
+  </div>
+</div>
+
+
 
         {/* Checkbox for Upcoming Activities */}
         <Checkbox

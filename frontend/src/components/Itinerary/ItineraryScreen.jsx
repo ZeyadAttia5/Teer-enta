@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect ,useRef} from "react";
 import {
   Table,
   Button,
@@ -17,6 +17,8 @@ import {
   Tooltip,
   Switch,
 } from "antd";
+import { ReloadOutlined } from '@ant-design/icons';
+
 import {
   MinusCircleOutlined,
   PlusOutlined,
@@ -33,8 +35,10 @@ import {
   getMyItineraries,
   flagIternaary,
 } from "../../api/itinerary.ts";
+import { SearchOutlined } from "@ant-design/icons";
 import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
+import { Filter, SortAsc ,ChevronRight} from 'lucide-react'
 
 import moment from "moment";
 import "antd";
@@ -49,7 +53,136 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getCurrency } from "../../api/account.ts";
 
 const { Option } = Select;
+const { Search } = Input;
 const { RangePicker } = DatePicker;
+
+const Button1 = ({ children, onClick, variant = 'default' }) => {
+  const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+  const variantClasses = variant === 'outline' 
+    ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
+    : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+  
+  return (
+    <button className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`} onClick={onClick}>
+      {children}
+    </button>
+  )
+}
+
+const Button2 = ({ children, onClick, variant = 'default' }) => {
+  const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+  const variantClasses = variant === 'outline' 
+    ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
+    : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+  
+  return (
+    <Button className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`} onClick={onClick} type="primary" 
+    danger
+    icon={<ReloadOutlined />}
+    >
+      {children}
+    </Button>
+  )
+}
+
+const DropdownMenu = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+
+  return (
+    <div className="relative inline-block text-left" ref={dropdownRef}>
+      {React.Children.map(children, child => 
+        React.cloneElement(child, { isOpen, setIsOpen })
+      )}
+    </div>
+  )
+}
+
+const DropdownMenuTrigger = ({ children, isOpen, setIsOpen }) => {
+  return React.cloneElement(children, {
+    onClick: () => setIsOpen(!isOpen),
+    'aria-expanded': isOpen,
+    'aria-haspopup': true,
+  })
+}
+
+const DropdownMenuContent = ({ children, isOpen }) => {
+  if (!isOpen) return null
+  return (
+    <div className="absolute right-0 left-0 mt-2 w-56 rounded-md shadow-lg bg-white text-gray-700 z-50">
+      <div className="py-1">{children}</div>
+    </div>
+  )
+}
+
+const DropdownMenuLabel = ({ children }) => <div className="px-3 py-2 text-sm font-semibold">{children}</div>
+const DropdownMenuSeparator = () => <hr className="my-1 border-border" />
+const DropdownMenuGroup = ({ children }) => <div>{children}</div>
+const DropdownMenuItem = ({ children, onSelect }) => (
+  <button
+    className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-default"
+    onClick={onSelect}
+  >
+    {children}
+  </button>
+)
+
+const DropdownMenuPortal = ({ children }) => {
+  return <div className="relative cursor-pointer">{children}</div>
+}
+
+const DropdownMenuSub = ({ trigger, children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+      >
+      <DropdownMenuSubTrigger onClick={() => setIsOpen(prev => !prev)}>
+        {trigger}
+      </DropdownMenuSubTrigger>
+      <DropdownMenuPortal>
+        <DropdownMenuSubContent isOpen={isOpen}>
+          {children}
+        </DropdownMenuSubContent>
+      </DropdownMenuPortal>
+    </div>
+  );
+};
+
+const DropdownMenuSubTrigger = ({ children, onClick }) => (
+  <button 
+    className="w-full text-left px-3 py-2 text-sm flex items-center justify-between hover:bg-accent hover:text-accent-foreground"
+    
+  >
+    {children}
+    <ChevronRight className="h-4 w-4" />
+  </button>
+);
+
+const DropdownMenuSubContent = ({ children, isOpen }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="absolute left-full top-1/2 -translate-y-10 w-56 rounded-md shadow-lg bg-white text-gray-700 z-50">
+      <div className="py-1 px-1 bg-white hover:bg-gray-100 hover:border-transparent rounded-md">{children}</div>
+    </div>
+  );
+};
 
 const ItineraryScreen = ({ setFlag }) => {
   setFlag(false);
@@ -91,6 +224,16 @@ const ItineraryScreen = ({ setFlag }) => {
     fetchActivities();
     fetchPreferenceTags();
   }, [location.pathname]);
+
+
+  const resetFilters = () => {
+    setSelectedBudget('');
+    setSelectedDateFilter('');
+    setSelectedLanguage('');
+    setSelectedPreference('');
+    setSortBy('');
+    setSearchTerm('');
+  };
 
   const budgets = [...new Set(itineraries.map((itin) => itin.price))];
   const languages = [...new Set(itineraries.map((itin) => itin.language))];
@@ -461,7 +604,7 @@ const ItineraryScreen = ({ setFlag }) => {
 
   return (
     <div className="p-6 bg-[#E0F0EE] min-h-screen">
-      <h1 className="text-9xl font-bold mb-4 text-[#496989]">Itineraries</h1>
+      {/* <h1 className="text-9xl font-bold mb-4 text-[#496989]">Itineraries</h1> */}
       {user && user.userRole === "TourGuide" && (
         <Button
           type="primary"
@@ -474,110 +617,151 @@ const ItineraryScreen = ({ setFlag }) => {
         </Button>
       )}
       <div className="p-8 bg-[#E0F0EE]">
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Search by name, category, or tag..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="mb-4 p-2 border border-slate-700 rounded-md w-[600px] mx-auto block"
-          />
-        </div>
+      <div className="mb-6 flex flex-col items-center space-y-4">
+    {/* Centered, smaller search bar */}
+    <Search
+      enterButton={<SearchOutlined />}
+      placeholder="Search by name, category, or tag..."
+      value={searchTerm}
+      allowClear
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="p-2 rounded-md w-[400px]"  // Reduced width for smaller size
+    />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-          <div className="flex flex-col">
-            <label htmlFor="budgetFilter" className="font-semibold mb-1">
-              Filter by Budget:
-            </label>
-            <select
-              id="budgetFilter"
-              value={selectedBudget}
-              onChange={(e) => setSelectedBudget(e.target.value)}
-              className="p-2 border border-slate-700 rounded-md"
-            >
-              <option value="">All Budgets</option>
-              {budgets.map((budget, index) => (
-                <option key={index} value={budget}>
-                  {budget}
-                </option>
-              ))}
-            </select>
-          </div>
+    <div className="flex space-x-4">
+      {/* Sort Dropdown */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button1 variant="outline">
+            <SortAsc className="mr-2 h-4 w-4" />
+            Sort
+          </Button1>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem asChild>
+              <div>
+                <select
+                  id="sortFilter"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                >
+                  <option value="">None</option>
+                  <option value="pricingHighToLow">Price (High to Low)</option>
+                  <option value="pricingLowToHigh">Price (Low to High)</option>
+                  <option value="ratingHighToLow">Rating (High to Low)</option>
+                  <option value="ratingLowToHigh">Rating (Low to High)</option>
+                </select>
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-          <div className="flex flex-col">
-            <label htmlFor="dateFilter" className="font-semibold mb-1">
-              Filter by Date:
-            </label>
-            <select
-              id="dateFilter"
-              value={selectedDateFilter}
-              onChange={(e) => setSelectedDateFilter(e.target.value)}
-              className="p-2 border border-slate-700 rounded-md"
-            >
-              <option value="">All Dates</option>
-              <option value="today">Today</option>
-              <option value="thisWeek">This Week</option>
-              <option value="thisMonth">This Month</option>
-              <option value="thisYear">This Year</option>
-              <option value="allUpcoming">All Upcoming</option>
-            </select>
-          </div>
+      {/* Filter Dropdown */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button1 variant="outline">
+            <Filter className="mr-2 h-4 w-4" />
+            Filter
+          </Button1>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuSub trigger="Budget">
+              <div className="w-full">
+                <select
+                  id="budgetFilter"
+                  value={selectedBudget}
+                  onChange={(e) => setSelectedBudget(e.target.value)}
+                  className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                >
+                  <option value="">All Budgets</option>
+                  {budgets.map((budget, index) => (
+                    <option key={index} value={budget}>
+                      {budget}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </DropdownMenuSub>
 
-          <div className="flex flex-col">
-            <label htmlFor="languageFilter" className="font-semibold mb-1">
-              Filter by Language:
-            </label>
-            <select
-              id="languageFilter"
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="p-2 border border-slate-700 rounded-md"
-            >
-              <option value="">All Languages</option>
-              {languages.map((language, index) => (
-                <option key={index} value={language}>
-                  {language}
-                </option>
-              ))}
-            </select>
-          </div>
+            <DropdownMenuSub trigger="Date">
+              <div>
+                <select
+                  id="dateFilter"
+                  value={selectedDateFilter}
+                  onChange={(e) => setSelectedDateFilter(e.target.value)}
+                  className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                >
+                  <option value="">All Dates</option>
+                  <option value="today">Today</option>
+                  <option value="thisWeek">This Week</option>
+                  <option value="thisMonth">This Month</option>
+                  <option value="thisYear">This Year</option>
+                  <option value="allUpcoming">All Upcoming</option>
+                </select>
+              </div>
+            </DropdownMenuSub>
 
-          <div className="flex flex-col">
-            <label htmlFor="preferenceFilter" className="font-semibold mb-1">
-              Filter by Preference:
-            </label>
-            <select
-              id="preferenceFilter"
-              value={selectedPreference}
-              onChange={(e) => setSelectedPreference(e.target.value)}
-              className="p-2 border border-slate-700 rounded-md"
-            >
-              <option value="">All Preferences</option>
-              {preferenceTagsList.map((preference) => (
-                <option key={preference._id} value={preference._id}>
-                  {preference.tag}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="sortFilter" className="font-semibold mb-1">
-              Sort by:
-            </label>
-            <select
-              id="sortFilter"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="p-2 border border-slate-700 rounded-md"
-            >
-              <option value="">None</option>
-              <option value="pricingHighToLow">Price (High to Low)</option>
-              <option value="pricingLowToHigh">Price (Low to High)</option>
-              <option value="ratingHighToLow">Rating (High to Low)</option>
-              <option value="ratingLowToHigh">Rating (Low to High)</option>
-            </select>
-          </div>
-        </div>
+            <DropdownMenuSub trigger="Language">
+              <div>
+                <select
+                  id="languageFilter"
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                >
+                  <option value="">All Languages</option>
+                  {languages.map((language, index) => (
+                    <option key={index} value={language}>
+                      {language}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </DropdownMenuSub>
+
+            <DropdownMenuSub trigger="Preference">
+              <div>
+                <select
+                  id="preferenceFilter"
+                  value={selectedPreference}
+                  onChange={(e) => setSelectedPreference(e.target.value)}
+                  className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                >
+                  <option value="">All Preferences</option>
+                  {preferenceTagsList.map((preference) => (
+                    <option key={preference._id} value={preference._id}>
+                      {preference.tag}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </DropdownMenuSub>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Reset Button */}
+      <Button2
+        type="primary" 
+        danger
+        icon={<ReloadOutlined />}
+        onClick={resetFilters}
+        className="ml-4 h-9"
+      >
+        Reset
+      </Button2>
+    </div>
+    
+  </div>
+    
       </div>
       {user === null || user.userRole === "Tourist" ? (
         <main className="flex flex-wrap gap-4 py-10 ">
