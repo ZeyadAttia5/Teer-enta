@@ -123,7 +123,8 @@ exports.checkOutOrder = async (req, res) => {
             products,
             totalPrice,
             deliveryAddress,
-            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
+            // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
+            status: 'Pending',
             isActive: true,
         });
 

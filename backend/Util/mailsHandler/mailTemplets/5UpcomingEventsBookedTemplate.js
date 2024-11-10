@@ -1,6 +1,7 @@
 const BrevoTemplate = require("../model/BrevoTemplate");
 
 class UpcomingEventsBookedTemplate extends BrevoTemplate {
+    // name of event and date of event and user name
     constructor(name ,userName ,date) {
         super();
         this.name = name;
@@ -20,3 +21,5 @@ class UpcomingEventsBookedTemplate extends BrevoTemplate {
         };
     }
 }
+
+module.exports = UpcomingEventsBookedTemplate;

@@ -44,6 +44,10 @@ import CreateTransportation from "./components/Transportation/CreateTransportati
 import BookTransportation from "./components/Transportation/BookTransportation.jsx";
 import BookFlight from "./components/Flight/BookFlight.jsx";
 import NewProfile from "./components/Profile/NewProfile.js";
+import UnActiveActivities from "./components/Activity/UnActiveActivities.tsx";
+import UnActiveIternaries from "./components/Itinerary/UnActiveIternaries.jsx";
+import ForgotPassword from "./components/Auth/Password/ForgotPassword";
+import ResetPassword from "./components/Auth/Password/ResetPassword";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -101,6 +105,8 @@ function App() {
             <Route path="/login" element={<Login setFlag={setFlag} flag={flag} />} />
             <Route path="/profile" element={<Profile setFlag={setFlag} />} />
             <Route path="/preference-tags" element={<PreferenceTags setFlag={setFlag} />} />
+            <Route path="/forgot-password" element={<ForgotPassword setFlag={setFlag} />} />
+            <Route path="/reset-password/:token" element={<ResetPassword setFlag={setFlag} />} />
 
             {/* Activity Routes */}
             <Route path="/activities" element={<AllActivitiesCRUD setFlag={setFlag} />} />
@@ -109,6 +115,7 @@ function App() {
             <Route path="/activity-categories" element={<ActivityCategories setFlag={setFlag} />} />
             <Route path="/tags" element={<Tags setFlag={setFlag} />} />
             <Route path="/activity" element={<ActivityList setFlag={setFlag} />} />
+            <Route path="/unActiveActivity" element={<UnActiveActivities setFlag={setFlag} />} />
             <Route path="/touristActivities" element={<TouristActivity setFlag={setFlag} />}/>
             {/* Historical Places Routes */}
             <Route path="/historicalPlace" element={<ReadHistoriaclPlaces setFlag={setFlag} />} />
@@ -137,6 +144,7 @@ function App() {
                 <Route path="activityDetails/:id" element={<ActivityDetails setFlag={setFlag} />} />
                 <Route path="/" element={<IternaryScreen setFlag={setFlag} />} />
                 <Route path="flaggedIternaries" element={<FlaggedIternary setFlag={setFlag} />} />
+                <Route path="unActiveIternaries" element={<UnActiveIternaries setFlag={setFlag} />} />
                 <Route path="iternaryDetails/:id" element={<IternaryDetails setFlag={setFlag} />} />
               </Routes>
             }/>

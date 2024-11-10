@@ -26,3 +26,11 @@ export const toggleFirstLoginAndUpdatePrefrences = async ({prefrences,accessToke
         }
     });
 }
+
+export const forgotPassword = async (data) => {
+    return await axios.post(`${API_BASE_URL}/auth/forgotPassword`, data);
+}
+
+export const resetPassword = async (data) => {
+    return await axios.post(`${API_BASE_URL}/auth/resetPassword`, data);
+}

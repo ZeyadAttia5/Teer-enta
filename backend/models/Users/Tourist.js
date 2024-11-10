@@ -11,6 +11,8 @@ const touristSchema = new mongoose.Schema({
     loyalityPoints: {type: Number, default: 0},
     isActive: {type: Boolean, default: true},
     wallet: {type: Number, default: 0},
+    currency: {type: mongoose.Schema.Types.ObjectId, ref: 'Currency', default: null},
+    firstLogin: {type: Boolean, default: true},
     preferences: {
         preferenceTags: [{type: mongoose.Schema.Types.ObjectId, ref: 'PreferenceTag'}],
         activityCategories: [{type: mongoose.Schema.Types.ObjectId, ref: 'ActivityCategory'}],
@@ -38,11 +40,8 @@ const touristSchema = new mongoose.Schema({
             quantity: {type: Number}
         }
     ],
-    currency: {type: mongoose.Schema.Types.ObjectId, ref: 'Currency', default: null},
-    firstLogin: {type: Boolean, default: true},
 }, {timestamps: true});
 
-// Use discriminator to extend User schema
 const Tourist = User.discriminator('Tourist', touristSchema);
 
 module.exports = Tourist;

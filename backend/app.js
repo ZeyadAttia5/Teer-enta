@@ -28,6 +28,7 @@ const complaintRoutes = require('./routes/complaint');
 const currencyRoutes = require('./routes/currency') ;
 const fileRoutes = require('./routes/file');
 const cartRoutes = require('./routes/cart');
+const promoCodeRoutes = require('./routes/promoCode');
 
 
 
@@ -80,6 +81,7 @@ app.use("/payment", paymentRoutes);
 app.use("/complaint", complaintRoutes);
 app.use("/upload" , fileRoutes ) ;
 app.use("/currency" , currencyRoutes) ;
+app.use("/promoCode", promoCodeRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });
