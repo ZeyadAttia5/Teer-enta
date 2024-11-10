@@ -134,7 +134,7 @@ exports.unArchiveProduct = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(400).send({message: 'Invalid product id'});
         }
-        const unArchivedProduct = await product.findByIdAndUpdate(productId, {isActive: false}, {new: true});
+        const unArchivedProduct = await product.findByIdAndUpdate(productId, {isActive: true}, {new: true});
         if (!unArchivedProduct) {
             return res.status(404).send({message: 'Product not found'});
         }
