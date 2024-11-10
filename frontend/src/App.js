@@ -44,6 +44,8 @@ import CreateTransportation from "./components/Transportation/CreateTransportati
 import BookTransportation from "./components/Transportation/BookTransportation.jsx";
 import BookFlight from "./components/Flight/BookFlight.jsx";
 import NewProfile from "./components/Profile/NewProfile.js";
+import ForgotPassword from "./components/Auth/Password/ForgotPassword";
+import ResetPassword from "./components/Auth/Password/ResetPassword";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -101,6 +103,8 @@ function App() {
             <Route path="/login" element={<Login setFlag={setFlag} flag={flag} />} />
             <Route path="/profile" element={<Profile setFlag={setFlag} />} />
             <Route path="/preference-tags" element={<PreferenceTags setFlag={setFlag} />} />
+            <Route path="/forgot-password" element={<ForgotPassword setFlag={setFlag} />} />
+            <Route path="/reset-password/:token" element={<ResetPassword setFlag={setFlag} />} />
 
             {/* Activity Routes */}
             <Route path="/activities" element={<AllActivitiesCRUD setFlag={setFlag} />} />

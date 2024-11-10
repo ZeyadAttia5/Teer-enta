@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const promoCodesSchema = new mongoose.Schema({
-    code: { type: String, required: true },
+    code: { type: String, required: true, unique: true },
     discount: { type: Number, required: true },
-    isActive: { type: Boolean, default: true } ,
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    expiryDate: { type: Date, required: true },
+    usageLimit: { type: Number, default: 1 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('PromoCodes', promoCodesSchema);

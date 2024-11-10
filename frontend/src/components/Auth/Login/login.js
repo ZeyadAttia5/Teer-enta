@@ -195,7 +195,8 @@ function Login({ setFlag, flag }) {
             ) : (
                 <div className="w-1/2 flex flex-col justify-center items-center">
           <span className="ml-8 text-lg leading-7">
-            <div className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
+            <div
+                className="cursor-pointer w-fit border border-transparent hover:border-white p-2 rounded-md transition-all duration-300 hover:scale-105">
               <Link to="/" className="ring-0">
                 <img
                     src={logo}
@@ -206,76 +207,85 @@ function Login({ setFlag, flag }) {
               </Link>
             </div>
           </span>
-                    <form className="formlogin mt-2 bg-white block p-4 max-w-[500px] rounded-lg shadow-xl">
-                        <p className="text-4xl font-bold my-4">Login now</p>
-                        <p className="my-2">Hi, Welcome back</p>
+                  <form className="formlogin mt-2 bg-white block p-4 max-w-[500px] rounded-lg shadow-xl">
+                    <p className="text-4xl font-bold my-4">Login now</p>
+                    <p className="my-2">Hi, Welcome back</p>
 
-                        <div className="flex items-center pt-4 pl-3 pr-3 text-sm leading-5 text-gray-400 mb-4">
-                            <div className="h-px flex-1 bg-gray-400 text-gray-800"></div>
-                            <p className="pl-3 pr-3 text-sm leading-5 text-gray-400">
-                                Login with Username & Password
-                            </p>
-                            <div className="h-px flex-1 bg-gray-400 text-gray-800"></div>
-                        </div>
+                    <div className="flex items-center pt-4 pl-3 pr-3 text-sm leading-5 text-gray-400 mb-4">
+                      <div className="h-px flex-1 bg-gray-400 text-gray-800"></div>
+                      <p className="pl-3 pr-3 text-sm leading-5 text-gray-400">
+                        Login with Username & Password
+                      </p>
+                      <div className="h-px flex-1 bg-gray-400 text-gray-800"></div>
+                    </div>
 
-                        <h6 className="text-sm font-medium text-gray-700">Username</h6>
-                        <div className="input-containerlogin relative">
-                            <input
-                                className="inputlogin"
-                                type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Enter your username"
-                            />
-                        </div>
+                    <h6 className="text-sm font-medium text-gray-700">Username</h6>
+                    <div className="input-containerlogin relative">
+                      <input
+                          className="inputlogin"
+                          type="text"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          placeholder="Enter your username"
+                      />
+                    </div>
 
-                        <h6 className="text-sm font-medium text-gray-700">Password</h6>
-                        <div className="input-containerlogin relative">
-                            <input
-                                className="inputlogin"
-                                type={showPassword ? "text" : "password"}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter your password"
-                                style={{ paddingRight: "40px" }}
-                            />
-                            <span
-                                onClick={togglePasswordVisibility}
-                                style={{
-                                    position: "absolute",
-                                    right: "10px",
-                                    top: "50%",
-                                    transform: "translateY(-50%)",
-                                    cursor: "pointer",
-                                }}
-                            >
-                {showPassword ? <FaEyeSlash color="gray" /> : <FaEye color="gray" />}
+                    <h6 className="text-sm font-medium text-gray-700">Password</h6>
+                    <div className="input-containerlogin relative">
+                      <input
+                          className="inputlogin"
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Enter your password"
+                          style={{paddingRight: "40px"}}
+                      />
+                      <span
+                          onClick={togglePasswordVisibility}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            cursor: "pointer",
+                          }}
+                      >
+                {showPassword ? <FaEyeSlash color="gray"/> : <FaEye color="gray"/>}
               </span>
-                        </div>
-                        <div className="flex justify-between mt-1 mb-4">
-                            <span className="text-red-500 text-xs ml-4">{message}</span>
-                            <a className="hover:underline text-[#474bca] text-xs" href="">
-                                Forgot password?
-                            </a>
-                        </div>
-                        <button
-                            type="submit"
-                            className="buttonlogin bg-[#02735f] block pt-3 pb-3 pl-5 pr-5 text-white text-sm leading-5 font-medium w-full rounded-lg uppercase"
-                            onClick={handleLoginSubmission}
-                        >
-                            Login
-                        </button>
+                    </div>
+                    <div className="flex justify-between mt-1 mb-4">
+                      <span className="text-red-500 text-xs ml-4">{message}</span>
+                      <a className="hover:underline text-[#474bca] text-xs" href="">
+                        Forgot password?
+                      </a>
+                    </div>
+                    <button
+                        type="submit"
+                        className="buttonlogin bg-[#02735f] block pt-3 pb-3 pl-5 pr-5 text-white text-sm leading-5 font-medium w-full rounded-lg uppercase"
+                        onClick={handleLoginSubmission}
+                    >
+                      Login
+                    </button>
 
-                        <p className="text-xs text-center">
-                            No account?
-                            <a href="/signup" className="text-[#474bca] hover:underline">
-                                Sign up
-                            </a>
-                        </p>
-                    </form>
+                    <p className="text-xs text-center">
+                      No account?
+                      <a href="/signup" className="text-[#474bca] hover:underline">
+                        Sign up
+                      </a>
+                    </p>
+                  </form>
+                  <div className="flex justify-between mt-1 mb-4">
+                    <span className="text-red-500 text-xs ml-4">{message}</span>
+                    {/* Update the href to use react-router Link */}
+                    <Link to="/forgot-password" className="hover:underline text-[#474bca] text-xs">
+                      Forgot password?
+                    </Link>
+                  </div>
+
                 </div>
             )}
         </div>
     );
 }
+
 export default Login;

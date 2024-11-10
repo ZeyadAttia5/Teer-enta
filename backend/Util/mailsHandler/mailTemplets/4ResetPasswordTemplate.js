@@ -18,3 +18,5 @@ class ResetPasswordTemplate extends BrevoTemplate {
         };
     }
 }
+
+module.exports = ResetPasswordTemplate;

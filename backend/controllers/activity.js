@@ -313,7 +313,8 @@ exports.bookActivity = async (req, res) => {
         const newBooking = await BookedActivity.create({
             activity: id,
             createdBy: userId,
-            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
+            // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
+            status:"Pending",
             date: activity.date
         });
 // Logic for assigning loyalty points based on the tourist's current level

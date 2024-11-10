@@ -4,8 +4,15 @@ const TourGuide = require('../models/Users/TourGuide');
 const Advertiser = require('../models/Users/Advertiser');
 const Seller = require('../models/Users/Seller');
 const bcrypt = require('bcryptjs');
+const jwt = require("jsonwebtoken");
+const crypto = require('crypto');
 const TokenHandler = require('../Util/TokenHandler/tokenGenerator');
 const errorHandler = require("../Util/ErrorHandler/errorSender");
+const BrevoService = require("../Util/mailsHandler/brevo/brevoService");
+const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
+const brevoService = new BrevoService(brevoConfig);
+const ResetPasswordTemplate = require("../Util/mailsHandler/mailTemplets/4ResetPasswordTemplate")
+
 
 exports.signup = async (req, res) => {
     try {
@@ -180,3 +187,63 @@ exports.changeAllpasswords = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+
+
+exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const otp = crypto.randomInt(100000, 999999).toString(); // Generate OTP
+        const otpExpiry = Date.now() + 15 * 60 * 1000; // OTP expires in 15 minutes
+
+        const token = jwt.sign(
+            { userId: user._id }, // Payload - identify the user
+            process.env.JWT_SECRET_RESET, // Secret key for signing the token
+            { expiresIn: '15m' } // Token expires in 15 minutes
+        );
+
+        user.resetOtp = otp;
+        user.otpExpiry = otpExpiry;
+        await user.save();
+
+        const template = new ResetPasswordTemplate (otp,user.username);
+        await brevoService.send(template, email);
+
+        res.status(200).json({ message: 'OTP sent to email' , token});
+    } catch (error) {
+
+        errorHandler.SendError(res, error);
+    }
+};
+
+exports.resetPassword = async (req, res) => {
+    const { otp, newPassword, token } = req.body;
+    try {
+        console.log(token);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_RESET);
+        const user = await User.findById(decoded.userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.resetOtp !== otp || Date.now() > user.otpExpiry) {
+            return res.status(400).json({ message: 'Invalid or expired OTP' });
+        }
+
+        // Hash the new password
+        user.password = await bcrypt.hash(newPassword, 10);
+        user.resetOtp = undefined; // Clear OTP
+        user.otpExpiry = undefined; // Clear expiry
+        await user.save();
+
+        res.status(200).json({ message: 'Password successfully reset' });
+    } catch (error) {
+        errorHandler.SendError(res, error);
+    }
+};
