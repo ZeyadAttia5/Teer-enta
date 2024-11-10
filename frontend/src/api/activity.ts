@@ -22,6 +22,14 @@ const getMyActivities = async () => {
     },
   });
 };
+
+const getUnActiveActivities = async () => {
+  return await axios.get<TActivity[]>(`${API_BASE_URL}/activity/unactive`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
+};
 const getUpcomingActivities = async () =>
   await axios.get<TActivity[]>(`${API_BASE_URL}/activity/upcoming`);
 
@@ -155,6 +163,20 @@ export const UnFlagActivity = async (activityId) => {
     return response.data;
 }
 
+// activate activity
+export const activateActivity = async (activityId) => {
+    const response = await axios.post(
+      `${API_BASE_URL}/activity/activate/${activityId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      }
+    );
+    return response.data;
+}
+
 
 export {
   getActivities,
@@ -163,9 +185,10 @@ export {
   deleteActivity,
   getUpcomingActivities,
   getMyActivities,
-    getBookedActivities,
+  getBookedActivities,
   getActivity,
-    getTouristActivities ,
-    bookActivity ,
-    cancleActivityBooking
+  getTouristActivities,
+  bookActivity,
+  cancleActivityBooking,
+  getUnActiveActivities,
 };
