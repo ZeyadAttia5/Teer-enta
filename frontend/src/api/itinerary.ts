@@ -149,3 +149,27 @@ export const unflagIternaary = async (itineraryId: String | Number) => {
   );
 };
 
+
+export const getUnActiveItineraries = async () => {
+  const response = await axios.get(`${API_BASE_URL}/itinerary/unactive`, {
+    headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+    return response.data;
+}
+
+export const activateItinerary = async (itineraryId) => {
+  const response = await axios.post(
+    `${API_BASE_URL}/itinerary/activate/${itineraryId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    }
+  );
+  return response.data;
+}
+
+

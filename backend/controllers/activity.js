@@ -432,7 +432,7 @@ exports.deactivateActivity = async (req, res) => {
 exports.activateActivity = async (req, res) => {
     try {
         const id = req.params.id;
-        if (!mongoose.Types.objectId.isValid(id)) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({message: "invalid object id "});
         }
         const activity = await Activity.findByIdAndUpdate(id, {isActive: true}, {new: true});
@@ -441,6 +441,7 @@ exports.activateActivity = async (req, res) => {
         }
         return res.status(200).json({message: "activity activated successfully"});
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 }
@@ -575,6 +576,17 @@ exports.makeAllActivitiesAppropriate = async (req, res) => {
     } catch (err) {
         console.error('Error updating activities:', err); // Log the error for debugging
         return errorHandler.SendError(res, err);
+    }
+};
+
+
+// get unactiveActivities
+exports.getUnactiveActivities = async (req, res) => {
+    try {
+        const activities = await Activity.find({ isActive: false });
+        res.status(200).json(activities);
+    } catch (err) {
+        errorHandler.SendError(res, err);
     }
 };
 

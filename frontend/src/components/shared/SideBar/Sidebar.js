@@ -80,6 +80,14 @@ const Sidebar = ({ visible, onClose }) => {
               Flagged Itinerary
             </Menu.Item>
             )}
+            {(user && user.userRole === "Admin") && (
+            <Menu.Item
+              key="2000"
+              onClick={() => handleClick("/itinerary/unActiveIternaries")}
+            >
+              UnActive Itinerary
+            </Menu.Item>
+            )}
             {user && user.userRole === "TourGuide" && (
               <Menu.Item key="5" onClick={() => handleClick("/itinerary/my")}>
                 My Itinerary
@@ -102,6 +110,14 @@ const Sidebar = ({ visible, onClose }) => {
                   <Menu.Item key="7" onClick={() => handleClick("/activities")}>
                     Activities
                   </Menu.Item>
+                  {user && user.userRole === "Admin" && (
+                      <Menu.Item
+                          key="1000000"
+                          onClick={() => handleClick("/unActiveActivity")}
+                      >
+                        UnActive Activities
+                      </Menu.Item>
+                  )}
                   {user && user.userRole === "Admin" && (
                       <Menu.Item
                           key="16"

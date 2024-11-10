@@ -646,3 +646,15 @@ exports.makeAllItineraryAppropriate = async (req, res) => {
 };
   
   
+exports.getUnActiveItinerary = async (req, res) => {
+    try {
+        const itineraries = await Itinerary.find({isActive: false});
+        console.log(itineraries);
+        if (itineraries.length === 0) {
+            return res.status(404).json({message: "No unActive itineraries found"});
+        }
+        res.status(200).json(itineraries);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
