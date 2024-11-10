@@ -16,6 +16,7 @@ router.get("/flagged", itineraryController.getFlaggedItineraries);
 router.get("/:id/comments", itineraryController.getCommentsForItinerary);
 router.get("/:id/ratings", itineraryController.getRatingsForItinerary);
 router.get("/booked",isAuth , itineraryController.getBookedItineraries);
+router.get("/unActive", itineraryController.getUnActiveItinerary);
 router.post("/create", isAuth ,itineraryController.createItinerary);
 router.post("/book/:id",isAuth , itineraryController.bookItinerary);
 router.post('/activate/:id' , itineraryController.activateItinerary) ;

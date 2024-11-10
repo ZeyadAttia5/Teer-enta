@@ -187,6 +187,8 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       category: values.category, // Assuming this is category _id
     };
 
+    
+
     try {
       if (isEditing && currentActivity) {
         console.log("Updating activity", activityData);
@@ -360,7 +362,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       <Table
         columns={columns}
         dataSource={activities}
-        scroll={{ x: '80%' }}
+        scroll={{ x: "80%" }}
         rowKey="_id"
         loading={loading}
       />
@@ -377,7 +379,12 @@ const AllActivitiesCRUD = ({ setFlag }) => {
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
-        <Form form={form} onFinish={handleFormSubmit} layout="vertical">
+        <Form
+          form={form}
+          onFinish={handleFormSubmit}
+          initialValues={{ isActive: false,isBookingOpen: false }}
+          layout="vertical"
+        >
           <Item label="Name" name="name" rules={[{ required: true }]}>
             <Input disabled={isViewing} />
           </Item>
@@ -417,9 +424,9 @@ const AllActivitiesCRUD = ({ setFlag }) => {
             {/*  </GoogleMap>*/}
             {/*</LoadScript>*/}
             <MapContainer
-                longitude={location.lng}
-                latitude={location.lat}
-                outputLocation={(lat, lng) => setLocation({ lat, lng })}
+              longitude={location.lng}
+              latitude={location.lat}
+              outputLocation={(lat, lng) => setLocation({ lat, lng })}
             />
           </Item>
           <Item label="Category" name="category" rules={[{ required: true }]}>
