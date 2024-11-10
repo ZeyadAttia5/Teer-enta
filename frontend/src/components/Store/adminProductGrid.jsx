@@ -41,7 +41,7 @@ const AdminProductGrid = ({setFlag}) => {
                 setLoading(false);
             }
         };
-
+        fetchCurrency() ;
         fetchProducts();
     }, [showArchived, backURL]);
 
@@ -54,9 +54,6 @@ const AdminProductGrid = ({setFlag}) => {
             console.error("Fetch currency error:", error);
         }
     }
-    useEffect(() => {
-        fetchCurrency();
-    }, []);
 
     const calculateAverageRating = (ratings) => {
         if (ratings.length === 0) return 0;
@@ -200,7 +197,7 @@ const AdminProductGrid = ({setFlag}) => {
                             />
                             <div className="p-4">
                                 <h2 className="font-bold text-xl">{product.name}</h2>
-                                <p className="text-gray-700 "><span className="font-semibold">{currency?.code}</span> {currency?.rate * product.price.toFixed(2)}</p>
+                                <p className="text-gray-700 "><span className="font-semibold">{currency?.code}</span> {(currency?.rate * product.price).toFixed(2)}</p>
                                 <StarRating rating={calculateAverageRating(product.ratings)}/>
                                 <div className="flex justify-start items-center">
                                     <Link to={`/products/${product._id}`}>

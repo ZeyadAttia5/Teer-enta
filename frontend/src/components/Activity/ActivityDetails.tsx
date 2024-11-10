@@ -34,6 +34,7 @@ import MapContainer from "../shared/GoogleMaps/GoogleMaps";
 import { TActivity } from "../../types/Activity/Activity";
 import StaticMap from "../shared/GoogleMaps/ViewLocation";
 import { getActivity } from "../../api/activity.ts";
+import {getCurrency} from "../../api/account.ts";
 
 const { Title, Text } = Typography;
 
@@ -43,6 +44,18 @@ const ActivityDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [currency, setCurrency] = useState(null);
+
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
+    }
+  }
+
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -58,7 +71,7 @@ const ActivityDetails: React.FC = () => {
         setLoading(false);
       }
     };
-
+    fetchCurrency();
     if (ActivityId) fetchActivity();
   }, [ActivityId]);
 
@@ -90,7 +103,7 @@ const ActivityDetails: React.FC = () => {
     }
       - Price Range: ${
         activity?.price?.min && activity?.price?.max
-            ? `$${activity.price.min} - $${activity.price.max}`
+            ? `${currency?.code} ${(currency.rate*activity.price.min).toFixed(2)} - ${(currency.rate*activity.price.max).toFixed(2)}`
             : "Not specified"
     }
       - Category: ${activity?.category?.category || "No category"}
@@ -237,10 +250,11 @@ const ActivityDetails: React.FC = () => {
                     <Statistic
                       title={<Text style={{ color: "#58A399" }}>Price Range</Text>}
                       value={
-                        activity.price.min && activity.price.max
-                          ? `$${activity.price.min} - $${activity.price.max}`
-                          : "Price not specified"
+                        activity?.price?.min && activity?.price?.max
+                            ? `${currency?.code} ${(currency?.rate*activity.price.min).toFixed(2)} - ${(currency?.rate*activity.price.max).toFixed(2)}`
+                            : "Not specified"
                       }
+
                       prefix={<DollarOutlined />}
                       valueStyle={{ color: "#496989" }}
                     />
