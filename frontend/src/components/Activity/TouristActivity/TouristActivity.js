@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { Filter, SortAsc ,ChevronRight,Star} from 'lucide-react'
 import { ReloadOutlined } from '@ant-design/icons';
 import { FaLayerGroup } from "react-icons/fa";
+import {getCurrency} from "../../../api/account.ts";
 
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
@@ -155,6 +156,7 @@ const TouristActivity = ({ setFlag }) => {
   const [rating, setRating] = useState(0);
   const [sortBy, setSortBy] = useState(""); // To track sorting preference
   const [showUpcoming, setShowUpcoming] = useState(false); // State for upcoming activities
+  const [currency , setCurrency] = useState(null);
 
 
   const location = useLocation();
@@ -167,6 +169,16 @@ const TouristActivity = ({ setFlag }) => {
     setShowUpcoming(false);
     setSearchQuery("");
   };
+
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
+    }
+  }
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -198,6 +210,7 @@ const TouristActivity = ({ setFlag }) => {
         console.error("Error fetching activities:", error);
       }
     };
+    fetchCurrency();
     fetchActivities();
   }, [location.pathname]);
 
@@ -449,6 +462,8 @@ const TouristActivity = ({ setFlag }) => {
                         }
                         image={place.imagePath}
                         averageRating={place.averageRating} // Pass average rating to ActivityCard
+                        currencyCode={currency?.code}
+                        currencyRate={currency?.rate}
                     />
                   </Link>
               ))

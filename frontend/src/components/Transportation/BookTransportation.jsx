@@ -71,6 +71,7 @@ const BookTransportation = ({}) => {
     }
   };
   useEffect(() => {
+    fetchCurrency();
     fetchTransportation();
   }, []);
 
@@ -83,9 +84,6 @@ const BookTransportation = ({}) => {
       console.error("Fetch currency error:", error);
     }
   }
-    useEffect(() => {
-        fetchCurrency();
-    }, []);
 
   return (
     <List
