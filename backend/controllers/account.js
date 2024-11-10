@@ -246,9 +246,20 @@ exports.redeemPoints = async (req, res) => {
         user.wallet += toRedeem * 100;
         user.loyalityPoints -= toRedeem * 10000;
 
-        console.log(user.loyalityPoints);
         if (!user.hasProfile) {
             user.hasProfile = true;
+        }
+        let newLevel;
+        if (user.loyalityPoints <= 100000) {
+            newLevel = 'LEVEL1';
+        } else if (user.loyalityPoints <= 500000) {
+            newLevel = 'LEVEL2';
+        } else {
+            newLevel = 'LEVEL3';
+        }
+
+        if (user.level !== newLevel) {
+            user.level = newLevel;
         }
         await user.save();
         return res.status(200).json({
