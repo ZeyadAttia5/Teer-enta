@@ -5,7 +5,7 @@ import FilterDropdown from "./filterDropdown";
 import StarRating from "../shared/starRating";
 import {Input, Row, Col, Button} from "antd";
 import {FaEdit} from "react-icons/fa";
-import {getProducts, archiveProduct, unArchiveProduct} from "../../api/products.ts";
+import {getProducts, archiveProduct, unArchiveProduct, getArchivedProducts} from "../../api/products.ts";
 import {getCurrency} from "../../api/account.ts";
 
 const AdminProductGrid = ({setFlag}) => {
@@ -31,7 +31,7 @@ const AdminProductGrid = ({setFlag}) => {
         const fetchProducts = async () => {
             try {
                 const response = showArchived
-                    ? await axios.get(`${backURL}/product/archived`, {headers: {Authorization: `Bearer ${accessToken}`}})
+                    ? await getArchivedProducts()
                     : await getProducts();
 
                 setProducts(response.data);

@@ -26,7 +26,9 @@ exports.getProducts = async (req, res) => {
 
 exports.getArchivedProducts = async (req,res)=>{
     try {
-        const products = await product.find({isActive:false}) ;
+        console.log(req.user);
+        const products = await product.find(
+            {isActive:false , createdBy:req.user._id});
         if (products.length===0){
             return res.status(200).json({message:"no products found"})
         }

@@ -12,6 +12,14 @@ export const getProduct = async (productId) => {
     return await axios.get(`${API_BASE_URL}/product/one/${productId}`);
 }
 
+export const getArchivedProducts = async () => {
+    return await axios.get(`${API_BASE_URL}/product/archived`,{
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
+
 export const addProduct = async (product) => {
     return await axios.post(`${API_BASE_URL}/product/create`, product ,{
         headers: {
