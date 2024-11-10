@@ -383,7 +383,8 @@ exports.bookItinerary = async (req, res) => {
             itinerary: id,
             createdBy: userId,
             date: new Date(date),
-            status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
+            // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
+            status:'Pending'
         });
 
 // Logic for assigning loyalty points based on the tourist's current level

@@ -5,11 +5,11 @@ const LevelBadge = ({ level }) => {
   const getLevelText = (level) => {
     switch (level) {
       case 1:
-        return "Alpha male";
+        return "Silver";
       case 2:
-        return "Beta male";
+        return "Bronze";
       case 3:
-        return "Sigma male";
+        return "Platinum";
       default:
         return "Unknown Level";
     }
@@ -35,10 +35,10 @@ const LevelBadge = ({ level }) => {
       <div
         className={`relative inline-flex items-center justify-center w-fit p-2 h-12 text-white font-bold rounded-full ${
           level === 1
-            ? "bg-green-500"
+            ? "bg-gray-400"
             : level === 2
-            ? "bg-blue-500"
-            : "bg-purple-500"
+            ? "bg-yellow-700"
+            : "bg-indigo-300"
         } custom-pulse`}
         style={{ border: "2px solid black" }}
       >

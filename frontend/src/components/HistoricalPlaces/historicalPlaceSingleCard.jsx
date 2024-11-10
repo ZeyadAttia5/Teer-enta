@@ -10,11 +10,10 @@ import {getCurrency} from "../../api/account.ts";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
-const HistoricalPlaceSingleCard = ({places}) => {
+const HistoricalPlaceSingleCard = ({currency, places}) => {
     const user = JSON.parse(localStorage.getItem("user"));
     const id = places._id;
     const accessToken = localStorage.getItem('accessToken');
-    const [currency, setCurrency] = useState(null);
 
 
     const handleDeleteHistoricalPlace = async () => {
@@ -31,19 +30,6 @@ const HistoricalPlaceSingleCard = ({places}) => {
             toast.error('An error occurred while deleting the historical place.');
         }
     };
-
-    const fetchCurrency = async () => {
-        try {
-            const response = await getCurrency();
-            setCurrency(response.data);
-            console.log("Currency:", response.data);
-        } catch (error) {
-            console.error("Fetch currency error:", error);
-        }
-    }
-    useEffect(() => {
-        fetchCurrency();
-    }, []);
 
     return (
         <div
@@ -77,7 +63,7 @@ const HistoricalPlaceSingleCard = ({places}) => {
                     {places.tickets.map((ticket, index) => (
                         <div key={ticket.type + index} className="text-gray-600 text-sm">
                             <span
-                                className="font-medium">{ticket.type}:</span> {currency?.rate * ticket.price} {currency?.code}
+                                className="font-medium">{ticket.type}:</span> {(currency?.rate * ticket.price).toFixed(2)} {currency?.code}
                         </div>
                     ))}
                 </div>

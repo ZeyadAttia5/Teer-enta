@@ -7,4 +7,6 @@ router.post('/login' ,authController.login);
 router.post('/changePassword' , isAuth , authController.changePassword)
 router.post('/toggleFirstLoginAndUpdatePrefrences' , isAuth , authController.toggleFirstLoginAndUpdatePrefrences)
 router.post('/changeAllPasswords' , authController.changeAllpasswords) ;
+router.post('/forgotPassword', authController.forgotPassword);
+router.post('/resetPassword', authController.resetPassword);
 module.exports = router;

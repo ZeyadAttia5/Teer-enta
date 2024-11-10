@@ -4,6 +4,8 @@ const userSchema = new mongoose.Schema({
     email: { type: String , unique: true , sparse:true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    resetOtp: { type: String, default: null },
+    otpExpiry: { type: Date, default: null },
     userRole: {
         type: String,
         enum: ['Tourist', 'TourGuide', 'Advertiser', 'Seller', 'Admin', 'TourismGovernor'],

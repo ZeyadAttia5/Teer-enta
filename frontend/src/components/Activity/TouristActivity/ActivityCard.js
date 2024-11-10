@@ -14,9 +14,10 @@ const ActivityCard = ({
                           specialDiscounts,
                           ratings,
                           averageRating,
+                            currencyCode ,
+                            currencyRate
                       }) => {
     const [address, setAddress] = useState("");
-    const [currency, setCurrency] = useState(null);
 
     // Fetch address from Google Maps API based on latitude and longitude
     useEffect(() => {
@@ -30,22 +31,9 @@ const ActivityCard = ({
                 console.error("Error fetching address:", error);
             }
         };
-
         fetchAddress();
     }, [location.lat, location.lng]);
 
-    const fetchCurrency = async () => {
-        try {
-            const response = await getCurrency();
-            setCurrency(response.data);
-            console.log("Currency:", response.data);
-        } catch (error) {
-            console.error("Fetch currency error:", error);
-        }
-    }
-    useEffect(() => {
-        fetchCurrency();
-    }, []);
 
     return (
         <div className="flex justify-center items-center">
@@ -61,7 +49,7 @@ const ActivityCard = ({
                 <p style={{color: "#496989"}} className="font-bold mb-2">🕒 {time}</p>
                 <p style={{color: "#496989"}} className="font-bold mb-2">📂 {category || "Uncategorized"}</p>
                 <p style={{color: "#496989"}} className="font-bold mb-2">
-                    💲 {currency?.code} {price?.min ? `${currency?.rate * price.min}` : "N/A"} - {price?.max ? `${currency?.rate * price.max}` : "N/A"}
+                    💲 {currencyCode} {price?.min ? `${(currencyRate * price.min).toFixed(1)}` : "N/A"} - {price?.max ? `${(currencyRate * price.max).toFixed(1)}` : "N/A"}
                 </p>
 
                 {/* Average Rating */}
