@@ -52,7 +52,8 @@ const TouristProfile = () => {
       setCurrencyId(response.data.currency);
       const gettingCurrency = await getMyCurrency();
       setCurrency(gettingCurrency.data.code);
-      setRate(response.data.rate);
+      setRate(gettingCurrency.data.rate);
+      console.log("rate: ", gettingCurrency.data.rate);
       setLoading(false); // Show spinner
     } catch (error) {
       console.error("Error fetching currencies:", error);
@@ -117,9 +118,9 @@ const TouristProfile = () => {
       <div className="flex gap-32">
         <UserCard
           username={user.username}
-          wallet={wallet}
+          wallet={fetchedData.wallet}
           currency={currency}
-          points={points}
+          points={fetchedData.loyalityPoints}
           userRole={fetchedData.userRole}
           rate={rate}
           setCurrencyId={setCurrencyId}
