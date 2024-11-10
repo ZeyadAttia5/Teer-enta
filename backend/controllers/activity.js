@@ -135,7 +135,7 @@ exports.getBookedActivities = async (req, res, next) => {
     try {
         const userId = req.user._id;
         const bookedActivities = await BookedActivity
-            .find({createdBy: userId, isAppropriate: true})
+            .find({createdBy: userId})
             .populate({
                 path: 'activity', // Populate the itinerary field
                 populate: {

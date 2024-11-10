@@ -2,11 +2,12 @@ const BrevoTemplate = require("../model/BrevoTemplate");
 
 class UpcomingEventsBookedTemplate extends BrevoTemplate {
     // name of event and date of event and user name
-    constructor(name ,userName ,date) {
+    constructor(name ,userName ,date ,url) {
         super();
         this.name = name;
         this.userName = userName;
         this.date = date;
+        this.url = url ;
     }
 
     template() {
@@ -17,7 +18,8 @@ class UpcomingEventsBookedTemplate extends BrevoTemplate {
         return {
             name: this.name,
             userName: this.userName,
-            date: this.date
+            date: this.date ,
+            url : this.url
         };
     }
 }

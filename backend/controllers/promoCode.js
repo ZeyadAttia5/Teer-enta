@@ -1,17 +1,7 @@
-// controllers/promoCodeController.js
-
 const PromoCode = require('../models/PromoCodes');
 const errorHandler = require('../Util/ErrorHandler/errorSender');
+const {generateRandomCode} = require("../Util/promoCodeGenerator");
 
-// Helper function to generate a random alphanumeric code
-function generateRandomCode(length = 8) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let code = '';
-    for (let i = 0; i < length; i++) {
-        code += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return code;
-}
 
 exports.createPromoCode = async (req, res) => {
     try {

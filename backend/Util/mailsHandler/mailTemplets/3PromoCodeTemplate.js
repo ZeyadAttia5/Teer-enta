@@ -1,10 +1,11 @@
 const BrevoTemplate = require("../model/BrevoTemplate");
 
 class PromoCodeTemplate extends BrevoTemplate {
-    constructor(code ,userName) {
+    constructor(code ,userName,expDate) {
         super();
         this.code = code;
         this.userName = userName;
+        this.expDate = expDate;
     }
 
     template() {
@@ -15,6 +16,9 @@ class PromoCodeTemplate extends BrevoTemplate {
         return {
             code: this.code,
             userName: this.userName,
+            expDate: this.expDate
         };
     }
 }
+
+module.exports = PromoCodeTemplate;

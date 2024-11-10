@@ -29,6 +29,8 @@ const currencyRoutes = require('./routes/currency') ;
 const fileRoutes = require('./routes/file');
 const cartRoutes = require('./routes/cart');
 const promoCodeRoutes = require('./routes/promoCode');
+require('./scheduler/PromoCodeSenderBD');
+require('./scheduler/upcomingEventsBookedReminder');
 
 
 
