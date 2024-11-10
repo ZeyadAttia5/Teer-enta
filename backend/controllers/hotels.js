@@ -34,13 +34,6 @@ exports.getHotelOffers = async (req, res) => {
                 uniqueHotels.push(hotel); // Add the hotel if chainCode is unique
             }
         });
-        // console.log("number of unique hotels: ", uniqueHotels.length);
-        // console.log(uniqueHotels);
-
-
-        // hotelIds.data = hotelIds.data.slice(0, 5);
-        // console.log(hotelIds.data);
-        // console.log(hotelIds.data.map(hotel => hotel.hotelId));
         let hotelIds = uniqueHotels.map(hotel => hotel.hotelId).slice(0,Math.min(50,uniqueHotels.length)).join(',');
         const hotelSearch = await amadeus.shopping.hotelOffersSearch.get({
             hotelIds: hotelIds,
@@ -97,6 +90,7 @@ exports.bookHotel = async (req, res) => {
                 return res.status(400).json({ message: "Insufficient wallet balance." });
             }
 
+            // should loyalty points be awarded here?
             // Deduct the amount from the wallet
             tourist.wallet -= totalPrice;
             await tourist.save();
