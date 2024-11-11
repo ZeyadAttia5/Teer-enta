@@ -50,10 +50,10 @@ const BookActivity = () => {
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const response = await getActivity(activityId);
-            message.success(response.data.message);
-        } catch (err) {
-            message.error(err);
+            const response = await bookActivity(activityId ,paymentMethod);
+            message.success(response.message);
+        } catch (error) {
+            message.error(error.response.data.message);
         } finally {
             setLoading(false);
         }
