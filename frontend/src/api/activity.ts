@@ -107,7 +107,7 @@ export const addRatingToActivity = async (activityId, rating) => {
         {rating},
         {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
         });
     return response.data;
@@ -123,7 +123,7 @@ export const addCommentToActivity = async (activityId, comment) => {
         {comment},
         {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
         });
     return response.data;

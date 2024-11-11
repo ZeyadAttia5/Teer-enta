@@ -56,7 +56,8 @@ const BookingGrid = () => {
             await commentOnTourGuide(tourGuideId, feedback.comment);
             message.success('Tour guide feedback submitted successfully');
         } catch (error) {
-            message.error(error.message.data.message);
+            console.log("here",error);
+            message.error(error.response.data.message);
         }
     };
 
@@ -76,7 +77,7 @@ const BookingGrid = () => {
             await addCommentToActivity(activityId, feedback.comment);
             message.success('Activity feedback submitted successfully');
         } catch (error) {
-            message.error(error.message.data.message);
+            message.error(error.response.data.message);
         }
     };
 
