@@ -58,7 +58,7 @@ exports.getActivity = async (req, res, next) => {
         const {id} = req.params;
         const activity = await Activity.findOne({_id: id, isActive: true})
             .populate('category')
-            .populate('preferenceTags');
+            .populate('preferenceTags').populate('createdBy');
         if (!activity) {
             return res.status(404).json({message: 'ActivityList not found or Inactive'});
         }
