@@ -705,7 +705,7 @@ exports.makeAllItineraryAppropriate = async (req, res) => {
   
 exports.getUnActiveItinerary = async (req, res) => {
     try {
-        const itineraries = await Itinerary.find({isActive: false});
+        const itineraries = await Itinerary.find({isActive: false ,createdBy : req.user._id});
         console.log(itineraries);
         if (itineraries.length === 0) {
             return res.status(404).json({message: "No unActive itineraries found"});

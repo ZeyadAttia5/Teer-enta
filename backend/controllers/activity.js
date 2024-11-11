@@ -627,7 +627,7 @@ exports.makeAllActivitiesAppropriate = async (req, res) => {
 // get unactiveActivities
 exports.getUnactiveActivities = async (req, res) => {
     try {
-        const activities = await Activity.find({ isActive: false });
+        const activities = await Activity.find({ isActive: false ,createdBy : req.user._id });
         res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);
