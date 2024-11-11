@@ -369,9 +369,11 @@ const ItineraryScreen = ({setFlag}) => {
 
             const formattedTimeline = itinerary.timeline.map((tl) => ({
                 ...tl,
-                activity: tl.activity ? tl.activity._id : "Activity not found",
+                activity: tl.activity ? tl.activity.name : "Activity not found",
                 startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
             }));
+
+            console.log("formattedTimeline", formattedTimeline);
 
             const formattedActivities = itinerary.activities.map((act) => ({
                 activity: act.activity ? act.activity._id : "Activity not found",
@@ -442,6 +444,8 @@ const ItineraryScreen = ({setFlag}) => {
                 }))
                 : [];
 
+            console.log("formattedTimeline", formattedTimeline);
+
             const formattedPreferenceTags = values.preferenceTags
                 ? values.preferenceTags.map((tag) => tag)
                 : [];
@@ -472,6 +476,7 @@ const ItineraryScreen = ({setFlag}) => {
     };
 
     const showViewModal = (itinerary) => {
+        console.log("Viewing itinerary", itinerary);
         setViewingItinerary(itinerary);
         setIsViewModalVisible(true);
     };
@@ -517,8 +522,6 @@ const ItineraryScreen = ({setFlag}) => {
             title: "Actions",
             key: "actions",
             render: (text, record) => (
-                console.log("record", record.availableDates[0]),
-                    console.log("user", user._id),
                     (
                         <>
                             <Button
@@ -536,7 +539,7 @@ const ItineraryScreen = ({setFlag}) => {
 
                             {user &&
                                 user._id === record.createdBy &&
-                                (console.log("record", record),
+                                (
                                     (
                                         <>
                                             <Button
@@ -1222,9 +1225,10 @@ const ItineraryScreen = ({setFlag}) => {
 
                         <Form.Item label="Timeline">
                             {viewingItinerary.timeline.map((entry, index) => (
+                                console.log("entry", entry),
                                 <div key={index}>
                                     <Input
-                                        value={`${entry.activity?.name} - Start: ${entry.startTime}, Duration: ${entry.duration} min`}
+                                        value={`${entry.activity.name} - Start: ${entry.startTime}, Duration: ${entry.duration} min`}
                                         disabled
                                     />
                                 </div>

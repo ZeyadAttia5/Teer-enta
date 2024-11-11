@@ -1,39 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProduct, updateProduct, archiveProduct, unArchiveProduct } from "../../api/products.ts";
-import ImageUpload from "./ImageUpload"; // Import the image upload component
-import { message } from 'antd';
+import { getProduct, updateProduct, addProduct, archiveProduct, unArchiveProduct } from "../../api/products.ts";
+import { Input, Button, Alert, message } from 'antd'; // Import message from Ant Design
+import ImageUpload from './ImageUpload';
 
 const EditProductForm = ({ setFlag }) => {
   setFlag(false);
   const { productId } = useParams();
   const navigate = useNavigate();
+
   const [product, setProduct] = useState({
     name: '',
     description: '',
     price: '',
-    imageUrl: '', 
-    quantity: '', 
-    isActive: '',
+    imageUrl: '',
+    quantity: '',
+    isActive: true, // Default to true if it's a new product
   });
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
+  // Fetch product data for editing
   useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const response = await getProduct(productId);
-        setProduct(response.data);
-      } catch (err) {
-        setError('Failed to fetch product data');
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (productId) {
+      const fetchProductData = async () => {
+        try {
+          const response = await getProduct(productId);
+          setProduct(response.data);
+        } catch (err) {
+          setError('Failed to fetch product data');
+        }
+      };
 
-    fetchProductData();
+      fetchProductData();
+    }
   }, [productId]);
 
   const handleChange = (e) => {
@@ -55,17 +57,17 @@ const EditProductForm = ({ setFlag }) => {
     try {
       if (product.isActive) {
         await archiveProduct(productId);
-        setSuccess('Product archived successfully!');
+        message.success('Product archived successfully!');
       } else {
         await unArchiveProduct(productId);
-        setSuccess('Product unarchived successfully!');
+        message.success( 'Product unarchived successfully!');
       }
       setProduct((prevProduct) => ({
         ...prevProduct,
         isActive: !prevProduct.isActive,
       }));
     } catch (err) {
-      setError('Failed to update archive status');
+      message.error( 'Failed to update archive status');
     }
   };
 
@@ -76,12 +78,20 @@ const EditProductForm = ({ setFlag }) => {
     setSuccess(null);
 
     try {
-      const response = await updateProduct(product, productId);
-      setSuccess('Product successfully updated!');
-      message.loading('loading');
-      setTimeout(() => navigate('/products'), 1000);
+      let response;
+      if (productId) {
+        // Update product
+        response = await updateProduct(product, productId);
+        message.success('Product successfully updated!');
+      } else {
+        // Create new product
+        response = await addProduct(product);
+        message.success('Product successfully created!');
+      }
+
+      setTimeout(() => navigate('/products'), 1000); // Redirect to products page after success
     } catch (err) {
-      setError('Failed to update product');
+      message.error('Failed to update product');
     } finally {
       setLoading(false);
     }
@@ -91,93 +101,96 @@ const EditProductForm = ({ setFlag }) => {
   if (error) return <div className="text-center mt-24">Error: {error}</div>;
 
   return (
-    <div className="flex flex-col items-center py-16 px-5 mt-20">
-      <h2 className="text-2xl font-bold text-customGreen mb-6">Edit Product</h2>
-      <form className="bg-white border-4 border-customGreen p-8 rounded-lg shadow-md w-full max-w-md" onSubmit={handleSubmit}>
-        
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        {success && <div className="text-green-500 mb-4">{success}</div>}
+      <div className="flex flex-col items-center py-16 px-5 mt-20">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">{productId ? "Edit Product" : "Add New Product"}</h2>
+        <form className="bg-white border-2 border-gray-300 p-8 rounded-lg shadow-md w-full max-w-md" onSubmit={handleSubmit}>
 
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Product Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={product.name}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border-2 border-customGreen rounded"
-          />
-        </div>
+          {error && <Alert message={error} type="error" showIcon className="mb-4" />}
+          {success && <Alert message={success} type="success" showIcon className="mb-4" />}
 
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Description:</label>
-          <textarea
-            name="description"
-            value={product.description}
-            onChange={handleChange}
-            rows="4"
-            required
-            className="w-full p-2 border-2 border-customGreen rounded"
-          />
-        </div>
+          <div className="mb-4">
+            <label className="block text-lg text-gray-700 mb-2">Product Name:</label>
+            <Input
+                name="name"
+                value={product.name}
+                onChange={handleChange}
+                required
+                className="w-full"
+            />
+          </div>
 
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Price:</label>
-          <input
-            type="number"
-            name="price"
-            value={product.price}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border-2 border-customGreen rounded"
-          />
-        </div>
+          <div className="mb-4">
+            <label className="block text-lg text-gray-700 mb-2">Description:</label>
+            <Input.TextArea
+                name="description"
+                value={product.description}
+                onChange={handleChange}
+                rows={4}
+                required
+                className="w-full"
+            />
+          </div>
 
-        {/* Display existing image */}
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Current Image:</label>
-          {product.imageUrl ? (
-            <img src={product.imageUrl} alt="Current product" className="w-full h-auto max-h-40 object-cover rounded mb-2" />
-          ) : (
-            <p>No image available</p>
+          <div className="mb-4">
+            <label className="block text-lg text-gray-700 mb-2">Price:</label>
+            <Input
+                type="number"
+                name="price"
+                value={product.price}
+                onChange={handleChange}
+                required
+                className="w-full"
+            />
+          </div>
+
+          {/* Display existing image */}
+          <div className="mb-4">
+            <label className="block text-lg text-gray-700 mb-2">Current Image:</label>
+            {product.imageUrl ? (
+                <img src={product.imageUrl} alt="Current product" className="w-full h-auto max-h-40 object-cover rounded mb-2" />
+            ) : (
+                <p>No image available</p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-lg text-gray-700 mb-2">Upload New Product Image:</label>
+            <ImageUpload setImageUrl={setImageUrl} />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-lg text-gray-700 mb-2">Available Quantity:</label>
+            <Input
+                type="number"
+                name="quantity"
+                value={product.quantity}
+                onChange={handleChange}
+                required
+                className="w-full"
+            />
+          </div>
+
+          <Button
+              type="primary"
+              htmlType="submit"
+              className="w-full bg-blue-500 text-white mt-4 hover:bg-blue-600"
+              loading={loading}
+              disabled={loading}
+          >
+            {loading ? (productId ? "Updating..." : "Creating...") : (productId ? "Update Product" : "Add Product")}
+          </Button>
+
+          {productId && (
+              <Button
+                  type="default"
+                  onClick={handleArchiveToggle}
+                  className="w-full mt-4 bg-gray-400 text-white hover:bg-gray-500"
+              >
+                {product.isActive ? 'Archive' : 'Unarchive'}
+              </Button>
           )}
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Upload New Product Image:</label>
-          <ImageUpload setImageUrl={setImageUrl} />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-lg text-customGreen mb-2">Available Quantity:</label>
-          <input
-            type="number"
-            name="quantity"
-            value={product.quantity}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border-2 border-customGreen rounded"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className={`bg-customGreen text-white px-4 py-2 rounded-lg ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-darkerGreen'}`}
-          disabled={loading}
-        >
-          {loading ? "Updating..." : "Update Product"}
-        </button>
-
-        <button
-          type="button"
-          onClick={handleArchiveToggle}
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg ml-4 hover:bg-gray-700"
-        >
-          {product.isActive ? 'Archive' : 'Unarchive'}
-        </button>
-      </form>
-    </div>
+        </form>
+      </div>
   );
 };
 

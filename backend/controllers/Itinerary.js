@@ -72,8 +72,8 @@ exports.getItinerary = async (req, res, next) => {
                     path: "category",
                 },
             ],
-        });
-        console.log(itinerary);
+        }).populate("timeline.activity");
+        console.log("New ffffffffffffffffffffffffffffffffffffffffffftest",itinerary.timeline);
 
         if (!itinerary) {
             return res.status(404).json({message: "Itinerary not found"});
@@ -91,11 +91,11 @@ exports.getMyItineraries = async (req, res, next) => {
         const createdBy = req.user._id;
         const itineraries = await Itinerary.find({createdBy: createdBy})
             .populate("activities.activity")
-            .populate("preferenceTags");
+            .populate("preferenceTags")
+            .populate("timeline.activity");
         if (itineraries.length === 0) {
             return res.status(404).json({message: "No itineraries found"});
         }
-        console.log(itineraries);
         res.status(200).json(itineraries);
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -113,7 +113,8 @@ exports.getUpcomingItineraries = async (req, res, next) => {
             isActive: true,
         })
             .populate("activities.activity")
-            .populate("preferenceTags");
+            .populate("preferenceTags")
+            .populate("timeline.activity");
         if (upcomingItineraries.length === 0) {
             return res.status(404).json({message: "No upcoming itineraries found"});
         }
