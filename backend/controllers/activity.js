@@ -151,6 +151,50 @@ exports.getBookedActivities = async (req, res, next) => {
     }
 }
 
+exports.pendingBookings = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const bookedActivities = await BookedActivity
+            .find({ createdBy: userId, status: 'Pending' })
+            .populate({
+                path: 'activity',
+                match: { isAppropriate: true }, // Add match condition to filter the populated activities
+                populate: {
+                    path: 'createdBy', // Populate the createdBy field of the itinerary
+                }
+            })
+            .populate('createdBy');
+        if (bookedActivities.length === 0) {
+            return res.status(404).json({message: 'No booked ActivityList found'});
+        }
+        res.status(200).json(bookedActivities);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.completedBookings = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const bookedActivities = await BookedActivity
+            .find({ createdBy: userId, status: 'Completed' })
+            .populate({
+                path: 'activity',
+                match: { isAppropriate: true }, // Add match condition to filter the populated activities
+                populate: {
+                    path: 'createdBy', // Populate the createdBy field of the itinerary
+                }
+            })
+            .populate('createdBy');
+        if (bookedActivities.length === 0) {
+            return res.status(404).json({message: 'No booked ActivityList found'});
+        }
+        res.status(200).json(bookedActivities);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
 exports.createActivity = async (req, res, next) => {
     try {
         const activity = await Activity.create(req.body);

@@ -216,6 +216,7 @@ const ItineraryScreen = ({setFlag}) => {
 
     const location = useLocation();
 
+
     useEffect(() => {
         if (location.pathname === "/itinerary/my") {
             fetchMyIternaries();
@@ -402,6 +403,11 @@ const ItineraryScreen = ({setFlag}) => {
         form.resetFields();
     };
 
+    const handleBookItinerary =  (ItineraryId) => {
+
+        navigate(`book/${ItineraryId}`);
+    }
+
     const handleDelete = async (id) => {
         try {
             await deleteItinerary(id);
@@ -536,6 +542,8 @@ const ItineraryScreen = ({setFlag}) => {
                             >
                                 View
                             </Button>
+
+
 
                             {user &&
                                 user._id === record.createdBy &&
@@ -771,7 +779,7 @@ const ItineraryScreen = ({setFlag}) => {
                         <div
                             key={index}
                             className="relative m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-[#E2F4C5]" // Keep this class for the animation
-                            onClick={() => navigate(`iternaryDetails/${itinerary._id}`)} // Set the click handler here
+
                             style={{cursor: "pointer"}} // Ensure the cursor changes to pointer
                         >
                             <Card
@@ -812,6 +820,16 @@ const ItineraryScreen = ({setFlag}) => {
                                         </div>
                                     }
                                 />
+                                {user && user.userRole === "Tourist" && (
+                                    <>
+                                        <Button onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}>
+                                            show details
+                                        </Button>
+                                        <Button onClick={() => handleBookItinerary(itinerary._id)} >
+                                            Book
+                                        </Button>
+                                    </>
+                                )}
                             </Card>
                         </div>
                     ))}

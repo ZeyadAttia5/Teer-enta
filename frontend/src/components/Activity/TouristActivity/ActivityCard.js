@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Rate} from "antd";
+import {Rate, Button} from "antd";
 import {getGoogleMapsAddress} from "../../../api/googleMaps.ts";
 import {getCurrency} from "../../../api/account.ts";
+import {useNavigate} from "react-router-dom";
 
 const ActivityCard = ({
+                          id,
                           name,
                           date,
                           time,
@@ -14,10 +16,11 @@ const ActivityCard = ({
                           specialDiscounts,
                           ratings,
                           averageRating,
-                            currencyCode ,
-                            currencyRate
+                          currencyCode,
+                          currencyRate
                       }) => {
     const [address, setAddress] = useState("");
+    const navigate = useNavigate();
 
     // Fetch address from Google Maps API based on latitude and longitude
     useEffect(() => {
@@ -34,6 +37,13 @@ const ActivityCard = ({
         fetchAddress();
     }, [location.lat, location.lng]);
 
+    const handleActivityDetails = (activityId) => {
+        navigate(`/itinerary/activityDetails/${activityId}`);
+    }
+
+    const handleActivityBooking = (activityId) => {
+        navigate(`/touristActivities/book/${activityId}`);
+    }
 
     return (
         <div className="flex justify-center items-center">
@@ -87,6 +97,13 @@ const ActivityCard = ({
                 <p className={`font-semibold mt-4 bg-white p-2 rounded-lg ${isBookingOpen ? "text-green-600" : "text-red-600"}`}>
                     🎟️ {isBookingOpen ? "Booking is Open!" : "Fully Booked! :("}
                 </p>
+
+                <Button>
+                    <a onClick={() => handleActivityDetails(id)}>View Details</a>
+                </Button>
+                <Button>
+                    <a onClick={() => handleActivityBooking(id)}>Book Now</a>
+                </Button>
             </div>
         </div>
     );

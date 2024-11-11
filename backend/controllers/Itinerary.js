@@ -150,6 +150,62 @@ exports.getBookedItineraries = async (req, res, next) => {
         errorHandler.SendError(res, err);
     }
 };
+
+exports.pendingBookings = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+
+        const bookedItineraries = await BookedItinerary.find({
+            createdBy: userId,
+            status: 'Pending'
+        })
+            .populate({
+                path: 'itinerary',
+                match: { isAppropriate: true }, // Filter itineraries with isAppropriate: true
+                populate: {
+                    path: 'createdBy' // Populate the createdBy field of the itinerary
+                }
+            })
+            .populate('createdBy'); // Populate the createdBy field of the booked itinerary
+
+        if (bookedItineraries.length === 0) {
+            return res.status(404).json({message: "No pending booked itineraries found"});
+        }
+
+        res.status(200).json(bookedItineraries);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+exports.completedBookings = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+
+        const bookedItineraries = await BookedItinerary.find({
+            createdBy: userId,
+            status: 'Completed'
+        })
+            .populate({
+                path: 'itinerary',
+                match: { isAppropriate: true }, // Filter itineraries with isAppropriate: true
+                populate: {
+                    path: 'createdBy' // Populate the createdBy field of the itinerary
+                }
+            })
+            .populate('createdBy'); // Populate the createdBy field of the booked itinerary
+
+        if (bookedItineraries.length === 0) {
+            return res.status(404).json({message: "No pending booked itineraries found"});
+        }
+
+        res.status(200).json(bookedItineraries);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+
 exports.getUpcomingPaidItineraries = async (req, res, next) => {
     try {
         const userId = req.user._id;
