@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {getBookedItineraries, cancleItineraryBooking} from '../../../api/itinerary.ts';
 import {cancleActivityBooking, getBookedActivities} from '../../../api/activity.ts';
 import {Card, Tag, Button, Space, Select, message} from "antd";
+import {getCurrency} from "../../../api/account.ts";
 
 const {Option} = Select;
 
@@ -11,8 +12,10 @@ const BookingGrid = () => {
     const [activityStatus, setActivityStatus] = useState('All');
     const [itineraryStatus, setItineraryStatus] = useState('All');
     const [selectedType, setSelectedType] = useState('activities'); // To toggle between activities and itineraries
+    const [currency, setCurrency] = useState(null);
 
     useEffect(() => {
+        fetchCurrency();
         fetchBookings();
     }, []);
 
@@ -22,6 +25,15 @@ const BookingGrid = () => {
         setBookedActivities(activities.data);
         setBookedItineraries(itineraries);
     };
+
+    const fetchCurrency = async () => {
+        try {
+            const response = await getCurrency();
+            setCurrency(response.data);
+        } catch (err) {
+            message.error(err.response.data.message);
+        }
+    }
 
     const renderStatusTag = (status: 'Pending' | 'Completed' | 'Cancelled') => {
         switch (status) {
@@ -119,8 +131,8 @@ const BookingGrid = () => {
                                 {renderStatusTag(itinerary?.status)}
                             </div>
                             <div className="text-sm text-gray-600">
-                                <p>Booking By: {itinerary?.createdBy.name}</p>
-                                <p>Price: ${itinerary?.itinerary?.price}</p>
+                                <p>Booking By: {itinerary?.createdBy.username}</p>
+                                <p>Price: {currency?.code} {(currency?.rate * itinerary?.itinerary?.price).toFixed(2)}</p>
                             </div>
                             {itinerary?.status === 'Pending' && (
                                 <Button
@@ -150,9 +162,9 @@ const BookingGrid = () => {
                                 {renderStatusTag(activity?.status)}
                             </div>
                             <div className="text-sm text-gray-600">
-                                <p>Booking By: {activity?.createdBy.name}</p>
+                                <p>Booking By: {activity?.createdBy.username}</p>
                                 <p>Location: {activity?.activity?.location?.lat}, {activity?.activity?.location?.lng}</p>
-                                <p>Price: ${activity?.activity?.price.min}</p>
+                                <p>Price: {currency?.code} {(currency?.rate * activity?.activity?.price.min).toFixed(2)}</p>
                             </div>
                             {activity?.status === 'Pending' && (
                                 <Button
