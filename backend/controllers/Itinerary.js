@@ -72,7 +72,7 @@ exports.getItinerary = async (req, res, next) => {
                     path: "category",
                 },
             ],
-        }).populate("timeline.activity");
+        }).populate("timeline.activity").populate("createdBy");
         console.log("New ffffffffffffffffffffffffffffffffffffffffffftest",itinerary.timeline);
 
         if (!itinerary) {

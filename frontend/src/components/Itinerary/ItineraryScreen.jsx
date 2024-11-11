@@ -773,66 +773,72 @@ const ItineraryScreen = ({setFlag}) => {
 
             </div>
             {user === null || user.userRole === "Tourist" ? (
-                <main className="flex flex-wrap gap-4 py-10 ">
-                    {sortedItineraries?.map((itinerary, index) => (
-                        <div
-                            key={index}
-                            className="relative m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-[#E2F4C5]" // Keep this class for the animation
-
-                            style={{cursor: "pointer"}} // Ensure the cursor changes to pointer
+                <main className="flex flex-wrap justify-center items-center min-h-screen py-10">
+                {sortedItineraries?.map((itinerary, index) => (
+                    <div
+                        key={index}
+                        className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:bg-[#E2F4C5] hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4"
+                        style={{ cursor: "pointer" }}
+                    >
+                        <Card
+                            className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:text-white"
+                            style={{ backgroundColor: "#ffffff" }} // Set a default background color for better visibility
                         >
-                            <Card
-                                className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:text-white" // Change background to #E2F4C5 on hover
-                                style={{backgroundColor: "#ffffff"}} // Set a default background color for better visibility
+                            <Card.Meta
+                                title={
+                                    <span
+                                        className="font-bold text-3xl mb-2 transition-transform duration-500 ease-out hover:scale-150"
+                                        style={{ color: "#496989" }}
+                                    >
+                                        {itinerary.name}
+                                    </span>
+                                }
+                                description={
+                                    <div
+                                        className="flex flex-col space-y-2"
+                                        style={{ color: "#496989" }}
+                                    >
+                                        <span className="font-bold text-lg hover:text-[#58A399]">
+                                            🌐 {itinerary.language}
+                                        </span>
+                                        <span className="font-bold text-lg hover:text-[#58A399]">
+                                            💲 {currency?.code} {(itinerary.price * currency?.rate).toFixed(2)}
+                                        </span>
+                                        <span className="font-bold text-lg hover:text-[#58A399]">
+                                            ♿ {itinerary.accessibility || "N/A"}
+                                        </span>
+                                        <span className="font-bold text-lg hover:text-[#58A399]">
+                                            📍 from: {itinerary.pickupLocation}
+                                        </span>
+                                        <span className="font-bold text-lg hover:text-[#58A399]">
+                                            📍 to: {itinerary.dropOffLocation}
+                                        </span>
+                                    </div>
+                                }
+                            />
+                        </Card>
+            
+                        <div className="flex justify-center items-center gap-4 p-4">
+                            <Button
+                                onClick={() => navigate(`itineraryDetails/${itinerary._id}`)}
+                                className="text-white bg-[#58A399] hover:bg-[#4a8f7a] transition-all duration-300"
                             >
-                                <Card.Meta
-                                    title={
-                                        <span
-                                            className="font-bold text-7xl mb-2 transition-transform duration-500 ease-out hover:scale-150 "
-                                            style={{color: "#496989"}}
-                                        >
-                      {itinerary.name}
-                    </span>
-                                    }
-                                    description={
-                                        <div
-                                            className="flex flex-col space-y-2"
-                                            style={{color: "#496989"}}
-                                        >
-                                            {" "}
-                                            {/* Keep the text color consistent */}
-                                            <span className="font-bold text-lg hover:text-[#58A399]">
-                        🌐 {itinerary.language}
-                      </span>
-                                            <span className="font-bold text-lg hover:text-[#58A399]">
-                        💲 {currency?.code} {(itinerary.price * currency?.rate).toFixed(2)}
-                      </span>
-                                            <span className="font-bold text-lg hover:text-[#58A399]">
-                        ♿ {itinerary.accessibility || "N/A"}
-                      </span>
-                                            <span className="font-bold text-lg hover:text-[#58A399]">
-                        📍 from: {itinerary.pickupLocation}
-                      </span>
-                                            <span className="font-bold text-lg hover:text-[#58A399]">
-                        📍 to: {itinerary.dropOffLocation}
-                      </span>
-                                        </div>
-                                    }
-                                />
-                                <Button onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}>
-                                    show details
+                                Show Details
+                            </Button>
+                            {user && user.userRole === "Tourist" && (
+                                <Button
+                                    onClick={() => handleBookItinerary(itinerary._id)}
+                                    className="text-white bg-[#496989] hover:bg-[#3b5b68] transition-all duration-300"
+                                >
+                                    Book
                                 </Button>
-                                {user && user.userRole === "Tourist" && (
-                                    <>
-                                        <Button onClick={() => handleBookItinerary(itinerary._id)}>
-                                            Book
-                                        </Button>
-                                    </>
-                                )}
-                            </Card>
+                            )}
                         </div>
-                    ))}
-                </main>
+                    </div>
+                ))}
+            </main>
+            
+            
             ) : (
                 <Table
                     dataSource={sortedItineraries}

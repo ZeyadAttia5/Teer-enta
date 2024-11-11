@@ -165,25 +165,30 @@ const ActivityDetails: React.FC = () => {
 
   const hoverCardStyle = {
     backgroundColor: "#E2F4C5", // hover color
-    transform: "scale(1.05)",
     boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
   };
 
   return (
     <div style={{ backgroundColor: "#496989", minHeight: "100vh", padding: "24px" }}>
       <Space direction="vertical" size="large" style={{ width: "100%", margin: "0 auto" }}>
+
         {/* Header Section */}
         <Card
           style={{
             ...cardStyle,
             ...(hoveredCard === "header" ? hoverCardStyle : {}),
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '15px',
+            transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
           }}
           onMouseEnter={() => setHoveredCard("header")}
           onMouseLeave={() => setHoveredCard(null)}
         >
           <Row justify="space-between" align="middle">
             <Col>
-              <Title level={2} style={{ color: "#496989" }}>{activity.name}</Title>
+              <Title level={2} style={{ color: "#3A6DAF", fontWeight: 'bold', textShadow: '2px 2px 4px rgba(0,0,0,0.1)' }}>
+                {activity.name}
+              </Title>
               <Space size="small">
                 <Badge
                   status={activity.isActive ? "success" : "error"}
@@ -196,16 +201,39 @@ const ActivityDetails: React.FC = () => {
               </Space>
             </Col>
             <Col>
-            <Space direction="vertical" align="end">
+              <Space direction="vertical" align="end">
                 <Rate disabled value={averageRating} allowHalf />
-                <Text type="secondary">{activity.ratings.length} ratings</Text>
+                <Text type="secondary" style={{ color: "#7D8798" }}>
+                  {activity.ratings.length} ratings
+                </Text>
                 <Space>
-                  <Button icon={<CopyOutlined />} onClick={handleCopyLink}>
+                  <Button
+                    icon={<CopyOutlined />}
+                    onClick={handleCopyLink}
+                    style={{
+                      backgroundColor: '#4A90E2',
+                      color: 'white',
+                      borderColor: 'transparent',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                      transition: 'background-color 0.3s, transform 0.2s',
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#357ABD'} // Darker blue on hover
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#4A90E2'} // Original blue color
+                  >
                     Copy Link
                   </Button>
                   <Button
-                      icon={<MailOutlined />}
-                      onClick={handleShareEmail}
+                    icon={<MailOutlined />}
+                    onClick={handleShareEmail}
+                    style={{
+                      backgroundColor: '#4A90E2',
+                      color: 'white',
+                      borderColor: 'transparent',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                      transition: 'background-color 0.3s, transform 0.2s',
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#357ABD'} // Darker blue on hover
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#4A90E2'} // Original blue color
                   >
                     Share via Email
                   </Button>
@@ -311,37 +339,48 @@ const ActivityDetails: React.FC = () => {
 
         {/* Special Discounts */}
         {activity.specialDiscounts.length > 0 && (
-          <Card
-            title={<Space><PercentageOutlined style={{ color: "#58A399" }} /><span>Special Discounts</span></Space>}
-            style={{
-              ...cardStyle,
-              ...(hoveredCard === "specialDiscounts" ? hoverCardStyle : {}),
-            }}
-            onMouseEnter={() => setHoveredCard("specialDiscounts")}
-            onMouseLeave={() => setHoveredCard(null)}
-          >
-            <List
-              dataSource={activity.specialDiscounts}
-              renderItem={(discount) => (
-                <List.Item
-                  extra={discount.isAvailable ? (
-                    <Tag color="success" icon={<CheckCircleOutlined />}>
-                      Available
-                    </Tag>
-                  ) : (
-                    <Tag color="error" icon={<CloseCircleOutlined />}>
-                      Not Available
-                    </Tag>
-                  )}
-                >
-                  <List.Item.Meta
-                    title={<Text style={{ color: "#58A399" }}>{`${discount.discount}% OFF`}</Text>}
-                    description={<Text style={{ color: "#496989" }}>{discount.Description}</Text>}
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
+  <Card
+    title={
+      <Space>
+        <PercentageOutlined style={{ color: "#58A399" }} />
+        <span>Special Discounts</span>
+      </Space>
+    }
+    style={{
+      ...cardStyle,
+      ...(hoveredCard === "specialDiscounts" ? hoverCardStyle : {}),
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Same box shadow as header
+      borderRadius: '15px', // Same rounded corners
+      transition: 'background-color 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
+      padding: '20px', // Padding for spacious layout
+    }}
+    onMouseEnter={() => setHoveredCard("specialDiscounts")}
+    onMouseLeave={() => setHoveredCard(null)}
+  >
+    <List
+      dataSource={activity.specialDiscounts}
+      renderItem={(discount) => (
+        <List.Item
+          extra={
+            discount.isAvailable ? (
+              <Tag color="success" icon={<CheckCircleOutlined />}>
+                Available
+              </Tag>
+            ) : (
+              <Tag color="error" icon={<CloseCircleOutlined />}>
+                Not Available
+              </Tag>
+            )
+          }
+        >
+          <List.Item.Meta
+            title={<Text style={{ color: "#58A399" }}>{`${discount.discount}% OFF`}</Text>}
+            description={<Text style={{ color: "#496989" }}>{discount.Description}</Text>}
+          />
+        </List.Item>
+      )}
+    />
+  </Card>
         )}
 
         {/* Comments */}
@@ -369,17 +408,32 @@ const ActivityDetails: React.FC = () => {
             />
           </Card>
         )}
-        <Card size="small">
-          <Space direction="vertical" size="small">
-            <Text type="secondary">Created by: {activity.createdBy.companyName}</Text>
-            <Text type="secondary">
-              Created: {new Date(activity.createdAt).toLocaleDateString()}
-            </Text>
-            <Text type="secondary">
-              Last updated: {new Date(activity.updatedAt).toLocaleDateString()}
-            </Text>
-          </Space>
+
+        {/* Footer */}
+        <Card
+  size="small"
+  style={{
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '15px',
+    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+  }}
+  onMouseEnter={() => setHoveredCard("footer")}
+  onMouseLeave={() => setHoveredCard(null)}
+  className="text-center"
+>
+  <Space direction="vertical" size="small" style={{ textAlign: 'center' }}>
+    <Text type="secondary" style={{ color: "#7D8798" }}>
+    <strong>Created by:</strong> {activity.createdBy.companyName}
+    </Text>
+    <Text type="secondary" style={{ color: "#7D8798" }}>
+      <strong>Created:</strong> {new Date(activity.createdAt).toLocaleDateString()}
+    </Text>
+    <Text type="secondary" style={{ color: "#7D8798" }}>
+    <strong>Last updated:</strong> {new Date(activity.updatedAt).toLocaleDateString()}
+    </Text>
+  </Space>
         </Card>
+        
       </Space>
     </div>
   );
