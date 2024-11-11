@@ -821,7 +821,7 @@ const ItineraryScreen = ({setFlag}) => {
             
                         <div className="flex justify-center items-center gap-4 p-4">
                             <Button
-                                onClick={() => navigate(`itineraryDetails/${itinerary._id}`)}
+                                onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}
                                 className="text-white bg-[#58A399] hover:bg-[#4a8f7a] transition-all duration-300"
                             >
                                 Show Details
