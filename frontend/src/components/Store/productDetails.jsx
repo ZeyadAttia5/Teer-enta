@@ -18,6 +18,7 @@ const ProductDetails = ({setFlag}) => {
   const [product, setProduct] = useState(null); // State for the product
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const [currency , setCurrency] = useState(null);
   const [refreshReviews, setRefreshReviews] = useState(false); // NEW STATE
   const user = JSON.parse(localStorage.getItem("user"));
   const onSubmit = async (values) => {

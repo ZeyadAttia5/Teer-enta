@@ -5,29 +5,28 @@ const errorHandler = require("../Util/ErrorHandler/errorSender");
 module.exports = async (req, res, next) => {
     const authHeader = req.headers["authorization"];
 
+    // If there is no authorization header, continue to the next middleware
     if (!authHeader) {
-        next();
+        return next();
     }
+
     const token = authHeader.split(" ")[1];
-    let decodedToken;
 
     try {
-        decodedToken = jwt.verify(token, process.env.JWT_SECRET_ACCESS);
+        // Attempt to verify the JWT token
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET_ACCESS);
+
         if (!decodedToken) {
-            return res.status(401).json({message: "Token is Not Correct"});
+            return next(); // Continue to the next middleware if the token is invalid
         }
 
-        const checkToken = await Token.findOne({token: token});
-        if (!checkToken) {
-            return res.status(403).json({message: "Login first"});
+        // Check if the token exists in the database
+        const checkToken = await Token.findOne({ token: token });
+        if (!checkToken || checkToken.blackListedToken) {
+            return next(); // Continue to the next middleware if the token is blacklisted or not found
         }
 
-        if (checkToken.blackListedToken) {
-            return res.status(403).json({
-                message: "You are blocked, You cannot perform this request",
-            });
-        }
-
+        // Attach user info to the request object if token is valid and not blacklisted
         req.user = {
             _id: decodedToken.userId,
             hasProfile: decodedToken.hasProfile,
@@ -35,10 +34,12 @@ module.exports = async (req, res, next) => {
             accessToken: token
         };
         req.body.createdBy = req.user._id;
+
+        // Proceed to the next middleware
         next();
 
     } catch (err) {
-        // next() ;
-        errorHandler.SendError(res, err);
+        // If JWT verification fails, continue to the next middleware instead of sending an error
+        next();
     }
 };

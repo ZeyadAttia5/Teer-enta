@@ -403,7 +403,7 @@ const ItineraryScreen = ({setFlag}) => {
         form.resetFields();
     };
 
-    const handleBookItinerary =  (ItineraryId) => {
+    const handleBookItinerary = (ItineraryId) => {
 
         navigate(`book/${ItineraryId}`);
     }
@@ -528,86 +528,85 @@ const ItineraryScreen = ({setFlag}) => {
             title: "Actions",
             key: "actions",
             render: (text, record) => (
-                    (
-                        <>
-                            <Button
-                                icon={<EyeOutlined/>}
-                                onClick={() => showViewModal(record)}
-                                className="mr-2"
-                                style={{
-                                    backgroundColor: "#02735F",
-                                    color: "#fff",
-                                    border: "none",
-                                }}
-                            >
-                                View
-                            </Button>
+                (
+                    <>
+                        <Button
+                            icon={<EyeOutlined/>}
+                            onClick={() => showViewModal(record)}
+                            className="mr-2"
+                            style={{
+                                backgroundColor: "#02735F",
+                                color: "#fff",
+                                border: "none",
+                            }}
+                        >
+                            View
+                        </Button>
 
 
-
-                            {user &&
-                                user._id === record.createdBy &&
+                        {user &&
+                            user._id === record.createdBy &&
+                            (
                                 (
-                                    (
-                                        <>
-                                            <Button
-                                                icon={<EditOutlined/>}
-                                                onClick={() => showModal(record)}
-                                                className="mr-2"
-                                                style={{
-                                                    backgroundColor: "#02735F",
-                                                    color: "#fff",
-                                                    border: "none",
-                                                }}
-                                            >
-                                                Edit
-                                            </Button>
-
-                                            <Button
-                                                icon={<DeleteOutlined/>}
-                                                onClick={() => handleDelete(record._id)}
-                                                style={{
-                                                    backgroundColor: "#02735F",
-                                                    color: "#fff",
-                                                    border: "none",
-                                                }}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </>
-                                    ))}
-                            {user && user.userRole === "Admin" && (
-                                <Badge count={0} offset={[-5, 5]}>
-                                    <Tooltip title={"Flag this item as Inappropriate"}>
+                                    <>
                                         <Button
-                                            danger
-                                            icon={<FlagFilled/>}
-                                            onClick={async () => {
-                                                try {
-                                                    setLoading(true);
-                                                    await flagIternaary(record._id);
-                                                    message.success("Item flagged as inappropriate");
-                                                    await fetchItineraries();
-                                                } catch (error) {
-                                                    message.error("Failed to flag item as inappropriate");
-                                                } finally {
-                                                    setLoading(false);
-                                                }
-                                            }}
-                                            shape="circle"
+                                            icon={<EditOutlined/>}
+                                            onClick={() => showModal(record)}
+                                            className="mr-2"
                                             style={{
-                                                button: {
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                },
+                                                backgroundColor: "#02735F",
+                                                color: "#fff",
+                                                border: "none",
                                             }}
-                                        />
-                                    </Tooltip>
-                                </Badge>
-                            )}
-                        </>
-                    )
+                                        >
+                                            Edit
+                                        </Button>
+
+                                        <Button
+                                            icon={<DeleteOutlined/>}
+                                            onClick={() => handleDelete(record._id)}
+                                            style={{
+                                                backgroundColor: "#02735F",
+                                                color: "#fff",
+                                                border: "none",
+                                            }}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </>
+                                ))}
+                        {user && user.userRole === "Admin" && (
+                            <Badge count={0} offset={[-5, 5]}>
+                                <Tooltip title={"Flag this item as Inappropriate"}>
+                                    <Button
+                                        danger
+                                        icon={<FlagFilled/>}
+                                        onClick={async () => {
+                                            try {
+                                                setLoading(true);
+                                                await flagIternaary(record._id);
+                                                message.success("Item flagged as inappropriate");
+                                                await fetchItineraries();
+                                            } catch (error) {
+                                                message.error("Failed to flag item as inappropriate");
+                                            } finally {
+                                                setLoading(false);
+                                            }
+                                        }}
+                                        shape="circle"
+                                        style={{
+                                            button: {
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            },
+                                        }}
+                                    />
+                                </Tooltip>
+                            </Badge>
+                        )}
+                    </>
+                )
             ),
         },
     ];
@@ -820,12 +819,12 @@ const ItineraryScreen = ({setFlag}) => {
                                         </div>
                                     }
                                 />
+                                <Button onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}>
+                                    show details
+                                </Button>
                                 {user && user.userRole === "Tourist" && (
                                     <>
-                                        <Button onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}>
-                                            show details
-                                        </Button>
-                                        <Button onClick={() => handleBookItinerary(itinerary._id)} >
+                                        <Button onClick={() => handleBookItinerary(itinerary._id)}>
                                             Book
                                         </Button>
                                     </>
@@ -1244,12 +1243,12 @@ const ItineraryScreen = ({setFlag}) => {
                         <Form.Item label="Timeline">
                             {viewingItinerary.timeline.map((entry, index) => (
                                 console.log("entry", entry),
-                                <div key={index}>
-                                    <Input
-                                        value={`${entry.activity.name} - Start: ${entry.startTime}, Duration: ${entry.duration} min`}
-                                        disabled
-                                    />
-                                </div>
+                                    <div key={index}>
+                                        <Input
+                                            value={`${entry.activity.name} - Start: ${entry.startTime}, Duration: ${entry.duration} min`}
+                                            disabled
+                                        />
+                                    </div>
                             ))}
                         </Form.Item>
 
