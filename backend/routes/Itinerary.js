@@ -18,17 +18,17 @@ router.get("/:id/ratings", itineraryController.getRatingsForItinerary);
 router.get("/booked", isAuth, itineraryController.getBookedItineraries);
 router.get("/pendingBookings", isAuth, itineraryController.pendingBookings);
 router.get("/completedBookings", isAuth, itineraryController.completedBookings);
-router.get("/unActive", itineraryController.getUnActiveItinerary);
+router.get("/unActive",isAuth, itineraryController.getUnActiveItinerary);
 router.post("/create", isAuth, itineraryController.createItinerary);
 router.post("/book/:id", isAuth, itineraryController.bookItinerary);
-router.post('/activate/:id', itineraryController.activateItinerary);
+router.post('/activate/:id',isAuth, itineraryController.activateItinerary);
 router.post('/deactivated/:id', itineraryController.deactivateItinerary);
 router.post('/:id/comment', isAuth, itineraryController.addCommentToItinerary);
 router.post('/:id/rating', isAuth, itineraryController.rateItinerary);
 router.post('/makeAllActivitesAppropriate', itineraryController.makeAllItineraryAppropriate);
 router.put("/update/:id", isAuth, itineraryController.updateItinerary);
 router.patch("/flagInappropriate/:id", isAuth, itineraryController.flagInappropriate)
-router.patch("/UnFlagInappropriate/:id", itineraryController.UnFlagInappropriate);
+router.patch("/UnFlagInappropriate/:id",isAuth, itineraryController.UnFlagInappropriate);
 router.patch("/cancel/book/:id", isAuth, itineraryController.cancelItineraryBooking);
 router.delete("/delete/:id", isAuth, itineraryController.deleteItinerary);
 

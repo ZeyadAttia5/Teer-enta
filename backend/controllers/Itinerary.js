@@ -131,10 +131,11 @@ exports.getBookedItineraries = async (req, res, next) => {
 
         const bookedItineraries = await BookedItinerary.find({
             createdBy: userId,
-            isActive: true
+            isActive: true, // Filter based on itinerary's appropriateness
         })
             .populate({
                 path: 'itinerary', // Populate the itinerary field
+                match: { isAppropriate: true }, // Ensures only appropriate itineraries are populated
                 populate: {
                     path: 'createdBy' // Populate the createdBy field of the itinerary
                 }
@@ -142,7 +143,7 @@ exports.getBookedItineraries = async (req, res, next) => {
             .populate('createdBy'); // Populate the createdBy field of the booked itinerary
 
         if (bookedItineraries.length === 0) {
-            return res.status(404).json({message: "No booked itineraries found"});
+            return res.status(404).json({ message: "No booked itineraries found" });
         }
 
         res.status(200).json(bookedItineraries);
@@ -705,7 +706,7 @@ exports.makeAllItineraryAppropriate = async (req, res) => {
   
 exports.getUnActiveItinerary = async (req, res) => {
     try {
-        const itineraries = await Itinerary.find({isActive: false});
+        const itineraries = await Itinerary.find({isActive: false ,createdBy : req.user._id});
         console.log(itineraries);
         if (itineraries.length === 0) {
             return res.status(404).json({message: "No unActive itineraries found"});

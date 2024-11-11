@@ -38,7 +38,7 @@ const UserCard = ({
         </div>
       </div>
       <div className="flex gap-4">
-        <WalletBalanceCard currency={currency} value={wallet * rate || 0} />
+        <WalletBalanceCard currency={currency} value={(wallet * rate || 0).toFixed(2)} />
         <div className="flex flex-col justify-center w-[40%]">
           <CurrencyDropdown1 setCurrencyId={setCurrencyId} isEditable={isEditable} />
         </div>

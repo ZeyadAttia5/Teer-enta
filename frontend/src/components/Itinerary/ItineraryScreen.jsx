@@ -444,7 +444,7 @@ const ItineraryScreen = ({setFlag}) => {
 
             const formattedTimeline = values.timeline
                 ? values.timeline.map((tl) => ({
-                    activity: tl.activity,
+                    activity: tl.activity._id,
                     startTime: tl.startTime ? tl.startTime.format("HH:mm") : null,
                     duration: tl.duration,
                 }))
@@ -464,6 +464,7 @@ const ItineraryScreen = ({setFlag}) => {
                 timeline: formattedTimeline,
                 preferenceTags: formattedPreferenceTags,
             };
+            console.log("Here",formattedData);
 
             if (editingItinerary) {
                 console.log("Updating itinerary", formattedData);
