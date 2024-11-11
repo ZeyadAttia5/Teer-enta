@@ -80,7 +80,7 @@ const Sidebar = ({ visible, onClose }) => {
               Flagged Itinerary
             </Menu.Item>
             )}
-            {(user && user.userRole === "Admin") && (
+            {(user && user.userRole === "TourGuide") && (
             <Menu.Item
               key="2000"
               onClick={() => handleClick("/itinerary/unActiveIternaries")}
