@@ -7,7 +7,8 @@ import {getProduct} from "../../api/products.ts"; // Import Ant Design component
 import Reviews from '../Store/reviews.jsx';
 import FeedbackForm from '../shared/FeedBackForm/FeedbackForm.jsx';
 import { getProductReviews, getProductRatings, addReviewToProduct, addRatingToProduct } from '../../api/products.ts';
-import ProductReviews from '../Store/productReviews.jsx'; // Import the ProductReviews component
+import ProductReviews from '../Store/productReviews.jsx';
+import {getMyCurrency} from "../../api/profile.ts"; // Import the ProductReviews component
 const { Title, Paragraph } = Typography;
 
 const ProductDetails = ({setFlag}) => {
@@ -64,7 +65,16 @@ const ProductDetails = ({setFlag}) => {
         setLoading(false);
       }
     };
-  
+
+    const fetchCurrency = async () => {
+        try {
+            const response = await getMyCurrency();
+            setCurrency(response.data);
+        } catch (error) {
+            console.error("Failed to fetch currency:", error);
+        }
+    }
+    fetchCurrency() ;
     fetchProductDetails();
   }, [id, user?._id]);
   
@@ -120,7 +130,7 @@ const ProductDetails = ({setFlag}) => {
             <Divider />
 
             <Paragraph className="text-lg font-semibold text-[#58A399]">
-              Price: <span className="text-xl">${product.price.toFixed(2)}</span>
+              Price: <span className="text-xl">{currency?.code} {(currency?.rate*product.price).toFixed(2)}</span>
             </Paragraph>
             <Paragraph className="text-lg font-semibold">
               Available Quantity: <span className="text-[#58A399]">{product.quantity}</span>

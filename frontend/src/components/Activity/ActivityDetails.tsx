@@ -34,7 +34,7 @@ import MapContainer from "../shared/GoogleMaps/GoogleMaps";
 import { TActivity } from "../../types/Activity/Activity";
 import StaticMap from "../shared/GoogleMaps/ViewLocation";
 import { getActivity } from "../../api/activity.ts";
-import {getCurrency} from "../../api/account.ts";
+import {getMyCurrency} from "../../api/profile.ts";
 
 const { Title, Text } = Typography;
 
@@ -48,7 +48,7 @@ const ActivityDetails: React.FC = () => {
 
   const fetchCurrency = async () => {
     try {
-      const response = await getCurrency();
+      const response = await getMyCurrency();
       setCurrency(response.data);
       console.log("Currency:", response.data);
     } catch (error) {
@@ -103,7 +103,7 @@ const ActivityDetails: React.FC = () => {
     }
       - Price Range: ${
         activity?.price?.min && activity?.price?.max
-            ? `${currency?.code} ${(currency.rate*activity.price.min).toFixed(2)} - ${(currency.rate*activity.price.max).toFixed(2)}`
+            ? `${currency?.code} ${(currency?.rate*activity.price.min).toFixed(2)} - ${(currency?.rate*activity.price.max).toFixed(2)}`
             : "Not specified"
     }
       - Category: ${activity?.category?.category || "No category"}
@@ -359,11 +359,11 @@ const ActivityDetails: React.FC = () => {
               dataSource={activity.comments}
               renderItem={(comment) => (
                 <List.Item>
-                  <List.Item.Meta
-                    avatar={<Avatar>{comment.user[0]}</Avatar>}
-                    title={<Text strong style={{ color: "#496989" }}>{comment.user}</Text>}
-                    description={<Text>{comment.text}</Text>}
-                  />
+                  {/*<List.Item.Meta*/}
+                  {/*  avatar={<Avatar>{comment.user[0]}</Avatar>}*/}
+                  {/*  title={<Text strong style={{ color: "#496989" }}>{comment.user}</Text>}*/}
+                  {/*  description={<Text>{comment.text}</Text>}*/}
+                  {/*/>*/}
                 </List.Item>
               )}
             />
