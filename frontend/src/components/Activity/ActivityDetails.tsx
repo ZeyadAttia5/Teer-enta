@@ -423,7 +423,7 @@ const ActivityDetails: React.FC = () => {
 >
   <Space direction="vertical" size="small" style={{ textAlign: 'center' }}>
     <Text type="secondary" style={{ color: "#7D8798" }}>
-    <strong>Created by:</strong> {activity.createdBy.companyName}
+    <strong>Created by:</strong> {activity.createdBy.username}
     </Text>
     <Text type="secondary" style={{ color: "#7D8798" }}>
       <strong>Created:</strong> {new Date(activity.createdAt).toLocaleDateString()}
@@ -433,7 +433,7 @@ const ActivityDetails: React.FC = () => {
     </Text>
   </Space>
         </Card>
-        
+
       </Space>
     </div>
   );
