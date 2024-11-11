@@ -24,10 +24,9 @@ cron.schedule('0 0 * * *', async () => {
         }
 
         for (let booking of bookedActivities) {
-            const activity = booking.activity;
             const user = booking.createdBy;
 
-            const activityDate = moment(activity.date);
+            const activityDate = moment(booking.date);
             const daysDifference = activityDate.diff(currentDate, 'days');
 
             if (daysDifference === 5) {
@@ -35,7 +34,7 @@ cron.schedule('0 0 * * *', async () => {
                     const emailParams = {
                         name: activity.name,
                         userName: user.username,
-                        date: moment(activity.date).format('MMMM Do YYYY'),
+                        date: moment(booking.date).format('MMMM Do YYYY'),
                     };
 
                     const emailTemplate = new UpcomingEventTemplate(
