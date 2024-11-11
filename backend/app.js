@@ -29,8 +29,10 @@ const currencyRoutes = require('./routes/currency') ;
 const fileRoutes = require('./routes/file');
 const cartRoutes = require('./routes/cart');
 const promoCodeRoutes = require('./routes/promoCode');
+const statisticRoutes = require('./routes/statistics');
 require('./scheduler/PromoCodeSenderBD');
 require('./scheduler/upcomingEventsBookedReminder');
+require('./scheduler/DeadLineSchaduler');
 
 
 
@@ -84,6 +86,7 @@ app.use("/complaint", complaintRoutes);
 app.use("/upload" , fileRoutes ) ;
 app.use("/currency" , currencyRoutes) ;
 app.use("/promoCode", promoCodeRoutes);
+app.use("/statistics", statisticRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });
