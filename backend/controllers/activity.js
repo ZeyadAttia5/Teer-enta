@@ -12,7 +12,7 @@ const PaymentReceiptItemTemplate = require("../Util/mailsHandler/mailTemplets/2P
 exports.getActivities = async (req, res, next) => {
     try {
         const activities = await Activity
-            .find({isActive: true , isBookingOpen: true , isAppropriate:true})
+            .find({isActive: true, isBookingOpen: true, isAppropriate: true})
             .populate('category')
             .populate('preferenceTags');
         if (activities.length === 0) {
@@ -30,7 +30,7 @@ exports.getFlaggedActivities = async (req, res, next) => {
         const activities = await Activity.find({isAppropriate: false})
             .populate('category')
             .populate('preferenceTags');
-       
+
         res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -71,7 +71,7 @@ exports.getActivity = async (req, res, next) => {
 exports.getMyActivities = async (req, res, next) => {
     try {
         const createdBy = req.user._id;
-        const activities = await Activity.find({createdBy:createdBy})
+        const activities = await Activity.find({createdBy: createdBy})
             .populate('category')
             .populate('preferenceTags');
         console.log(activities);
@@ -90,9 +90,9 @@ exports.getUpcomingActivities = async (req, res, next) => {
         const activities = await Activity.find(
             {
                 date: {$gte: today},
-                isAppropriate:true ,
-                isActive:true ,
-                isBookingOpen:true
+                isAppropriate: true,
+                isActive: true,
+                isBookingOpen: true
             })
             .populate('category')
             .populate('preferenceTags');
@@ -113,12 +113,12 @@ exports.getUpcomingPaidActivities = async (req, res, next) => {
         const upcomingActivities = await BookedActivity.find({
             createdBy: userId,
             status: 'Completed',
-            date: { $gte: currentDate },
+            date: {$gte: currentDate},
             isActive: true
         }).populate('activity'); // Populate the activity details
 
         if (!upcomingActivities || upcomingActivities.length === 0) {
-            return res.status(404).json({ message: "No upcoming paid activities found." });
+            return res.status(404).json({message: "No upcoming paid activities found."});
         }
 
         res.status(200).json({
@@ -138,6 +138,7 @@ exports.getBookedActivities = async (req, res, next) => {
             .find({createdBy: userId})
             .populate({
                 path: 'activity', // Populate the itinerary field
+                match: {isAppropriate: true},
                 populate: {
                     path: 'createdBy' // Populate the createdBy field of the itinerary
                 }
@@ -155,10 +156,10 @@ exports.pendingBookings = async (req, res, next) => {
     try {
         const userId = req.user._id;
         const bookedActivities = await BookedActivity
-            .find({ createdBy: userId, status: 'Pending' })
+            .find({createdBy: userId, status: 'Pending'})
             .populate({
                 path: 'activity',
-                match: { isAppropriate: true }, // Add match condition to filter the populated activities
+                match: {isAppropriate: true}, // Add match condition to filter the populated activities
                 populate: {
                     path: 'createdBy', // Populate the createdBy field of the itinerary
                 }
@@ -177,10 +178,10 @@ exports.completedBookings = async (req, res, next) => {
     try {
         const userId = req.user._id;
         const bookedActivities = await BookedActivity
-            .find({ createdBy: userId, status: 'Completed' })
+            .find({createdBy: userId, status: 'Completed'})
             .populate({
                 path: 'activity',
-                match: { isAppropriate: true }, // Add match condition to filter the populated activities
+                match: {isAppropriate: true}, // Add match condition to filter the populated activities
                 populate: {
                     path: 'createdBy', // Populate the createdBy field of the itinerary
                 }
@@ -266,22 +267,20 @@ exports.flagInappropriate = async (req, res) => {
     try {
         const id = req.params.id;
         if (!mongoose.Types.ObjectId.isValid(id)) {
-          return res.status(400).json({ message: "invalid object id " });
+            return res.status(400).json({message: "invalid object id "});
         }
-        const activity = await Activity.
-            findByIdAndUpdate(id, {isAppropriate: false}, {new: true}).
-            populate('createdBy');
+        const activity = await Activity.findByIdAndUpdate(id, {isAppropriate: false}, {new: true}).populate('createdBy');
         if (!activity) {
             return res.status(404).json({message: "activity not found"});
         }
         // console.log("here",activity.createdBy);
         const template = new FlaggedActivityTemplate(
-            activity.name ,
+            activity.name,
             activity.price.max,
             activity.createdBy.username
         );
 
-        await brevoService.send(template,activity.createdBy.email);
+        await brevoService.send(template, activity.createdBy.email);
 
         //refunding the user to be handled
         return res.status(200).json({message: "activity flagged inappropriate successfully"});
@@ -292,14 +291,14 @@ exports.flagInappropriate = async (req, res) => {
 
 exports.bookActivity = async (req, res) => {
     try {
-        const { id } = req.params; // Activity ID
+        const {id} = req.params; // Activity ID
         const userId = req.user._id; // Logged-in user ID (Tourist)
-        let { paymentMethod } = req.body; // Payment method: wallet, credit_card, or cash_on_delivery
+        let {paymentMethod} = req.body; // Payment method: wallet, credit_card, or cash_on_delivery
         paymentMethod = paymentMethod || 'wallet';
         // Find the activity
-        const activity = await Activity.findOne({ isActive: true, _id: id });
+        const activity = await Activity.findOne({isActive: true, _id: id});
         if (!activity) {
-            return res.status(404).json({ message: "Activity not found or inactive" });
+            return res.status(404).json({message: "Activity not found or inactive"});
         }
 
         const existingBooking = await BookedActivity.findOne({
@@ -310,7 +309,7 @@ exports.bookActivity = async (req, res) => {
         }).populate('activity');
 
         if (existingBooking && existingBooking.date.toISOString().split('T')[0] === activity.date.toISOString().split('T')[0]) {
-            return res.status(400).json({ message: "You already have a pending booking for this activity on the same date" });
+            return res.status(400).json({message: "You already have a pending booking for this activity on the same date"});
         }
 
         // Retrieve the tourist's wallet balance if needed
@@ -323,7 +322,7 @@ exports.bookActivity = async (req, res) => {
         if (paymentMethod === 'wallet') {
             // Wallet payment method
             if (tourist.wallet < totalPrice) {
-                return res.status(400).json({ message: "Insufficient wallet balance" });
+                return res.status(400).json({message: "Insufficient wallet balance"});
             }
             // Deduct the amount from the wallet
             tourist.wallet -= totalPrice;
@@ -350,7 +349,7 @@ exports.bookActivity = async (req, res) => {
             // The booking can proceed directly
 
         } else {
-            return res.status(400).json({ message: "Invalid payment method selected" });
+            return res.status(400).json({message: "Invalid payment method selected"});
         }
 
         // Create a new booking
@@ -358,7 +357,7 @@ exports.bookActivity = async (req, res) => {
             activity: id,
             createdBy: userId,
             // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
-            status:"Pending",
+            status: "Pending",
             date: activity.date
         });
 // Logic for assigning loyalty points based on the tourist's current level
@@ -393,11 +392,11 @@ exports.bookActivity = async (req, res) => {
 
         const template = new PaymentReceiptItemTemplate(
             tourist.username,
-            activity.price.max ,
-            activity.date ,
+            activity.price.max,
+            activity.date,
             "Activity"
         )
-        await brevoService.send(template,tourist.email);
+        await brevoService.send(template, tourist.email);
 
         return res.status(200).json({
             message: "Activity booked successfully",
@@ -413,21 +412,21 @@ exports.bookActivity = async (req, res) => {
 
 exports.cancelActivityBooking = async (req, res) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
         const userId = req.user._id;
 
         const bookedActivity = await BookedActivity.findOne({
             _id: id,
             createdBy: userId,
-            isActive: true ,
+            isActive: true,
         }).populate('activity');
 
         if (!bookedActivity) {
-            return res.status(404).json({ message: "Booking not found" });
+            return res.status(404).json({message: "Booking not found"});
         }
 
-        if(bookedActivity.status === 'Cancelled') {
-            return res.status(400).json({ message: "Booking already cancelled" });
+        if (bookedActivity.status === 'Cancelled') {
+            return res.status(400).json({message: "Booking already cancelled"});
         }
 
         const currentDate = new Date();
@@ -435,10 +434,10 @@ exports.cancelActivityBooking = async (req, res) => {
         const hoursDifference = (activityDate - currentDate) / (1000 * 60 * 60);
 
         if (hoursDifference < 48) {
-            return res.status(400).json({ message: "Cannot cancel the booking less than 48 hours before the activity" });
+            return res.status(400).json({message: "Cannot cancel the booking less than 48 hours before the activity"});
         }
         const tourist = await Tourist.findById(userId);
-        if(bookedActivity.status === 'Completed') {
+        if (bookedActivity.status === 'Completed') {
             tourist.wallet += bookedActivity.activity.price.max; //TODO Price not always max
             await tourist.save();
         }
@@ -451,7 +450,7 @@ exports.cancelActivityBooking = async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ message: "An error occurred while cancelling the booking" });
+        return res.status(500).json({message: "An error occurred while cancelling the booking"});
     }
 };
 
@@ -492,105 +491,105 @@ exports.activateActivity = async (req, res) => {
 
 exports.addRatingToActivity = async (req, res) => {
     try {
-      const { id } = req.params; 
-      const { rating } = req.body; 
-  
-      const userId = req.user._id;
-  
-      const activity = await Activity.findById(id);
-  
-      if (!activity) {
-        return res.status(404).json({ message: "Activity not found" });
-      }
-  
-      const booking = await BookedActivity.findOne({ 
-        createdBy: userId,
-        activity: id,
-        status: 'Completed'
-      });
-  
-      if (!booking) {
-        return res.status(400).json({ message: "You haven't completed this activity" });
-      }
-  
-      activity.ratings.push({
-        createdBy: userId,
-        rating: rating,
-      });
-  
-      await activity.save();
-  
-      res.status(200).json({ message: "Rating added successfully", activity });
+        const {id} = req.params;
+        const {rating} = req.body;
+
+        const userId = req.user._id;
+
+        const activity = await Activity.findById(id);
+
+        if (!activity) {
+            return res.status(404).json({message: "Activity not found"});
+        }
+
+        const booking = await BookedActivity.findOne({
+            createdBy: userId,
+            activity: id,
+            status: 'Completed'
+        });
+
+        if (!booking) {
+            return res.status(400).json({message: "You haven't completed this activity"});
+        }
+
+        activity.ratings.push({
+            createdBy: userId,
+            rating: rating,
+        });
+
+        await activity.save();
+
+        res.status(200).json({message: "Rating added successfully", activity});
     } catch (err) {
-      errorHandler.SendError(res, err);
+        errorHandler.SendError(res, err);
     }
 };
 
 exports.getRatingsForActivity = async (req, res) => {
     try {
-        const { id } = req.params; 
+        const {id} = req.params;
 
         const activity = await Activity.findById(id)
-        .populate('ratings.user', 'username');
+            .populate('ratings.user', 'username');
 
         if (!activity) {
-        return res.status(404).json({ message: "Activity not found" });
+            return res.status(404).json({message: "Activity not found"});
         }
 
-        res.status(200).json({ ratings: activity.ratings });
+        res.status(200).json({ratings: activity.ratings});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
 };
-  
+
 exports.addCommentToActivity = async (req, res) => {
     try {
-      const { id } = req.params; 
-      const { comment } = req.body; 
-      const userId = req.user._id; 
-  
-      const activity = await Activity.findById(id).populate('createdBy');
-  
-      if (!activity || !activity.isActive) {
-        return res.status(404).json({ message: "Activity not found or inactive" });
-      }
-  
-      const booking = await BookedActivity.findOne({ 
-        activity: id,
-        createdBy: userId,
-        isActive: true,
-        status: 'Completed'
-      });
-  
-      if (!booking) {
-        return res.status(400).json({ message: "You haven't attended this activity" });
-      }
-  
-      activity.comments.push({
-        createdBy: userId,
-        comment: comment,
-      });
-  
-      await activity.save();
-  
-      res.status(200).json({ message: "Comment added successfully", activity });
-    } catch (err) {
-      errorHandler.SendError(res, err);
-    }
-};
-  
-exports.getCommentsForActivity = async (req, res) => {
-    try {
-        const { id } = req.params; 
+        const {id} = req.params;
+        const {comment} = req.body;
+        const userId = req.user._id;
 
-        const activity = await Activity.findById(id)
-        .populate('comments.user', 'username'); 
+        const activity = await Activity.findById(id).populate('createdBy');
 
         if (!activity || !activity.isActive) {
-        return res.status(404).json({ message: "Activity not found or inactive" });
+            return res.status(404).json({message: "Activity not found or inactive"});
         }
 
-        res.status(200).json({ comments: activity.comments });
+        const booking = await BookedActivity.findOne({
+            activity: id,
+            createdBy: userId,
+            isActive: true,
+            status: 'Completed'
+        });
+
+        if (!booking) {
+            return res.status(400).json({message: "You haven't attended this activity"});
+        }
+
+        activity.comments.push({
+            createdBy: userId,
+            comment: comment,
+        });
+
+        await activity.save();
+
+        res.status(200).json({message: "Comment added successfully", activity});
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+exports.getCommentsForActivity = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const activity = await Activity.findById(id)
+            .populate('comments.user', 'username');
+
+        if (!activity || !activity.isActive) {
+            return res.status(404).json({message: "Activity not found or inactive"});
+        }
+
+        res.status(200).json({comments: activity.comments});
     } catch (err) {
         errorHandler.SendError(res, err);
     }
@@ -601,7 +600,7 @@ exports.makeAllActivitiesAppropriate = async (req, res) => {
     try {
         const result = await Activity.updateMany(
             {}, // Empty filter means all documents
-            { $set: { isAppropriate: true } } // Set "isAppropriate" to true
+            {$set: {isAppropriate: true}} // Set "isAppropriate" to true
         );
 
         // Log the entire result to understand its structure
@@ -609,7 +608,7 @@ exports.makeAllActivitiesAppropriate = async (req, res) => {
 
         // Check if any documents were modified
         if (result.modifiedCount === 0) {
-            return res.status(200).json({ message: 'No activities were updated (they may already be set as appropriate).' });
+            return res.status(200).json({message: 'No activities were updated (they may already be set as appropriate).'});
         }
 
         // Return a response indicating how many documents were modified
@@ -627,7 +626,7 @@ exports.makeAllActivitiesAppropriate = async (req, res) => {
 // get unactiveActivities
 exports.getUnactiveActivities = async (req, res) => {
     try {
-        const activities = await Activity.find({ isActive: false });
+        const activities = await Activity.find({isActive: false});
         res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);

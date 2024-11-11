@@ -35,10 +35,18 @@ const BookingGrid = () => {
     }, []);
 
     const fetchBookings = async () => {
-        const activities = await getBookedActivities();
-        const itineraries = await getBookedItineraries();
-        setBookedActivities(activities.data);
-        setBookedItineraries(itineraries);
+        try {
+            const activities = await getBookedActivities();
+            setBookedActivities(activities.data);
+        } catch (error) {
+            message.error(error.response.data.message);
+        }
+        try {
+            const itineraries = await getBookedItineraries();
+            setBookedItineraries(itineraries);
+        } catch (error) {
+            message.error(error.response.data.message);
+        }
     };
 
     const fetchCurrency = async () => {
@@ -56,7 +64,7 @@ const BookingGrid = () => {
             await commentOnTourGuide(tourGuideId, feedback.comment);
             message.success('Tour guide feedback submitted successfully');
         } catch (error) {
-            console.log("here",error);
+            console.log("here", error);
             message.error(error.response.data.message);
         }
     };
@@ -146,91 +154,100 @@ const BookingGrid = () => {
             {selectedType === 'itineraries' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                     {bookedItineraries.map((itinerary) => (
-                        <Card key={itinerary._id} title={itinerary.itinerary.name} className="shadow-lg p-4" hoverable>
-                            <div className="flex justify-between items-center mb-4">
-                                <span>{new Date(itinerary.date).toLocaleDateString()}</span>
-                                {renderStatusTag(itinerary.status)}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                                <p>Booking By: {itinerary.createdBy.username}</p>
-                                <p>Price: {currency?.code} {(currency?.rate * itinerary.itinerary.price).toFixed(2)}</p>
-                            </div>
-                            {itinerary.status === 'Pending' && (
-                                <Button type="primary" danger onClick={() => cancelBooking(itinerary._id, 'itinerary')}>
-                                    Cancel Booking
+                        itinerary.itinerary ? (
+                            <Card key={itinerary._id} title={itinerary.itinerary.name} className="shadow-lg p-4"
+                                  hoverable>
+                                <div className="flex justify-between items-center mb-4">
+                                    <span>{new Date(itinerary.date).toLocaleDateString()}</span>
+                                    {renderStatusTag(itinerary.status)}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                    <p>Booking By: {itinerary.createdBy.username}</p>
+                                    <p>Price: {currency?.code} {(currency?.rate * itinerary.itinerary.price).toFixed(2)}</p>
+                                </div>
+                                {itinerary.status === 'Pending' && (
+                                    <Button type="primary" danger
+                                            onClick={() => cancelBooking(itinerary._id, 'itinerary')}>
+                                        Cancel Booking
+                                    </Button>
+                                )}
+
+                                <Button
+                                    className="mt-4"
+                                    onClick={() => toggleFeedbackVisibility(itinerary._id, 'tourGuide')}
+                                >
+                                    {feedbackVisibility[itinerary._id]?.tourGuide ? 'Hide Tour Guide Feedback' : 'Give Tour Guide Feedback'}
                                 </Button>
-                            )}
+                                <Button
+                                    className="mt-4"
+                                    onClick={() => toggleFeedbackVisibility(itinerary._id, 'itinerary')}
+                                >
+                                    {feedbackVisibility[itinerary._id]?.itinerary ? 'Hide Itinerary Feedback' : 'Give Itinerary Feedback'}
+                                </Button>
 
-                            <Button
-                                className="mt-4"
-                                onClick={() => toggleFeedbackVisibility(itinerary._id, 'tourGuide')}
-                            >
-                                {feedbackVisibility[itinerary._id]?.tourGuide ? 'Hide Tour Guide Feedback' : 'Give Tour Guide Feedback'}
-                            </Button>
-                            <Button
-                                className="mt-4"
-                                onClick={() => toggleFeedbackVisibility(itinerary._id, 'itinerary')}
-                            >
-                                {feedbackVisibility[itinerary._id]?.itinerary ? 'Hide Itinerary Feedback' : 'Give Itinerary Feedback'}
-                            </Button>
+                                {feedbackVisibility[itinerary._id]?.tourGuide && (
+                                    <FeedbackForm
+                                        entity={{
+                                            name: itinerary.itinerary.createdBy.username,
+                                            _id: itinerary.itinerary.createdBy._id
+                                        }}
+                                        onSubmit={(feedback) => submitTourGuideRateAndReview(itinerary.itinerary.createdBy._id, feedback)}
+                                    />
+                                )}
 
-                            {feedbackVisibility[itinerary._id]?.tourGuide && (
-                                <FeedbackForm
-                                    entity={{
-                                        name: itinerary.itinerary.createdBy.username,
-                                        _id: itinerary.itinerary.createdBy._id
-                                    }}
-                                    onSubmit={(feedback) => submitTourGuideRateAndReview(itinerary.itinerary.createdBy._id, feedback)}
-                                />
-                            )}
-
-                            {feedbackVisibility[itinerary._id]?.itinerary && (
-                                <FeedbackForm
-                                    entity={{name: itinerary.itinerary.name, _id: itinerary.itinerary._id}}
-                                    onSubmit={(feedback) => submitItineraryRateAndReview(itinerary.itinerary._id, feedback)}
-                                />
-                            )}
-                        </Card>
+                                {feedbackVisibility[itinerary._id]?.itinerary && (
+                                    <FeedbackForm
+                                        entity={{name: itinerary.itinerary.name, _id: itinerary.itinerary._id}}
+                                        onSubmit={(feedback) => submitItineraryRateAndReview(itinerary.itinerary._id, feedback)}
+                                    />
+                                )}
+                            </Card>
+                        ) : null // Render nothing if itinerary.itinerary is null
                     ))}
                 </div>
             )}
+
 
             {selectedType === 'activities' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                     {bookedActivities.map((activity) => (
-                        <Card key={activity._id} title={activity.activity.name} className="shadow-lg p-4" hoverable>
-                            <div className="flex justify-between items-center mb-4">
-                                <span>{new Date(activity.date).toLocaleDateString()}</span>
-                                {renderStatusTag(activity.status)}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                                <p>Booking By: {activity.createdBy.username}</p>
-                                <p>Location: {activity.activity.location.lat}, {activity.activity.location.lng}</p>
-                                <p>Price: {currency?.code} {(currency?.rate * activity.activity.price.min).toFixed(2)}</p>
-                            </div>
-                            {activity.status === 'Pending' && (
-                                <Button type="primary" danger onClick={() => cancelBooking(activity._id, 'activity')}>
-                                    Cancel Booking
+                        activity.activity ? (
+                            <Card key={activity._id} title={activity.activity.name} className="shadow-lg p-4" hoverable>
+                                <div className="flex justify-between items-center mb-4">
+                                    <span>{new Date(activity.date).toLocaleDateString()}</span>
+                                    {renderStatusTag(activity.status)}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                    <p>Booking By: {activity.createdBy.username}</p>
+                                    <p>Location: {activity.activity.location.lat}, {activity.activity.location.lng}</p>
+                                    <p>Price: {currency?.code} {(currency?.rate * activity.activity.price.min).toFixed(2)}</p>
+                                </div>
+                                {activity.status === 'Pending' && (
+                                    <Button type="primary" danger
+                                            onClick={() => cancelBooking(activity._id, 'activity')}>
+                                        Cancel Booking
+                                    </Button>
+                                )}
+
+                                <Button
+                                    className="mt-4"
+                                    onClick={() => toggleFeedbackVisibility(activity._id, 'activity')}
+                                >
+                                    {feedbackVisibility[activity._id]?.activity ? 'Hide Activity Feedback' : 'Give Activity Feedback'}
                                 </Button>
-                            )}
 
-                            <Button
-                                className="mt-4"
-                                onClick={() => toggleFeedbackVisibility(activity._id, 'activity')}
-                            >
-                                {feedbackVisibility[activity._id]?.activity ? 'Hide Activity Feedback' : 'Give Activity Feedback'}
-                            </Button>
-
-                            {feedbackVisibility[activity._id]?.activity && (
-                                <FeedbackForm
-                                    entity={{name: activity.activity.name, _id: activity.activity._id}}
-                                    onSubmit={(feedback) => submitActivityRateAndReview(activity.activity._id, feedback)}
-                                />
-                            )}
-                        </Card>
+                                {feedbackVisibility[activity._id]?.activity && (
+                                    <FeedbackForm
+                                        entity={{name: activity.activity.name, _id: activity.activity._id}}
+                                        onSubmit={(feedback) => submitActivityRateAndReview(activity.activity._id, feedback)}
+                                    />
+                                )}
+                            </Card>
+                        ) : null // Render nothing if activity.activity is null
                     ))}
                 </div>
             )}
+
         </div>
     );
 };
