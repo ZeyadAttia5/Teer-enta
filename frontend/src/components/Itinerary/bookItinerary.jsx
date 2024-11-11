@@ -55,8 +55,8 @@ const BookItinerary = () => {
         setLoading(true);
 
         try {
-            await bookItinerary(itinerary._id, selectedDate, paymentMethod);
-            message.success("Booking successful!");
+            const response = await bookItinerary(itinerary._id, selectedDate, paymentMethod);
+            message.success(response.data.message);
         } catch (error) {
             message.error(error.response.data.message);
         } finally {

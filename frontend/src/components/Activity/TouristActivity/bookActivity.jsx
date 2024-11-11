@@ -51,7 +51,7 @@ const BookActivity = () => {
         setLoading(true);
         try {
             const response = await bookActivity(activityId ,paymentMethod);
-            message.success(response.message);
+            message.success(response.data.message);
         } catch (error) {
             message.error(error.response.data.message);
         } finally {
