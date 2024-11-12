@@ -158,18 +158,16 @@ const ActivityDetails: React.FC = () => {
     borderRadius: "10px",
     transition: "transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
     boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#94A3B8",
     color: "#496989",
-    cursor: "pointer",
   };
 
   const hoverCardStyle = {
-    backgroundColor: "#E2F4C5", // hover color
     boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
   };
 
   return (
-    <div style={{ backgroundColor: "#496989", minHeight: "100vh", padding: "24px" }}>
+    <div style={{ backgroundColor: "#f8fafc", minHeight: "100vh", padding: "24px" }}>
       <Space direction="vertical" size="large" style={{ width: "100%", margin: "0 auto" }}>
 
         {/* Header Section */}
@@ -260,23 +258,23 @@ const ActivityDetails: React.FC = () => {
                 <Row gutter={[24, 24]}>
                   <Col span={12}>
                     <Statistic
-                      title={<Text style={{ color: "#58A399" }}>Date</Text>}
+                      title={<Text style={{ color: "white" }}>Date</Text>}
                       value={new Date(activity.date).toLocaleDateString()}
                       prefix={<CalendarOutlined />}
-                      valueStyle={{ color: "#496989" }}
+                      valueStyle={{ color: "black" }}
                     />
                   </Col>
                   <Col span={12}>
                     <Statistic
-                      title={<Text style={{ color: "#58A399" }}>Time</Text>}
+                      title={<Text style={{ color: "white" }}>Time</Text>}
                       value={activity.time}
                       prefix={<ClockCircleOutlined />}
-                      valueStyle={{ color: "#496989" }}
+                      valueStyle={{ color: "black" }}
                     />
                   </Col>
                   <Col span={24}>
                     <Statistic
-                      title={<Text style={{ color: "#58A399" }}>Price Range</Text>}
+                      title={<Text style={{ color: "white" }}>Price Range</Text>}
                       value={
                         activity?.price?.min && activity?.price?.max
                             ? `${currency?.code} ${(currency?.rate*activity.price.min).toFixed(2)} - ${(currency?.rate*activity.price.max).toFixed(2)}`
@@ -284,7 +282,7 @@ const ActivityDetails: React.FC = () => {
                       }
 
                       prefix={<DollarOutlined />}
-                      valueStyle={{ color: "#496989" }}
+                      valueStyle={{ color: "#black " }}
                     />
                   </Col>
                 </Row>
@@ -301,11 +299,11 @@ const ActivityDetails: React.FC = () => {
               >
                 <Space direction="vertical">
                   <div>
-                    <Text strong style={{ color: "#496989" }}>Category: </Text>
+                    <Text strong style={{ color: "white" }}>Category: </Text>
                     <Tag color="blue">{activity.category?.category}</Tag>
                   </div>
                   <div>
-                    <Text strong style={{ color: "#496989" }}>Preference Tags: </Text>
+                    <Text strong style={{ color: "white" }}>Preference Tags: </Text>
                     <Space wrap>
                       {activity.preferenceTags.map((tag) => (
                         <Tag key={tag._id} color="green">
@@ -374,8 +372,8 @@ const ActivityDetails: React.FC = () => {
           }
         >
           <List.Item.Meta
-            title={<Text style={{ color: "#58A399" }}>{`${discount.discount}% OFF`}</Text>}
-            description={<Text style={{ color: "#496989" }}>{discount.Description}</Text>}
+            title={<Text style={{ color: "white" }}>{`${discount.discount}% OFF`}</Text>}
+            description={<Text style={{ color: "white" }}>{discount.Description}</Text>}
           />
         </List.Item>
       )}
@@ -416,19 +414,20 @@ const ActivityDetails: React.FC = () => {
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     borderRadius: '15px',
     transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+    backgroundColor: "#94A3B8",
   }}
   onMouseEnter={() => setHoveredCard("footer")}
   onMouseLeave={() => setHoveredCard(null)}
   className="text-center"
 >
   <Space direction="vertical" size="small" style={{ textAlign: 'center' }}>
-    <Text type="secondary" style={{ color: "#7D8798" }}>
+    <Text type="secondary" style={{ color: "black" }}>
     <strong>Created by:</strong> {activity.createdBy.username}
     </Text>
-    <Text type="secondary" style={{ color: "#7D8798" }}>
+    <Text type="secondary" style={{ color: "black" }}>
       <strong>Created:</strong> {new Date(activity.createdAt).toLocaleDateString()}
     </Text>
-    <Text type="secondary" style={{ color: "#7D8798" }}>
+    <Text type="secondary" style={{ color: "black" }}>
     <strong>Last updated:</strong> {new Date(activity.updatedAt).toLocaleDateString()}
     </Text>
   </Space>

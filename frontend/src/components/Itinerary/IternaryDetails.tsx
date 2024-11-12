@@ -38,7 +38,7 @@ const ItineraryDetails: React.FC = () => {
   const navigate = useNavigate();
 
   const cardStyle = "bg-white shadow-xl rounded-lg w-full h-full overflow-hidden";
-  const gradientBg = "bg-slate-500";
+  const gradientBg = "bg-slate-400";
   const titleStyle = "text-lg font-semibold mb-4 flex items-center gap-2 text-white";
 
   useEffect(() => {
@@ -117,7 +117,8 @@ const ItineraryDetails: React.FC = () => {
     window.location.href = mailtoLink;
   };
 
-  return (<div className="bg-slate-50 min-h-screen flex items-center justify-center p-8">
+  return (
+  <div className="bg-slate-50 min-h-screen flex items-center justify-center p-8">
     <Space direction="vertical" size="large" className="relative w-full p-10">
     <div className="absolute top-1 left-1/2 animate-bounce">
         <EnvironmentOutlined className="text-6xl text-black" />
