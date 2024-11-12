@@ -437,8 +437,11 @@ exports.cancelActivityBooking = async (req, res) => {
             return res.status(400).json({message: "Cannot cancel the booking less than 48 hours before the activity"});
         }
         const tourist = await Tourist.findById(userId);
-        if (bookedActivity.status === 'Completed') {
-            tourist.wallet += bookedActivity.activity.price.max; //TODO Price not always max
+        if (bookedActivity.status === 'Completed' || bookedActivity.status === 'Pending') {
+            const activeDiscount = bookedActivity.activity.specialDiscounts.find(discount => discount.isAvailable);
+            const maxPrice = bookedActivity.activity.price.max;// TODO this should be reviewed
+            const totalPrice = activeDiscount ? maxPrice * (1 - activeDiscount.discount / 100) : maxPrice;
+            tourist.wallet += totalPrice;
             await tourist.save();
         }
         bookedActivity.status = 'Cancelled';
