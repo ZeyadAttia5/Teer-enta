@@ -29,6 +29,7 @@ import {
 import {useNavigate, useParams} from "react-router-dom";
 import {getIternary} from "../../api/itinerary.ts";
 import {TItinerary} from "../../types/Itinerary/Itinerary";
+import {getCommentsForTourGuide} from "../../api/tourGuide";
 
 const {Title, Text} = Typography;
 
