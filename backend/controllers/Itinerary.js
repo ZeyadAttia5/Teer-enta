@@ -73,6 +73,7 @@ exports.getItinerary = async (req, res, next) => {
                 },
             ],
         }).populate("timeline.activity")
+            .populate("createdBy")
             .populate("createdBy.ratings.createdBy")
             .populate("createdBy.comments.createdBy")
             .populate("comments.createdBy");
