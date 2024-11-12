@@ -44,9 +44,8 @@ const ItineraryDetails: React.FC = () => {
     const titleStyle = "text-lg font-semibold mb-4 flex items-center gap-2 text-white";
 
     useEffect(() => {
-        getIternary(itineraryId ?? -1)
+        getIternary(itineraryId)
             .then((res) => {
-          console.log(res.data);
                 setItinerary(res.data);
                 fetchTourGuideComments(res.data.createdBy);
             })
@@ -58,9 +57,9 @@ const ItineraryDetails: React.FC = () => {
 
     const fetchTourGuideComments = async (tourGuideId) => {
         try {
+            console.log(tourGuideId);
             const response = await getCommentsForTourGuide(tourGuideId);
-            setTourGuideComments(response.data);
-            console.log(tourGuideComments) ;
+            setTourGuideComments(response.data.comments);
         } catch (error) {
             message.error("Failed to fetch tour guide comments");
         }

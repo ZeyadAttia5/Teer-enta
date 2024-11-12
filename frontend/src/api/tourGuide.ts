@@ -6,12 +6,12 @@ const token = localStorage.getItem('accessToken');
 
 export const rateTourGuide = async (tourGuideId, rating) => {
     const response = await axios.post(`${API_BASE_URL}/tourGuide/${tourGuideId}/rate`,
-    { rating }, 
-    {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+        {rating},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     return response.data;
 };
 
@@ -22,16 +22,15 @@ export const getRatingsForTourGuide = async (tourGuideId) => {
 
 export const commentOnTourGuide = async (tourGuideId, comment) => {
     const response = await axios.post(`${API_BASE_URL}/tourGuide/${tourGuideId}/comment`,
-    { comment }, 
-    {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+        {comment},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     return response.data;
 };
 
 export const getCommentsForTourGuide = async (tourGuideId) => {
-    const response = await axios.get(`${API_BASE_URL}/tourGuide/${tourGuideId}/comments`);
-    return response.data;
+    return await axios.get(`${API_BASE_URL}/tourGuide/${tourGuideId}/comments`);
 };
