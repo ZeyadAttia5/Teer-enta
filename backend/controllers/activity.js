@@ -55,12 +55,17 @@ exports.UnFlagInappropriate = async (req, res) => {
 
 exports.getActivity = async (req, res, next) => {
     try {
-        const {id} = req.params;
-        const activity = await Activity.findOne({_id: id, isActive: true})
+        const { id } = req.params;
+        const activity = await Activity.findOne({ _id: id, isActive: true })
             .populate('category')
-            .populate('preferenceTags').populate('createdBy');
+            .populate('preferenceTags')
+            .populate('createdBy')
+            .populate({
+                path: 'comments.user',  // Populate the user in comments
+            });
+
         if (!activity) {
-            return res.status(404).json({message: 'ActivityList not found or Inactive'});
+            return res.status(404).json({ message: 'Activity not found or inactive' });
         }
         res.status(200).json(activity);
     } catch (err) {
@@ -508,7 +513,7 @@ exports.addRatingToActivity = async (req, res) => {
         const booking = await BookedActivity.findOne({
             createdBy: userId,
             activity: id,
-            status: 'Completed'
+            // status: 'Completed'
         });
 
         if (!booking) {
@@ -561,7 +566,7 @@ exports.addCommentToActivity = async (req, res) => {
             activity: id,
             createdBy: userId,
             isActive: true,
-            status: 'Completed'
+            // status: 'Completed'
         });
 
         if (!booking) {

@@ -3,7 +3,7 @@ const Tourist = require('../models/Users/Tourist');
 const BookedActivity = require('../models/Booking/BookedActivitie');
 const BookedItinerary = require('../models/Booking/BookedItinerary');
 const BookedTransportation = require('../models/Booking/BookedTransportation');
-const Activity = require('../models/Activity/Activity') ;
+const Activity = require('../models/Activity/Activity');
 const BookedFlight = require('../models/Booking/BookedFlight');
 const BookedHotel = require('../models/Booking/BookedHotel');
 const Transportation = require('../models/Transportation');
@@ -153,28 +153,38 @@ exports.requestMyAccountDeletion = async (req, res) => {
         const user = await User.findById(userId);
         if (user.userRole === "Tourist") {
             const bookedActivities = await BookedActivity.find({createdBy: userId, status: "Pending"});
-            if (bookedActivities.length > 0) {
+            if (bookedActivities) {
                 return res.status(400).json({message: "You have upcoming activities, you can't delete your account"});
             }
             const bookedItinerary = await BookedItinerary.find({createdBy: userId, status: "Pending"});
-            if (bookedItinerary.length > 0) {
+            if (bookedItinerary) {
                 return res.status(400).json({message: "You have upcoming itineraries, you can't delete your account"});
             }
             const bookedTransportation = await BookedTransportation.find({createdBy: userId, status: "Pending"});
-            if (bookedTransportation.length > 0) {
+            if (bookedTransportation) {
                 return res.status(400).json({message: "You have upcoming transportation, you can't delete your account"});
             }
             const bookedFlights = await BookedFlight.find({createdBy: userId, status: "Pending"});
-            if(bookedFlights.length > 0){
+            if (bookedFlights) {
                 return res.status(400).json({message: "You have upcoming flights, you can't delete your account"});
             }
             const bookedHotels = await BookedHotel.find({createdBy: userId, status: "Pending"});
-            if (bookedHotels.length > 0) {
+            if (bookedHotels) {
                 return res.status(400).json({message: "You have upcoming hotels, you can't delete your account"});
             }
         }
 
         if (user.userRole === "Advertiser") {
+            const bookedActivitiesForAdvertiser = await BookedActivity.find({status: "Pending"})
+                .populate({
+                    path: 'activity',
+                    match: {createdBy: userId},  // Filter activities by creator ID
+                });
+            for (let i = 0; i < bookedActivitiesForAdvertiser.length; i++) {
+                if (bookedActivitiesForAdvertiser[i].activity) {
+                    return res.status(400).json({message: "there are upcoming bookings on your activities, you can't delete your account"});
+                }
+            }
             await Activity
                 .find({createdBy: userId})
                 .updateMany({isActive: false});
@@ -183,12 +193,21 @@ exports.requestMyAccountDeletion = async (req, res) => {
                 .updateMany({isActive: false});
         }
         if (user.userRole === "TourGuide") {
+            const bookedItineraryForTourGuide = await BookedItinerary.find({status: "Pending"})
+                .populate({
+                    path: 'itinerary',
+                    match: {createdBy: userId}
+                });
+            for (let i = 0; i < bookedItineraryForTourGuide.length; i++) {
+                if (bookedItineraryForTourGuide[i].itinerary) {
+                    return res.status(400).json({message: "there are upcoming bookings itineraries, you can't delete your account"});
+                }
+            }
             await Itinerary
                 .find({createdBy: userId})
                 .updateMany({isActive: false});
         }
         if (user.userRole === "Seller") {
-            console.log("hey");
             await Product
                 .find({createdBy: userId})
                 .updateMany({isActive: false});
@@ -280,7 +299,7 @@ exports.receiveBadge = async (req, res) => {
         // Find the tourist
         const tourist = await Tourist.findById(userId);
         if (!tourist) {
-            return res.status(404).json({ message: "Tourist not found." });
+            return res.status(404).json({message: "Tourist not found."});
         }
 
         // Determine level based on loyalty points
@@ -310,21 +329,21 @@ exports.receiveBadge = async (req, res) => {
         }
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: "An error occurred while updating the badge level.", error: err.message });
+        res.status(500).json({message: "An error occurred while updating the badge level.", error: err.message});
     }
 };
 
 
-exports.chooseMyCurrency = async (req,res)=>{
+exports.chooseMyCurrency = async (req, res) => {
     try {
-        const userId = req.user._id ;
-        const currencyId = req.params.id ;
-        const userRole = req.user.role ;
-        const Model = userModel[userRole] ;
-        const updatedUser = await Model.findByIdAndUpdate(userId , {currency:currencyId} , {new:true}) ;
-        return res.status(200).json({message:"currency updated successfully" , user : updatedUser}) ;
-    }catch (err){
-        errorHandler.SendError(res,err) ;
+        const userId = req.user._id;
+        const currencyId = req.params.id;
+        const userRole = req.user.role;
+        const Model = userModel[userRole];
+        const updatedUser = await Model.findByIdAndUpdate(userId, {currency: currencyId}, {new: true});
+        return res.status(200).json({message: "currency updated successfully", user: updatedUser});
+    } catch (err) {
+        errorHandler.SendError(res, err);
     }
 }
 
