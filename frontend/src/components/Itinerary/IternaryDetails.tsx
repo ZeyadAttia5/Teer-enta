@@ -122,7 +122,7 @@ const ItineraryDetails: React.FC = () => {
     <div className="absolute top-1 left-1/2 animate-bounce">
         <EnvironmentOutlined className="text-6xl text-black" />
       </div>
-  
+
       {/* First Card for Itinerary Details */}
       <Card
   bordered={true}  // Add border to the card
@@ -191,7 +191,7 @@ const ItineraryDetails: React.FC = () => {
 
 
 
-  
+
       {/* Combined Row for Locations, Activities, Timeline, and Available Dates */}
       <Row gutter={[16, 16]} className="mb-8">
       {/* Locations Card */}
@@ -290,7 +290,7 @@ const ItineraryDetails: React.FC = () => {
         </Card>
       </Col>
     </Row>
-  
+
       {/* Last Full-Width Card for Comments */}
       {(itinerary?.comments.length ?? 0) > 0 && (
   <Card
@@ -310,12 +310,12 @@ const ItineraryDetails: React.FC = () => {
         dataSource={itinerary?.comments}
         renderItem={(comment) => (
           <List.Item className="transition-all duration-300 hover:bg-[#4A90E2] hover:text-white rounded-xl">
-            <List.Item.Meta 
+            <List.Item.Meta
             className="pl-3"
               avatar={<Avatar icon={<UserOutlined />} />}
               title={
                 <span className="text-gray-300 hover:text-whitex">
-                  Traveler's feedback
+                  {comment.createdBy.username}
                 </span>
               }
               description={
@@ -333,7 +333,7 @@ const ItineraryDetails: React.FC = () => {
   </Card>
 )}
 
-  
+
 <Card className={`text-center ${cardStyle} ${gradientBg} rounded-lg shadow-lg mt-8 p-6`}>
   <div className="space-y-4">
     {/* Footer Title and Icon */}
