@@ -45,65 +45,76 @@ const ActivityCard = ({
         navigate(`/touristActivities/book/${activityId}`);
     }
 
-    return (<div className="flex justify-center items-center">
+    return (<div className="flex justify-center items-center min-h-screen py-10">
         <div
-            className="max-w-3xl w-full rounded-lg shadow-lg p-6 m-4 transform transition-all duration-300 ease-in-out hover:rotate-1 hover:skew-y-1 hover:shadow-2xl hover:bg-gradient-to-r from-[#E2F4C5] via-[#A8CD9F] to-[#58A399] hover:text-white"
-            style={{backgroundColor: "#ffffff"}}>
-
-            {/* Activity Name */}
-            <h2 className="font-bold text-7xl mb-4" style={{color: "#496989"}}>{name}</h2>
-
-            {/* Displaying details in bold and under each other */}
-            <p style={{color: "#496989"}} className="font-bold mb-2">📅 {new Date(date).toLocaleDateString()}</p>
-            <p style={{color: "#496989"}} className="font-bold mb-2">🕒 {time}</p>
-            <p style={{color: "#496989"}} className="font-bold mb-2">📂 {category || "Uncategorized"}</p>
-            <p style={{color: "#496989"}} className="font-bold mb-2">
-                💲 {currencyCode} {price?.min ? `${(currencyRate * price.min).toFixed(1)}` : "N/A"} - {price?.max ? `${(currencyRate * price.max).toFixed(1)}` : "N/A"}
-            </p>
-
-            {/* Average Rating */}
-            <div className="flex items-center mb-4">
-                <span className="font-semibold" style={{color: "#496989"}}>Rating:</span>
-                <Rate allowHalf disabled value={averageRating} className="ml-2"/>
-                <span className="ml-2" style={{color: "#496989"}}>{averageRating.toFixed(1)}</span>
+          className="max-w-3xl w-full rounded-lg shadow-lg p-6 m-4 transform hover:bg-[#E2F4C5] hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out"
+          style={{ backgroundColor: "#ffffff", cursor: "pointer" }}
+        >
+      
+          {/* Activity Name */}
+          <h2 className="font-bold text-7xl mb-4 transition-transform duration-500 ease-out hover:scale-105" style={{ color: "#496989" }}>
+            {name}
+          </h2>
+      
+          {/* Displaying details in bold and under each other */}
+          <p className="font-bold mb-2 text-[#496989]">📅 {new Date(date).toLocaleDateString()}</p>
+          <p className="font-bold mb-2 text-[#496989]">🕒 {time}</p>
+          <p className="font-bold mb-2 text-[#496989]">📂 {category || "Uncategorized"}</p>
+          <p className="font-bold mb-2 text-[#496989]">
+            💲 {currencyCode} {price?.min ? `${(currencyRate * price.min).toFixed(1)}` : "N/A"} - {price?.max ? `${(currencyRate * price.max).toFixed(1)}` : "N/A"}
+          </p>
+      
+          {/* Average Rating */}
+          <div className="flex items-center mb-4">
+            <span className="font-semibold text-[#496989]">Rating:</span>
+            <Rate allowHalf disabled value={averageRating} className="ml-2"/>
+            <span className="ml-2 text-[#496989]">{averageRating.toFixed(1)}</span>
+          </div>
+      
+          {/* Special Discounts */}
+          {specialDiscounts?.length > 0 && specialDiscounts.map((discount, index) => discount.isAvailable ? (
+            <div key={index} className="mb-4 p-3 rounded-lg bg-[#E2F4C5] text-[#496989]">
+              <p className="font-semibold">
+                Special Discount: {discount.discount}% OFF - {discount.Description}
+              </p>
             </div>
-
-            {/* Special Discounts */}
-            {specialDiscounts?.length > 0 && specialDiscounts.map((discount, index) => discount.isAvailable ? (
-                <div key={index} className="mb-4 p-3 rounded-lg"
-                     style={{backgroundColor: "#E2F4C5", color: "#496989"}}>
-                    <p className="font-semibold">
-                        Special Discount: {discount.discount}% OFF - {discount.Description}
-                    </p>
-                </div>) : null)}
-
-            {/* Google Maps Link */}
-            <a
-                href={`https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-bold block mb-4 transition-all duration-300 ease-in-out hover:underline"
-                style={{color: "#496989"}}
+          ) : null)}
+      
+          {/* Google Maps Link */}
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold block mb-4 transition-all duration-300 ease-in-out text-[#496989] hover:underline"
+          >
+            📍 View on Google Maps
+          </a>
+      
+          {/* Booking Status */}
+          <p className={`font-semibold mt-4 bg-slate-100 p-2 rounded-lg ${isBookingOpen ? "text-green-600" : "text-red-600"}`}>
+            🎟️ {isBookingOpen ? "Booking is Open!" : "Fully Booked! :("}
+          </p>
+      
+          {/* Action Buttons */}
+          <div className="flex justify-center items-center gap-4 p-4">
+            <Button
+              onClick={() => handleActivityDetails(id)}
+              className="text-white bg-[#58A399] hover:bg-[#4a8f7a] transition-all duration-300"
             >
-                📍 View on Google Maps
-            </a>
-
-            {/* Booking Status */}
-            <p className={`font-semibold mt-4 bg-white p-2 rounded-lg ${isBookingOpen ? "text-green-600" : "text-red-600"}`}>
-                🎟️ {isBookingOpen ? "Booking is Open!" : "Fully Booked! :("}
-            </p>
-
-            <Button>
-                <a onClick={() => handleActivityDetails(id)}>View Details</a>
+              View Details
             </Button>
             {user && user.userRole === "Tourist" && (
-                <Button type="primary" onClick={() => handleActivityBooking(id)}>
-                    Book Now
-                </Button>
+              <Button
+                onClick={() => handleActivityBooking(id)}
+                className="text-white bg-[#496989] hover:bg-[#3b5b68] transition-all duration-300"
+              >
+                Book Now
+              </Button>
             )}
-
+          </div>
         </div>
-    </div>);
+      </div>
+      );
 };
 
 export default ActivityCard;
