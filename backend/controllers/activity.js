@@ -392,7 +392,7 @@ exports.bookActivity = async (req, res) => {
 
         const template = new PaymentReceiptItemTemplate(
             tourist.username,
-            activity.price.max,
+            totalPrice,
             activity.date,
             "Activity"
         )
