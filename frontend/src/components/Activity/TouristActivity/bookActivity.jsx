@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from "react";
-import {Form, Select, Radio, Button, message, Typography} from "antd";
-import {bookActivity, getActivity} from "../../../api/activity.ts"; // Adjust the path as needed
-import {useParams, useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Form, Radio, Button, message, Typography } from "antd";
+import { bookActivity, getActivity } from "../../../api/activity.ts";
+import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import {getMyCurrency} from "../../../api/profile.ts";
+import { getMyCurrency } from "../../../api/profile.ts";
 import StaticMap from "../../shared/GoogleMaps/ViewLocation";
 
-const {Title, Text} = Typography;
+const { Title, Text } = Typography;
 
 const BookActivity = () => {
     const [loading, setLoading] = useState(false);
@@ -16,10 +16,8 @@ const BookActivity = () => {
     const [currency, setCurrency] = useState(null);
     const [activity, setActivity] = useState(null);
 
-    // Initialize useNavigate hook
     const navigate = useNavigate();
 
-    // Fetch activity data
     const fetchActivity = async () => {
         try {
             const response = await getActivity(activityId);
@@ -36,8 +34,7 @@ const BookActivity = () => {
         } catch (err) {
             message.error("Failed to get currency. Please try again.");
         }
-    }
-
+    };
 
     useEffect(() => {
         fetchCurrency();
@@ -51,13 +48,24 @@ const BookActivity = () => {
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const response = await bookActivity(activityId ,paymentMethod);
+            const response = await bookActivity(activityId, paymentMethod);
             message.success(response.data.message);
         } catch (error) {
             message.error(error.response.data.message);
         } finally {
             setLoading(false);
         }
+    };
+
+    // Find the active discount on the front end
+    const activeDiscount = activity?.specialDiscounts?.find(discount => discount.isAvailable)?.discount || 0;
+
+    // Calculate Discounted Price if Active Discount is Available
+    const calculateDiscountedPrice = (price) => {
+        if (activeDiscount) {
+            return (price * (1 - activeDiscount / 100)).toFixed(2);
+        }
+        return price.toFixed(2);
     };
 
     return (
@@ -73,18 +81,27 @@ const BookActivity = () => {
             </div>
             <div className="mb-4">
                 <Text className="block text-lg font-semibold">Location:</Text>
-                <StaticMap latitude={activity?.location?.latitude} longitude={activity?.location?.longitude}/>
+                <StaticMap latitude={activity?.location?.latitude} longitude={activity?.location?.longitude} />
             </div>
+
+            {/* Pricing Section with Discount */}
             <div className="mb-4">
                 <Text className="block text-lg font-semibold">Price:</Text>
-                <Text className="block text-sm">{currency?.code} {currency?.rate * activity?.price?.min} -
-                    {currency?.code} {currency?.rate * activity?.price?.max}</Text>
+                {activeDiscount ? (
+                    <>
+                        <Text delete className="block text-sm text-red-600">
+                            Original: {currency?.code} {(currency?.rate * activity?.price?.min).toFixed(2)} - {currency?.code} {(currency?.rate * activity?.price?.max).toFixed(2)}
+                        </Text>
+                        <Text className="block text-sm text-green-600">
+                            Discounted: {currency?.code} {calculateDiscountedPrice(currency?.rate * activity?.price?.min)} - {currency?.code} {calculateDiscountedPrice(currency?.rate * activity?.price?.max)}
+                        </Text>
+                    </>
+                ) : (
+                    <Text className="block text-sm">{currency?.code} {(currency?.rate * activity?.price?.min).toFixed(2)} - {currency?.code} {(currency?.rate * activity?.price?.max).toFixed(2)}</Text>
+                )}
             </div>
 
-
             <Form layout="vertical">
-
-                {/* Payment Method */}
                 <Form.Item label="Payment Method" required>
                     <Radio.Group onChange={handlePaymentMethodChange} value={paymentMethod}>
                         <Radio value="wallet">Wallet</Radio>
@@ -92,7 +109,6 @@ const BookActivity = () => {
                     </Radio.Group>
                 </Form.Item>
 
-                {/* Submit Button */}
                 <Form.Item>
                     <Button
                         type="primary"
