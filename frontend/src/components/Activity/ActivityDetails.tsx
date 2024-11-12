@@ -420,17 +420,48 @@ const ActivityDetails: React.FC = () => {
   onMouseLeave={() => setHoveredCard(null)}
   className="text-center"
 >
+<div className="space-y-4">
+  {/* Footer Title and Icon */}
+  <div className="text-xl font-bold text-white mb-4">
+      <EnvironmentOutlined size={20} className=" text-blue-500" />
+      <span className="ml-2">Activity Information</span>
+    </div>
+
   <Space direction="vertical" size="small" style={{ textAlign: 'center' }}>
     <Text type="secondary" style={{ color: "black" }}>
+  <UserOutlined className="mr-2 text-blue-500" />
     <strong>Created by:</strong> {activity.createdBy.username}
     </Text>
     <Text type="secondary" style={{ color: "black" }}>
+    <CalendarOutlined className="mr-2 text-blue-500" />
       <strong>Created:</strong> {new Date(activity.createdAt).toLocaleDateString()}
     </Text>
     <Text type="secondary" style={{ color: "black" }}>
+    <ClockCircleOutlined className="mr-2 text-blue-500" />
     <strong>Last updated:</strong> {new Date(activity.updatedAt).toLocaleDateString()}
     </Text>
   </Space>
+</div>
+ {/* Footer Action Links */}
+ <div className="mt-6 flex justify-center space-x-6">
+    <a
+      href="#"
+      className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
+    >
+      Privacy Policy
+    </a>
+    <a
+      href="#"
+      className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
+    >
+      Terms of Service
+    </a>
+  </div>
+
+  {/* Footer Footer */}
+  <div className="mt-8 text-sm text-gray-400">
+    <Text>© 2024 Teer Enta. All rights reserved.</Text>
+  </div>
         </Card>
 
       </Space>
