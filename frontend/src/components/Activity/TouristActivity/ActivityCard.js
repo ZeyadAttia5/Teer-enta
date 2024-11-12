@@ -63,8 +63,13 @@ const ActivityCard = ({
     }
 
     return (<div className="flex justify-center items-center min-h-screen py-10">
+      <div
+                        
+          className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:bg-[#E2F4C5] hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4"
+          style={{ cursor: "pointer" }}
+      >
       <Card
-        className="max-w-3xl w-full rounded-lg shadow-lg m-4 p-6 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:scale-105 hover:shadow-xl"
+        className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:text-white"
         style={{ backgroundColor: "#ffffff", cursor: "pointer" }}
       >
         <Card.Meta
@@ -116,9 +121,9 @@ const ActivityCard = ({
             </div>
           }
         />
-        
+        </Card>
         {/* Action Buttons */}
-        <div className="flex justify-center items-center gap-4 mt-6">
+        <div className="flex justify-center items-center gap-4 p-4">
           <Button
             onClick={() => handleActivityDetails(id)}
             className="text-white bg-[#58A399] hover:bg-[#4a8f7a] transition-all duration-300"
@@ -134,7 +139,7 @@ const ActivityCard = ({
             </Button>
           )}
         </div>
-      </Card>
+      </div>
     </div>
      );
 };
