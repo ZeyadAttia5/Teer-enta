@@ -4,6 +4,7 @@ import {bookActivity, getActivity} from "../../../api/activity.ts"; // Adjust th
 import {useParams, useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
 import {getMyCurrency} from "../../../api/profile.ts";
+import StaticMap from "../../shared/GoogleMaps/ViewLocation";
 
 const {Title, Text} = Typography;
 
@@ -72,7 +73,7 @@ const BookActivity = () => {
             </div>
             <div className="mb-4">
                 <Text className="block text-lg font-semibold">Location:</Text>
-                <Text className="block text-sm">{activity?.location.lat}, {activity?.location.lng}</Text>
+                <StaticMap latitude={activity?.location?.latitude} longitude={activity?.location?.longitude}/>
             </div>
             <div className="mb-4">
                 <Text className="block text-lg font-semibold">Price:</Text>
