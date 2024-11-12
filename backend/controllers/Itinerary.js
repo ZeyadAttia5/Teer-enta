@@ -72,8 +72,10 @@ exports.getItinerary = async (req, res, next) => {
                     path: "category",
                 },
             ],
-        }).populate("timeline.activity").populate("createdBy");
-        console.log("New ffffffffffffffffffffffffffffffffffffffffffftest",itinerary.timeline);
+        }).populate("timeline.activity")
+            .populate("createdBy.ratings.createdBy")
+            .populate("createdBy.comments.createdBy")
+            .populate("comments.createdBy");
 
         if (!itinerary) {
             return res.status(404).json({message: "Itinerary not found"});

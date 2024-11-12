@@ -1,6 +1,7 @@
 const TourGuide = require('../models/Users/TourGuide');
 const mongoose = require('mongoose');
 const BookedItinerary = require("../models/Booking/BookedItinerary");
+const errorHandler = require('../Util/ErrorHandler/errorSender');
 
 
 

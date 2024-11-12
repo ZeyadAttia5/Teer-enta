@@ -1,209 +1,211 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
-  List,
-  Card,
-  Tag,
-  Space,
-  Typography,
-  Avatar,
-  Tooltip,
-  Badge,
-  message,
-  Button,
+    List,
+    Card,
+    Tag,
+    Space,
+    Typography,
+    Avatar,
+    Tooltip,
+    Badge,
+    message,
+    Button,
 } from "antd";
 import {
-  CarOutlined,
-  CompassOutlined,
-  DollarOutlined,
-  CalendarOutlined,
-  UserOutlined,
-  GlobalOutlined,
+    CarOutlined,
+    CompassOutlined,
+    DollarOutlined,
+    CalendarOutlined,
+    UserOutlined,
+    GlobalOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
-  bookTransportation,
-  getTransportations,
+    bookTransportation,
+    getTransportations,
 } from "../../api/transportation.ts";
 import {getCurrency} from "../../api/account.ts";
+import StaticMap from '../shared/GoogleMaps/ViewLocation.jsx';
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 const getVehicleIcon = (type) => {
-  const colors = {
-    Car: "#1890ff",
-    Scooter: "#52c41a",
-    Bus: "#722ed1",
-  };
-  return (
-    <Tag color={colors[type]} icon={<CarOutlined />}>
-      {type}
-    </Tag>
-  );
+    const colors = {
+        Car: "#1890ff",
+        Scooter: "#52c41a",
+        Bus: "#722ed1",
+    };
+    return (
+        <Tag color={colors[type]} icon={<CarOutlined/>}>
+            {type}
+        </Tag>
+    );
 };
 
 const BookTransportation = ({}) => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [currency, setCurrency] = useState(null);
-  const fetchTransportation = async () => {
-    setLoading(true);
-    try {
-      const response = await getTransportations();
-      setData(response.data);
-    } catch (error) {
-      console.error("Fetch transportation error:", error);
-    } finally {
-      setLoading(false);
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [currency, setCurrency] = useState(null);
+    const fetchTransportation = async () => {
+        setLoading(true);
+        try {
+            const response = await getTransportations();
+            setData(response.data);
+        } catch (error) {
+            console.error("Fetch transportation error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const handleClick = async (id) => {
+        try {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user) {
+                message.error("Please login to book transportation");
+                return;
+            }
+            await bookTransportation(id);
+            message.success("Transportation booked successfully");
+        } catch (error) {
+            console.error("Book transportation error:", error);
+            message.error(error.response.data.message);
+        }
+    };
+    useEffect(() => {
+        fetchCurrency();
+        fetchTransportation();
+    }, []);
+
+    const fetchCurrency = async () => {
+        try {
+            const response = await getCurrency();
+            setCurrency(response.data);
+            console.log("Currency:", response.data);
+        } catch (error) {
+            console.error("Fetch currency error:", error);
+        }
     }
-  };
-  const handleClick = async (id) => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if(!user){
-        message.error("Please login to book transportation");
-        return;
-      }
-      await bookTransportation(id);
-      message.success("Transportation booked successfully");
-    } catch (error) {
-      console.error("Book transportation error:", error);
-      message.error(error.response.data.message);
-    }
-  };
-  useEffect(() => {
-    fetchCurrency();
-    fetchTransportation();
-  }, []);
 
-  const fetchCurrency = async () => {
-    try {
-      const response = await getCurrency();
-      setCurrency(response.data);
-      console.log("Currency:", response.data);
-    } catch (error) {
-      console.error("Fetch currency error:", error);
-    }
-  }
+    return (
+        <List
+            grid={{
+                xs: 1,
+                sm: 1,
+                md: 2,
+                lg: 2,
+                xl: 3,
+                xxl: 3,
+            }}
+            className="p-2"
+            dataSource={data}
+            loading={loading}
+            renderItem={(item, index) => (
+                <List.Item key={index}>
+                    <Badge.Ribbon
+                        text={item.isActive ? "Active" : "Inactive"}
+                        color={item.isActive ? "green" : "red"}
+                    >
+                        <Card
+                            hoverable
+                            title={
+                                <Space>
+                                    {getVehicleIcon(item.vehicleType)}
+                                    <Text strong>{`Trip #${item._id.slice(-6)}`}</Text>
+                                </Space>
+                            }
+                        >
+                            <Space
+                                direction="vertical"
+                                size="middle"
+                                style={{width: "100%"}}
+                            >
+                                <Space>
+                                    <CompassOutlined/>
+                                    <Text>Pickup: </Text>
+                                    <Tooltip
+                                        title={`${item.pickupLocation.lat}, ${item.pickupLocation.lng}`}
+                                    >
+                                        <Tag color="blue">View on map</Tag>
+                                    </Tooltip>
+                                </Space>
+                                <StaticMap latitude={item.pickupLocation.lat} longitude={item.pickupLocation.lng}/>
+                                <Space>
+                                    <CompassOutlined/>
+                                    <Text>Drop-off: </Text>
+                                    <Tooltip
+                                        title={`${item.dropOffLocation.lat}, ${item.dropOffLocation.lng}`}
+                                    >
+                                        <Tag color="purple">View on map</Tag>
+                                    </Tooltip>
+                                </Space>
+                                <StaticMap latitude={item.dropOffLocation.lat} longitude={item.dropOffLocation.lng}/>
 
-  return (
-    <List
-      grid={{
-        xs: 1,
-        sm: 1,
-        md: 2,
-        lg: 2,
-        xl: 3,
-        xxl: 3,
-      }}
-      className="p-2"
-      dataSource={data}
-      loading={loading}
-      renderItem={(item,index) => (
-        <List.Item key={index} >
-          <Badge.Ribbon
-            text={item.isActive ? "Active" : "Inactive"}
-            color={item.isActive ? "green" : "red"}
-          >
-            <Card
-              hoverable
-              title={
-                <Space>
-                  {getVehicleIcon(item.vehicleType)}
-                  <Text strong>{`Trip #${item._id.slice(-6)}`}</Text>
-                </Space>
-              }
-            >
-              <Space
-                direction="vertical"
-                size="middle"
-                style={{ width: "100%" }}
-              >
-                <Space>
-                  <CompassOutlined />
-                  <Text>Pickup: </Text>
-                  <Tooltip
-                    title={`${item.pickupLocation.lat}, ${item.pickupLocation.lng}`}
-                  >
-                    <Tag color="blue">View on map</Tag>
-                  </Tooltip>
-                </Space>
+                                <Space>
+                                    <DollarOutlined/>
+                                    <Text strong>
+                                        {currency && currency?.code} {(item.price * currency?.rate).toFixed(2)}
+                                    </Text>
+                                </Space>
 
-                <Space>
-                  <CompassOutlined />
-                  <Text>Drop-off: </Text>
-                  <Tooltip
-                    title={`${item.dropOffLocation.lat}, ${item.dropOffLocation.lng}`}
-                  >
-                    <Tag color="purple">View on map</Tag>
-                  </Tooltip>
-                </Space>
+                                <Space>
+                                    <CalendarOutlined/>
+                                    <Text>{dayjs(item.date).format("MMM D, YYYY")}</Text>
+                                </Space>
 
-                <Space>
-                  <DollarOutlined />
-                  <Text strong>
-                    {currency && currency?.code} {(item.price * currency?.rate).toFixed(2)}
-                  </Text>
-                </Space>
+                                {item.notes && (
+                                    <Text type="secondary" ellipsis={{tooltip: item.notes}}>
+                                        Notes: {item.notes}
+                                    </Text>
+                                )}
 
-                <Space>
-                  <CalendarOutlined />
-                  <Text>{dayjs(item.date).format("MMM D, YYYY")}</Text>
-                </Space>
+                                <Card size="small" title="Advertiser Info">
+                                    <Space align="start">
+                                        <Avatar
+                                            src={item.createdBy.logoUrl}
+                                            icon={<UserOutlined/>}
+                                        />
+                                        <Space direction="vertical" size={0}>
+                                            <Text strong>Username: {item.createdBy.username ?? 'NA'}</Text>
+                                            <Text strong>Company: {item.createdBy.companyName ?? 'NA'}</Text>
+                                            <Text type="secondary" style={{fontSize: "12px"}}>
+                                                Industry: {item.createdBy.industry ?? 'NA'}
+                                            </Text>
+                                            {item.createdBy.website && (
+                                                <Space size={4}>
+                                                    <GlobalOutlined/>
+                                                    <a
+                                                        href={item.createdBy.website}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        Website
+                                                    </a>
+                                                </Space>
+                                            )}
+                                        </Space>
+                                    </Space>
+                                </Card>
 
-                {item.notes && (
-                  <Text type="secondary" ellipsis={{ tooltip: item.notes }}>
-                    Notes: {item.notes}
-                  </Text>
-                )}
+                                <Text type="secondary" style={{fontSize: "12px"}}>
+                                    Created: {dayjs(item.createdAt).format("MMM D, YYYY")}
+                                </Text>
+                            </Space>
+                            <Button
+                                type="primary"
+                                block
+                                onClick={() => handleClick(item._id)}
+                            >
+                                Book
+                            </Button>
+                        </Card>
+                    </Badge.Ribbon>
+                    {/* create a booking button using ant design */}
 
-                <Card size="small" title="Advertiser Info">
-                  <Space align="start">
-                    <Avatar
-                      src={item.createdBy.logoUrl}
-                      icon={<UserOutlined />}
-                    />
-                    <Space direction="vertical" size={0}>
-                      <Text strong>Username: {item.createdBy.username ?? 'NA'}</Text>
-                      <Text strong>Company: {item.createdBy.companyName ?? 'NA'}</Text>
-                      <Text type="secondary" style={{ fontSize: "12px" }}>
-                        Industry: {item.createdBy.industry?? 'NA'}
-                      </Text>
-                      {item.createdBy.website && (
-                        <Space size={4}>
-                          <GlobalOutlined />
-                          <a
-                            href={item.createdBy.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Website
-                          </a>
-                        </Space>
-                      )}
-                    </Space>
-                  </Space>
-                </Card>
 
-                <Text type="secondary" style={{ fontSize: "12px" }}>
-                  Created: {dayjs(item.createdAt).format("MMM D, YYYY")}
-                </Text>
-              </Space>
-              <Button
-                type="primary"
-                block
-                onClick={() => handleClick(item._id)}
-              >
-                Book
-              </Button>
-            </Card>
-          </Badge.Ribbon>
-          {/* create a booking button using ant design */}
-          
-          
-        </List.Item>
-      )}
-    />
-  );
+                </List.Item>
+            )}
+        />
+    );
 };
 
 export default BookTransportation;
