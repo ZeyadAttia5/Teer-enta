@@ -36,18 +36,20 @@ const {Title, Text} = Typography;
 const ItineraryDetails: React.FC = () => {
     const {id: itineraryId} = useParams<{ id: string }>();
     const [itinerary, setItinerary] = useState<TItinerary>();
+    const [tourGuide,setTourGuide] = useState();
     const navigate = useNavigate();
     const [tourGuideComments, setTourGuideComments] = useState([]);
 
     const cardStyle = "bg-white shadow-xl rounded-lg w-full h-full overflow-hidden";
-  const gradientBg = "bg-slate-400";
+    const gradientBg = "bg-slate-400";
     const titleStyle = "text-lg font-semibold mb-4 flex items-center gap-2 text-white";
 
     useEffect(() => {
         getIternary(itineraryId)
             .then((res) => {
-                setItinerary(res.data);
-                fetchTourGuideComments(res.data.createdBy);
+                setItinerary(res.data.itinerary);
+                setTourGuide(res.data.tourGuide);
+                fetchTourGuideComments(res.data.itinerary.createdBy);
             })
             .catch((error) => {
                 message.error("Failed to fetch itinerary details");
@@ -450,7 +452,7 @@ const ItineraryDetails: React.FC = () => {
                         <Space direction="vertical" size="small" className="text-center">
                             <Text type="secondary" className="text-blue-500">
                                 <UserOutlined className="mr-2 text-blue-500"/>
-                                <strong>Created by:</strong> {itinerary?.createdBy.username}
+                                <strong>Created by:</strong> {tourGuide}
                             </Text>
                             <Text type="secondary" className="text-blue-500">
                                 <CalendarOutlined className="mr-2 text-blue-500"/>

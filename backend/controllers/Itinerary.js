@@ -73,15 +73,19 @@ exports.getItinerary = async (req, res, next) => {
                 },
             ],
         }).populate("timeline.activity")
-            .populate("createdBy")
             .populate("createdBy.ratings.createdBy")
             .populate("createdBy.comments.createdBy")
             .populate("comments.createdBy");
 
+        const itineraryr = await Itinerary.findOne({
+            _id: id,
+            isActive: true,
+            isAppropriate: true
+        }).populate('createdBy');
         if (!itinerary) {
             return res.status(404).json({message: "Itinerary not found"});
         }
-        res.status(200).json(itinerary);
+        res.status(200).json({itinerary, tourGuide: itineraryr.createdBy.username});
     } catch (err) {
         console.log(err);
         errorHandler.SendError(res, err);
