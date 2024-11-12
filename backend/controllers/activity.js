@@ -315,9 +315,9 @@ exports.bookActivity = async (req, res) => {
         // Retrieve the tourist's wallet balance if needed
         const tourist = await Tourist.findById(userId);
 
-        // Calculate the total cost of the activity
-        const totalPrice = activity.price.max; // TODO this should be reviewed
-
+        const activeDiscount = activity.specialDiscounts.find(discount => discount.isAvailable);
+        const maxPrice = activity.price.max;// TODO this should be reviewed
+        const totalPrice = activeDiscount ? maxPrice * (1 - activeDiscount.discount / 100) : maxPrice;
         // Handle payment method
         if (paymentMethod === 'wallet') {
             // Wallet payment method
