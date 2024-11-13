@@ -4,6 +4,9 @@ import {bookItinerary, getIternary} from "../../api/itinerary.ts"; // Adjust the
 import {useParams} from "react-router-dom";
 import dayjs from "dayjs";
 import {getMyCurrency} from "../../api/profile.ts";
+import CheckoutForm from "../shared/CheckoutForm";
+import {Elements} from "@stripe/react-stripe-js";
+import {loadStripe} from "@stripe/stripe-js";
 
 const {Option} = Select;
 const {Title, Text} = Typography;
@@ -99,13 +102,22 @@ const BookItinerary = () => {
                     </Select>
                 </Form.Item>
 
+
                 {/* Payment Method */}
                 <Form.Item label="Payment Method" required>
                     <Radio.Group onChange={handlePaymentMethodChange} value={paymentMethod}>
                         <Radio value="wallet">Wallet</Radio>
-                        <Radio value="creditCard">Credit Card</Radio>
+                        <Radio value="Card">Credit Card</Radio>
                     </Radio.Group>
                 </Form.Item>
+
+                {paymentMethod === "Card" && (
+                    <div className='my-2'>
+                        <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
+                            <CheckoutForm/>
+                        </Elements>
+                    </div>
+                )}
 
                 {/* Submit Button */}
                 <Form.Item>

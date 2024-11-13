@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Form, Radio, Button, message, Typography } from "antd";
-import { bookActivity, getActivity } from "../../../api/activity.ts";
-import { useParams, useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Form, Radio, Button, message, Typography} from "antd";
+import {bookActivity, getActivity} from "../../../api/activity.ts";
+import {useParams, useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
-import { getMyCurrency } from "../../../api/profile.ts";
+import {getMyCurrency} from "../../../api/profile.ts";
 import StaticMap from "../../shared/GoogleMaps/ViewLocation";
+import CheckoutForm from "../../shared/CheckoutForm";
+import {Elements} from "@stripe/react-stripe-js";
+import {loadStripe} from "@stripe/stripe-js";
 
-const { Title, Text } = Typography;
+const {Title, Text} = Typography;
 
 const BookActivity = () => {
     const [loading, setLoading] = useState(false);
@@ -81,7 +84,7 @@ const BookActivity = () => {
             </div>
             <div className="mb-4">
                 <Text className="block text-lg font-semibold">Location:</Text>
-                <StaticMap latitude={activity?.location?.latitude} longitude={activity?.location?.longitude} />
+                <StaticMap latitude={activity?.location?.latitude} longitude={activity?.location?.longitude}/>
             </div>
 
             {/* Pricing Section with Discount */}
@@ -97,7 +100,8 @@ const BookActivity = () => {
                         </Text>
                     </>
                 ) : (
-                    <Text className="block text-sm">{currency?.code} {(currency?.rate * activity?.price?.min).toFixed(2)} - {currency?.code} {(currency?.rate * activity?.price?.max).toFixed(2)}</Text>
+                    <Text
+                        className="block text-sm">{currency?.code} {(currency?.rate * activity?.price?.min).toFixed(2)} - {currency?.code} {(currency?.rate * activity?.price?.max).toFixed(2)}</Text>
                 )}
             </div>
 
@@ -105,9 +109,16 @@ const BookActivity = () => {
                 <Form.Item label="Payment Method" required>
                     <Radio.Group onChange={handlePaymentMethodChange} value={paymentMethod}>
                         <Radio value="wallet">Wallet</Radio>
-                        <Radio value="creditCard">Credit Card</Radio>
+                        <Radio value="Card">Credit Card</Radio>
                     </Radio.Group>
                 </Form.Item>
+
+                {paymentMethod === "Card" && (
+                    <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
+                        <CheckoutForm/>
+                    </Elements>
+                )}
+
 
                 <Form.Item>
                     <Button
