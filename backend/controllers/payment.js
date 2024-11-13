@@ -6,7 +6,7 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 // TODO: what should be the payment method types?
 // TODO: remove the console.log statements
 exports.createPaymentIntent = async (req, res) => {
-    const amount = req.body.amount * 100;
+    const amount = Math.round(req.body.amount * 100);
     try {
         console.log("Creating payment intent with amount:", amount);
         const paymentIntent = await stripe.paymentIntents.create({
