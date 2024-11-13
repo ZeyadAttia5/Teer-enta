@@ -2,9 +2,8 @@ import {CardElement, useElements, useStripe} from "@stripe/react-stripe-js";
 import {useState} from "react";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-// TODO: remove the console.log statements
-// TODO:
-export const CheckoutForm = (amount) => {
+
+const CheckoutForm = ({amount, onPaymentSuccess}) => {
     const stripe = useStripe();
     const elements = useElements();
     const [error, setError] = useState(null);
@@ -13,17 +12,15 @@ export const CheckoutForm = (amount) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const cardElement = elements.getElement(CardElement);
-        console.log("start");
+
         const { error, paymentMethod } = await stripe.createPaymentMethod({
             type: 'card',
             card: cardElement,
         });
-        console.log("first: " + error);
 
         if (error) {
             setError(error.message);
         } else {
-            console.log("second: " + error);
             // Call backend to create payment intent
             const response = await fetch(`${API_BASE_URL}/create-payment-intent`, {
                 method: 'POST',
@@ -42,6 +39,7 @@ export const CheckoutForm = (amount) => {
                 setError(confirmError.message);
             } else if (paymentIntent.status === 'succeeded') {
                 setSuccess(true);
+                onPaymentSuccess();
             }
         }
     };
@@ -73,3 +71,4 @@ export const CheckoutForm = (amount) => {
         </form>
     );
 };
+export default CheckoutForm;

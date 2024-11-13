@@ -37,7 +37,6 @@ exports.getHotelOffers = async (req, res) => {
         let hotelIds = uniqueHotels.map(hotel => hotel.hotelId).slice(0,Math.min(50,uniqueHotels.length)).join(',');
         const hotelSearch = await amadeus.shopping.hotelOffersSearch.get({
             hotelIds: hotelIds,
-            // cityCode: cityCode,
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
             adults: adults,
