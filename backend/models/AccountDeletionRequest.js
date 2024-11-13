@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const AccountDeletionRequestSchema = new mongoose.Schema({
-    user: {Type: mongoose.SchemaTypes.ObjectId, ref: 'User'},
+    user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     status: {
         type: String,
         enum: ['pending', 'approved', 'rejected'], // Define the possible values here
