@@ -2,9 +2,6 @@ const errorHandler = require("../Util/ErrorHandler/errorSender");
 const Stripe = require('stripe');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
-// TODO: what should be the currency?
-// TODO: what should be the payment method types?
-// TODO: remove the console.log statements
 exports.createPaymentIntent = async (req, res) => {
     const amount = Math.round(req.body.amount * 100);
     try {
