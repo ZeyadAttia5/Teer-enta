@@ -1,8 +1,10 @@
-import {CardElement, useElements, useStripe} from "@stripe/react-stripe-js";
+import {CardElement, Elements, useElements, useStripe} from "@stripe/react-stripe-js";
+import { loadStripe } from '@stripe/stripe-js';
 import {useState} from "react";
 import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const CheckoutForm = ({amount, onPaymentSuccess, onError}) => {
     const stripe = useStripe();
@@ -55,13 +57,16 @@ const CheckoutForm = ({amount, onPaymentSuccess, onError}) => {
         },
     };
 
-    return (<form onSubmit={handleSubmit}>
-            <div className="card-container">
-                <CardElement options={CARD_ELEMENT_OPTIONS}/>
-            </div>
-            <button type="submit" disabled={!stripe}>Pay</button>
-            {error && <div>{error}</div>}
-            {success && <div>Payment Successful!</div>}
-        </form>);
+    return (
+        <Elements stripe={stripePromise}>
+            <form onSubmit={handleSubmit}>
+                <div className="card-container">
+                    <CardElement options={CARD_ELEMENT_OPTIONS}/>
+                </div>
+                <button type="submit" disabled={!stripe}>Pay</button>
+                {error && <div>{error}</div>}
+                {success && <div>Payment Successful!</div>}
+            </form>
+        </Elements>);
 };
 export default CheckoutForm;
