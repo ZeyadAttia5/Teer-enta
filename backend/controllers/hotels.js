@@ -160,6 +160,17 @@ exports.bookHotel = async (req, res) => {
 }
 
 
+exports.getHotelBookings = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const bookings = await BookedHotel.find({ createdBy: userId }).sort({ createdAt: -1 });
+        res.status(200).json(bookings);
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}
+
+
 
 ////// Amadeus API Reference
 // // City Search API
