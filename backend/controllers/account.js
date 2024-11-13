@@ -16,6 +16,8 @@ const userModel = require('../models/Users/userModels');
 const TourGuide = require('../models/Users/TourGuide');
 const {uploadMultipleFiles, uploadSingleFile} = require('../middlewares/imageUploader');
 const {Model} = require("mongoose");
+const AccountDeletionRequest = require('../models/AccountDeletionRequest');
+const Order = require('../models/Product/Order');
 
 
 exports.deleteAccount = async (req, res) => {
@@ -154,23 +156,28 @@ exports.requestMyAccountDeletion = async (req, res) => {
         if (user.userRole === "Tourist") {
             const bookedActivities = await BookedActivity.find({createdBy: userId, status: "Pending"});
             if (bookedActivities) {
-                return res.status(400).json({message: "You have upcoming activities, you can't delete your account"});
+                await AccountDeletionRequest.create({user: userId});
+                return res.status(400).json({message: "You have upcoming activities, request has been sent to admin"});
             }
             const bookedItinerary = await BookedItinerary.find({createdBy: userId, status: "Pending"});
             if (bookedItinerary) {
-                return res.status(400).json({message: "You have upcoming itineraries, you can't delete your account"});
+                await AccountDeletionRequest.create({user: userId});
+                return res.status(400).json({message: "You have upcoming itineraries, request has been sent to admin"});
             }
             const bookedTransportation = await BookedTransportation.find({createdBy: userId, status: "Pending"});
             if (bookedTransportation) {
-                return res.status(400).json({message: "You have upcoming transportation, you can't delete your account"});
+                await AccountDeletionRequest.create({user: userId});
+                return res.status(400).json({message: "You have upcoming transportation, request has been sent to admin"});
             }
             const bookedFlights = await BookedFlight.find({createdBy: userId, status: "Pending"});
             if (bookedFlights) {
-                return res.status(400).json({message: "You have upcoming flights, you can't delete your account"});
+                await AccountDeletionRequest.create({user: userId});
+                return res.status(400).json({message: "You have upcoming flights, request has been sent to admin"});
             }
             const bookedHotels = await BookedHotel.find({createdBy: userId, status: "Pending"});
             if (bookedHotels) {
-                return res.status(400).json({message: "You have upcoming hotels, you can't delete your account"});
+                await AccountDeletionRequest.create({user: userId});
+                return res.status(400).json({message: "You have upcoming hotels, request has been sent to admin"});
             }
         }
 
@@ -182,7 +189,8 @@ exports.requestMyAccountDeletion = async (req, res) => {
                 });
             for (let i = 0; i < bookedActivitiesForAdvertiser.length; i++) {
                 if (bookedActivitiesForAdvertiser[i].activity) {
-                    return res.status(400).json({message: "there are upcoming bookings on your activities, you can't delete your account"});
+                    await AccountDeletionRequest.create({user: userId});
+                    return res.status(400).json({message: "there are upcoming bookings on your activities, request has been sent to admin"});
                 }
             }
             await Activity
@@ -200,7 +208,8 @@ exports.requestMyAccountDeletion = async (req, res) => {
                 });
             for (let i = 0; i < bookedItineraryForTourGuide.length; i++) {
                 if (bookedItineraryForTourGuide[i].itinerary) {
-                    return res.status(400).json({message: "there are upcoming bookings itineraries, you can't delete your account"});
+                    await AccountDeletionRequest.create({user: userId});
+                    return res.status(400).json({message: "there are upcoming bookings itineraries, request has been sent to admin"});
                 }
             }
             await Itinerary
@@ -208,6 +217,48 @@ exports.requestMyAccountDeletion = async (req, res) => {
                 .updateMany({isActive: false});
         }
         if (user.userRole === "Seller") {
+            const pendingOrders = await Order.aggregate([
+                // Match orders that are pending
+                {$match: {status: 'Pending'}},
+
+                // Unwind the products array to make each product a separate document in the aggregation pipeline
+                {$unwind: '$products'},
+
+                // Lookup to join the Product collection
+                {
+                    $lookup: {
+                        from: 'products', // Product collection name in MongoDB
+                        localField: 'products.product',
+                        foreignField: '_id',
+                        as: 'productDetails',
+                    },
+                },
+
+                // Unwind the productDetails array to make it a single object
+                {$unwind: '$productDetails'},
+
+                // Match products that are created by the specified user
+                {$match: {'productDetails.createdBy': mongoose.Types.ObjectId(userId)}},
+
+                // Group back to reconstruct the orders with matching products
+                {
+                    $group: {
+                        _id: '$_id',
+                        createdBy: {$first: '$createdBy'},
+                        products: {$push: '$products'},
+                        totalPrice: {$first: '$totalPrice'},
+                        deliveryAddress: {$first: '$deliveryAddress'},
+                        status: {$first: '$status'},
+                        isActive: {$first: '$isActive'},
+                        createdAt: {$first: '$createdAt'},
+                        updatedAt: {$first: '$updatedAt'},
+                    },
+                },
+            ]);
+            if (pendingOrders.length) {
+                await AccountDeletionRequest.create({user: userId});
+                return res.status(400).json({message: "You have pending orders, request has been sent to admin"});
+            }
             await Product
                 .find({createdBy: userId})
                 .updateMany({isActive: false});

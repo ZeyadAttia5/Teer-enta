@@ -11,7 +11,8 @@ const errorHandler = require("../Util/ErrorHandler/errorSender");
 const BrevoService = require("../Util/mailsHandler/brevo/brevoService");
 const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
 const brevoService = new BrevoService(brevoConfig);
-const ResetPasswordTemplate = require("../Util/mailsHandler/mailTemplets/4ResetPasswordTemplate")
+const ResetPasswordTemplate = require("../Util/mailsHandler/mailTemplets/4ResetPasswordTemplate");
+const AccountDeletionRequest = require('../models/AccountDeletionRequest');
 
 
 exports.signup = async (req, res) => {
@@ -103,6 +104,12 @@ exports.login = async (req, res) => {
         const user = await User.findOne({username});
         if (!user) return res.status(404).json({message: 'User not found'});
 
+        const IsRequestPending = await AccountDeletionRequest.findOne({username: user, status: 'pending'});
+        if (IsRequestPending) return res.status(401).json({message: "Your account deletion request is still pending"});
+
+        const IsRequestAccepted = await AccountDeletionRequest.findOne({username: user, status: 'approved'});
+        if (IsRequestAccepted) return res.status(401).json({message: "Your account deletion request is accepted by the admin"});
+
         const doMatch = await bcrypt.compare(password, user.password);
         if (!doMatch) return res.status(401).json({message: "Wrong Password"});
 
@@ -113,7 +120,7 @@ exports.login = async (req, res) => {
         if (status === "Rejected") {
             return res.status(403).json({message: "Your request is rejected"});
         }
-        if(user.userRole === "Tourist"){
+        if (user.userRole === "Tourist") {
             let newLevel = user.level;
             if (user.loyalityPoints > 500000 && user.level !== 'LEVEL3') {
                 newLevel = 'LEVEL3';
@@ -180,31 +187,31 @@ exports.changeAllpasswords = async (req, res) => {
 
 
 exports.forgotPassword = async (req, res) => {
-    const { email } = req.body;
+    const {email} = req.body;
 
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({email});
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({message: 'User not found'});
         }
 
         const otp = crypto.randomInt(100000, 999999).toString(); // Generate OTP
         const otpExpiry = Date.now() + 15 * 60 * 1000; // OTP expires in 15 minutes
 
         const token = jwt.sign(
-            { userId: user._id }, // Payload - identify the user
+            {userId: user._id}, // Payload - identify the user
             process.env.JWT_SECRET_RESET, // Secret key for signing the token
-            { expiresIn: '15m' } // Token expires in 15 minutes
+            {expiresIn: '15m'} // Token expires in 15 minutes
         );
 
         user.resetOtp = otp;
         user.otpExpiry = otpExpiry;
         await user.save();
 
-        const template = new ResetPasswordTemplate (otp,user.username);
+        const template = new ResetPasswordTemplate(otp, user.username);
         await brevoService.send(template, email);
 
-        res.status(200).json({ message: 'OTP sent to email' , token});
+        res.status(200).json({message: 'OTP sent to email', token});
     } catch (error) {
 
         errorHandler.SendError(res, error);
@@ -212,18 +219,18 @@ exports.forgotPassword = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
-    const { otp, newPassword, token } = req.body;
+    const {otp, newPassword, token} = req.body;
     try {
         console.log(token);
         const decoded = jwt.verify(token, process.env.JWT_SECRET_RESET);
         const user = await User.findById(decoded.userId);
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({message: 'User not found'});
         }
 
         if (user.resetOtp !== otp || Date.now() > user.otpExpiry) {
-            return res.status(400).json({ message: 'Invalid or expired OTP' });
+            return res.status(400).json({message: 'Invalid or expired OTP'});
         }
 
         // Hash the new password
@@ -232,7 +239,7 @@ exports.resetPassword = async (req, res) => {
         user.otpExpiry = undefined; // Clear expiry
         await user.save();
 
-        res.status(200).json({ message: 'Password successfully reset' });
+        res.status(200).json({message: 'Password successfully reset'});
     } catch (error) {
         errorHandler.SendError(res, error);
     }
