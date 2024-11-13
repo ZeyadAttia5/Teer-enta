@@ -80,7 +80,6 @@ exports.bookTransportation = async (req, res) => {
             // Deduct the amount from the wallet
             tourist.wallet -= totalPrice;
             await tourist.save();
-
         } else if (paymentMethod === 'credit_card') {
             // Credit card payment: Integrate with payment provider (e.g., Stripe)
             /*
@@ -101,7 +100,6 @@ exports.bookTransportation = async (req, res) => {
             return res.status(400).json({ message: 'Invalid payment method selected.' });
         }
 
-        // Create the transportation booking
         await BookedTransportation.create({
             transportation: id,
             createdBy: userId,

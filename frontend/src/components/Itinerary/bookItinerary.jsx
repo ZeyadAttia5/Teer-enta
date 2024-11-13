@@ -91,7 +91,7 @@ const BookItinerary = () => {
                         onChange={handleDateChange}
                         value={selectedDate}
                     >
-                        {itinerary?.availableDates.map((date) => (
+                        {itinerary?.availableDates?.map((date) => (
                             <Option key={date.Date} value={date.Date}>
                                 {dayjs(date.Date).format("MMMM D, YYYY")} - {date.Times}
                             </Option>

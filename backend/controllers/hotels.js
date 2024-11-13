@@ -89,12 +89,8 @@ exports.bookHotel = async (req, res) => {
             if (tourist.wallet < totalPrice) {
                 return res.status(400).json({ message: "Insufficient wallet balance." });
             }
-
-            // should loyalty points be awarded here?
-            // Deduct the amount from the wallet
             tourist.wallet -= totalPrice;
             await tourist.save();
-
         } else if (paymentMethod === 'credit_card') {
             // Credit card payment: Integrate with payment provider (e.g., Stripe)
             /*
@@ -115,7 +111,6 @@ exports.bookHotel = async (req, res) => {
             return res.status(400).json({ message: "Invalid payment method selected." });
         }
 
-        // Proceed with hotel booking in the external system (Amadeus or similar)
         const hotelBooking = await amadeus.booking.hotelBookings.post(
             JSON.stringify({
                 "data": {
@@ -132,6 +127,7 @@ exports.bookHotel = async (req, res) => {
         // console.log("error status code: ", err.response.statusCode);
         if(err.response.statusCode === 401) {
             try {
+
                 await BookedHotel.create({
                     hotel: {
                         hotelId: hotel.hotelId,
@@ -148,6 +144,7 @@ exports.bookHotel = async (req, res) => {
                     createdBy: req.user._id,
                     status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
                 });
+
                 return res.status(200).json({message: "Successfully booked!"});
             } catch(e){
                 console.log(e);

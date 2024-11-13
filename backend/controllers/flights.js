@@ -125,7 +125,6 @@ exports.bookFlight = async (req, res) => {
             }
             tourist.wallet -= totalPrice;  // Deduct from wallet
             await tourist.save();
-
         } else if (paymentMethod === 'credit_card') {
             // Example for Stripe (uncomment and configure the actual integration):
             /*
@@ -145,8 +144,6 @@ exports.bookFlight = async (req, res) => {
         } else {
             return res.status(400).json({ message: 'Invalid payment method selected.' });
         }
-
-        // Save the flight booking in your database
         await BookedFlight.create({
             departureDate: booking.data.flightOffers[0].itineraries[0].segments[0].departure.at,
             arrivalDate: offer.itineraries[0].segments[0].arrival.at,

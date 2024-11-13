@@ -268,18 +268,6 @@ exports.redeemPoints = async (req, res) => {
         if (!user.hasProfile) {
             user.hasProfile = true;
         }
-        let newLevel;
-        if (user.loyalityPoints <= 100000) {
-            newLevel = 'LEVEL1';
-        } else if (user.loyalityPoints <= 500000) {
-            newLevel = 'LEVEL2';
-        } else {
-            newLevel = 'LEVEL3';
-        }
-
-        if (user.level !== newLevel) {
-            user.level = newLevel;
-        }
         await user.save();
         return res.status(200).json({
             message: "Successfully redeemed points",
@@ -302,16 +290,13 @@ exports.receiveBadge = async (req, res) => {
             return res.status(404).json({message: "Tourist not found."});
         }
 
-        // Determine level based on loyalty points
-        const loyaltyPoints = tourist.loyalityPoints;
-        let newLevel;
-
-        if (loyaltyPoints <= 100000) {
-            newLevel = 'LEVEL1';
-        } else if (loyaltyPoints <= 500000) {
-            newLevel = 'LEVEL2';
-        } else {
+        let newLevel = tourist.level;
+        if (tourist.loyalityPoints > 500000 && tourist.level !== 'LEVEL3') {
             newLevel = 'LEVEL3';
+        } else if (tourist.loyalityPoints > 100000 && tourist.loyalityPoints <= 500000 && tourist.level === 'LEVEL1') {
+            newLevel = 'LEVEL2';
+        } else if (tourist.loyalityPoints <= 100000 && tourist.level === "LEVEL1") {
+            newLevel = 'LEVEL1';
         }
 
         // Check if the level needs to be updated

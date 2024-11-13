@@ -113,28 +113,18 @@ exports.login = async (req, res) => {
         if (status === "Rejected") {
             return res.status(403).json({message: "Your request is rejected"});
         }
-
-        // Check and update level if user is a tourist
-        if (user.userRole === 'Tourist') {  // Ensure this applies only to tourists
-            const tourist = await Tourist.findById(user._id);
-            const loyaltyPoints = tourist.loyalityPoints;
-            let newLevel;
-
-            if (loyaltyPoints <= 100000) {
-                newLevel = 'LEVEL1';
-            } else if (loyaltyPoints <= 500000) {
-                newLevel = 'LEVEL2';
-            } else {
+        if(user.userRole === "Tourist"){
+            let newLevel = user.level;
+            if (user.loyalityPoints > 500000 && user.level !== 'LEVEL3') {
                 newLevel = 'LEVEL3';
+            } else if (user.loyalityPoints > 100000 && user.loyalityPoints <= 500000 && user.level === 'LEVEL1') {
+                newLevel = 'LEVEL2';
+            } else if (user.loyalityPoints <= 100000 && user.level === "LEVEL1") {
+                newLevel = 'LEVEL1';
             }
-            console.log('New level:', newLevel);
-            // Update level only if necessary
-            if (tourist.level !== newLevel) {
-                tourist.level = newLevel;
-                await tourist.save();
-            }
+            user.level = newLevel;
+            await user.save();
         }
-
         // Generate tokens after level check
         const {token: accessToken, expiresIn: accessExpiresIn} = await TokenHandler.generateAccessToken(user);
         const {token: refreshToken, expiresIn: refreshExpiresIn} = await TokenHandler.generateRefreshToken(user);

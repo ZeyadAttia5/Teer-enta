@@ -425,7 +425,6 @@ exports.bookItinerary = async (req, res) => {
                 return res.status(400).json({ message: "Insufficient wallet balance" });
             }
             tourist.wallet -= totalPrice;
-            await tourist.save();
         } else if (paymentMethod === 'credit_card') {
             // Implement credit card payment handling with a provider like Stripe here
             // Uncomment and configure if using Stripe:
@@ -452,7 +451,6 @@ exports.bookItinerary = async (req, res) => {
             status:'Pending'
         });
 
-// Logic for assigning loyalty points based on the tourist's current level
         let loyaltyPoints = 0;
         if (tourist.level === 'LEVEL1') {
             loyaltyPoints = totalPrice * 0.5;
@@ -461,26 +459,18 @@ exports.bookItinerary = async (req, res) => {
         } else if (tourist.level === 'LEVEL3') {
             loyaltyPoints = totalPrice * 1.5;
         }
+        let newLevel = tourist.level;
 
-// Update loyalty points for the tourist
-        tourist.loyalityPoints += loyaltyPoints;
-
-// Check if level needs to be updated based on the new loyalty points
-        let newLevel;
-        if (tourist.loyalityPoints <= 100000) {
-            newLevel = 'LEVEL1';
-        } else if (tourist.loyalityPoints <= 500000) {
-            newLevel = 'LEVEL2';
-        } else {
+        if (tourist.loyalityPoints > 500000 && tourist.level !== 'LEVEL3') {
             newLevel = 'LEVEL3';
+        } else if (tourist.loyalityPoints > 100000 && tourist.loyalityPoints <= 500000 && tourist.level === 'LEVEL1') {
+            newLevel = 'LEVEL2';
+        } else if (tourist.loyalityPoints <= 100000 && tourist.level === "LEVEL1") {
+            newLevel = 'LEVEL1';
         }
+        tourist.loyalityPoints += loyaltyPoints;
+        tourist.level = newLevel;
 
-// Only update and save if the level has changed
-        if (tourist.level !== newLevel) {
-            tourist.level = newLevel;
-        }
-
-// Save the tourist document with updated points and possibly a new level
         await tourist.save();
         const template = new PaymentReceiptItemTemplate(
             tourist.username,
