@@ -1,7 +1,7 @@
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const BookedFlight = require("../models/Booking/BookedFlight");
 const Tourist = require("../models/Users/Tourist");
-const { getCountryCode } = require("../Util/LocationCodes");
+const {getCountryCode} = require("../Util/LocationCodes");
 const Amadeus = require('amadeus');
 
 const amadeus = new Amadeus({
@@ -10,29 +10,29 @@ const amadeus = new Amadeus({
 });
 
 exports.getAirports = async (req, res) => {
-  // keyword: city name:
-  // countryName: country name
-  const { keyword, countryName } = req.query;
-  try {
-    const countryCode = await getCountryCode(countryName);
-    const params = {
-      keyword: keyword,
-      subType: "AIRPORT,CITY",
-      "page[offset]": 0,
-    };
-    if (countryCode) {
-      params["countryCode"] = countryCode;
-    }
-    const response = await amadeus.client.get(
-      "/v1/reference-data/locations",
-      params
-    );
+    // keyword: city name:
+    // countryName: country name
+    const {keyword, countryName} = req.query;
+    try {
+        const countryCode = await getCountryCode(countryName);
+        const params = {
+            keyword: keyword,
+            subType: "AIRPORT,CITY",
+            "page[offset]": 0,
+        };
+        if (countryCode) {
+            params["countryCode"] = countryCode;
+        }
+        const response = await amadeus.client.get(
+            "/v1/reference-data/locations",
+            params
+        );
 
-    return res.status(200).json(JSON.parse(response.body));
-  } catch (err) {
-    console.log(err);
-    res.status(400).json(err);
-  }
+        return res.status(200).json(JSON.parse(response.body));
+    } catch (err) {
+        console.log(err);
+        res.status(400).json(err);
+    }
 }
 
 // TODO: add other parameters to the request (return Date, etc.)
@@ -40,27 +40,27 @@ exports.getAirports = async (req, res) => {
 // infants: infants
 // returnDate: returnDate,
 exports.getFlightOffers = async (req, res) => {
-  // departureDate:Y-M-D
-  //   adults:Integer
-  const { departureAirport, destinationAirport, departureDate, adults } =
-    req.query;
+    // departureDate:Y-M-D
+    //   adults:Integer
+    const {departureAirport, destinationAirport, departureDate, adults} =
+        req.query;
 
-  try {
-    const offers = await amadeus.shopping.flightOffersSearch.get({
-      originLocationCode: departureAirport,
-      destinationLocationCode: destinationAirport,
-      departureDate: departureDate,
-      adults: adults,
-    });
-    if (!offers.data || offers.data.length === 0) {
-      return res.status(200).json([]);
+    try {
+        const offers = await amadeus.shopping.flightOffersSearch.get({
+            originLocationCode: departureAirport,
+            destinationLocationCode: destinationAirport,
+            departureDate: departureDate,
+            adults: adults,
+        });
+        if (!offers.data || offers.data.length === 0) {
+            return res.status(200).json([]);
+        }
+        // offers.data is an array of flight offers
+        res.status(200).json(offers.data);
+    } catch (err) {
+        console.log(err);
+        errorHandler.SendError(res, err);
     }
-    // offers.data is an array of flight offers
-    res.status(200).json(offers.data);
-  } catch (err) {
-    console.log(err);
-    errorHandler.SendError(res, err);
-  }
 }
 
 exports.bookFlight = async (req, res) => {
@@ -80,7 +80,7 @@ exports.bookFlight = async (req, res) => {
         );
 
         if (!pricingResponse.data || pricingResponse.data.length === 0) {
-            return res.status(400).json({ error: "Flight offer pricing failed." });
+            return res.status(400).json({error: "Flight offer pricing failed."});
         }
 
         // Check if the user has already booked the same flight (same offer, same dates)
@@ -90,12 +90,12 @@ exports.bookFlight = async (req, res) => {
             departureDate: offer.itineraries[0].segments[0].departure.at,
             arrivalDate: offer.itineraries[0].segments[0].arrival.at,
             departureAirport: offer.itineraries[0].segments[0].departure.iataCode,
-            arrivalAirport: offer.itineraries[0].segments[0].arrival.iataCode ,
+            arrivalAirport: offer.itineraries[0].segments[0].arrival.iataCode,
             status: 'Pending'
         });
 
         if (existingBooking) {
-            return res.status(400).json({ message: "You have already booked this flight." });
+            return res.status(400).json({message: "You have already booked this flight."});
         }
 
         // Create the flight booking in the Amadeus system
@@ -115,13 +115,13 @@ exports.bookFlight = async (req, res) => {
         // Handle payment method
         const tourist = await Tourist.findById(userId);
         if (!tourist) {
-            return res.status(404).json({ message: 'Tourist not found.' });
+            return res.status(404).json({message: 'Tourist not found.'});
         }
 
         // Payment via wallet
         if (paymentMethod === 'wallet') {
             if (tourist.wallet < totalPrice) {
-                return res.status(400).json({ message: 'Insufficient wallet balance.' });
+                return res.status(400).json({message: 'Insufficient wallet balance.'});
             }
             tourist.wallet -= totalPrice;  // Deduct from wallet
             await tourist.save();
@@ -142,7 +142,7 @@ exports.bookFlight = async (req, res) => {
         } else if (paymentMethod === 'cash_on_delivery') {
             // No immediate payment action needed
         } else {
-            return res.status(400).json({ message: 'Invalid payment method selected.' });
+            return res.status(400).json({message: 'Invalid payment method selected.'});
         }
         await BookedFlight.create({
             departureDate: booking.data.flightOffers[0].itineraries[0].segments[0].departure.at,
@@ -166,3 +166,21 @@ exports.bookFlight = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 };
+
+exports.getFlightBookings = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const bookedFlights = await BookedFlight
+            .find({createdBy: userId, isActive: true})
+            .sort({createdAt: -1});
+
+        if (bookedFlights.length === 0) {
+            return res.status(404).json({message: 'No flight bookings found.'});
+        }
+
+        res.status(200).json(bookedFlights);
+    } catch (err) {
+        console.log(err);
+        errorHandler.SendError(res, err);
+    }
+}

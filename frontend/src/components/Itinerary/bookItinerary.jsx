@@ -23,7 +23,7 @@ const BookItinerary = () => {
     const fetchItinerary = async () => {
         try {
             const response = await getIternary(itineraryId);
-            setItinerary(response.data);
+            setItinerary(response.data.itinerary);
         } catch (err) {
             message.error("Failed to get itinerary. Please try again.");
         }

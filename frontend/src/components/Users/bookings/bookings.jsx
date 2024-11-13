@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     getBookedItineraries,
     cancleItineraryBooking,
@@ -11,21 +11,20 @@ import {
     addCommentToActivity,
     addRatingToActivity
 } from '../../../api/activity.ts';
-import {rateTourGuide, commentOnTourGuide} from '../../../api/tourGuide.ts';
-import {Card, Tag, Button, Space, Select, message, Avatar, Typography} from 'antd';
-import {getCurrency, submitFeedback} from '../../../api/account.ts'; // Import submitFeedback API function
-import {LikeOutlined, UserOutlined} from '@ant-design/icons';
+import { rateTourGuide, commentOnTourGuide } from '../../../api/tourGuide.ts';
+import { Card, Tag, Button, Space, Select, message, Segmented, Typography } from 'antd';
+import { getCurrency, submitFeedback } from '../../../api/account.ts';
 import FeedbackForm from '../../shared/FeedBackForm/FeedbackForm.jsx';
 
-const {Text} = Typography;
-const {Option} = Select;
+const { Text } = Typography;
+const { Option } = Select;
 
 const BookingGrid = () => {
     const [bookedActivities, setBookedActivities] = useState([]);
     const [bookedItineraries, setBookedItineraries] = useState([]);
     const [activityStatus, setActivityStatus] = useState('All');
     const [itineraryStatus, setItineraryStatus] = useState('All');
-    const [selectedType, setSelectedType] = useState('activities'); // To toggle between activities and itineraries
+    const [selectedType, setSelectedType] = useState('Activities'); // Using "Activities" and "Itineraries" directly
     const [currency, setCurrency] = useState(null);
     const [feedbackVisibility, setFeedbackVisibility] = useState({}); // To track visibility of feedback forms
 
@@ -64,7 +63,6 @@ const BookingGrid = () => {
             await commentOnTourGuide(tourGuideId, feedback.comment);
             message.success('Tour guide feedback submitted successfully');
         } catch (error) {
-            console.log("here", error);
             message.error(error.response.data.message);
         }
     };
@@ -124,39 +122,58 @@ const BookingGrid = () => {
         }));
     };
 
+    const filteredActivities = bookedActivities.filter(activity =>
+        activityStatus === 'All' || activity.status === activityStatus
+    );
+
+    const filteredItineraries = bookedItineraries.filter(itinerary =>
+        itineraryStatus === 'All' || itinerary.status === itineraryStatus
+    );
+
     return (
         <div className="p-6">
             <Space className="mb-6">
-                <Select value={selectedType} onChange={setSelectedType} style={{width: 200}}>
-                    <Option value="activities">Activities</Option>
-                    <Option value="itineraries">Itineraries</Option>
-                </Select>
+                <Segmented
+                    options={['Activities', 'Itineraries']}
+                    value={selectedType}
+                    onChange={(value) => setSelectedType(value)}
+                />
 
-                {selectedType === 'activities' && (
-                    <Select value={activityStatus} onChange={setActivityStatus} style={{width: 200}}>
-                        <Option value="All">All Activities</Option>
-                        <Option value="Pending">Pending Activities</Option>
-                        <Option value="Completed">Completed Activities</Option>
-                        <Option value="Cancelled">Cancelled Activities</Option>
-                    </Select>
+                {selectedType === 'Activities' && (
+                    <Select
+                        value={activityStatus}
+                        onChange={setActivityStatus}
+                        options={[
+                            { label: 'All', value: 'All' },
+                            { label: 'Pending', value: 'Pending' },
+                            { label: 'Completed', value: 'Completed' },
+                            { label: 'Cancelled', value: 'Cancelled' },
+                        ]}
+                        className="w-full px-4 py-2 text-center"  // Full width and padding for better appearance
+                        style={{ minWidth: 120 }}  // Minimum width for the dropdown
+                    />
                 )}
-
-                {selectedType === 'itineraries' && (
-                    <Select value={itineraryStatus} onChange={setItineraryStatus} style={{width: 200}}>
-                        <Option value="All">All Itineraries</Option>
-                        <Option value="Pending">Pending Itineraries</Option>
-                        <Option value="Completed">Completed Itineraries</Option>
-                        <Option value="Cancelled">Cancelled Itineraries</Option>
-                    </Select>
+                {selectedType === 'Itineraries' && (
+                    <Select
+                        value={itineraryStatus}
+                        onChange={setItineraryStatus}
+                        options={[
+                            { label: 'All', value: 'All' },
+                            { label: 'Pending', value: 'Pending' },
+                            { label: 'Completed', value: 'Completed' },
+                            { label: 'Cancelled', value: 'Cancelled' },
+                        ]}
+                        className="w-full px-4 py-2 text-center"  // Full width and padding for better appearance
+                        style={{ minWidth: 120 }}  // Minimum width for the dropdown
+                    />
                 )}
             </Space>
 
-            {selectedType === 'itineraries' && (
+            {selectedType === 'Itineraries' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                    {bookedItineraries.map((itinerary) => (
+                    {filteredItineraries.map((itinerary) => (
                         itinerary.itinerary ? (
-                            <Card key={itinerary._id} title={itinerary.itinerary.name} className="shadow-lg p-4"
-                                  hoverable>
+                            <Card key={itinerary._id} title={itinerary.itinerary.name} className="shadow-lg p-4" hoverable>
                                 <div className="flex justify-between items-center mb-4">
                                     <span>{new Date(itinerary.date).toLocaleDateString()}</span>
                                     {renderStatusTag(itinerary.status)}
@@ -166,25 +183,16 @@ const BookingGrid = () => {
                                     <p>Price: {currency?.code} {(currency?.rate * itinerary.itinerary.price).toFixed(2)}</p>
                                 </div>
                                 {itinerary.status === 'Pending' && (
-                                    <Button type="primary" danger
-                                            onClick={() => cancelBooking(itinerary._id, 'itinerary')}>
+                                    <Button type="primary" danger onClick={() => cancelBooking(itinerary._id, 'itinerary')}>
                                         Cancel Booking
                                     </Button>
                                 )}
-
-                                <Button
-                                    className="mt-4"
-                                    onClick={() => toggleFeedbackVisibility(itinerary._id, 'tourGuide')}
-                                >
+                                <Button className="mt-4" onClick={() => toggleFeedbackVisibility(itinerary._id, 'tourGuide')}>
                                     {feedbackVisibility[itinerary._id]?.tourGuide ? 'Hide Tour Guide Feedback' : 'Give Tour Guide Feedback'}
                                 </Button>
-                                <Button
-                                    className="mt-4"
-                                    onClick={() => toggleFeedbackVisibility(itinerary._id, 'itinerary')}
-                                >
+                                <Button className="mt-4" onClick={() => toggleFeedbackVisibility(itinerary._id, 'itinerary')}>
                                     {feedbackVisibility[itinerary._id]?.itinerary ? 'Hide Itinerary Feedback' : 'Give Itinerary Feedback'}
                                 </Button>
-
                                 {feedbackVisibility[itinerary._id]?.tourGuide && (
                                     <FeedbackForm
                                         entity={{
@@ -194,23 +202,21 @@ const BookingGrid = () => {
                                         onSubmit={(feedback) => submitTourGuideRateAndReview(itinerary.itinerary.createdBy._id, feedback)}
                                     />
                                 )}
-
                                 {feedbackVisibility[itinerary._id]?.itinerary && (
                                     <FeedbackForm
-                                        entity={{name: itinerary.itinerary.name, _id: itinerary.itinerary._id}}
+                                        entity={{ name: itinerary.itinerary.name, _id: itinerary.itinerary._id }}
                                         onSubmit={(feedback) => submitItineraryRateAndReview(itinerary.itinerary._id, feedback)}
                                     />
                                 )}
                             </Card>
-                        ) : null // Render nothing if itinerary.itinerary is null
+                        ) : null
                     ))}
                 </div>
             )}
 
-
-            {selectedType === 'activities' && (
+            {selectedType === 'Activities' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                    {bookedActivities.map((activity) => (
+                    {filteredActivities.map((activity) => (
                         activity.activity ? (
                             <Card key={activity._id} title={activity.activity.name} className="shadow-lg p-4" hoverable>
                                 <div className="flex justify-between items-center mb-4">
@@ -223,31 +229,24 @@ const BookingGrid = () => {
                                     <p>Price: {currency?.code} {(currency?.rate * activity.activity.price.min).toFixed(2)}</p>
                                 </div>
                                 {activity.status === 'Pending' && (
-                                    <Button type="primary" danger
-                                            onClick={() => cancelBooking(activity._id, 'activity')}>
+                                    <Button type="primary" danger onClick={() => cancelBooking(activity._id, 'activity')}>
                                         Cancel Booking
                                     </Button>
                                 )}
-
-                                <Button
-                                    className="mt-4"
-                                    onClick={() => toggleFeedbackVisibility(activity._id, 'activity')}
-                                >
+                                <Button className="mt-4" onClick={() => toggleFeedbackVisibility(activity._id, 'activity')}>
                                     {feedbackVisibility[activity._id]?.activity ? 'Hide Activity Feedback' : 'Give Activity Feedback'}
                                 </Button>
-
                                 {feedbackVisibility[activity._id]?.activity && (
                                     <FeedbackForm
-                                        entity={{name: activity.activity.name, _id: activity.activity._id}}
+                                        entity={{ name: activity.activity.name, _id: activity.activity._id }}
                                         onSubmit={(feedback) => submitActivityRateAndReview(activity.activity._id, feedback)}
                                     />
                                 )}
                             </Card>
-                        ) : null // Render nothing if activity.activity is null
+                        ) : null
                     ))}
                 </div>
             )}
-
         </div>
     );
 };
