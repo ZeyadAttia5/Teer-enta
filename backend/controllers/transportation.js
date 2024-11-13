@@ -105,7 +105,8 @@ exports.bookTransportation = async (req, res) => {
             createdBy: userId,
             // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
             status: 'Pending',
-            date: transportation.date
+            date: transportation.date ,
+            price: totalPrice
         });
 
         return res.status(200).json({ message: 'Transportation booked successfully' });

@@ -4,6 +4,7 @@ const bookedItinerarySchema = new mongoose.Schema({
     itinerary: { type: mongoose.Schema.Types.ObjectId, ref: 'Itinerary' },
     date: { type: Date, required: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    price: { type: Number, required: true },
     status: {
         type: String,
         enum: ['Pending', 'Completed', 'Cancelled'],

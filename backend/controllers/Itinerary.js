@@ -448,7 +448,8 @@ exports.bookItinerary = async (req, res) => {
             createdBy: userId,
             date: new Date(date),
             // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
-            status:'Pending'
+            status:'Pending' ,
+            price : totalPrice
         });
 
         let loyaltyPoints = 0;
@@ -474,7 +475,7 @@ exports.bookItinerary = async (req, res) => {
         await tourist.save();
         const template = new PaymentReceiptItemTemplate(
             tourist.username,
-            itinerary.price ,
+           totalPrice ,
             date,
             "Itinerary"
         )

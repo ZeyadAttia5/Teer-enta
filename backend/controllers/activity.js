@@ -361,7 +361,8 @@ exports.bookActivity = async (req, res) => {
             createdBy: userId,
             // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
             status: "Pending",
-            date: activity.date
+            date: activity.date ,
+            price : totalPrice
         });
 
         let loyaltyPoints = 0;
