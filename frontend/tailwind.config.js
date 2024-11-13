@@ -6,10 +6,10 @@ module.exports = {
       colors: {
         customGreen: '#02735F', // Your custom green color
         darkerGreen: '#075B4C',
-        first: "#496989",
-        second: "#58A399",
-        third: "#A8CD9F",
-        fourth: "#E2F4C5",
+        first: "#27374D",
+        second: "#526D82",
+        third: "#9DB2BF",
+        fourth: "#DDE6ED",
       },
       keyframes: {
         "tourist-background-keyframe": {

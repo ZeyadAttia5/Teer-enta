@@ -3,7 +3,7 @@ const BookedItinerary = require('../models/Booking/BookedItinerary');
 const BookedTransportation = require('../models/Booking/BookedTransportation');
 const BookedHotel = require('../models/Booking/BookedHotel');
 const BookedFlight = require('../models/Booking/BookedFlight');
-const errorHandler = require('../util/ErrorHandler/errorSender');
+const errorHandler = require('../Util/ErrorHandler/errorSender');
 const cron = require('node-cron');
 
 cron.schedule('0 0 * * *', async () => {
