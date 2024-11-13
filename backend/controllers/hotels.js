@@ -105,9 +105,7 @@ exports.bookHotel = async (req, res) => {
                 return res.status(500).json({ message: "Payment failed." });
             }
             */
-        } else if (paymentMethod === 'cash_on_delivery') {
-            // Cash on delivery: No payment is processed immediately, just proceed with the booking
-        } else {
+        }else {
             return res.status(400).json({ message: "Invalid payment method selected." });
         }
 

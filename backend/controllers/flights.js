@@ -139,9 +139,7 @@ exports.bookFlight = async (req, res) => {
                 return res.status(500).json({ message: 'Payment failed.' });
             }
             */
-        } else if (paymentMethod === 'cash_on_delivery') {
-            // No immediate payment action needed
-        } else {
+        }else {
             return res.status(400).json({message: 'Invalid payment method selected.'});
         }
         await BookedFlight.create({

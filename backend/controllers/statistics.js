@@ -42,6 +42,7 @@ exports.getNewUsersPerMonth = async (req, res) => {
         errorHandler.SendError(res, error);
     }
 };
+
 exports.getItineraryTouristCount = async (req, res) => {
     try {
         const totalTouristsInItineraries = await BookedItinerary.find({

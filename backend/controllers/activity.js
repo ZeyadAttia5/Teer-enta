@@ -347,11 +347,7 @@ exports.bookActivity = async (req, res) => {
             }
             */
 
-        } else if (paymentMethod === 'cash_on_delivery') {
-            // Cash on delivery method - no immediate payment action required
-            // The booking can proceed directly
-
-        } else {
+        }else {
             return res.status(400).json({message: "Invalid payment method selected"});
         }
 

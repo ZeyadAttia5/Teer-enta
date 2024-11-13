@@ -110,10 +110,8 @@ exports.checkOutOrder = async (req, res) => {
             user.wallet -= totalPrice; // Deduct from wallet
         } else if (paymentMethod === 'credit_card') {
             // Here you would integrate with Stripe or your payment provider
-            // For example, you can create a payment intent with Stripe and handle it accordingly
+                // For example, you can create a payment intent with Stripe and handle it accordingly
             // await stripe.paymentIntents.create({ amount: totalPrice, currency: 'usd', ... });
-        } else if (paymentMethod === 'cash_on_delivery') {
-            // No immediate payment processing required, just proceed with the order
         } else {
             return res.status(400).json({ message: 'Invalid payment method selected.' });
         }

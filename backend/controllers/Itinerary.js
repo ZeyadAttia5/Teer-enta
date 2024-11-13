@@ -439,8 +439,8 @@ exports.bookItinerary = async (req, res) => {
                 return res.status(500).json({ message: "Credit card payment failed" });
             }
             */
-        } else if (paymentMethod !== 'cash_on_delivery') {
-            return res.status(400).json({ message: "Invalid payment method selected" });
+        }else {
+            return res.status(400).json({message: 'Invalid payment method selected.'});
         }
 
         const newBooking = await BookedItinerary.create({
