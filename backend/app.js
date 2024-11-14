@@ -33,8 +33,10 @@ const statisticRoutes = require('./routes/statistics');
 require('./scheduler/PromoCodeSenderBD');
 require('./scheduler/upcomingEventsBookedReminder');
 require('./scheduler/DeadLineSchaduler');
+const {initSocket} = require("./Util/socket");
 
-
+const server = http.createServer(app);
+initSocket(server);
 
 app.use(morgan('dev'))
 app.use((req, res, next) => {
@@ -92,4 +94,5 @@ app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });
 });
 
-app.listen(PORT);
+// app.listen(PORT);
+server.listen(PORT);
