@@ -17,7 +17,7 @@ const {Search} = Input;
 
 
 const Button1 = ({children, onClick, variant = 'default'}) => {
-    const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+    const baseClasses = "inline-flex text-white  items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-second hover:bg-third";
     const variantClasses = variant === 'outline'
         ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
         : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
@@ -233,7 +233,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
     };
 
     return (
-        <div className="p-16 bg-[#E0F0EE]">
+        <div className="py-6 px-16">
             <div className="mb-6 flex justify-center">
                 <Search
                     enterButton={<SearchOutlined/>}
@@ -248,7 +248,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
                 {/* Tag Filter Dropdown */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button1 variant="outline">
+                        <Button1 variant="outline" className="bg-second">
                             <Filter className="mr-2 h-4 w-4"/>
                             Filter by Tag
                         </Button1>
@@ -278,13 +278,13 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* Reset Button */}
+               
                 <Button
                     type="primary"
-                    danger
+                    
                     icon={<ReloadOutlined/>}
                     onClick={resetFilters}
-                    className="ml-4 h-9"
+                    className="ml-4 h-9 bg-second hover:bg-third"
                 >
                     Reset
                 </Button>

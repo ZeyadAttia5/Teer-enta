@@ -133,7 +133,7 @@ const AdminProductGrid = ({setFlag}) => {
         <div className="container mx-auto p-5 relative">
             {feedbackMessage && (
                 <div
-                    className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg"
+                    className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-first text-white px-4 py-2 rounded shadow-lg"
                     style={{transition: "opacity 0.5s ease-in-out", zIndex: 9999}}
                 >
                     {feedbackMessage}
@@ -145,7 +145,7 @@ const AdminProductGrid = ({setFlag}) => {
                         placeholder="Search for products..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-72 border-customGreen rounded-full border-2 focus:border-customGreen transition-colors duration-300"
+                        className="w-72 border-first rounded-full border-2 focus:border-customGreen transition-colors duration-300"
                     />
                     <FilterDropdown
                         filters={filters}
@@ -188,7 +188,7 @@ const AdminProductGrid = ({setFlag}) => {
                 {filteredProducts.map((product) => (
                     <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
                         <div
-                            className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
+                            className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-third transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
                             <img
                                 className="w-full h-48 object-cover"
                                 src={product.image ? product.image : product.imageUrl}
@@ -202,7 +202,7 @@ const AdminProductGrid = ({setFlag}) => {
                                 <div className="flex justify-start items-center">
                                     <Link to={`/products/${product._id}`}>
                                         <Button
-                                            className="bg-customGreen hover:bg-darkerGreen text-white mt-2"
+                                            className="bg-first hover:bg-darkerGreen text-white mt-2"
                                         >
                                             View Details
                                         </Button>
