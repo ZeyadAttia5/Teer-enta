@@ -2,6 +2,7 @@ const Transportation = require('../models/Transportation')
 const BookedTransportation = require('../models/Booking/BookedTransportation')
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const Tourist = require('../models/Users/Tourist');
+const PromoCodes = require("../models/PromoCodes");
 
 exports.getAllTransportations = async (req, res) => {
     try{
@@ -47,10 +48,24 @@ exports.bookTransportation = async (req, res) => {
         const { payments } = req.body;  // Assuming payments are passed in the request body
         const paymentMethod = payments?.paymentMethod || 'wallet'; // Default to wallet if not specified
         const userId = req.user._id;
+        const promoCode = req.body.promoCode;
 
         const transportation = await Transportation.findOne({ _id: id, isActive: true });
         if (!transportation) {
             return res.status(404).json({ message: 'Transportation not found or Inactive' });
+        }
+
+        const existingPromoCode = await PromoCodes.findOne({
+            code: promoCode,
+            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+        });
+
+        if (!existingPromoCode) {
+            return res.status(400).json({ message: "Invalid or expired Promo Code" });
+        }
+
+        if (existingPromoCode.usageLimit <= 0) {
+            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
         }
 
         // Check for existing pending bookings for the same transportation and date
@@ -65,7 +80,8 @@ exports.bookTransportation = async (req, res) => {
             return res.status(400).json({ message: "You have already a Pending booking on this Transportation on the same date" });
         }
 
-        const totalPrice = transportation.price; // Assuming you have a price field in the Transportation model
+        let totalPrice = transportation.price; // Assuming you have a price field in the Transportation model
+        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
         const tourist = await Tourist.findById(userId);
         if (!tourist) {
             return res.status(404).json({ message: 'Tourist not found.' });

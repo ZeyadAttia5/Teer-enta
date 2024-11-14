@@ -6,6 +6,10 @@ const router = express.Router();
 
 router.get('/totalUsers' ,statisticsController.getTotalUsers);
 router.get('/newUsersPerMonth',statisticsController.getNewUsersPerMonth);
-router.get('/itineraryTouristCount/:id', statisticsController.getItineraryTouristCount );
-router.get('/activityTouristCount/:id', statisticsController.getActivityTouristCount);
+router.get('/report/adminRevenue',isAuth, statisticsController.getAdminRevenueReport);
+router.get('/report/itinerary',isAuth, statisticsController.getItineraryReport);
+router.get('/report/activity',isAuth, statisticsController.getActivityReport);
+router.get('/report/transportation',isAuth, statisticsController.getTransportationReport);
+router.get('/report/order',isAuth, statisticsController.getProductReport);
+
 module.exports = router;

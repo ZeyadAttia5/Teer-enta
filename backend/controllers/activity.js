@@ -2,6 +2,7 @@ const Activity = require('../models/Activity/Activity');
 const Itinerary = require('../models/Itinerary/Itinerary');
 const BookedActivity = require('../models/Booking/BookedActivitie');
 const Tourist = require('../models/Users/Tourist');
+const PromoCodes = require('../models/PromoCodes');
 const mongoose = require('mongoose')
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 const BrevoService = require("../Util/mailsHandler/brevo/brevoService");
@@ -299,6 +300,7 @@ exports.bookActivity = async (req, res) => {
         const {id} = req.params; // Activity ID
         const userId = req.user._id; // Logged-in user ID (Tourist)
         let {paymentMethod} = req.body; // Payment method: wallet, credit_card, or cash_on_delivery
+        const promoCode = req.body.promoCode;
         paymentMethod = paymentMethod || 'wallet';
         // Find the activity
         const activity = await Activity.findOne({isActive: true, _id: id});
@@ -316,13 +318,26 @@ exports.bookActivity = async (req, res) => {
         if (existingBooking && existingBooking.date.toISOString().split('T')[0] === activity.date.toISOString().split('T')[0]) {
             return res.status(400).json({message: "You already have a pending booking for this activity on the same date"});
         }
+        const existingPromoCode = await PromoCodes.findOne({
+            code: promoCode,
+            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+        });
+
+        if (!existingPromoCode) {
+            return res.status(400).json({ message: "Invalid or expired Promo Code" });
+        }
+
+        if (existingPromoCode.usageLimit <= 0) {
+            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+        }
 
         // Retrieve the tourist's wallet balance if needed
         const tourist = await Tourist.findById(userId);
 
         const activeDiscount = activity.specialDiscounts.find(discount => discount.isAvailable);
         const maxPrice = activity.price.max;// TODO this should be reviewed
-        const totalPrice = activeDiscount ? maxPrice * (1 - activeDiscount.discount / 100) : maxPrice;
+        let totalPrice = activeDiscount ? maxPrice * (1 - activeDiscount.discount / 100) : maxPrice;
+        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
         // Handle payment method
         if (paymentMethod === 'wallet') {
             // Wallet payment method

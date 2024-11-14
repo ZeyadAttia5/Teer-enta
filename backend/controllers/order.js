@@ -7,6 +7,7 @@ const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
 const brevoService = new BrevoService(brevoConfig);
 const ProductOutOfStockTemplate = require("../Util/mailsHandler/mailTemplets/6ProductOutOfStockTemplate");
 const FlaggedActivityTemplate = require("../Util/mailsHandler/mailTemplets/7FlaggedActivityTemplate");
+const PromoCodes = require("../models/PromoCodes");
 exports.getOrders = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -73,11 +74,23 @@ exports.checkOutOrder = async (req, res) => {
         const userId = req.user._id;
         const deliveryAddress = req.body.deliveryAddress;
         const paymentMethod = req.body.paymentMethod; // wallet, credit card, or cash on delivery
-
+        const promoCode = req.body.promoCode;
         const user = await Tourist.findById(userId).populate('cart.product');
 
         if (!user || !user.cart || user.cart.length === 0) {
             return res.status(400).json({ message: 'No products in the cart to create an order.' });
+        }
+        const existingPromoCode = await PromoCodes.findOne({
+            code: promoCode,
+            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+        });
+
+        if (!existingPromoCode) {
+            return res.status(400).json({ message: "Invalid or expired Promo Code" });
+        }
+
+        if (existingPromoCode.usageLimit <= 0) {
+            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
         }
 
         let totalPrice = 0;
@@ -101,6 +114,7 @@ exports.checkOutOrder = async (req, res) => {
             });
             totalPrice += cartItem.quantity * product.price;
         }
+        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
 
         if (paymentMethod === 'wallet') {
             if (user.wallet < totalPrice) {

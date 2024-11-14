@@ -3,6 +3,7 @@ const errorHandler = require("../Util/ErrorHandler/errorSender");
 const Tourist = require("../models/Users/Tourist");
 const { getCityCodes } = require("../Util/LocationCodes");
 const BookedHotel = require("../models/Booking/BookedHotel");
+const PromoCodes = require("../models/PromoCodes");
 
 const amadeus = new Amadeus({
     clientId: process.env.AMADEUS_CLIENT_ID,
@@ -51,13 +52,27 @@ exports.getHotelOffers = async (req, res) => {
 exports.bookHotel = async (req, res) => {
     const { hotel, offer, guests, payments } = req.body;
     const paymentMethod = payments.paymentMethod || 'wallet'; // Default to wallet if not specified
+    const promoCode = req.body.promoCode;
 
     if (!hotel || !offer || !guests || !payments) {
         return res.status(400).json({ error: "Invalid request body: required fields missing (hotel, offer, guests, payments)" });
     }
 
     try {
-        const totalPrice = offer.price.total; // Get total price for the booking
+        const existingPromoCode = await PromoCodes.findOne({
+            code: promoCode,
+            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+        });
+
+        if (!existingPromoCode) {
+            return res.status(400).json({ message: "Invalid or expired Promo Code" });
+        }
+
+        if (existingPromoCode.usageLimit <= 0) {
+            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+        }
+        let totalPrice = offer.price.total; // Get total price for the booking
+        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
         const userId = req.user._id;
 
         // Retrieve the tourist's details (e.g., wallet balance)

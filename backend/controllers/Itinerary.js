@@ -10,6 +10,7 @@ const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
 const brevoService = new BrevoService(brevoConfig);
 const FlaggedItineraryTemplate = require("../Util/mailsHandler/mailTemplets/1FlaggedItineraryTemplate");
 const PaymentReceiptItemTemplate = require("../Util/mailsHandler/mailTemplets/2PaymentReceiptItemTemplate");
+const PromoCodes = require("../models/PromoCodes");
 
 exports.getItineraries = async (req, res, next) => {
     try {
@@ -400,6 +401,7 @@ exports.bookItinerary = async (req, res) => {
         const { id } = req.params;
         const { date, paymentMethod = 'wallet' } = req.body; // Default to 'wallet' if payment method is not provided
         const userId = req.user._id;
+        const promoCode = req.body.promoCode;
 
         const itinerary = await Itinerary.findOne({ isActive: true, _id: id });
         if (!itinerary) {
@@ -416,10 +418,22 @@ exports.bookItinerary = async (req, res) => {
         if (existingBooking) {
             return res.status(400).json({ message: "You already have a pending booking for this itinerary on the selected date" });
         }
+        const existingPromoCode = await PromoCodes.findOne({
+            code: promoCode,
+            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+        });
+
+        if (!existingPromoCode) {
+            return res.status(400).json({ message: "Invalid or expired Promo Code" });
+        }
+
+        if (existingPromoCode.usageLimit <= 0) {
+            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+        }
 
         const tourist = await Tourist.findById(userId);
-        const totalPrice = itinerary.price; // Adjust this if needed to dynamically handle different prices
-
+        let totalPrice = itinerary.price; // Adjust this if needed to dynamically handle different prices
+        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
         if (paymentMethod === 'wallet') {
             if (tourist.wallet < totalPrice) {
                 return res.status(400).json({ message: "Insufficient wallet balance" });
