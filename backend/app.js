@@ -34,6 +34,7 @@ require('./scheduler/PromoCodeSenderBD');
 require('./scheduler/upcomingEventsBookedReminder');
 require('./scheduler/DeadLineSchaduler');
 const {initSocket} = require("./Util/socket");
+const http = require('http');
 
 const server = http.createServer(app);
 initSocket(server);
