@@ -5,6 +5,7 @@ import { Button, Typography, Spin, Divider } from "antd";
 import { getProduct } from "../../api/products.ts"; // Import Ant Design components
 import Reviews from "../Store/reviews.jsx";
 import FeedbackForm from "../shared/FeedBackForm/FeedbackForm.jsx";
+import { message } from "antd";
 import { FaHeart } from "react-icons/fa";
 import {
   getProductReviews,
@@ -14,6 +15,7 @@ import {
 } from "../../api/products.ts";
 import ProductReviews from "../Store/productReviews.jsx";
 import { getMyCurrency } from "../../api/profile.ts"; // Import the ProductReviews component
+import { addToWishlist, deleteWishlistProduct, getWishlist } from "../../api/cart.ts";
 const { Title, Paragraph } = Typography;
 
 const ProductDetails = ({ setFlag }) => {
@@ -52,9 +54,12 @@ const ProductDetails = ({ setFlag }) => {
   const handleWishToggle = async () => {
     try {
       if (isWished === true) {
-        // TODO Send request to remove from wishlist
+        await deleteWishlistProduct(product._id);
+        message.success("Product removed from wishlist");
+
       } else {
-        // TODO Send request to add to wishlist
+        await addToWishlist(product._id);
+        message.success("Product added to wishlist");
       }
       setIsWished((prevState) => !prevState); // Toggle the archived state
     } catch (error) {
@@ -67,6 +72,17 @@ const ProductDetails = ({ setFlag }) => {
       try {
         const response = await getProduct(id);
         setProduct(response.data);
+
+        // Get the wishlist and check if the product id exists there
+        const wishlistResponse = await getWishlist();
+        if (!wishlistResponse.data.wishlist || wishlistResponse.status === 404)
+          return;
+        else {
+          const wishlist = new Set(
+            wishlistResponse.data.wishlist.map((product) => product._id)
+          );
+          setIsWished(wishlist.has(id));
+        }
 
         // other product fetching and state updates here...
       } catch (err) {
