@@ -38,7 +38,7 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
       >
-        <button className="bg-[#58A399] text-white py-2 px-4 rounded-md focus:outline-none">
+        <button className="bg-second text-white py-2 px-4 rounded-md focus:outline-none">
           Filter & Sort ⌄
         </button>
         {isOpen && (

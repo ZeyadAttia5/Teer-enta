@@ -115,7 +115,7 @@ const TouristProfile = () => {
 
   return (
     <Spin spinning={loading} tip="Updating Profile...">
-      <div className="flex justify-center">
+      <div className="flex ">
         <div className="flex gap-16 w-[80%]">
           <UserCard
             username={user.username}
@@ -129,14 +129,14 @@ const TouristProfile = () => {
             level={level}
           />
 
-          <div className="flex justify-center">
-            <div className="max-w-xl p-4 bg-white shadow-lg rounded-lg">
-              <div className="flex justify-between">
+          <div className="flex justify-center m-8 w-fit">
+            <div className="max-w-xl p-4 bg-fourth border-gray-300 border-2 w-[500px] rounded-lg">
+              <div className="flex justify-between w-fit">
                 <h2 className="text-2xl font-bold mb-4">
                   {fetchedData.username}
                 </h2>
               </div>
-              <Form layout="vertical">
+              <Form layout="vertical" className="">
                 <Form.Item label="Phone Number">
                   <Input
                     value={fetchedData.mobileNumber}
@@ -232,7 +232,7 @@ const TouristProfile = () => {
                 </div>
               </Form>
 
-              <div className="flex gap-4 mt-4">
+              <div className="flex gap-3 justify-between mt-4">
                 {!isEditing ? (
                   <Button type="primary" onClick={() => setIsEditing(true)}>
                     Edit Profile

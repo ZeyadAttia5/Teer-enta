@@ -9,7 +9,7 @@ const StarRating = ({ rating }) => {
       {[...Array(totalStars)].map((_, index) => (
         <svg
           key={index}
-          className={`w-5 h-5 ${index < filledStars ? 'text-yellow-500' : 'text-gray-300'}`} // Change color based on filled
+          className={`w-5 h-5 ${index < filledStars ? 'text-yellow-400' : 'text-fourth'}`} // Change color based on filled
           fill="currentColor"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"

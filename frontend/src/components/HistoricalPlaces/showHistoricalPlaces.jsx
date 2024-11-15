@@ -83,7 +83,7 @@ const ShowHistoricalPlaces = () => {
 
     return (
         <div
-            className="max-w-3xl mx-auto mt-10 p-8 pb-10 mb-16 bg-white shadow-lg rounded-lg border border-gray-200 hover:scale-105 hover:bg-[#E2F4C5] transition-transform duration-300 ease-in-out">
+            className="max-w-3xl mx-auto mt-10 p-8 pb-10 mb-16 bg-white shadow-lg rounded-lg border border-gray-200  transition-transform duration-300 ease-in-out">
             <h2 className="text-3xl font-semibold mb-6 text-gray-700 text-center">{historicalPlace.name}</h2>
             <div className="mb-8 text-center">
                 <Space>
