@@ -6,6 +6,7 @@ import { Input, Row, Col, Button } from "antd";
 import { FaHeart } from "react-icons/fa";
 import { getProducts, getArchivedProducts } from "../../api/products.ts";
 import { getCurrency } from "../../api/account.ts";
+import { addToWishlist, deleteWishlistProduct, getWishlist } from "../../api/cart.ts";
 
 const AdminProductGrid = ({ setFlag }) => {
     setFlag(false);
@@ -29,9 +30,18 @@ const AdminProductGrid = ({ setFlag }) => {
             try {
                 const response = showArchived ? await getArchivedProducts() : await getProducts();
                 setProducts(response.data);
-                // Populate the wishlist state from the data
-                const wishlistItems = new Set(response.data.filter(p => p.isInWishlist).map(p => p._id));
-                setWishlist(wishlistItems);
+                
+                try {
+                    const wishlistResponse = await getWishlist();
+                    if (!wishlistResponse.data.wishlist || wishlistResponse.status===404) return;
+
+                    setWishlist(new Set(wishlistResponse.data.wishlist.map((product) => product._id)));
+                } catch (err) {
+                    console.error("Fetch wishlist error: ", err);
+                }
+
+                
+                
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -57,21 +67,17 @@ const AdminProductGrid = ({ setFlag }) => {
             const updatedWishlist = new Set(wishlist);
             if (wishlist.has(productId)) {
                 updatedWishlist.delete(productId);
-                // TODO call the remove from wishlist api
-
+                await deleteWishlistProduct(productId);      
                 setFeedbackMessage("Product removed from wishlist");
             } else {
                 updatedWishlist.add(productId);
-                // Send request to archiveProduct API to update wishlist status
-                // TODO call the add to wishlist api
-                
-
+                await addToWishlist(productId);         
                 setFeedbackMessage("Product added to wishlist");
             }
             setWishlist(updatedWishlist);
             setTimeout(() => setFeedbackMessage(""), 3000);
         } catch (err) {
-            setError("Failed to update wishlist status");
+            console.error("Wishlist toggle error: ", err);
         }
     };
 
