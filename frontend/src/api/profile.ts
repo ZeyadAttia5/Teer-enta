@@ -62,10 +62,10 @@ export const chooseMyCurrency = async (id) => {
   );
 };
 
-export const saveActivity = async (activityData) => {
+export const saveActivity = async (activityId) => {
   return await axios.post(
-    `${process.env.REACT_APP_BACKEND_URL}/Profile/activity/save`,
-    activityData,
+    `${process.env.REACT_APP_BACKEND_URL}/Profile/save/activity/${activityId}`,
+    activityId,
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -76,7 +76,7 @@ export const saveActivity = async (activityData) => {
 
 export const getSavedActivities = async () => {
   return await axios.get(
-    `${process.env.REACT_APP_BACKEND_URL}/Profile/activities/saved`,
+    `${process.env.REACT_APP_BACKEND_URL}/Profile/saved/activities`,
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
