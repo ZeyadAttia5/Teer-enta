@@ -186,10 +186,6 @@ exports.getFlightBookings = async (req, res) => {
             .find({createdBy: userId, isActive: true})
             .sort({createdAt: -1});
 
-        if (bookedFlights.length === 0) {
-            return res.status(404).json({message: 'No flight bookings found.'});
-        }
-
         res.status(200).json(bookedFlights);
     } catch (err) {
         console.log(err);
