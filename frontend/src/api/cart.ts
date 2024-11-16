@@ -32,11 +32,20 @@ export const addToWishlist = async (productId) => {
     }
   };
 export const addToCartFromWishlist = async (productId) => {
-    return await axios.post(`${API_BASE_URL}/cart/add/cartFromWishlist/product/${productId}`, {
+  try{  
+    const response = await axios.post(`${API_BASE_URL}/cart/add/cartFromWishlist/product/${productId}`,
+      {}, // Request body (empty here)
+      {
         headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
-    });
+      }
+    );
+    return response.data; // Adjust based on backend response
+  } catch (error) {
+    console.error("Error adding product to wishlist:", error);
+    throw error; // Throw the error to handle it in the UI
+  }
 }
 export const addToCart = async (productId) => {
     return await axios.post(`${API_BASE_URL}/cart/wishlist/add/${productId}`)

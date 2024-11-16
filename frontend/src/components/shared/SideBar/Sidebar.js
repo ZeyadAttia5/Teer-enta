@@ -165,6 +165,9 @@ const Sidebar = ({visible, onClose}) => {
                         <Menu.Item key="13" onClick={() => handleClick("/products")}>
                             All Products
                         </Menu.Item>
+                        <Menu.Item key="15" onClick={() => handleClick("/wishlisted_products")}>
+                            Wishlist
+                        </Menu.Item>
                         {(user &&
                             (user.userRole === "Seller" || user.userRole === "Admin")) && (
                             <>
