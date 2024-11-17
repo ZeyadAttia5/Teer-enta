@@ -172,7 +172,7 @@ const ActivityCard = ({
                         await saveActivity(id);
                         message.success("Activity saved successfully!");
                       } catch (error) {
-                        message.error("Failed to save activity.");
+                        message.error(error.response.data.message);
                       }
                     }}
                     className="text-white bg-[#FF6347] hover:bg-[#FF4500] transition-all duration-300 mt-4"
