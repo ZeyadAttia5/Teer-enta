@@ -33,7 +33,7 @@ const ActivityCard = ({
   category,
   specialDiscounts,
   ratings,
-  averageRating,
+
   currencyCode,
   currencyRate,
 }) => {
@@ -42,6 +42,15 @@ const ActivityCard = ({
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+
+  // Calculate average rating
+  const averageRating =
+    ratings.length > 0
+      ? ratings.reduce((acc, rat) => acc + (parseFloat(rat.rating) || 0), 0) /
+        ratings.length
+      : 0;
+
+  console.log("average rating is ......" + averageRating);
 
   // Fetch address from Google Maps API based on latitude and longitude
   useEffect(() => {
