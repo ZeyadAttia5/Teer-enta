@@ -18,7 +18,7 @@ import {
     Switch,
 } from "antd";
 import {ReloadOutlined} from '@ant-design/icons';
-
+import { GlobalOutlined, DollarCircleOutlined, TeamOutlined, EnvironmentTwoTone, SwapRightOutlined } from '@ant-design/icons';
 import {
     MinusCircleOutlined,
     PlusOutlined,
@@ -773,47 +773,65 @@ const ItineraryScreen = ({setFlag}) => {
                 </div>
 
             </div>
-            {user === null || user.userRole === "Tourist" ? (
+            {user === null || user?.userRole === "Tourist" ? (
                 <main className="flex flex-wrap justify-center items-center min-h-screen py-10">
                 {sortedItineraries?.map((itinerary, index) => (
                     <div
                         key={index}
-                        className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:bg-[#E2F4C5] hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4"
-                        style={{ cursor: "pointer" }}
+                        className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
                     >
+                        {/* Book Now Circle */}
+                        <div className="absolute top-4 left-4 bg-[#58A399] text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
+                            <span>Book Now</span>
+                        </div>
+            
                         <Card
-                            className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:text-white"
-                            style={{ backgroundColor: "#ffffff" }} // Set a default background color for better visibility
+                            className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
+                            style={{ backgroundColor: "#ffffff" }} // Default background color
                         >
                             <Card.Meta
                                 title={
                                     <span
-                                        className="font-bold text-3xl mb-2 transition-transform duration-500 ease-out hover:scale-150"
-                                        style={{ color: "#496989" }}
+                                        className="font-bold text-4xl mb-2 transition-transform duration-500 ease-out" // Increased font size
+                                        style={{ color: "#333333" }}
                                     >
-                                        {itinerary.name}
+                                        {itinerary?.name}
                                     </span>
                                 }
                                 description={
-                                    <div
-                                        className="flex flex-col space-y-2"
-                                        style={{ color: "#496989" }}
-                                    >
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            🌐 {itinerary.language}
-                                        </span>
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            💲 {currency?.code} {(itinerary.price * currency?.rate).toFixed(2)}
-                                        </span>
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            ♿ {itinerary.accessibility || "N/A"}
-                                        </span>
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            📍 from: {itinerary.pickupLocation}
-                                        </span>
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            📍 to: {itinerary.dropOffLocation}
-                                        </span>
+                                    <div className="flex flex-col space-y-3" style={{ color: "#333333" }}>
+                                        {/* Horizontal Line to Split the Card */}
+                                        <hr className="my-4 border-t-2 border-[#58A399]" /> {/* Green line */}
+                                        <Tooltip title="Language">
+                                            <span className="font-semibold text-lg hover:text-[#58A399]">
+                                                <GlobalOutlined style={{ marginRight: 8 }} />
+                                                {itinerary?.language}
+                                            </span>
+                                        </Tooltip>
+                                        <Tooltip title="Price">
+                                            <span className="font-semibold text-lg hover:text-[#58A399]">
+                                                <DollarCircleOutlined style={{ marginRight: 8 }} />
+                                                {currency?.code} {(itinerary?.price * currency?.rate).toFixed(2)}
+                                            </span>
+                                        </Tooltip>
+                                        <Tooltip title="Accessibility">
+                                            <span className="font-semibold text-lg hover:text-[#58A399]">
+                                                <TeamOutlined style={{ marginRight: 8 }} />
+                                                {itinerary?.accessibility || "N/A"}
+                                            </span>
+                                        </Tooltip>
+                                        <Tooltip title="Travel Route">
+    <span className="font-semibold text-lg hover:text-[#58A399] flex items-center">
+        <EnvironmentTwoTone
+            twoToneColor="#000000" // Set the color to black
+            style={{ marginRight: 8 }}
+        />
+        {itinerary?.pickupLocation}
+        <span className="mx-2 text-[#333333]">⇢</span>
+        {itinerary?.dropOffLocation}
+    </span>
+</Tooltip>
+
                                     </div>
                                 }
                             />
@@ -821,14 +839,14 @@ const ItineraryScreen = ({setFlag}) => {
             
                         <div className="flex justify-center items-center gap-4 p-4">
                             <Button
-                                onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}
+                                onClick={() => navigate(`iternaryDetails/${itinerary?._id}`)}
                                 className="text-white bg-[#58A399] hover:bg-[#4a8f7a] transition-all duration-300"
                             >
                                 Show Details
                             </Button>
-                            {user && user.userRole === "Tourist" && (
+                            {user && user?.userRole === "Tourist" && (
                                 <Button
-                                    onClick={() => handleBookItinerary(itinerary._id)}
+                                    onClick={() => handleBookItinerary(itinerary?._id)}
                                     className="text-white bg-[#496989] hover:bg-[#3b5b68] transition-all duration-300"
                                 >
                                     Book
@@ -838,6 +856,8 @@ const ItineraryScreen = ({setFlag}) => {
                     </div>
                 ))}
             </main>
+            
+
             
             
             ) : (
