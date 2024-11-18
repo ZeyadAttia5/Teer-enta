@@ -80,11 +80,11 @@ const ActivityDetails: React.FC = () => {
     if (!activity) return <Alert type="warning" message="Activity not found"/>;
 // hello
     const averageRating =
-        activity.ratings.length > 0
+        activity?.ratings?.length > 0
             ? Number(
                 (
-                    activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
-                    activity.ratings.length
+                    activity?.ratings?.reduce((acc, curr) => acc + curr.rating, 0) /
+                    activity?.ratings?.length
                 ).toFixed(1)
             )
             : 0;
@@ -98,25 +98,25 @@ const ActivityDetails: React.FC = () => {
       - Time: ${activity?.time}
       - Location: ${
             activity?.location
-                ? `Latitude: ${activity.location.lat}, Longitude: ${activity.location.lng}`
+                ? `Latitude: ${activity?.location?.lat}, Longitude: ${activity?.location?.lng}`
                 : "Location not specified"
         }
       - Price Range: ${
             activity?.price?.min && activity?.price?.max
-                ? `${currency?.code} ${(currency?.rate * activity.price.min).toFixed(2)} - ${(currency?.rate * activity.price.max).toFixed(2)}`
+                ? `${currency?.code} ${(currency?.rate * activity?.price?.min).toFixed(2)} - ${(currency?.rate * activity?.price?.max).toFixed(2)}`
                 : "Not specified"
         }
       - Category: ${activity?.category?.category || "No category"}
       - Tags: ${
-            activity?.preferenceTags.length > 0
-                ? activity.preferenceTags.map((tag) => tag.tag).join(", ")
+            activity?.preferenceTags?.length > 0
+                ? activity?.preferenceTags?.map((tag) => tag.tag).join(", ")
                 : "No tags"
         }
 
       Special Discounts:
       ${
-            activity?.specialDiscounts.length > 0
-                ? activity.specialDiscounts
+            activity?.specialDiscounts?.length > 0
+                ? activity?.specialDiscounts
                     .map(
                         (discount, index) =>
                             `${index + 1}. ${discount.discount}% OFF - ${
@@ -128,12 +128,12 @@ const ActivityDetails: React.FC = () => {
         }
 
       Ratings:
-      - Total Ratings: ${activity?.ratings.length}
+      - Total Ratings: ${activity?.ratings?.length}
       - Average Rating: ${
-            activity?.ratings.length
+            activity?.ratings?.length
                 ? (
-                    activity.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
-                    activity.ratings.length
+                    activity?.ratings?.reduce((acc, curr) => acc + curr.rating, 0) /
+                    activity?.ratings?.length
                 ).toFixed(1)
                 : "No ratings yet"
         }
@@ -189,16 +189,16 @@ const ActivityDetails: React.FC = () => {
                                 fontWeight: 'bold',
                                 textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
                             }}>
-                                {activity.name}
+                                {activity?.name}
                             </Title>
                             <Space size="small">
                                 <Badge
-                                    status={activity.isActive ? "success" : "error"}
-                                    text={activity.isActive ? "Active" : "Inactive"}
+                                    status={activity?.isActive ? "success" : "error"}
+                                    text={activity?.isActive ? "Active" : "Inactive"}
                                 />
                                 <Badge
-                                    status={activity.isBookingOpen ? "processing" : "default"}
-                                    text={activity.isBookingOpen ? "Booking Open" : "Booking Closed"}
+                                    status={activity?.isBookingOpen ? "processing" : "default"}
+                                    text={activity?.isBookingOpen ? "Booking Open" : "Booking Closed"}
                                 />
                             </Space>
                         </Col>
@@ -206,7 +206,7 @@ const ActivityDetails: React.FC = () => {
                             <Space direction="vertical" align="end">
                                 <Rate disabled value={averageRating} allowHalf/>
                                 <Text type="secondary" style={{color: "#7D8798"}}>
-                                    {activity.ratings.length} ratings
+                                    {activity?.ratings?.length} ratings
                                 </Text>
                                 <Space>
                                     <Button
@@ -263,7 +263,7 @@ const ActivityDetails: React.FC = () => {
                                     <Col span={12}>
                                         <Statistic
                                             title={<Text style={{color: "white"}}>Date</Text>}
-                                            value={new Date(activity.date).toLocaleDateString()}
+                                            value={new Date(activity?.date).toLocaleDateString()}
                                             prefix={<CalendarOutlined/>}
                                             valueStyle={{color: "black"}}
                                         />
@@ -271,7 +271,7 @@ const ActivityDetails: React.FC = () => {
                                     <Col span={12}>
                                         <Statistic
                                             title={<Text style={{color: "white"}}>Time</Text>}
-                                            value={activity.time}
+                                            value={activity?.time}
                                             prefix={<ClockCircleOutlined/>}
                                             valueStyle={{color: "black"}}
                                         />
@@ -281,7 +281,7 @@ const ActivityDetails: React.FC = () => {
                                             title={<Text style={{color: "white"}}>Price Range</Text>}
                                             value={
                                                 activity?.price?.min && activity?.price?.max
-                                                    ? `${currency?.code} ${(currency?.rate * activity.price.min).toFixed(2)} - ${(currency?.rate * activity.price.max).toFixed(2)}`
+                                                    ? `${currency?.code} ${(currency?.rate * activity?.price?.min).toFixed(2)} - ${(currency?.rate * activity?.price?.max).toFixed(2)}`
                                                     : "Not specified"
                                             }
 
@@ -305,12 +305,12 @@ const ActivityDetails: React.FC = () => {
                                 <Space direction="vertical">
                                     <div>
                                         <Text strong style={{color: "white"}}>Category: </Text>
-                                        <Tag color="blue">{activity.category?.category}</Tag>
+                                        <Tag color="blue">{activity?.category?.category}</Tag>
                                     </div>
                                     <div>
                                         <Text strong style={{color: "white"}}>Preference Tags: </Text>
                                         <Space wrap>
-                                            {activity.preferenceTags.map((tag) => (
+                                            {activity?.preferenceTags?.map((tag) => (
                                                 <Tag key={tag._id} color="green">
                                                     {tag.tag}
                                                 </Tag>
@@ -336,7 +336,7 @@ const ActivityDetails: React.FC = () => {
                             onMouseEnter={() => setHoveredCard("location")}
                             onMouseLeave={() => setHoveredCard(null)}
                         >
-                            <StaticMap longitude={activity.location.lng} latitude={activity.location.lat}/>
+                            <StaticMap longitude={activity?.location?.lng} latitude={activity?.location?.lat}/>
                         </Card>
                     </Col>
                 </Row>
@@ -378,8 +378,8 @@ const ActivityDetails: React.FC = () => {
                                     }
                                 >
                                     <List.Item.Meta
-                                        title={<Text style={{color: "white"}}>{`${discount.discount}% OFF`}</Text>}
-                                        description={<Text style={{color: "white"}}>{discount.Description}</Text>}
+                                        title={<Text style={{color: "white"}}>{`${discount?.discount}% OFF`}</Text>}
+                                        description={<Text style={{color: "white"}}>{discount?.Description}</Text>}
                                     />
                                 </List.Item>
                             )}
@@ -433,7 +433,7 @@ const ActivityDetails: React.FC = () => {
                                                 description={
                                                     <Space>
                                                         <Text className="text-black">
-                                                            {comment.comment}
+                                                            {comment?.comment}
                                                         </Text>
                                                     </Space>
                                                 }
@@ -474,15 +474,15 @@ const ActivityDetails: React.FC = () => {
                         <Space direction="vertical" size="small" style={{textAlign: 'center'}}>
                             <Text type="secondary" style={{color: "black"}}>
                                 <UserOutlined className="mr-2 text-blue-500"/>
-                                <strong>Created by:</strong> {activity.createdBy.username}
+                                <strong>Created by:</strong> {activity?.createdBy?.username}
                             </Text>
                             <Text type="secondary" style={{color: "black"}}>
                                 <CalendarOutlined className="mr-2 text-blue-500"/>
-                                <strong>Created:</strong> {new Date(activity.createdAt).toLocaleDateString()}
+                                <strong>Created:</strong> {new Date(activity?.createdAt).toLocaleDateString()}
                             </Text>
                             <Text type="secondary" style={{color: "black"}}>
                                 <ClockCircleOutlined className="mr-2 text-blue-500"/>
-                                <strong>Last updated:</strong> {new Date(activity.updatedAt).toLocaleDateString()}
+                                <strong>Last updated:</strong> {new Date(activity?.updatedAt).toLocaleDateString()}
                             </Text>
                         </Space>
                     </div>

@@ -32,21 +32,21 @@ const HistoricalPlaceSingleCard = ({currency, places}) => {
     };
 
     return (
-        <Link to={`/historicalPlace/details/${places._id}`}>
+        <Link to={`/historicalPlace/details/${places?._id}`}>
         <div
             className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:bg-[#E2F4C5] hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
             <img
                 className="w-full h-48 object-cover"
                 src={
-                    places.images && places.images.length > 0
-                        ? places.images[0]
+                    places?.images && places?.images?.length > 0
+                        ? places?.images[0]
                         : "defaultImageUrl.jpg"
                 }
-                alt={places.name}
+                alt={places?.name}
                 loading="lazy"
             />
             <div className="p-6">
-                <h3 className="font-bold text-2xl mb-2 text-[#496989]">{places.name}</h3>
+                <h3 className="font-bold text-2xl mb-2 text-[#496989]">{places?.name}</h3>
                 {/* <p className="text-[#58A399] text-sm leading-relaxed mb-4">
                     {places.description.length > 120
                         ? places.description.slice(0, 100) + "..."
@@ -55,16 +55,16 @@ const HistoricalPlaceSingleCard = ({currency, places}) => {
 
                 <div className="mb-4">
                 <span className="inline-block text-sm text-gray-500 font-medium">
-                    Opening Hours: {places.openingHours}
+                    Opening Hours: {places?.openingHours}
                 </span>
                 </div>
 
                 <div className="mb-4">
                     <h4 className="font-bold text-gray-700 mb-2">Ticket Prices:</h4>
-                    {places.tickets.map((ticket, index) => (
+                    {places?.tickets?.map((ticket, index) => (
                         <div key={ticket.type + index} className="text-gray-600 text-sm">
                             <span
-                                className="font-medium">{ticket.type}:</span> {(currency?.rate * ticket.price).toFixed(2)} {currency?.code}
+                                className="font-medium">{ticket?.type}:</span> {(currency?.rate * ticket?.price).toFixed(2)} {currency?.code}
                         </div>
                     ))}
                 </div>
@@ -73,10 +73,10 @@ const HistoricalPlaceSingleCard = ({currency, places}) => {
             <div className="px-6 pb-4 flex flex-wrap">
             <span
                 className="inline-block bg-blue-100 rounded-full px-3 py-1 text-xs font-medium text-blue-600 mr-2 mb-2">
-                {places.location}
+                {places?.location}
             </span>
-                {places.tags &&
-                    places.tags.map((tag, index) => (
+                {places?.tags &&
+                    places?.tags?.map((tag, index) => (
                         <div key={tag.name + index}>
                         <span
                             className="inline-block bg-green-100 rounded-full px-3 py-1 text-xs font-medium text-green-600 mr-2 mb-2">
@@ -97,7 +97,7 @@ const HistoricalPlaceSingleCard = ({currency, places}) => {
                 {(user && (user.userRole === "TourismGovernor") && user._id === places.createdBy) && (
             <div className="flex justify-center items-center gap-x-4 p-4">
                     <div className="flex gap-4">
-                        <Link to={`/historicalPlace/update/${places._id}`}>
+                        <Link to={`/historicalPlace/update/${places?._id}`}>
                             <div
                                 className="flex justify-center items-center w-10 h-10 text-yellow-600 hover:text-black hover:scale-105 hover:shadow-lg transition duration-300 ease-in-out">
                                 <AiOutlineEdit className="text-2xl" title="Edit"/>

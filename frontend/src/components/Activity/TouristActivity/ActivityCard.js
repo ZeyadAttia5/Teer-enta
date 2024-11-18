@@ -52,7 +52,7 @@ const ActivityCard = ({
             }
         };
         fetchAddress();
-    }, [location.lat, location.lng]);
+    }, [location?.lat, location?.lng]);
 
     const handleActivityDetails = (activityId) => {
         navigate(`/itinerary/activityDetails/${activityId}`);
@@ -92,11 +92,11 @@ const ActivityCard = ({
               <div className="flex items-center mb-4">
                 <span className="font-semibold">Rating:</span>
                 <Rate allowHalf disabled value={averageRating} className="ml-2" />
-                <span className="ml-2">{averageRating.toFixed(1)}</span>
+                <span className="ml-2">{averageRating?.toFixed(1)}</span>
               </div>
     
               {/* Special Discounts */}
-              {specialDiscounts?.length > 0 && specialDiscounts.map((discount, index) => discount.isAvailable && (
+              {specialDiscounts?.length > 0 && specialDiscounts?.map((discount, index) => discount.isAvailable && (
                 <div key={index} className="mb-4 p-3 rounded-lg bg-[#E2F4C5]">
                   <p className="font-semibold">
                     Special Discount: {discount.discount}% OFF - {discount.Description}
@@ -106,7 +106,7 @@ const ActivityCard = ({
     
               {/* Google Maps Link */}
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${location?.lat},${location?.lng}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-bold transition-all duration-300 ease-in-out text-[#496989] hover:underline"
