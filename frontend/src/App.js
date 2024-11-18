@@ -51,6 +51,7 @@ import ResetPassword from "./components/Auth/Password/ResetPassword";
 import BookItinerary from "./components/Itinerary/bookItinerary";
 import BookActivity from "./components/Activity/TouristActivity/bookActivity";
 import Bookings from "./components/Users/bookings/bookings";
+import UserReport from "./components/reports/UserReport.jsx";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -174,6 +175,16 @@ function App() {
             path="/historicalPlace/details/:id"
             element={<ShowHistoricalPlaces setFlag={setFlag} />}
           />
+          <Route
+            path="/reports/*"
+            element={
+              <Routes>
+                <Route path="/users" element={<UserReport />} />
+              </Routes>
+
+            }
+          />
+
 
           {/* User Management Routes */}
           <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />
