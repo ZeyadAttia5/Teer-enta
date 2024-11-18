@@ -50,11 +50,12 @@ exports.getNewUsersPerMonth = async (req, res) => {
 
 exports.getItineraryReport = async (req, res) => {
     try {
-
         const report = await Itinerary.aggregate([
-            { $match: { createdBy: new mongoose.Types.ObjectId(req.user._id) } }, // Filter itineraries created by the current user
             {
-                $lookup: { // Left join with BookedItinerary to get bookings if they exist
+                $match: { createdBy: new mongoose.Types.ObjectId(req.user._id) } // Filter itineraries created by the user
+            },
+            {
+                $lookup: { // Join with BookedItinerary to find associated bookings
                     from: "bookeditineraries",
                     localField: "_id",
                     foreignField: "itinerary",
@@ -62,68 +63,58 @@ exports.getItineraryReport = async (req, res) => {
                 }
             },
             {
-                $lookup: { // Join with User collection to get username of each booking creator
-                    from: "users",
-                    localField: "bookings.createdBy",
-                    foreignField: "_id",
-                    as: "createdByDetails"
+                $unwind: {
+                    path: "$bookings",
+                    preserveNullAndEmptyArrays: true // Include itineraries with no bookings
                 }
             },
             {
-                $addFields: { // Map each booking's creator username from the user details
-                    bookings: {
-                        $map: {
-                            input: "$bookings",
-                            as: "booking",
-                            in: {
-                                date: "$$booking.date",
-                                price: "$$booking.price",
-                                status: "$$booking.status",
-                                createdAt: "$$booking.createdAt",
-                                updatedAt: "$$booking.updatedAt",
-                                createdBy: {
-                                    $arrayElemAt: [
-                                        {
-                                            $filter: {
-                                                input: "$createdByDetails",
-                                                as: "user",
-                                                cond: { $eq: ["$$user._id", "$$booking.createdBy"] }
-                                            }
-                                        },
-                                        0
-                                    ]
-                                }
-                            }
+                $addFields: {
+                    month: {
+                        $month: "$bookings.date" // Extract the month from the booking date
+                    },
+                    year: {
+                        $year: "$bookings.date" // Extract the year from the booking date
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        itineraryId: "$_id",
+                        itineraryName: "$name",
+                        year: "$year",
+                        month: "$month"
+                    },
+                    monthlyRevenue: { $sum: "$bookings.price" }, // Sum of prices for each month
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        itineraryId: "$_id.itineraryId",
+                        itineraryName: "$_id.itineraryName"
+                    },
+                    revenueByMonth: {
+                        $push: {
+                            year: "$_id.year",
+                            month: "$_id.month",
+                            revenue: "$monthlyRevenue"
                         }
                     }
                 }
             },
             {
-                $project: { // Format the output fields for clarity
-                    itineraryId: "$_id",
-                    itineraryName: "$name",
-                    totalBookings: { $size: "$bookings" },
-                    totalSales: { $sum: "$bookings.price" },
-                    bookings: {
-                        $map: {
-                            input: "$bookings",
-                            as: "booking",
-                            in: {
-                                date: "$$booking.date",
-                                createdBy: "$$booking.createdBy.username", // Username of booking creator
-                                price: "$$booking.price",
-                                status: "$$booking.status",
-                                createdAt: "$$booking.createdAt",
-                                updatedAt: "$$booking.updatedAt"
-                            }
-                        }
-                    }
+                $project: {
+                    _id: 0,
+                    itineraryId: "$_id.itineraryId",
+                    itineraryName: "$_id.itineraryName",
+                    revenueByMonth: 1
                 }
             }
         ]);
 
-
-        res.json(report); // Send the report data as JSON response
+        res.json(report); // Return the report
     } catch (error) {
         errorHandler.SendError(res, error);
     }
@@ -134,40 +125,70 @@ exports.getActivityReport = async (req, res) => {
         const userId = new mongoose.Types.ObjectId(req.user._id); // Ensure user ID is an ObjectId
 
         const report = await Activity.aggregate([
-            { $match: { createdBy: userId} }, // Only activities created by user, active and appropriate
             {
-                $lookup: { // Left join with the BookedActivity collection to get bookings data (if any)
-                    from: "bookedactivities",  // Match the collection name for bookings
-                    localField: "_id",  // Match activity's ID
-                    foreignField: "activity", // Match the field in BookedActivity that links to the activity
+                $match: { createdBy: userId } // Filter activities created by the current user
+            },
+            {
+                $lookup: { // Join with BookedActivity collection to get booking details
+                    from: "bookedactivities",
+                    localField: "_id",
+                    foreignField: "activity",
                     as: "bookings"
                 }
             },
             {
+                $unwind: {
+                    path: "$bookings",
+                    preserveNullAndEmptyArrays: true // Include activities with no bookings
+                }
+            },
+            {
                 $addFields: {
-                    totalBookings: { $size: "$bookings" }, // Calculate total number of bookings
-                    totalSales: { $sum: { $map: { input: "$bookings", as: "booking", in: "$$booking.price" } } } // Sum of prices from bookings
+                    month: {
+                        $month: "$bookings.date" // Extract the month from the booking date
+                    },
+                    year: {
+                        $year: "$bookings.date" // Extract the year from the booking date
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        activityId: "$_id",
+                        activityName: "$name",
+                        year: "$year",
+                        month: "$month"
+                    },
+                    monthlyRevenue: { $sum: "$bookings.price" }, // Sum of prices for each month
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        activityId: "$_id.activityId",
+                        activityName: "$_id.activityName"
+                    },
+                    revenueByMonth: {
+                        $push: {
+                            year: "$_id.year",
+                            month: "$_id.month",
+                            revenue: "$monthlyRevenue"
+                        }
+                    }
                 }
             },
             {
                 $project: {
                     _id: 0,
-                    activityId: "$_id",
-                    activityName: "$name",
-                    totalBookings: 1,
-                    totalSales: 1,
-                    bookings: {
-                        $cond: {
-                            if: { $eq: [{ $size: "$bookings" }, 0] },
-                            then: "No bookings", // If no bookings, set to "No bookings"
-                            else: "$bookings" // Otherwise, include bookings details
-                        }
-                    }
+                    activityId: "$_id.activityId",
+                    activityName: "$_id.activityName",
+                    revenueByMonth: 1
                 }
             }
         ]);
 
-        res.json(report); // Send the report data as JSON response
+        res.json(report); // Return the report
     } catch (error) {
         console.error(error);
         errorHandler.SendError(res, error);
@@ -176,37 +197,68 @@ exports.getActivityReport = async (req, res) => {
 
 exports.getTransportationReport = async (req, res) => {
     try {
-        const userId = new mongoose.Types.ObjectId(req.user._id); // User’s ID to ensure we're looking at their transportation
+        const userId = new mongoose.Types.ObjectId(req.user._id); // Ensure user ID is an ObjectId
+
         const report = await Transportation.aggregate([
-            { $match: { createdBy: userId } }, // Only transportation created by the user and active
             {
-                $lookup: { // Left join with BookedTransportation to get bookings data (if any)
-                    from: "bookedtransportations",  // Collection for bookings
-                    localField: "_id",  // Match the transportation's ID
-                    foreignField: "transportation", // Match the booking's transportation field
-                    as: "bookings" // Add the bookings data as a new field
+                $match: { createdBy: userId } // Filter transportation options created by the user
+            },
+            {
+                $lookup: { // Join with BookedTransportation collection to get booking details
+                    from: "bookedtransportations",
+                    localField: "_id",
+                    foreignField: "transportation",
+                    as: "bookings"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$bookings",
+                    preserveNullAndEmptyArrays: true // Include transportation options with no bookings
                 }
             },
             {
                 $addFields: {
-                    totalBookings: { $size: "$bookings" }, // Count the number of bookings
-                    totalSales: { $sum: { $map: { input: "$bookings", as: "booking", in: "$$booking.price" } } } // Sum of prices for bookings
+                    month: {
+                        $month: "$bookings.date" // Extract the month from the booking date
+                    },
+                    year: {
+                        $year: "$bookings.date" // Extract the year from the booking date
+                    }
                 }
             },
             {
-                $project: { // Final output
-                    _id: 0,
-                    transportationId: "$_id",
-                    transportationName: "$name", // Transportation's name
-                    totalBookings: 1, // Total number of bookings
-                    totalSales: 1, // Total sales from bookings
-                    bookings: {
-                        $cond: { // If no bookings, show 'No bookings', else show the bookings details
-                            if: { $eq: [{ $size: "$bookings" }, 0] },
-                            then: "No bookings",
-                            else: "$bookings"
+                $group: {
+                    _id: {
+                        transportationId: "$_id",
+                        transportationName: "$name",
+                        year: "$year",
+                        month: "$month"
+                    },
+                    monthlyRevenue: { $sum: "$bookings.price" }, // Sum of prices for each month
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        transportationId: "$_id.transportationId",
+                        transportationName: "$_id.transportationName"
+                    },
+                    revenueByMonth: {
+                        $push: {
+                            year: "$_id.year",
+                            month: "$_id.month",
+                            revenue: "$monthlyRevenue"
                         }
                     }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    transportationId: "$_id.transportationId",
+                    transportationName: "$_id.transportationName",
+                    revenueByMonth: 1
                 }
             }
         ]);
@@ -217,6 +269,7 @@ exports.getTransportationReport = async (req, res) => {
         errorHandler.SendError(res, error);
     }
 };
+
 
 exports.getProductReport = async (req, res) => {
     try {
