@@ -52,6 +52,7 @@ import BookItinerary from "./components/Itinerary/bookItinerary";
 import BookActivity from "./components/Activity/TouristActivity/bookActivity";
 import Bookings from "./components/Users/bookings/bookings";
 import UserReport from "./components/reports/UserReport.jsx";
+import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -207,6 +208,10 @@ function App() {
           <Route
             path="/products"
             element={<AdminProductGrid setFlag={setFlag} />}
+          />
+          <Route
+            path="/wishlisted_products"
+            element={<WishlistedProductGrid setFlag={setFlag} />}
           />
           <Route
             path="/products/:id"
