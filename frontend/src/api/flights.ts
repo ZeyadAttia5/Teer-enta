@@ -46,3 +46,11 @@ export const bookFlight = async (flightOffer, travelers) => {
       }
     );
 }
+
+export const getBookedFlights = async () => {
+ return await axios.get(`${API_BASE_URL}/booked`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
+}
