@@ -128,14 +128,29 @@ const ActivityCard = ({
 
             {/* Booking Status */}
             <Tooltip title="Booking Availability">
-              <p
-                className={`font-semibold mt-2 ${
-                  isBookingOpen ? "text-red-600" : "text-red-600"
-                }`}
-              >
-                {isBookingOpen ? "Booking is Open!" : "Fully Booked! :("}
-              </p>
-            </Tooltip>
+  <p
+    className={`font-semibold mt-4 mb-2 px-4 py-1 rounded-full ${
+      isBookingOpen
+        ? "bg-yellow-100 text-green-600" // Light red background and red text for "Book your spot"
+        : "bg-gray-100 text-gray-600" // Gray background for "Fully Booked!"
+    }`}
+    style={{
+      display: "block", // Ensures the background fits exactly the text size
+      maxWidth: "fit-content",  // Makes sure the text container adapts to text width
+      whiteSpace: "nowrap", // Prevents the text from wrapping to a new line
+    }}
+  >
+    {isBookingOpen ? (
+      <>
+        🎟️ Book your spot
+      </>
+    ) : (
+      "Fully Booked! :("
+    )}
+  </p>
+</Tooltip>
+
+
           </div>
         </Card>
 
