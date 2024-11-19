@@ -468,16 +468,16 @@ const ItineraryDetails: React.FC = () => {
                         <Space direction="vertical" size="small" className="text-center">
                             <Text type="secondary" className="text-blue-500">
                                 <UserOutlined className="mr-2 text-blue-500"/>
-                                <strong>Created by:</strong> {tourGuide}
+                                <strong>Created by: </strong> {tourGuide}
                             </Text>
                             <Text type="secondary" className="text-blue-500">
                                 <CalendarOutlined className="mr-2 text-blue-500"/>
-                                <strong>Created:</strong> {new Date(itinerary?.createdAt ?? "").toLocaleDateString()}
+                                <strong>Created: </strong> {new Date(itinerary?.createdAt ?? "").toLocaleDateString()}
                             </Text>
                             <Text type="secondary" className="text-blue-500">
                                 <ClockCircleOutlined className="mr-2 text-blue-500"/>
                                 <strong>Last
-                                    Updated:</strong> {new Date(itinerary?.updatedAt ?? "").toLocaleDateString()}
+                                    Updated: </strong> {new Date(itinerary?.updatedAt ?? "").toLocaleDateString()}
                             </Text>
                         </Space>
                     </div>
