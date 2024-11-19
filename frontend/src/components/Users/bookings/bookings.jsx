@@ -15,6 +15,9 @@ import { rateTourGuide, commentOnTourGuide } from '../../../api/tourGuide.ts';
 import { Card, Tag, Button, Space, Select, message, Segmented, Typography } from 'antd';
 import { getCurrency, submitFeedback } from '../../../api/account.ts';
 import FeedbackForm from '../../shared/FeedBackForm/FeedbackForm.jsx';
+import { getBookedHotels } from '../../../api/hotels.ts';
+import {getBookedFlights} from '../../../api/flights.ts';
+import {getBookedTransportations} from '../../../api/transportation.ts';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -22,8 +25,14 @@ const { Option } = Select;
 const BookingGrid = () => {
     const [bookedActivities, setBookedActivities] = useState([]);
     const [bookedItineraries, setBookedItineraries] = useState([]);
+    const [bookedHotels, setBookedHotels] = useState([]);
+    const [bookedFlights, setBookedFlights] = useState([]);
+    const [bookedTransportations, setBookedTransportations] = useState([]);
     const [activityStatus, setActivityStatus] = useState('All');
     const [itineraryStatus, setItineraryStatus] = useState('All');
+    const [hotelStatus, setHotelStatus] = useState('All');
+    const [flightStatus, setFlightStatus] = useState('All');
+    const [transportationStatus, setTransportationStatus] = useState('All');
     const [selectedType, setSelectedType] = useState('Activities'); // Using "Activities" and "Itineraries" directly
     const [currency, setCurrency] = useState(null);
     const [feedbackVisibility, setFeedbackVisibility] = useState({}); // To track visibility of feedback forms
@@ -35,18 +44,29 @@ const BookingGrid = () => {
 
     const fetchBookings = async () => {
         try {
-            const activities = await getBookedActivities();
-            setBookedActivities(activities.data);
+          const [activities, itineraries, hotels, flights, transportations] = await Promise.all([
+            getBookedActivities(),
+            getBookedItineraries(),
+            getBookedHotels(),
+            getBookedFlights(),
+            getBookedTransportations(),
+          ]);
+          console.log(activities);
+          console.log(itineraries) ;
+          console.log(hotels) ;
+          console.log(flights) ;
+          console.log(hotels);
+          console.log(transportations) ;
+          setBookedActivities(activities.data);
+          setBookedItineraries(itineraries);
+          setBookedHotels(hotels);
+          setBookedFlights(flights);
+          setBookedTransportations(transportations);
         } catch (error) {
-            message.error(error.response.data.message);
+          message.error('Error fetching bookings. Please try again.');
         }
-        try {
-            const itineraries = await getBookedItineraries();
-            setBookedItineraries(itineraries);
-        } catch (error) {
-            message.error(error.response.data.message);
-        }
-    };
+      };
+      
 
     const fetchCurrency = async () => {
         try {
@@ -130,11 +150,24 @@ const BookingGrid = () => {
         itineraryStatus === 'All' || itinerary.status === itineraryStatus
     );
 
+    const filteredHotels = bookedHotels.filter(hotel =>
+        hotelStatus === 'All' || hotel.status === hotelStatus
+    );
+
+    const filteredFlights = bookedFlights.filter(flight =>
+        flightStatus === 'All' || flight.status === flightStatus
+    );
+
+    const filteredTransportations = bookedTransportations.filter(transportation =>
+        transportationStatus === 'All' || transportation.status === transportationStatus
+    );
+
+
     return (
         <div className="p-6">
             <Space className="mb-6">
                 <Segmented
-                    options={['Activities', 'Itineraries']}
+                    options={['Activities', 'Itineraries' , 'Flights' , 'Hotels' , 'Transportations']}
                     value={selectedType}
                     onChange={(value) => setSelectedType(value)}
                 />
@@ -157,6 +190,48 @@ const BookingGrid = () => {
                     <Select
                         value={itineraryStatus}
                         onChange={setItineraryStatus}
+                        options={[
+                            { label: 'All', value: 'All' },
+                            { label: 'Pending', value: 'Pending' },
+                            { label: 'Completed', value: 'Completed' },
+                            { label: 'Cancelled', value: 'Cancelled' },
+                        ]}
+                        className="w-full px-4 py-2 text-center"  // Full width and padding for better appearance
+                        style={{ minWidth: 120 }}  // Minimum width for the dropdown
+                    />
+                )}
+                {selectedType === 'Flights' && (
+                    <Select
+                        value={flightStatus}
+                        onChange={setFlightStatus}
+                        options={[
+                            { label: 'All', value: 'All' },
+                            { label: 'Pending', value: 'Pending' },
+                            { label: 'Completed', value: 'Completed' },
+                            { label: 'Cancelled', value: 'Cancelled' },
+                        ]}
+                        className="w-full px-4 py-2 text-center"  // Full width and padding for better appearance
+                        style={{ minWidth: 120 }}  // Minimum width for the dropdown
+                    />
+                )}
+                 {selectedType === 'Hotels' && (
+                    <Select
+                        value={hotelStatus}
+                        onChange={setHotelStatus}
+                        options={[
+                            { label: 'All', value: 'All' },
+                            { label: 'Pending', value: 'Pending' },
+                            { label: 'Completed', value: 'Completed' },
+                            { label: 'Cancelled', value: 'Cancelled' },
+                        ]}
+                        className="w-full px-4 py-2 text-center"  // Full width and padding for better appearance
+                        style={{ minWidth: 120 }}  // Minimum width for the dropdown
+                    />
+                )}
+                {selectedType === 'Transportations' && (
+                    <Select
+                        value={transportationStatus}
+                        onChange={setTransportationStatus}
                         options={[
                             { label: 'All', value: 'All' },
                             { label: 'Pending', value: 'Pending' },
@@ -247,6 +322,91 @@ const BookingGrid = () => {
                     ))}
                 </div>
             )}
+
+            {selectedType === 'Flights' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                {filteredFlights.map((flight) => (
+                    <Card key={flight._id} title={`Flight from ${flight.departureAirport} to ${flight.arrivalAirport}`} className="shadow-lg p-4" hoverable>
+                        <div className="flex justify-between items-center mb-4">
+                            <span>{new Date(flight.departureDate).toLocaleDateString()}</span> {/* Departure Date */}
+                            {renderStatusTag(flight.status)} {/* Flight Status */}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                            <p><strong>Price:</strong> {currency?.code} {(currency?.rate * flight.price).toFixed(2)}</p> {/* Price */}
+                            <p><strong>Departure Airport:</strong> {flight.departureAirport}</p> {/* Departure Airport */}
+                            <p><strong>Arrival Airport:</strong> {flight.arrivalAirport}</p> {/* Arrival Airport */}
+                        </div>
+                        {flight.status === 'Pending' && (
+                            <Button type="primary" danger onClick={() => cancelBooking(flight._id, 'flight')} className="w-full">
+                                Cancel Booking
+                            </Button>
+                        )}
+                    </Card>
+                ))}
+            </div>
+            )}
+        
+        {selectedType === 'Hotels' && ( 
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {filteredHotels.map((hotel) => (
+                hotel.hotel ? (
+                    <Card key={hotel._id} title={hotel.hotel.name} className="shadow-lg p-4" hoverable>
+                        <div className="flex justify-between items-center mb-4">
+                            <span>{new Date(hotel.checkInDate).toLocaleDateString()} - {new Date(hotel.checkOutDate).toLocaleDateString()}</span>
+                            {renderStatusTag(hotel.status)}
+                        </div>
+                        <div className="text-sm text-gray-600 mb-4">
+                            <p><strong>Booking By:</strong> {hotel.createdBy.username}</p>
+                            <p><strong>Guests:</strong> {hotel.guests}</p>
+                            <p><strong>Location:</strong> {hotel.hotel.cityCode} (Lat: {hotel.hotel.latitude}, Lon: {hotel.hotel.longitude})</p>
+                            <p><strong>Price:</strong> {currency?.code} {(currency?.rate * hotel.price).toFixed(2)}</p>
+                        </div>
+                        {hotel.status === 'Pending' && (
+                            <Button
+                                type="primary"
+                                danger
+                                onClick={() => cancelBooking(hotel._id, 'hotel')}
+                                className="w-full"
+                            >
+                                Cancel Booking
+                            </Button>
+                        )}
+                    </Card>
+                ) : null
+            ))}
+        </div>
+        )}
+        
+
+            {selectedType === 'Transportations' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                {filteredTransportations.map((transportation) => (
+                    transportation.transportation ? (
+                        <Card key={transportation._id} title={transportation.transportation.name} className="shadow-lg p-4" hoverable>
+                            <div className="flex justify-between items-center mb-4">
+                                <span>{new Date(transportation.date).toLocaleDateString()}</span>
+                                {renderStatusTag(transportation.status)}
+                            </div>
+                            <div className="text-sm text-gray-600 mb-4">
+                                <p><strong>Booking By:</strong> {transportation.createdBy.username}</p>
+                                <p><strong>Price:</strong> {currency?.code} {(currency?.rate * transportation.price).toFixed(2)}</p>
+                            </div>
+                            {transportation.status === 'Pending' && (
+                                <Button
+                                    type="primary"
+                                    danger
+                                    onClick={() => cancelBooking(transportation._id, 'transportation')}
+                                    className="w-full"
+                                >
+                                    Cancel Booking
+                                </Button>
+                            )}
+                        </Card>
+                    ) : null
+                ))}
+            </div>
+            )}  
+
         </div>
     );
 };

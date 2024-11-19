@@ -64,7 +64,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
 
   // Fetch activities, categories, and tags on component load
   useEffect(() => {
-    if (locationn.pathname === "/activities/my") {
+    if (locationn?.pathname === "/activities/my") {
       console.log("My Activities");
       getMActivities();
     } else {
@@ -73,7 +73,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     }
     fetchCategories();
     fetchPreferenceTags();
-  }, [locationn.pathname]);
+  }, [locationn?.pathname]);
 
   const fetchActivities = async () => {
     setLoading(true);
@@ -192,7 +192,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     try {
       if (isEditing && currentActivity) {
         console.log("Updating activity", activityData);
-        await updateActivity(activityData, currentActivity._id);
+        await updateActivity(activityData, currentActivity?._id);
         notification.success({ message: "Activity updated successfully" });
       } else {
         await createActivity(activityData);
@@ -243,7 +243,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       key: "location",
       render: (loc) => (
         <span>
-          ({loc.lat}, {loc.lng})
+          ({loc?.lat}, {loc?.lng})
         </span>
       ),
     },
@@ -258,7 +258,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       dataIndex: "preferenceTags",
       key: "preferenceTags",
       render: (preferenceTags) => (
-        <span>{preferenceTags.map((tag) => tag.tag).join(", ")}</span>
+        <span>{preferenceTags?.map((tag) => tag.tag).join(", ")}</span>
       ),
     },
     {
@@ -268,7 +268,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       width: "20%",
       render: (discounts) => (
         <Row className="w-full">
-          {discounts.map((discount, index) => (
+          {discounts?.map((discount, index) => (
             <Col key={index} md={10} lg={10}>
               <Card
                 className="w-full"
@@ -313,7 +313,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                 </Popconfirm>
               </div>
             ))}
-          {user && user.userRole === "Admin"&& (
+          {user && user?.userRole === "Admin"&& (
           <Badge count={0} offset={[-5, 5]}>
               <Tooltip title={"Flag this item as Inappropriate"}>
                 <Button

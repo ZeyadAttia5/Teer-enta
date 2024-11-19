@@ -94,8 +94,8 @@ const UnActiveIternaries = ({}) => {
             title: "Actions",
             key: "actions",
             render: (text, record) => (
-                console.log("record", record.availableDates[0]),
-                    console.log("user", user._id),
+                console.log("record", record?.availableDates[0]),
+                    console.log("user", user?._id),
                     (
                         // <Badge count={0} offset={[-5, 5]}>
                         //     <Tooltip title={"Activate Iternary"}>

@@ -26,8 +26,8 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-50">
-            <div className="bg-white p-8 rounded shadow-lg w-96">
+        <div className="flex justify-center items-center bg-fourth">
+            <div className="bg-white p-8 rounded shadow-lg w-96 mt-16">
                 <h2 className="text-center text-xl font-semibold mb-4">Forgot Your Password?</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
@@ -41,12 +41,12 @@ const ForgotPassword = () => {
                         />
                     </div>
                     <Button
-                        type="primary"
+                        type="dander"
                         htmlType="submit"
                         block
                         loading={loading}
                         size="large"
-                        className="bg-blue-500 hover:bg-blue-600"
+                        className="bg-second text-white hover:bg-third"
                     >
                         Request OTP
                     </Button>

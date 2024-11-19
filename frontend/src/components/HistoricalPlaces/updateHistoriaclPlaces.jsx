@@ -159,7 +159,7 @@ const UpdateHistoricalPlaces = ({setFlag}) => {
           required
         >
           <option value="" disabled>Select Tag Type</option>
-          {uniqueTagTypes.map((tagType, index) => (
+          {uniqueTagTypes?.map((tagType, index) => (
             <option key={index} value={tagType}>
               {tagType}
             </option>
@@ -176,7 +176,7 @@ const UpdateHistoricalPlaces = ({setFlag}) => {
               required
             >
               <option value="" disabled>Select Tag Name</option>
-              {filteredTags.map((tag) => (
+              {filteredTags?.map((tag) => (
                 <option key={tag._id} value={tag._id}>
                   {tag.name}
                 </option>

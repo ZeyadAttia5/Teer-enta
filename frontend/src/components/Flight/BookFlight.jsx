@@ -53,12 +53,12 @@ const BookFlight = () => {
     setLoading(true);
     try {
       const { data: depAirports } = await getAirports(
-        departure.city,
-        departure.country
+        departure?.city,
+        departure?.country
       );
       const { data: destAirports } = await getAirports(
-        destination.city,
-        destination.country
+        destination?.city,
+        destination?.country
       );
 
       setDestinationAirports(
@@ -182,7 +182,7 @@ const BookFlight = () => {
                     form.setFieldsValue({ departureAirport: value });
                   }}
                 >
-                  {departureAirports.map((airport, index) => (
+                  {departureAirports?.map((airport, index) => (
                     <Option key={index} value={airport.iataCode}>
                       {airport.name} ({airport.iataCode})
                     </Option>
@@ -207,7 +207,7 @@ const BookFlight = () => {
                     form.setFieldsValue({ destinationAirport: value });
                   }}
                 >
-                  {destinationAirports.map((airport, index) => (
+                  {destinationAirports?.map((airport, index) => (
                     <Option key={index} value={airport.iataCode}>
                       {airport.name} ({airport.iataCode})
                     </Option>
@@ -266,7 +266,7 @@ const BookFlight = () => {
                   setSelectedFlight(flight);
                 }}
               >
-                {flights.map((flight) => (
+                {flights?.map((flight) => (
                   <Option key={flight.id} value={flight.id}>
                     {flight.itineraries[0].segments[0].departure.iataCode} →{" "}
                     {flight.itineraries[0].segments[0].arrival.iataCode} |{" "}
@@ -422,7 +422,7 @@ const BookFlight = () => {
       <Steps current={currentStep} items={steps} className="mb-8" />
 
       <Form form={form} layout="vertical" onFinish={handleFinish}>
-        {steps[currentStep].content}
+        {steps[currentStep]?.content}
 
         {selectedFlight && (
           <Card className="mb-4" size="small">
@@ -430,10 +430,10 @@ const BookFlight = () => {
             <br />
 
             <Text type="secondary">
-              {selectedFlight.itineraries[0].segments[0].departure.iataCode} →{" "}
-              {selectedFlight.itineraries[0].segments[0].arrival.iataCode} |{" "}
-              {selectedFlight.itineraries[0].segments[0].departure.at} |
-              {selectedFlight.price.total} {selectedFlight.price.currency}
+              {selectedFlight?.itineraries[0]?.segments[0]?.departure?.iataCode} →{" "}
+              {selectedFlight?.itineraries[0]?.segments[0]?.arrival?.iataCode} |{" "}
+              {selectedFlight?.itineraries[0]?.segments[0]?.departure?.at} |
+              {selectedFlight?.price?.total} {selectedFlight?.price?.currency}
             </Text>
           </Card>
         )}
@@ -443,13 +443,13 @@ const BookFlight = () => {
             <Button onClick={handlePrevStep}>Previous</Button>
           )}
 
-          {currentStep < steps.length - 1 && (
+          {currentStep < steps?.length - 1 && (
             <Button type="primary" onClick={handleNextStep}>
               Next
             </Button>
           )}
 
-          {currentStep === steps.length - 1 && (
+          {currentStep === steps?.length - 1 && (
             <Button type="primary" onClick={() => form.submit()}>
               Complete Booking
             </Button>

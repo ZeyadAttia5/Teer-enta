@@ -266,7 +266,7 @@ const ItineraryScreen = ({setFlag}) => {
         });
     };
 
-    const filteredItineraries = itineraries.filter(
+    const filteredItineraries = itineraries?.filter(
         (itin) =>
             (selectedBudget ? itin.price <= selectedBudget : true) &&
             filterByDate(itin) &&
@@ -281,7 +281,7 @@ const ItineraryScreen = ({setFlag}) => {
                 ))
     );
 
-    const sortedItineraries = filteredItineraries.sort((a, b) => {
+    const sortedItineraries = filteredItineraries?.sort((a, b) => {
         if (sortBy === "pricingHighToLow") {
             return b.price - a.price;
         } else if (sortBy === "pricingLowToHigh") {
@@ -362,13 +362,13 @@ const ItineraryScreen = ({setFlag}) => {
             await fetchActivities();
             await fetchPreferenceTags();
 
-            const formattedAvailableDates = itinerary.availableDates.map((date) => [
+            const formattedAvailableDates = itinerary?.availableDates?.map((date) => [
                 moment(date.Date),
                 moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm"),
             ]);
             console.log("formattedAvailableDates", formattedAvailableDates);
 
-            const formattedTimeline = itinerary.timeline.map((tl) => ({
+            const formattedTimeline = itinerary?.timeline?.map((tl) => ({
                 ...tl,
                 activity: tl.activity ? tl.activity.name : "Activity not found",
                 startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
@@ -376,12 +376,12 @@ const ItineraryScreen = ({setFlag}) => {
 
             console.log("formattedTimeline", formattedTimeline);
 
-            const formattedActivities = itinerary.activities.map((act) => ({
+            const formattedActivities = itinerary?.activities?.map((act) => ({
                 activity: act.activity ? act.activity._id : "Activity not found",
                 duration: act.duration,
             }));
 
-            const formattedPreferenceTags = itinerary.preferenceTags.map(
+            const formattedPreferenceTags = itinerary?.preferenceTags?.map(
                 (tag) => tag._id
             );
 
@@ -692,7 +692,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                                             >
                                                 <option value="">All Budgets</option>
-                                                {budgets.map((budget, index) => (
+                                                {budgets?.map((budget, index) => (
                                                     <option key={index} value={budget}>
                                                         {budget}
                                                     </option>
@@ -728,7 +728,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                                             >
                                                 <option value="">All Languages</option>
-                                                {languages.map((language, index) => (
+                                                {languages?.map((language, index) => (
                                                     <option key={index} value={language}>
                                                         {language}
                                                     </option>
@@ -746,7 +746,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                                             >
                                                 <option value="">All Preferences</option>
-                                                {preferenceTagsList.map((preference) => (
+                                                {preferenceTagsList?.map((preference) => (
                                                     <option key={preference._id} value={preference._id}>
                                                         {preference.tag}
                                                     </option>
@@ -932,7 +932,7 @@ const ItineraryScreen = ({setFlag}) => {
                         {(fields, {add, remove}) => (
                             <>
                                 <label className="block font-medium mb-2">Activities</label>
-                                {fields.map(({key, name, ...restField}) => (
+                                {fields?.map(({key, name, ...restField}) => (
                                     <Space
                                         key={key}
                                         style={{display: "flex", marginBottom: 8}}
@@ -947,7 +947,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 placeholder="Select activity"
                                                 style={{width: 200}}
                                             >
-                                                {activitiesList.map((activity) => (
+                                                {activitiesList?.map((activity) => (
                                                     <Option key={activity.name} value={activity._id}>
                                                         {activity.name}
                                                     </Option>
@@ -997,7 +997,7 @@ const ItineraryScreen = ({setFlag}) => {
                         {(fields, {add, remove}) => (
                             <>
                                 <label className="block font-medium mb-2">Locations</label>
-                                {fields.map(({key, name, ...restField}) => (
+                                {fields?.map(({key, name, ...restField}) => (
                                     <Space
                                         key={key}
                                         style={{display: "flex", marginBottom: 8}}
@@ -1057,7 +1057,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 placeholder="Select activity"
                                                 style={{width: 200}}
                                             >
-                                                {activitiesList.map((activity) => (
+                                                {activitiesList?.map((activity) => (
                                                     <Option key={activity._id} value={activity._id}>
                                                         {activity.name}
                                                     </Option>
@@ -1176,7 +1176,7 @@ const ItineraryScreen = ({setFlag}) => {
                             placeholder="Select preference tags"
                             allowClear
                         >
-                            {preferenceTagsList.map((tag) => (
+                            {preferenceTagsList?.map((tag) => (
                                 <Option key={tag._id} value={tag._id}>
                                     {tag.tag}
                                 </Option>
@@ -1245,10 +1245,10 @@ const ItineraryScreen = ({setFlag}) => {
                         <Divider/>
 
                         <Form.Item label="Activities">
-                            {viewingItinerary.activities.map((activity, index) => (
+                            {viewingItinerary.activities?.map((activity, index) => (
                                 <div key={index}>
                                     <Input
-                                        value={`${activity.activity?.name} - ${activity.duration} min`}
+                                        value={`${activity?.activity?.name} - ${activity?.duration} min`}
                                         disabled
                                     />
                                 </div>
@@ -1258,7 +1258,7 @@ const ItineraryScreen = ({setFlag}) => {
                         <Divider/>
 
                         <Form.Item label="Locations">
-                            {viewingItinerary.locations.map((location, index) => (
+                            {viewingItinerary?.locations?.map((location, index) => (
                                 <div key={index}>
                                     <Input value={location.name} disabled/>
                                 </div>
@@ -1268,7 +1268,7 @@ const ItineraryScreen = ({setFlag}) => {
                         <Divider/>
 
                         <Form.Item label="Timeline">
-                            {viewingItinerary.timeline.map((entry, index) => (
+                            {viewingItinerary?.timeline?.map((entry, index) => (
                                 console.log("entry", entry),
                                     <div key={index}>
                                         <Input
@@ -1281,7 +1281,7 @@ const ItineraryScreen = ({setFlag}) => {
 
                         <Divider/>
                         <Form.Item label="Available Dates">
-                            {viewingItinerary.availableDates.map(
+                            {viewingItinerary?.availableDates?.map(
                                 (date, index) => (
                                     console.log("date", date),
                                         console.log("time", date.Times),
@@ -1307,10 +1307,10 @@ const ItineraryScreen = ({setFlag}) => {
                         <Form.Item label="Preference Tags">
                             <Select
                                 mode="multiple"
-                                value={viewingItinerary.preferenceTags.map((tag) => tag._id)}
+                                value={viewingItinerary?.preferenceTags?.map((tag) => tag._id)}
                                 disabled
                             >
-                                {preferenceTagsList.map((tag) => (
+                                {preferenceTagsList?.map((tag) => (
                                     <Option key={tag._id} value={tag._id}>
                                         {tag.tag}
                                     </Option>
@@ -1322,10 +1322,10 @@ const ItineraryScreen = ({setFlag}) => {
                             name="isBookingOpen"
                             valuePropName="checked"
                         >
-                            <Switch disabled={true} value={viewingItinerary.isBookingOpen}/>
+                            <Switch disabled={true} value={viewingItinerary?.isBookingOpen}/>
                         </Form.Item>
                         <Form.Item label="Active" name="isActive" valuePropName="checked">
-                            <Switch disabled={true} value={viewingItinerary.isActive}/>
+                            <Switch disabled={true} value={viewingItinerary?.isActive}/>
                         </Form.Item>
                     </Form>
                 )}

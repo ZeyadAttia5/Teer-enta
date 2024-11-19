@@ -266,7 +266,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
                                         className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                                     >
                                         <option value="">All Tags</option>
-                                        {uniqueTagTypes.map((tagType, index) => (
+                                        {uniqueTagTypes?.map((tagType, index) => (
                                             <option key={index} value={tagType}>
                                                 {tagType}
                                             </option>
@@ -303,7 +303,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
                 </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredPlaces.map((place, index) => (
+                {filteredPlaces?.map((place, index) => (
                     <HistoricalPlaceSingleCard currency={{code: currency?.code, rate: currency?.rate}}  key={index} places={place}/>
                 ))}
             </div>

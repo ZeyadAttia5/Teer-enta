@@ -84,27 +84,27 @@ const HotelOfferCard = ({ offer,setLoading }) => {
     <Card
       hoverable
       style={{ width: "100%", marginBottom: 16 }}
-      onClick={() => console.log("Selected offer:", mainOffer.id)}
+      onClick={() => console.log("Selected offer:", mainOffer?.id)}
     >
       <Space direction="vertical" size="middle" style={{ width: "100%" }}>
         {/* Header Section */}
         <Row justify="space-between" align="top">
           <Col>
             <Title level={4} style={{ marginBottom: 8 }}>
-              {hotel.name}
+              {hotel?.name}
             </Title>
             <Space>
               <EnvironmentOutlined style={{ color: "#666" }} />
-              <Text type="secondary">{hotel.cityCode}</Text>
+              <Text type="secondary">{hotel?.cityCode}</Text>
             </Space>
           </Col>
           <Col>
             <Tag
               color={
-                mainOffer.policies.paymentType === "deposit" ? "blue" : "green"
+                mainOffer?.policies?.paymentType === "deposit" ? "blue" : "green"
               }
             >
-              {mainOffer.policies.paymentType}
+              {mainOffer?.policies?.paymentType}
             </Tag>
           </Col>
         </Row>
@@ -117,7 +117,7 @@ const HotelOfferCard = ({ offer,setLoading }) => {
                 <CalendarOutlined style={{ color: "#666" }} />
                 <Text type="secondary">Check-in</Text>
               </Space>
-              <Text strong>{formatDate(mainOffer.checkInDate)}</Text>
+              <Text strong>{formatDate(mainOffer?.checkInDate)}</Text>
             </Space>
           </Col>
           <Col span={12}>
@@ -126,7 +126,7 @@ const HotelOfferCard = ({ offer,setLoading }) => {
                 <CalendarOutlined style={{ color: "#666" }} />
                 <Text type="secondary">Check-out</Text>
               </Space>
-              <Text strong>{formatDate(mainOffer.checkOutDate)}</Text>
+              <Text strong>{formatDate(mainOffer?.checkOutDate)}</Text>
             </Space>
           </Col>
         </Row>
@@ -134,18 +134,18 @@ const HotelOfferCard = ({ offer,setLoading }) => {
         {/* Guests Section */}
         <Space>
           <UserOutlined style={{ color: "#666" }} />
-          <Text type="secondary">{mainOffer.guests.adults} Adults</Text>
+          <Text type="secondary">{mainOffer?.guests?.adults} Adults</Text>
         </Space>
 
         <Divider style={{ margin: "12px 0" }} />
 
         {/* Price and Room Section */}
         <Row justify="space-between" align="bottom">
-          {mainOffer.room?.typeEstimated && (
+          {mainOffer?.room?.typeEstimated && (
             <Col>
               <Text type="secondary">Room Type</Text>
               <br />
-              <Text strong>{mainOffer.room?.typeEstimated.bedType} Bed</Text>
+              <Text strong>{mainOffer?.room?.typeEstimated?.bedType} Bed</Text>
             </Col>
           )}
           <Col>
@@ -154,16 +154,16 @@ const HotelOfferCard = ({ offer,setLoading }) => {
             <Space>
               <EuroOutlined />
               <Text strong style={{ fontSize: 20 }}>
-                {parseFloat(mainOffer.price.total).toLocaleString()}
+                {parseFloat(mainOffer?.price?.total).toLocaleString()}
               </Text>
             </Space>
           </Col>
         </Row>
 
         {/* Cancellation Policy */}
-        {(mainOffer.policies.cancellations && mainOffer.policies.cancellations[0]?.description) && (
+        {(mainOffer?.policies?.cancellations && mainOffer?.policies?.cancellations[0]?.description) && (
           <Text type="danger" style={{ fontSize: 12 }}>
-            {mainOffer.policies.cancellations[0]?.description?.text}
+            {mainOffer?.policies?.cancellations[0]?.description?.text}
           </Text>
         )}
 
@@ -189,7 +189,7 @@ const ListOffers = ({ hotelOffers,setLoading }) => {
 
   const handleSearch = (value) => {
     setSearchText(value);
-    const filtered = hotelOffers.filter(
+    const filtered = hotelOffers?.filter(
       (offer) =>
         offer.hotel.name.toLowerCase().includes(value.toLowerCase()) ||
         offer.hotel.cityCode.toLowerCase().includes(value.toLowerCase())
@@ -384,18 +384,18 @@ const BookHotel = () => {
           <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
         </div>
       ) : (
-        steps[step].content
+        steps[step]?.content
       )}
       <div className="flex justify-between mt-8">
         {step > 0 && (
           <Button onClick={() => setStep(step - 1)}>Previous</Button>
         )}
-        {step < steps.length - 1 && (
+        {step < steps?.length - 1 && (
           <Button type="primary" onClick={() => setStep(step + 1)}>
             Next
           </Button>
         )}
-        {step === steps.length - 1 && (
+        {step === steps?.length - 1 && (
           <Button type="primary">Complete Booking</Button>
         )}
       </div>
