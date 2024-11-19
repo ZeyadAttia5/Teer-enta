@@ -52,14 +52,14 @@ const ChangePassword = () => {
   };
 
   return (
-    <section>
-      <div class="bg-white relative items-center w-full px-5 py-12 mx-auto md:px-12 lg:px-20 max-w-7xl">
-        <div class="w-full max-w-md mx-auto md:max-w-sm md:px-0 md:w-96 sm:px-4">
+    
+      <div class=" relative flex justify-center items-center mt-4 w-full ">
+        <div class={`w-[460px] p-3`}>
           <button
-            className="mb-4 text-blue-500 hover:underline"
+            className="mb-4 text-second hover:underline"
             onClick={() => window.history.back()}
           >
-            <span className=" text-2xl">←</span>Back
+            <span className=" text-2xl">←</span>Go back
           </button>
           <div class="flex flex-col">
             <div>
@@ -138,7 +138,7 @@ const ChangePassword = () => {
           </form>
         </div>
       </div>
-    </section>
+    
   );
 };
 

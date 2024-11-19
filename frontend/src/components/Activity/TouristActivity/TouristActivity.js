@@ -51,7 +51,7 @@ const DropdownMenu = ({children}) => {
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            if (dropdownRef?.current && !dropdownRef?.current?.contains(event.target)) {
                 setIsOpen(false)
             }
         }
@@ -213,7 +213,7 @@ const TouristActivity = ({setFlag}) => {
         };
         fetchCurrency();
         fetchActivities();
-    }, [location.pathname]);
+    }, [location?.pathname]);
 
     // Search Function
     const handleSearch = (value) => {
@@ -226,7 +226,7 @@ const TouristActivity = ({setFlag}) => {
 
         // Search by name, category, or tags
         if (searchQuery) {
-            data = data.filter((activity) => {
+            data = data?.filter((activity) => {
                 const nameMatch = activity.name.toLowerCase().includes(searchQuery);
                 const categoryMatch =
                     activity.category &&
@@ -241,37 +241,37 @@ const TouristActivity = ({setFlag}) => {
         }
 
         // Filter by budget (using price.min and price.max)
-        data = data.filter(
+        data = data?.filter(
             (activity) =>
-                activity.price.min >= budget[0] && activity.price.max <= budget[1]
+                activity?.price?.min >= budget[0] && activity?.price?.max <= budget[1]
         );
 
         // Filter by category using _id
         if (category) {
-            data = data.filter(
-                (activity) => activity.category && activity.category._id === category
+            data = data?.filter(
+                (activity) => activity?.category && activity?.category?._id === category
             );
         }
 
         // Filter by rating using averageRating
         if (rating > 0) {
-            data = data.filter((activity) => activity.averageRating >= rating);
+            data = data?.filter((activity) => activity?.averageRating >= rating);
         }
 
         // Filter for upcoming activities if the checkbox is checked
         if (showUpcoming) {
-            data = data.filter((activity) => dayjs(activity.date).isAfter(dayjs()));
+            data = data?.filter((activity) => dayjs(activity.date).isAfter(dayjs()));
         }
 
         // Sorting
         if (sortBy === "price") {
-            data.sort((a, b) => a.price.min - b.price.min);
+            data?.sort((a, b) => a.price.min - b.price.min);
         } else if (sortBy === "price_desc") {
-            data.sort((a, b) => b.price.max - a.price.max);
+            data?.sort((a, b) => b.price.max - a.price.max);
         } else if (sortBy === "rating") {
-            data.sort((a, b) => b.averageRating - a.averageRating);
+            data?.sort((a, b) => b.averageRating - a.averageRating);
         } else if (sortBy === "rating_asc") {
-            data.sort((a, b) => a.averageRating - b.averageRating);
+            data?.sort((a, b) => a.averageRating - b.averageRating);
         }
 
         setFilteredActivities(data);
@@ -283,7 +283,7 @@ const TouristActivity = ({setFlag}) => {
     }, [searchQuery, budget, category, rating, sortBy, activities, showUpcoming]);
 
     // Extract unique categories based on _id
-    const uniqueCategories = activities.reduce((acc, act) => {
+    const uniqueCategories = activities?.reduce((acc, act) => {
         if (act.category && !acc.find((cat) => cat.id === act.category._id)) {
             acc.push({id: act.category._id, name: act.category.category});
         }
@@ -351,7 +351,7 @@ const TouristActivity = ({setFlag}) => {
                                     value={category || undefined}
                                 >
                                     <option value="">All Categories</option>
-                                    {uniqueCategories.map((cat) => (
+                                    {uniqueCategories?.map((cat) => (
                                         <option key={cat.id} value={cat.id}>
                                             {cat.name}
                                         </option>
@@ -441,8 +441,8 @@ const TouristActivity = ({setFlag}) => {
 
             {/* Activity Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredActivities.length > 0 ? (
-                    filteredActivities.map((place) => (
+                {filteredActivities?.length > 0 ? (
+                    filteredActivities?.map((place) => (
                         // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
                             <ActivityCard
                                 id={place._id}

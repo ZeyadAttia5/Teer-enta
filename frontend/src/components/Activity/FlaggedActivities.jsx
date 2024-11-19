@@ -68,7 +68,7 @@ const FlaggedActivities = ({ setFlag }) => {
       key: "location",
       render: (loc) => (
         <span>
-          ({loc.lat}, {loc.lng})
+          ({loc?.lat}, {loc?.lng})
         </span>
       ),
     },
@@ -83,7 +83,7 @@ const FlaggedActivities = ({ setFlag }) => {
       dataIndex: "preferenceTags",
       key: "preferenceTags",
       render: (preferenceTags) => (
-        <span>{preferenceTags.map((tag) => tag.tag).join(", ")}</span>
+        <span>{preferenceTags?.map((tag) => tag.tag).join(", ")}</span>
       ),
     },
     {
@@ -93,7 +93,7 @@ const FlaggedActivities = ({ setFlag }) => {
       width: "20%",
       render: (discounts) => (
         <Row className="w-full">
-          {discounts.map((discount, index) => (
+          {discounts?.map((discount, index) => (
             <Col key={index} md={10} lg={10}>
               <Card
                 className="w-full"
@@ -124,7 +124,7 @@ const FlaggedActivities = ({ setFlag }) => {
                 onClick={async () => {
                   try {
                     setLoading(true);
-                    await UnFlagActivity(record._id);
+                    await UnFlagActivity(record?._id);
                     message.success("Item Unflagged");
                     await fetchActivities();
                   } catch (error) {

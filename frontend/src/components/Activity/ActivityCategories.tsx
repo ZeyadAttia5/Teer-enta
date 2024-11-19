@@ -35,7 +35,7 @@ const ActivityCategories = ({ setFlag }) => {
     const handleCreateCategory = () => {
         setIsEditing(false);
         setCurrentCategory(null);
-        form.resetFields();
+        form?.resetFields();
         setIsModalVisible(true);
     };
 
@@ -56,7 +56,7 @@ const ActivityCategories = ({ setFlag }) => {
         setLoading(true);
         try {
             if (isEditing) {
-                await updateActivityCategory(values, currentCategory._id);
+                await updateActivityCategory(values, currentCategory?._id);
                 notification.success({ message: 'Category updated successfully' });
             } else {
                 await createActivityCategory(values);

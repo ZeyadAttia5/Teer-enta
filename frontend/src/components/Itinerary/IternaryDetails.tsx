@@ -112,12 +112,12 @@ const ItineraryDetails: React.FC = () => {
             )
             .join("\n") || "No activities listed"}
 
-    Ratings: ${itinerary?.ratings.length} ratings
+    Ratings: ${itinerary?.ratings?.length} ratings
     Average Rating: ${
-            itinerary?.ratings.length
+            itinerary?.ratings?.length
                 ? (
-                    itinerary.ratings.reduce((sum, r) => sum + r.rating, 0) /
-                    itinerary.ratings.length
+                    itinerary.ratings?.reduce((sum, r) => sum + r.rating, 0) /
+                    itinerary.ratings?.length
                 ).toFixed(1)
                 : "No ratings yet"
         }

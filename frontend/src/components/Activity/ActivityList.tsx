@@ -81,7 +81,7 @@ const columns = [
     ...Filter({
       dataIndex: "category",
       filterFunction: (value, record) =>
-        record.category?.category.toLowerCase().startsWith(value.toLowerCase()),
+        record?.category?.category.toLowerCase().startsWith(value.toLowerCase()),
       type: "text",
     }),
     render: (value: TActivityCategory) => value?.category,
@@ -94,7 +94,7 @@ const columns = [
     onFilter: (value, record) => record.tags?.some((tag) => tag._id === value),
     render: (preferenceTags: TPreferenceTag[]) => (
       <>
-        {preferenceTags.map((tag, index) => {
+        {preferenceTags?.map((tag, index) => {
           let color = index % 2 ? "geekblue" : "green";
           return (
             <Tag color={color} key={tag._id}>
@@ -117,7 +117,7 @@ const columns = [
       }[]
     ) => (
       <>
-        {discounts.map((discount, index) => {
+        {discounts?.map((discount, index) => {
           return (
             <Tag color={discount.isAvailable ? "green" : "red"} key={index}>
               {discount.Description?.toUpperCase()}
@@ -141,7 +141,7 @@ const columns = [
     }),
     render: (ratings: { createdBy: string; rating: number }[]) => (
       <>
-        {ratings.map((rating) => {
+        {ratings?.map((rating) => {
           return (
             <Tag
               color={rating.rating > 2.5 ? "blue" : "warning"}
@@ -165,7 +165,7 @@ const columns = [
     key: "comments",
     render: (comments: { createdBy: string; comment: string }[]) => (
       <>
-        {comments.map((comment) => {
+        {comments?.map((comment) => {
           return (
             <Tag color="cyan" key={comment.createdBy}>
               {comment.comment}
@@ -193,10 +193,9 @@ const ActivityList = ({setFlag}) => {
   }, [upcoming]);
 
   useEffect(() => {
-    columns.forEach((column) => {
+    columns?.forEach((column) => {
       if (column.key === "preferenceTags")
-        column["filters"] = activities
-          .map((activity) => activity.preferenceTags)
+        column["filters"] = activities?.map((activity) => activity.preferenceTags)
           .flat()
           .map((tag) => ({ text: tag.tag, value: tag._id }));
     });
@@ -220,7 +219,7 @@ const ActivityList = ({setFlag}) => {
           bordered
           className="table-auto w-full"
           dataSource={activities}
-          columns={columns.map((col) => ({
+          columns={columns?.map((col) => ({
             ...col,
             className: "p-4 text-gray-700 text-sm font-medium text-center",
             title: <span className="font-semibold text-gray-600">{col.title}</span>,

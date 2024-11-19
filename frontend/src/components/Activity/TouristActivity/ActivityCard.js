@@ -65,7 +65,7 @@ const ActivityCard = ({
       }
     };
     fetchAddress();
-  }, [location.lat, location.lng]);
+  }, [location?.lat, location?.lng]);
 
   const handleActivityDetails = (activityId) => {
     navigate(`/itinerary/activityDetails/${activityId}`);
@@ -124,12 +124,12 @@ const ActivityCard = ({
                     value={averageRating}
                     className="ml-2"
                   />
-                  <span className="ml-2">{averageRating.toFixed(1)}</span>
+                  <span className="ml-2">{averageRating?.toFixed(1)}</span>
                 </div>
 
                 {/* Special Discounts */}
                 {specialDiscounts?.length > 0 &&
-                  specialDiscounts.map(
+                  specialDiscounts?.map(
                     (discount, index) =>
                       discount.isAvailable && (
                         <div
@@ -146,7 +146,7 @@ const ActivityCard = ({
 
                 {/* Google Maps Link */}
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}`}
+                  href={`https://www.google.com/maps/search/?api=1&query=${location?.lat},${location?.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-bold transition-all duration-300 ease-in-out text-[#496989] hover:underline"
@@ -162,24 +162,6 @@ const ActivityCard = ({
                 >
                   🎟️ {isBookingOpen ? "Booking is Open!" : "Fully Booked! :("}
                 </p>
-
-                {/* Save Activity Button */}
-                {user && user.userRole === "Tourist" && (
-                  <Button
-                    onClick={async () => {
-                      console.log("Saving activity..." + id);
-                      try {
-                        await saveActivity(id);
-                        message.success("Activity saved successfully!");
-                      } catch (error) {
-                        message.error(error.response.data.message);
-                      }
-                    }}
-                    className="text-white bg-[#FF6347] hover:bg-[#FF4500] transition-all duration-300 mt-4"
-                  >
-                    Save Activity
-                  </Button>
-                )}
               </div>
             }
           />
