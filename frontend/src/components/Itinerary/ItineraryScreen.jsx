@@ -18,7 +18,7 @@ import {
     Switch,
 } from "antd";
 import {ReloadOutlined} from '@ant-design/icons';
-
+import { GlobalOutlined, DollarCircleOutlined, TeamOutlined, EnvironmentTwoTone, SwapRightOutlined } from '@ant-design/icons';
 import {
     MinusCircleOutlined,
     PlusOutlined,
@@ -266,7 +266,7 @@ const ItineraryScreen = ({setFlag}) => {
         });
     };
 
-    const filteredItineraries = itineraries.filter(
+    const filteredItineraries = itineraries?.filter(
         (itin) =>
             (selectedBudget ? itin.price <= selectedBudget : true) &&
             filterByDate(itin) &&
@@ -281,7 +281,7 @@ const ItineraryScreen = ({setFlag}) => {
                 ))
     );
 
-    const sortedItineraries = filteredItineraries.sort((a, b) => {
+    const sortedItineraries = filteredItineraries?.sort((a, b) => {
         if (sortBy === "pricingHighToLow") {
             return b.price - a.price;
         } else if (sortBy === "pricingLowToHigh") {
@@ -362,13 +362,13 @@ const ItineraryScreen = ({setFlag}) => {
             await fetchActivities();
             await fetchPreferenceTags();
 
-            const formattedAvailableDates = itinerary.availableDates.map((date) => [
+            const formattedAvailableDates = itinerary?.availableDates?.map((date) => [
                 moment(date.Date),
                 moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm"),
             ]);
             console.log("formattedAvailableDates", formattedAvailableDates);
 
-            const formattedTimeline = itinerary.timeline.map((tl) => ({
+            const formattedTimeline = itinerary?.timeline?.map((tl) => ({
                 ...tl,
                 activity: tl.activity ? tl.activity.name : "Activity not found",
                 startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
@@ -376,12 +376,12 @@ const ItineraryScreen = ({setFlag}) => {
 
             console.log("formattedTimeline", formattedTimeline);
 
-            const formattedActivities = itinerary.activities.map((act) => ({
+            const formattedActivities = itinerary?.activities?.map((act) => ({
                 activity: act.activity ? act.activity._id : "Activity not found",
                 duration: act.duration,
             }));
 
-            const formattedPreferenceTags = itinerary.preferenceTags.map(
+            const formattedPreferenceTags = itinerary?.preferenceTags?.map(
                 (tag) => tag._id
             );
 
@@ -692,7 +692,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                                             >
                                                 <option value="">All Budgets</option>
-                                                {budgets.map((budget, index) => (
+                                                {budgets?.map((budget, index) => (
                                                     <option key={index} value={budget}>
                                                         {budget}
                                                     </option>
@@ -728,7 +728,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                                             >
                                                 <option value="">All Languages</option>
-                                                {languages.map((language, index) => (
+                                                {languages?.map((language, index) => (
                                                     <option key={index} value={language}>
                                                         {language}
                                                     </option>
@@ -746,7 +746,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                                             >
                                                 <option value="">All Preferences</option>
-                                                {preferenceTagsList.map((preference) => (
+                                                {preferenceTagsList?.map((preference) => (
                                                     <option key={preference._id} value={preference._id}>
                                                         {preference.tag}
                                                     </option>
@@ -773,47 +773,65 @@ const ItineraryScreen = ({setFlag}) => {
                 </div>
 
             </div>
-            {user === null || user.userRole === "Tourist" ? (
+            {user === null || user?.userRole === "Tourist" ? (
                 <main className="flex flex-wrap justify-center items-center min-h-screen py-10">
                 {sortedItineraries?.map((itinerary, index) => (
                     <div
                         key={index}
-                        className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:bg-[#E2F4C5] hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4"
-                        style={{ cursor: "pointer" }}
+                        className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
                     >
+                        {/* Book Now Circle */}
+                        <div className="absolute top-4 left-4 bg-[#58A399] text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
+                            <span>Book Now</span>
+                        </div>
+            
                         <Card
-                            className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:bg-[#E2F4C5] hover:text-white"
-                            style={{ backgroundColor: "#ffffff" }} // Set a default background color for better visibility
+                            className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
+                            style={{ backgroundColor: "#ffffff" }} // Default background color
                         >
                             <Card.Meta
                                 title={
                                     <span
-                                        className="font-bold text-3xl mb-2 transition-transform duration-500 ease-out hover:scale-150"
-                                        style={{ color: "#496989" }}
+                                        className="font-bold text-4xl mb-2 transition-transform duration-500 ease-out" // Increased font size
+                                        style={{ color: "#333333" }}
                                     >
-                                        {itinerary.name}
+                                        {itinerary?.name}
                                     </span>
                                 }
                                 description={
-                                    <div
-                                        className="flex flex-col space-y-2"
-                                        style={{ color: "#496989" }}
-                                    >
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            🌐 {itinerary.language}
-                                        </span>
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            💲 {currency?.code} {(itinerary.price * currency?.rate).toFixed(2)}
-                                        </span>
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            ♿ {itinerary.accessibility || "N/A"}
-                                        </span>
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            📍 from: {itinerary.pickupLocation}
-                                        </span>
-                                        <span className="font-bold text-lg hover:text-[#58A399]">
-                                            📍 to: {itinerary.dropOffLocation}
-                                        </span>
+                                    <div className="flex flex-col space-y-3" style={{ color: "#333333" }}>
+                                        {/* Horizontal Line to Split the Card */}
+                                        <hr className="my-4 border-t-2 border-[#58A399]" /> {/* Green line */}
+                                        <Tooltip title="Language">
+                                            <span className="font-semibold text-lg hover:text-[#58A399]">
+                                                <GlobalOutlined style={{ marginRight: 8 }} />
+                                                {itinerary?.language}
+                                            </span>
+                                        </Tooltip>
+                                        <Tooltip title="Price">
+                                            <span className="font-semibold text-lg hover:text-[#58A399]">
+                                                <DollarCircleOutlined style={{ marginRight: 8 }} />
+                                                {currency?.code} {(itinerary?.price * currency?.rate).toFixed(2)}
+                                            </span>
+                                        </Tooltip>
+                                        <Tooltip title="Accessibility">
+                                            <span className="font-semibold text-lg hover:text-[#58A399]">
+                                                <TeamOutlined style={{ marginRight: 8 }} />
+                                                {itinerary?.accessibility || "N/A"}
+                                            </span>
+                                        </Tooltip>
+                                        <Tooltip title="Travel Route">
+    <span className="font-semibold text-lg hover:text-[#58A399] flex items-center">
+        <EnvironmentTwoTone
+            twoToneColor="#000000" // Set the color to black
+            style={{ marginRight: 8 }}
+        />
+        {itinerary?.pickupLocation}
+        <span className="mx-2 text-[#333333]">⇢</span>
+        {itinerary?.dropOffLocation}
+    </span>
+</Tooltip>
+
                                     </div>
                                 }
                             />
@@ -821,14 +839,14 @@ const ItineraryScreen = ({setFlag}) => {
             
                         <div className="flex justify-center items-center gap-4 p-4">
                             <Button
-                                onClick={() => navigate(`iternaryDetails/${itinerary._id}`)}
+                                onClick={() => navigate(`iternaryDetails/${itinerary?._id}`)}
                                 className="text-white bg-[#58A399] hover:bg-[#4a8f7a] transition-all duration-300"
                             >
                                 Show Details
                             </Button>
-                            {user && user.userRole === "Tourist" && (
+                            {user && user?.userRole === "Tourist" && (
                                 <Button
-                                    onClick={() => handleBookItinerary(itinerary._id)}
+                                    onClick={() => handleBookItinerary(itinerary?._id)}
                                     className="text-white bg-[#496989] hover:bg-[#3b5b68] transition-all duration-300"
                                 >
                                     Book
@@ -838,6 +856,8 @@ const ItineraryScreen = ({setFlag}) => {
                     </div>
                 ))}
             </main>
+            
+
             
             
             ) : (
@@ -912,7 +932,7 @@ const ItineraryScreen = ({setFlag}) => {
                         {(fields, {add, remove}) => (
                             <>
                                 <label className="block font-medium mb-2">Activities</label>
-                                {fields.map(({key, name, ...restField}) => (
+                                {fields?.map(({key, name, ...restField}) => (
                                     <Space
                                         key={key}
                                         style={{display: "flex", marginBottom: 8}}
@@ -927,7 +947,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 placeholder="Select activity"
                                                 style={{width: 200}}
                                             >
-                                                {activitiesList.map((activity) => (
+                                                {activitiesList?.map((activity) => (
                                                     <Option key={activity.name} value={activity._id}>
                                                         {activity.name}
                                                     </Option>
@@ -977,7 +997,7 @@ const ItineraryScreen = ({setFlag}) => {
                         {(fields, {add, remove}) => (
                             <>
                                 <label className="block font-medium mb-2">Locations</label>
-                                {fields.map(({key, name, ...restField}) => (
+                                {fields?.map(({key, name, ...restField}) => (
                                     <Space
                                         key={key}
                                         style={{display: "flex", marginBottom: 8}}
@@ -1037,7 +1057,7 @@ const ItineraryScreen = ({setFlag}) => {
                                                 placeholder="Select activity"
                                                 style={{width: 200}}
                                             >
-                                                {activitiesList.map((activity) => (
+                                                {activitiesList?.map((activity) => (
                                                     <Option key={activity._id} value={activity._id}>
                                                         {activity.name}
                                                     </Option>
@@ -1156,7 +1176,7 @@ const ItineraryScreen = ({setFlag}) => {
                             placeholder="Select preference tags"
                             allowClear
                         >
-                            {preferenceTagsList.map((tag) => (
+                            {preferenceTagsList?.map((tag) => (
                                 <Option key={tag._id} value={tag._id}>
                                     {tag.tag}
                                 </Option>
@@ -1225,10 +1245,10 @@ const ItineraryScreen = ({setFlag}) => {
                         <Divider/>
 
                         <Form.Item label="Activities">
-                            {viewingItinerary.activities.map((activity, index) => (
+                            {viewingItinerary.activities?.map((activity, index) => (
                                 <div key={index}>
                                     <Input
-                                        value={`${activity.activity?.name} - ${activity.duration} min`}
+                                        value={`${activity?.activity?.name} - ${activity?.duration} min`}
                                         disabled
                                     />
                                 </div>
@@ -1238,7 +1258,7 @@ const ItineraryScreen = ({setFlag}) => {
                         <Divider/>
 
                         <Form.Item label="Locations">
-                            {viewingItinerary.locations.map((location, index) => (
+                            {viewingItinerary?.locations?.map((location, index) => (
                                 <div key={index}>
                                     <Input value={location.name} disabled/>
                                 </div>
@@ -1248,7 +1268,7 @@ const ItineraryScreen = ({setFlag}) => {
                         <Divider/>
 
                         <Form.Item label="Timeline">
-                            {viewingItinerary.timeline.map((entry, index) => (
+                            {viewingItinerary?.timeline?.map((entry, index) => (
                                 console.log("entry", entry),
                                     <div key={index}>
                                         <Input
@@ -1261,7 +1281,7 @@ const ItineraryScreen = ({setFlag}) => {
 
                         <Divider/>
                         <Form.Item label="Available Dates">
-                            {viewingItinerary.availableDates.map(
+                            {viewingItinerary?.availableDates?.map(
                                 (date, index) => (
                                     console.log("date", date),
                                         console.log("time", date.Times),
@@ -1287,10 +1307,10 @@ const ItineraryScreen = ({setFlag}) => {
                         <Form.Item label="Preference Tags">
                             <Select
                                 mode="multiple"
-                                value={viewingItinerary.preferenceTags.map((tag) => tag._id)}
+                                value={viewingItinerary?.preferenceTags?.map((tag) => tag._id)}
                                 disabled
                             >
-                                {preferenceTagsList.map((tag) => (
+                                {preferenceTagsList?.map((tag) => (
                                     <Option key={tag._id} value={tag._id}>
                                         {tag.tag}
                                     </Option>
@@ -1302,10 +1322,10 @@ const ItineraryScreen = ({setFlag}) => {
                             name="isBookingOpen"
                             valuePropName="checked"
                         >
-                            <Switch disabled={true} value={viewingItinerary.isBookingOpen}/>
+                            <Switch disabled={true} value={viewingItinerary?.isBookingOpen}/>
                         </Form.Item>
                         <Form.Item label="Active" name="isActive" valuePropName="checked">
-                            <Switch disabled={true} value={viewingItinerary.isActive}/>
+                            <Switch disabled={true} value={viewingItinerary?.isActive}/>
                         </Form.Item>
                     </Form>
                 )}

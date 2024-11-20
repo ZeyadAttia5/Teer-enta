@@ -14,14 +14,14 @@ import { uploadFile, uploadFiles } from "../../../api/account.ts";
 import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/logo/logo.jpeg";
-import SelectPrefrences from "../../shared/SelectPrefrences.jsx";
+import HappyWoman from "../../../assets/svgs/happy-woman-svgrepo-com.svg";
 
 function Signup({ setFlag }) {
   setFlag(true);
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
- 
+
   const handleUsernameChange = (event) => {
     setUsername(event.target.value); // Update the username state
   };
@@ -374,10 +374,9 @@ function Signup({ setFlag }) {
             password: password,
             userRole: selectedRole,
             mobileNumber: mobileNumber,
-            nationality: selectedNationality.label,
+            nationality: selectedNationality?.label,
             dateOfBirth: dob,
             occupation: jobTitle,
-            
           };
           break;
         case "TourGuide":
@@ -426,7 +425,11 @@ function Signup({ setFlag }) {
       setIsLoading(false);
 
       setMessage(response.data.message);
-      navigate("/login");
+      if (selectedRole === "Tourist") {
+        navigate("/");
+      } else {
+        navigate("/login");
+      }
       setFlag(false);
     } catch (error) {
       setIsLoading(false);
@@ -476,7 +479,7 @@ function Signup({ setFlag }) {
   }
 
   return (
-    <div className="flex justify-center my-8">
+    <div className="flex justify-center">
       {isLoading && <LoadingCircle />}
 
       <div className="flex flex-col justify-center items-center w-full">
@@ -494,10 +497,11 @@ function Signup({ setFlag }) {
           </div>
         </span>
         <div className="w-full">
-        <div className="flex justify-center">
-          <p className="text-[rgba(88,87,87,0.822)] font-bold text-1xl">
-            Signup now and get full access to our app.
-          </p>
+          <div className="flex gap-2 justify-center">
+            <p className="text-[rgba(88,87,87,0.822)] font-bold text-lg">
+              Signup now and get full access to our app
+            </p>
+            <img src={HappyWoman} alt="Waving Hand" width={40} />
           </div>
           <div className="flex justify-center">
             <div className="flex justify-center items-center w-1/4">
@@ -528,38 +532,7 @@ function Signup({ setFlag }) {
                     value={username}
                   />
                 </label>
-                {selectedRole === "Tourist" && (
-                  <h6
-                    className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
-                      selectedRole !== "Tourist" ? "hidden" : ""
-                    }`}
-                  >
-                    <span>Nationality</span>
-                    {isFormSubmitted && !selectedNationality && (
-                      <span className="text-red-500 font-normal text-xs">
-                        This field is required
-                      </span>
-                    )}
-                  </h6>
-                )}
 
-                <div
-                  className={`relative ${
-                    selectedRole !== "Tourist" ? "hidden" : ""
-                  }`}
-                >
-                  <div style={{ width: "100%", margin: "auto" }}>
-                    <Select
-                      className=""
-                      options={options}
-                      value={selectedNationality}
-                      onChange={handleNationalityChange}
-                      isSearchable={true} // Enable search functionality
-                      placeholder="Select a country"
-                      styles={customStyles} // Applying the custom styles
-                    />
-                  </div>
-                </div>
                 <h6 className="text-sm font-medium flex justify-between items-center text-gray-700">
                   <span>Email</span>
                   {isFormSubmitted && !email && !isValidEmail && (
@@ -578,7 +551,7 @@ function Signup({ setFlag }) {
                     value={email}
                     onChange={handleEmailChange}
                   />
-                  {!isValidEmail && email.length > 0 && (
+                  {!isValidEmail && email?.length > 0 && (
                     <FaExclamationCircle
                       style={{
                         position: "absolute",
@@ -649,38 +622,74 @@ function Signup({ setFlag }) {
                   />
                 </label>
 
-                <div
-                  className={`relative labelsignup ${
-                    selectedRole !== "Tourist" ? "hidden" : ""
-                  }`}
-                >
-                  <h6
-                    className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                <div className="flex justify-between">
+                  <div
+                    className={`relative labelsignup ${
                       selectedRole !== "Tourist" ? "hidden" : ""
                     }`}
                   >
-                    <span>Date of Birth</span>
-                    {isFormSubmitted && !dob && !isDobValid && (
-                      <span className="text-red-500 font-normal text-xs">
-                        This field is required
-                      </span>
-                    )}
-                  </h6>
-                  <div className="mt-1">
-                    <input
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      type="date"
-                      name="dob"
-                      value={dob}
-                      required
-                      onChange={handleDobChange}
-                    />
+                    <h6
+                      className={`text-sm flex justify-between items-center font-medium text-gray-700 ${
+                        selectedRole !== "Tourist" ? "hidden" : ""
+                      }`}
+                    >
+                      <span>Date of Birth</span>
+                      {isFormSubmitted && !dob && !isDobValid && (
+                        <span className="text-red-500 font-normal text-xs">
+                          This field is required
+                        </span>
+                      )}
+                    </h6>
+                    <div className="mt-1">
+                      <input
+                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        type="date"
+                        name="dob"
+                        value={dob}
+                        required
+                        onChange={handleDobChange}
+                      />
+                    </div>
                   </div>
+                  {selectedRole === "Tourist" && (
+                    <div>
+                      <h6
+                        className={`text-sm mb-1 flex justify-between items-center font-medium text-gray-700 ${
+                          selectedRole !== "Tourist" ? "hidden" : ""
+                        }`}
+                      >
+                        <span>Nationality</span>
+                        {isFormSubmitted && !selectedNationality && (
+                          <span className="text-red-500 font-normal text-xs">
+                            This field is required
+                          </span>
+                        )}
+                      </h6>
+
+                      <div
+                        className={`relative ${
+                          selectedRole !== "Tourist" ? "hidden" : ""
+                        }`}
+                      >
+                        <div style={{ width: "100%", margin: "auto" }}>
+                          <Select
+                            className=""
+                            options={options}
+                            value={selectedNationality}
+                            onChange={handleNationalityChange}
+                            isSearchable={true} // Enable search functionality
+                            placeholder="Select a country"
+                            styles={customStyles} // Applying the custom styles
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {selectedRole !== "Tourist" && (
                   <div>
-                    <h6 className="text-sm mb-2 font-medium text-gray-700 flex justify-between items-center ">
+                    <h6 className="text-sm mb-1 font-medium text-gray-700 flex justify-between items-center ">
                       <span>ID</span>
                       {isFormSubmitted && !ID && (
                         <span className="text-red-500 font-normal text-xs">
@@ -712,7 +721,7 @@ function Signup({ setFlag }) {
                   <div>
                     <h6 className="text-sm font-medium text-gray-700 flex justify-between items-center ">
                       <span>Certificates</span>
-                      {isFormSubmitted && certificates.length === 0 && (
+                      {isFormSubmitted && certificates?.length === 0 && (
                         <span className="text-red-500 font-normal text-xs">
                           This field is required
                         </span>
@@ -753,7 +762,6 @@ function Signup({ setFlag }) {
                   />
                   {/* Role Change */}
                 </label>
-                
 
                 <PasswordRestrictions
                   password={password}

@@ -29,3 +29,11 @@ export const bookTransportation = async (transportationId) => {
         },
     });
 }
+
+export const getBookedTransportations = async () => {
+    return await axios.get(`${API_BASE_URL}/transportation/booked/all`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}

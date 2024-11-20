@@ -95,7 +95,7 @@ const FlaggedIternary = ({setFlag}) => {
             key: "actions",
             render: (text, record) => (
                 console.log("record", record.availableDates[0]),
-                    console.log("user", user._id),
+                    console.log("user", user?._id),
                     (
                         <Badge count={0} offset={[-5, 5]}>
                             <Tooltip title={"UNFlag this item as Inappropriate"}>
@@ -104,7 +104,7 @@ const FlaggedIternary = ({setFlag}) => {
                                     onClick={async () => {
                                         try {
                                             setLoading(true);
-                                            await unflagIternaary(record._id);
+                                            await unflagIternaary(record?._id);
                                             message.success("Item Unflagged");
                                             await fetchItineraries();
                                         } catch (error) {

@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.get("/", transportationController.getAllTransportations);
 router.get("/:id", transportationController.getTransportation);
+router.get('/booked/all' , isAuth , transportationController.getBookedTransportations);
 router.post("/create",isAuth , transportationController.createTransportation);
 router.post("/book/:id",isAuth , transportationController.bookTransportation);
-router.get('/booked' , isAuth , transportationController.getBookedTransportations);
 
 
 

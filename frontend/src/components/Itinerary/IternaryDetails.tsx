@@ -16,6 +16,7 @@ import {
     Button,
 } from "antd";
 import {
+    ArrowRightOutlined,
     EnvironmentOutlined,
     ClockCircleOutlined,
     DollarOutlined,
@@ -112,12 +113,12 @@ const ItineraryDetails: React.FC = () => {
             )
             .join("\n") || "No activities listed"}
 
-    Ratings: ${itinerary?.ratings.length} ratings
+    Ratings: ${itinerary?.ratings?.length} ratings
     Average Rating: ${
-            itinerary?.ratings.length
+            itinerary?.ratings?.length
                 ? (
-                    itinerary.ratings.reduce((sum, r) => sum + r.rating, 0) /
-                    itinerary.ratings.length
+                    itinerary.ratings?.reduce((sum, r) => sum + r.rating, 0) /
+                    itinerary.ratings?.length
                 ).toFixed(1)
                 : "No ratings yet"
         }
@@ -141,7 +142,7 @@ const ItineraryDetails: React.FC = () => {
                 {/* First Card for Itinerary Details */}
                 <Card
                     bordered={true}  // Add border to the card
-                    className={`${cardStyle} ${gradientBg} w-full border-white`}
+                    className={`${cardStyle} ${gradientBg} w-full border-third max-w-4xl mx-auto`}
                     bodyStyle={{height: '100%'}}
                 >
                     <div className={titleStyle}>
@@ -150,8 +151,8 @@ const ItineraryDetails: React.FC = () => {
                     </div>
                     <div className="space-y-4">
                         {/* Itinerary Name */}
-                        <Row justify="center" className="text-center mb-1">
-                            <Title level={2} className="font-extrabold text-gray-300 !text-gray-300">
+                        <Row justify="center" className="text-center mb-0">
+                            <Title level={2} className="font-extrabold text-black-300 !text-black-300 mb-0 " style={{ fontSize: '7rem', marginBottom: '0.15rem' }}>
                                 {itinerary?.name}
                             </Title>
 
@@ -159,10 +160,28 @@ const ItineraryDetails: React.FC = () => {
 
                         {/* Description */}
                         <Row justify="center" className="text-center">
-                            <p className="text-white text-lg font-medium mb-6">
+                            <p className="text-black text-lg font-medium mb-4"style={{ fontSize: '2rem' }}>
                                 {"Explore amazing travel experiences!"}
                             </p>
                         </Row>
+                        <Row justify="center" align="middle" className="text-center space-x-2">
+                {itinerary?.pickupLocation && (
+                    <Col>
+                        <Text className="text-black font-semibold text-2xl">{itinerary?.pickupLocation}</Text>
+                    </Col>
+                )}
+
+                {/* Arrow between the locations */}
+                <Col className="flex items-center">
+                    <ArrowRightOutlined className="text-black text-1xl" />
+                </Col>
+
+                {itinerary?.dropOffLocation && (
+                    <Col>
+                        <Text className="text-black font-semibold text-2xl">{itinerary?.dropOffLocation}</Text>
+                    </Col>
+                )}
+            </Row>
 
                         {/* Tags */}
                         <Row justify="space-between" align="middle" gutter={[16, 16]}>
@@ -183,132 +202,129 @@ const ItineraryDetails: React.FC = () => {
                             </Col>
 
                             {/* Rating and Actions */}
-                            <Col>
-                                <Space direction="vertical" align="center">
-                                    <Rate disabled value={averageRating} allowHalf/>
-                                    <Text type="secondary" className="text-white">
-                                        {itinerary?.ratings.length} ratings
-                                    </Text>
-                                    <Space>
-                                        {/* Visible Buttons with contrasting text color */}
-                                        <Button icon={<CopyOutlined/>} onClick={handleCopyLink}
-                                                className="text-black bg-white hover:bg-gray-200">
-                                            Copy Link
-                                        </Button>
-                                        <Button icon={<MailOutlined/>} onClick={handleShareEmail}
-                                                className="text-black bg-white hover:bg-gray-200">
-                                            Share via Email
-                                        </Button>
-                                    </Space>
-                                </Space>
-                            </Col>
+<Col>
+  <Space direction="vertical" align="center">
+    <Rate disabled value={averageRating} allowHalf />
+    <Text type="secondary" className="text-white">
+      {itinerary?.ratings.length} ratings
+    </Text>
+    <Space>
+  {/* Copy Link Button with Icon and Text on Hover */}
+  <Button
+    icon={<CopyOutlined />}
+    onClick={handleCopyLink}
+    className="text-black bg-white hover:bg-gray-200 relative group"
+  >
+    {/* Invisible text, visible on hover */}
+    <span className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 text-sm bg-white text-black px-2 py--3 rounded">
+      Copy Link
+    </span>
+  </Button>
+
+  {/* Send Mail Button with Icon and Text on Hover */}
+  <Button
+    icon={<MailOutlined />}
+    onClick={handleShareEmail}
+    className="text-black bg-white hover:bg-gray-200 relative group"
+  >
+    {/* Invisible text, visible on hover */}
+    <span className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 text-sm bg-white text-black px-2 py-0 rounded">
+      Send Mail
+    </span>
+  </Button>
+</Space>
+
+  </Space>
+</Col>
+
                         </Row>
                     </div>
                 </Card>
 
 
                 {/* Combined Row for Locations, Activities, Timeline, and Available Dates */}
-                <Row gutter={[16, 16]} className="mb-8">
-                    {/* Locations Card */}
-                    {(itinerary?.pickupLocation || itinerary?.dropOffLocation) && (
-                        <Col xs={24} sm={12} md={6}>
-                            <Card className={`${cardStyle} ${gradientBg}`} bodyStyle={{height: '100%'}}>
-                                <div className={titleStyle}>
-                                    <MapPin size={20}/>
-                                    <span>Locations</span>
-                                </div>
-                                <div className="space-y-2">
-                                    {itinerary?.pickupLocation && (
-                                        <div>
-                                            <Text strong className="text-white">Pickup: </Text>
-                                            <Text className="text-white">{itinerary?.pickupLocation}</Text>
-                                        </div>
-                                    )}
-                                    {itinerary?.dropOffLocation && (
-                                        <div>
-                                            <Text strong className="text-white">Drop-off: </Text>
-                                            <Text className="text-white">{itinerary?.dropOffLocation}</Text>
-                                        </div>
-                                    )}
-                                </div>
-                            </Card>
-                        </Col>
-                    )}
+                <Row gutter={[16, 16]} className="mb-8" justify="center" align="middle">
+    
+    {/* Activities Card */}
+    <Col xs={24} sm={12} md={6} className="flex justify-center ">
+        <Card
+            className={`${cardStyle} ${gradientBg} bg-third transform transition-all duration-300 ease-in-out  `}
+            bodyStyle={{ height: '100%', padding: '24px 24px 0' }}
+        >
+            <div className="flex items-center justify-center text-black mb-4 ">
+                <Clock size={20} className="mr-2" />
+                <span className="font-bold text-xl">Activities</span>
+            </div>
+            <List
+                dataSource={itinerary?.activities}
+                renderItem={(item) => (
+                    <List.Item
+                        className="cursor-pointer rounded-md px-2 py-1 mb-2 bg-white/10 hover:bg-white/20 transition-all duration-300"
+                        onClick={() => navigate(`../activityDetails/${item.activity?._id}`)}
+                    >
+                        <Text className="text-black text-sm pl-3">{item.activity?.name}</Text>
+                        <Tag className="bg-blue-500 text-white border-none">{item.duration} min</Tag>
+                    </List.Item>
+                )}
+            />
+        </Card>
+    </Col>
 
-                    {/* Activities Card */}
-                    <Col xs={24} sm={12} md={6}>
-                        <Card className={`${cardStyle} ${gradientBg}`}
-                              bodyStyle={{height: '100%', padding: '24px 24px 0'}}>
-                            <div className={titleStyle}>
-                                <Clock size={20}/>
-                                <span>Activities</span>
-                            </div>
-                            <List
-                                dataSource={itinerary?.activities}
-                                renderItem={(item) => (
-                                    <List.Item
-                                        className="cursor-pointer rounded-md px-2 py-1 mb-2 bg-white/10"
-                                        onClick={() => navigate(`../activityDetails/${item.activity?._id}`)}
-                                    >
-                                        <Text className="text-white text-sm pl-3">{item.activity?.name}</Text>
-                                        <Tag className="bg-blue-500 text-white border-none">{item.duration} min</Tag>
-                                    </List.Item>
-                                )}
-                            />
-                        </Card>
-                    </Col>
+    {/* Timeline Card */}
+    <Col xs={24} sm={12} md={6} className="flex justify-center">
+        <Card
+            className={`${cardStyle} ${gradientBg} transform transition-all duration-300 ease-in-out hover:scale-105`}
+            bodyStyle={{ height: '100%' }}
+        >
+            <div className="flex items-center justify-center text-black mb-4">
+                <Clock size={20} className="mr-2" />
+                <span className="font-bold text-xl">Timeline</span>
+            </div>
+            <Timeline
+                items={itinerary?.timeline.map((item, index) => ({
+                    color: 'blue',
+                    children: (
+                        <>
+                            <Text strong className="text-black">{item.activity?.name}</Text>
+                            {item.startTime && (
+                                <Text className="text-black/80 block"> Starts at {item.startTime}</Text>
+                            )}
+                            {item.duration && <Tag className="bg-blue-500 text-white border-none mt-1">{item.duration} min</Tag>}
+                        </>
+                    ),
+                }))}
+            />
+        </Card>
+    </Col>
 
-                    {/* Timeline Card */}
-                    <Col xs={24} sm={12} md={6}>
-                        <Card className={`${cardStyle} ${gradientBg}`} bodyStyle={{height: '100%'}}>
-                            <div className={titleStyle}>
-                                <Clock size={20}/>
-                                <span>Timeline</span>
-                            </div>
-                            <Timeline
-                                items={itinerary?.timeline.map((item, index) => ({
-                                    color: 'blue',
-                                    children: (
-                                        <>
-                                            <Text strong className="text-white">{item.activity?.name}</Text>
-                                            {item.startTime && (
-                                                <Text className="text-white/80 block"> Starts at {item.startTime}</Text>
-                                            )}
-                                            {item.duration && <Tag
-                                                className="bg-blue-500 text-white border-none mt-1">{item.duration} min</Tag>}
-                                        </>
-                                    ),
-                                }))}
-                            />
+    {/* Available Dates Card */}
+    <Col xs={24} sm={12} md={6} className="flex justify-center">
+        <Card
+            className={`${cardStyle} ${gradientBg} transform transition-all duration-300 ease-in-out hover:scale-105`}
+            bodyStyle={{ height: '100%', padding: '24px 24px 0' }}
+        >
+            <div className="flex items-center justify-center text-black mb-4">
+                <Calendar size={20} className="mr-2" />
+                <span className="font-bold text-xl">Available Dates</span>
+            </div>
+            <List
+                grid={{ gutter: 16, column: 1 }}
+                dataSource={itinerary?.availableDates}
+                renderItem={(date) => (
+                    <List.Item>
+                        <Card size="small" className="bg-white/10 shadow-sm rounded-lg mb-2 hover:bg-white/20 transition-all duration-300">
+                            <Space className="justify-between w-full">
+                                <Text className="text-black">{new Date(date.Date).toLocaleDateString()}</Text>
+                                <Tag className="bg-cyan-500 text-white border-none">{date.Times}</Tag>
+                            </Space>
                         </Card>
-                    </Col>
+                    </List.Item>
+                )}
+            />
+        </Card>
+    </Col>
+</Row>
 
-                    {/* Available Dates Card */}
-                    <Col xs={24} sm={12} md={6}>
-                        <Card className={`${cardStyle} ${gradientBg}`}
-                              bodyStyle={{height: '100%', padding: '24px 24px 0'}}>
-                            <div className={titleStyle}>
-                                <Calendar size={20}/>
-                                <span>Available Dates</span>
-                            </div>
-                            <List
-                                grid={{gutter: 16, column: 1}}
-                                dataSource={itinerary?.availableDates}
-                                renderItem={(date) => (
-                                    <List.Item>
-                                        <Card size="small" className="bg-white/10 shadow-sm rounded-lg mb-2">
-                                            <Space className="justify-between w-full">
-                                                <Text
-                                                    className="text-white">{new Date(date.Date).toLocaleDateString()}</Text>
-                                                <Tag className="bg-cyan-500 text-white border-none">{date.Times}</Tag>
-                                            </Space>
-                                        </Card>
-                                    </List.Item>
-                                )}
-                            />
-                        </Card>
-                    </Col>
-                </Row>
 
                 {/* Last Full-Width Card for Comments */}
                 {(itinerary?.comments.length ?? 0) > 0 && (
@@ -319,7 +335,7 @@ const ItineraryDetails: React.FC = () => {
                     >
                         <div className={titleStyle}>
                             <UserOutlined className="text-[#4A90E2]" /> {/* Icon color adjusted */}
-                            <span className="text-white">Comments</span> {/* Title color changed to white */}
+                            <span className="text-black">Comments</span> {/* Title color changed to white */}
                         </div>
 
                         {/* List of Comments */}
@@ -338,7 +354,7 @@ const ItineraryDetails: React.FC = () => {
                                     dataSource={itinerary?.comments}
                                     renderItem={(comment) => (
                                         <List.Item
-                                            className="transition-all duration-300 hover:bg-[#4A90E2] hover:text-white rounded-xl"
+                                            className="transition-all duration-300 hover:bg-[#4A90E2] hover:text-black rounded-xl"
                                             style={{
                                                 marginRight: '16px',  // Space between items
                                                 display: 'inline-flex', // Ensure items are displayed inline with their natural width
@@ -350,13 +366,13 @@ const ItineraryDetails: React.FC = () => {
                                                 className="pl-3"
                                                 avatar={<Avatar icon={<UserOutlined />} />}
                                                 title={
-                                                    <span className="text-gray-300 hover:text-whitex">
+                                                    <span className="text-gray-300 hover:text-black">
                                         {comment.createdBy.username}
                                     </span>
                                                 }
                                                 description={
                                                     <Space>
-                                                        <Text className="text-white hover:text-white">
+                                                        <Text className="text-black hover:text-white">
                                                             {comment.comment}
                                                         </Text>
                                                     </Space>
@@ -381,7 +397,7 @@ const ItineraryDetails: React.FC = () => {
                     >
                         <div className={titleStyle}>
                             <UserOutlined className="text-[#4A90E2]" /> {/* Icon color adjusted */}
-                            <span className="text-white">Tour Guide Reviews</span> {/* Title color changed to white */}
+                            <span className="text-black">Tour Guide Reviews</span> {/* Title color changed to white */}
                         </div>
 
                         {/* List of Tour Guide Comments */}
@@ -412,13 +428,13 @@ const ItineraryDetails: React.FC = () => {
                                                 className="pl-3"
                                                 avatar={<Avatar icon={<UserOutlined />} />}
                                                 title={
-                                                    <span className="text-gray-300 hover:text-whitex">
+                                                    <span className="text-gray-300 hover:text-black">
                                         {comment.createdBy.username}
                                     </span>
                                                 }
                                                 description={
                                                     <Space>
-                                                        <Text className="text-white hover:text-white">
+                                                        <Text className="text-black hover:text-white">
                                                             {comment.comment}
                                                         </Text>
                                                     </Space>
@@ -443,7 +459,7 @@ const ItineraryDetails: React.FC = () => {
                 <Card className={`text-center ${cardStyle} ${gradientBg} rounded-lg shadow-lg mt-8 p-6`}>
                     <div className="space-y-4">
                         {/* Footer Title and Icon */}
-                        <div className="text-xl font-bold text-white mb-4">
+                        <div className="text-xl font-bold text-black mb-4">
                             <EnvironmentOutlined size={20} className=" text-blue-500"/>
                             <span className="ml-2">Itinerary Information</span>
                         </div>
@@ -452,16 +468,16 @@ const ItineraryDetails: React.FC = () => {
                         <Space direction="vertical" size="small" className="text-center">
                             <Text type="secondary" className="text-blue-500">
                                 <UserOutlined className="mr-2 text-blue-500"/>
-                                <strong>Created by:</strong> {tourGuide}
+                                <strong>Created by: </strong> {tourGuide}
                             </Text>
                             <Text type="secondary" className="text-blue-500">
                                 <CalendarOutlined className="mr-2 text-blue-500"/>
-                                <strong>Created:</strong> {new Date(itinerary?.createdAt ?? "").toLocaleDateString()}
+                                <strong>Created: </strong> {new Date(itinerary?.createdAt ?? "").toLocaleDateString()}
                             </Text>
                             <Text type="secondary" className="text-blue-500">
                                 <ClockCircleOutlined className="mr-2 text-blue-500"/>
                                 <strong>Last
-                                    Updated:</strong> {new Date(itinerary?.updatedAt ?? "").toLocaleDateString()}
+                                    Updated: </strong> {new Date(itinerary?.updatedAt ?? "").toLocaleDateString()}
                             </Text>
                         </Space>
                     </div>

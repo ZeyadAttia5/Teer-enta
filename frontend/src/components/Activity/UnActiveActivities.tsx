@@ -122,7 +122,7 @@ const UnActiveActivities = ({ setFlag }) => {
         record.tags?.some((tag) => tag._id === value),
       render: (preferenceTags: TPreferenceTag[]) => (
         <>
-          {preferenceTags.map((tag, index) => {
+          {preferenceTags?.map((tag, index) => {
             let color = index % 2 ? "geekblue" : "green";
             return (
               <Tag color={color} key={tag._id}>
@@ -145,7 +145,7 @@ const UnActiveActivities = ({ setFlag }) => {
         }[]
       ) => (
         <>
-          {discounts.map((discount, index) => {
+          {discounts?.map((discount, index) => {
             return (
               <Tag color={discount.isAvailable ? "green" : "red"} key={index}>
                 {discount.Description?.toUpperCase()}
@@ -193,7 +193,7 @@ const UnActiveActivities = ({ setFlag }) => {
       key: "comments",
       render: (comments: { createdBy: string; comment: string }[]) => (
         <>
-          {comments.map((comment) => {
+          {comments?.map((comment) => {
             return (
               <Tag color="cyan" key={comment.createdBy}>
                 {comment.comment}
@@ -232,8 +232,7 @@ const UnActiveActivities = ({ setFlag }) => {
   useEffect(() => {
     columns.forEach((column) => {
       if (column.key === "preferenceTags")
-        column["filters"] = activities
-          .map((activity) => activity.preferenceTags)
+        column["filters"] = activities?.map((activity) => activity.preferenceTags)
           .flat()
           .map((tag) => ({ text: tag.tag, value: tag._id }));
     });
@@ -253,7 +252,7 @@ const UnActiveActivities = ({ setFlag }) => {
           loading={loading}
           className="table-auto w-full"
           dataSource={activities}
-          columns={columns.map((col) => ({
+          columns={columns?.map((col) => ({
             ...col,
             className: "p-4 text-gray-700 text-sm font-medium text-center",
             title: (

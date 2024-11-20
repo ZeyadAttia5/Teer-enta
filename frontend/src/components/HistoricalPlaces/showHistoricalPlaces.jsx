@@ -50,26 +50,26 @@ const ShowHistoricalPlaces = () => {
     const handleShareEmail = () => {
         if (!historicalPlace) return;
 
-        const subject = `Check out this historical place: ${historicalPlace.name}`;
+        const subject = `Check out this historical place: ${historicalPlace?.name}`;
 
         const body = `
     Historical Place Details:
-    Name: ${historicalPlace.name}
-    Opening Hours: ${historicalPlace.openingHours}
-    Location: ${historicalPlace.location}
-    Description: ${historicalPlace.description}
+    Name: ${historicalPlace?.name}
+    Opening Hours: ${historicalPlace?.openingHours}
+    Location: ${historicalPlace?.location}
+    Description: ${historicalPlace?.description}
 
     Tags:
-    ${historicalPlace.tags.length > 0
-            ? historicalPlace.tags.map(tag => `- ${tag.name}`).join('\n')
+    ${historicalPlace?.tags.length > 0
+            ? historicalPlace?.tags.map(tag => `- ${tag.name}`).join('\n')
             : 'No tags available'}
 
     Tickets:
-    ${historicalPlace.tickets.length > 0
-            ? historicalPlace.tickets.map(ticket => `${ticket.type}:  ${ticket.price}`).join('\n')
+    ${historicalPlace?.tickets.length > 0
+            ? historicalPlace?.tickets.map(ticket => `${ticket.type}:  ${ticket.price}`).join('\n')
             : 'No tickets available.'}
 
-    More details and booking: ${window.location.origin}/historicalPlace/details/${historicalPlace._id}
+    More details and booking: ${window.location.origin}/historicalPlace/details/${historicalPlace?._id}
   `;
 
         const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -84,7 +84,7 @@ const ShowHistoricalPlaces = () => {
     return (
         <div
             className="max-w-3xl mx-auto mt-10 p-8 pb-10 mb-16 bg-white shadow-lg rounded-lg border border-gray-200  transition-transform duration-300 ease-in-out">
-            <h2 className="text-3xl font-semibold mb-6 text-gray-700 text-center">{historicalPlace.name}</h2>
+            <h2 className="text-3xl font-semibold mb-6 text-gray-700 text-center">{historicalPlace?.name}</h2>
             <div className="mb-8 text-center">
                 <Space>
                     <Button icon={<CopyOutlined/>} onClick={handleCopyLink}>
@@ -97,12 +97,12 @@ const ShowHistoricalPlaces = () => {
             </div>
 
             {/* Image section */}
-            {historicalPlace.images && historicalPlace.images.length > 0 && (
+            {historicalPlace?.images && historicalPlace?.images.length > 0 && (
                 <div className="mb-8 group">
                     <img
                         className="w-full h-64 object-cover rounded-lg shadow-md transition-transform duration-300 ease-in-out group-hover:scale-775 group-hover:h-screen"
-                        src={historicalPlace.images[0]}
-                        alt={historicalPlace.name}
+                        src={historicalPlace?.images[0]}
+                        alt={historicalPlace?.name}
                     />
                 </div>
             )}
@@ -110,23 +110,23 @@ const ShowHistoricalPlaces = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                     <h3 className="text-xl font-semibold mb-2 text-gray-600">Opening Hours</h3>
-                    <p className="text-gray-700">{historicalPlace.openingHours}</p>
+                    <p className="text-gray-700">{historicalPlace?.openingHours}</p>
                 </div>
 
                 <div>
                     <h3 className="text-xl font-semibold mb-2 text-gray-600">Location</h3>
-                    <p className="text-gray-700">{historicalPlace.location}</p>
+                    <p className="text-gray-700">{historicalPlace?.location}</p>
                 </div>
 
                 <div className="md:col-span-2">
                     <h3 className="text-xl font-semibold mb-2 text-gray-600">Description</h3>
-                    <p className="text-gray-700">{historicalPlace.description}</p>
+                    <p className="text-gray-700">{historicalPlace?.description}</p>
                 </div>
 
                 <div className="md:col-span-2">
                     <h3 className="text-xl font-semibold mb-2 text-gray-600">Tags</h3>
                     <ul className="space-y-2">
-                        {historicalPlace.tags.map((tag, index) => (
+                        {historicalPlace?.tags?.map((tag, index) => (
                             <li
                                 key={index}
                                 className="flex justify-between bg-gray-100 p-3 rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-[#496989] hover:text-white"
@@ -140,9 +140,9 @@ const ShowHistoricalPlaces = () => {
 
                 <div className="md:col-span-2">
                     <h3 className="text-xl font-semibold mb-2 text-gray-600">Tickets</h3>
-                    {historicalPlace.tickets.length > 0 ? (
+                    {historicalPlace?.tickets?.length > 0 ? (
                         <ul className="space-y-2">
-                            {historicalPlace.tickets.map((ticket, index) => (
+                            {historicalPlace?.tickets?.map((ticket, index) => (
                                 <li
                                     key={index}
                                     className="flex justify-between bg-gray-100 p-3 rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-[#496989] hover:text-white"
