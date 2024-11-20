@@ -10,6 +10,7 @@ router.get('/:id',isAuth , profileController.getProfile);
 router.get('/all/addresses/', isAuth, profileController.getAllAddresses); //MS3 98
 router.get('/saved/activities',isAuth , profileController.getSavedActivities); //MS3 66
 router.post('/save/activity/:id',isAuth , profileController.addSavedActivity); //MS3 66
+router.delete('/remove/activity/:id',isAuth , profileController.removeSavedActivity); //MS3 66
 router.post('/create/:id' , isAuth ,profileController.createProfile)
 router.put('/update/:id', isAuth, profileController.updateProfile);
 router.put('/add/address/', isAuth, profileController.addAddress); //MS3 98
