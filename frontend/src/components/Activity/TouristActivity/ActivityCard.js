@@ -29,6 +29,8 @@ const ActivityCard = ({
       try {
         const response = await getGoogleMapsAddress(location);
         const formattedAddress = response.data.results[0]?.formatted_address || "Address not found";
+        const formattedAddress =
+          response.data.results[0]?.formatted_address || "Address not found";
         setAddress(formattedAddress);
       } catch (error) {
         console.error("Error fetching address:", error);
