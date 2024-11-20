@@ -179,14 +179,16 @@ exports.manageFieldNames = async (req, res, next) => {
 
 exports.getSavedActivities = async (req, res) => {
   try {
-    console.log(req.user);
     const userId = req.user._id;
-    console.log(req.user._id);
 
     const tourist = await Tourist.findById(userId).populate({
-      path: 'savedActivities', // Populate saved activities
-      model: 'Activity', // Assuming 'Activity' is the name of the model for activities
-      match: { isActive: true } // Optional: only include active activities
+      path: 'savedActivities',
+      model: 'Activity',
+      match: { isActive: true },
+      populate: {
+        path: 'category',
+        model: 'ActivityCategory'
+      }
     });
 
     if (!tourist) {
