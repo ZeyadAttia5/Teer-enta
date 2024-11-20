@@ -325,7 +325,7 @@ const TouristActivity = ({ setFlag }) => {
   }, []);
 
   return (
-    <div className="p-16 bg-[#E0F0EE] ">
+    <div className="p-0 bg-fourth">
       {/* <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p> */}
 
       <div className="flex flex-col items-center space-y-4 mb-8">
@@ -498,7 +498,6 @@ const TouristActivity = ({ setFlag }) => {
               }
               image={place.imagePath}
               averageRating={place.averageRating} // Pass average rating to ActivityCard
-              isSaved={place.isSaved}
               currencyCode={currency?.code}
               currencyRate={currency?.rate}
             />
