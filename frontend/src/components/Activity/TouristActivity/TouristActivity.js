@@ -498,6 +498,7 @@ const TouristActivity = ({ setFlag }) => {
               }
               image={place.imagePath}
               averageRating={place.averageRating} // Pass average rating to ActivityCard
+              isSaved={place.isSaved} // Pass isSaved to ActivityCard
               currencyCode={currency?.code}
               currencyRate={currency?.rate}
             />
