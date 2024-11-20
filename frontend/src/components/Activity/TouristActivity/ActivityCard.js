@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Rate, Button, Tooltip } from "antd";
+import { Rate, Button, Tooltip, message } from "antd";
 import { getGoogleMapsAddress } from "../../../api/googleMaps.ts";
+import { saveActivity, removeSavedActivity } from "../../../api/profile.ts"; // Import the save activity method
 import { useNavigate } from "react-router-dom";
 import { Card } from "antd";
 import {
@@ -8,14 +9,11 @@ import {
   ClockCircleOutlined,
   FolderOutlined,
   DollarOutlined,
+  HeartOutlined,
+  HeartFilled,
+  // Message,
 } from "@ant-design/icons";
-//import act1 from "../../../assets/activities/act1.jpg";
-//import act2 from "../../../assets/activities/act2.jpg";
-//import act3 from "../../../assets/activities/act3.jpg";
-//import act4 from "../../../assets/activities/act4.jpg";
-//import act5 from "../../../assets/activities/act5.jpg";
-//import act6 from "../../../assets/activities/act6.jpg";
-//import act7 from "../../../assets/activities/act7.jpg";
+
 const ActivityCard = ({
   id,
   name,
@@ -31,14 +29,15 @@ const ActivityCard = ({
   currencyCode,
   currencyRate,
   imageUrl,
+  isSaved,
 }) => {
   const [address, setAddress] = useState("");
+  // const [isSaved, setIsSaved] = useState(false); // State to manage saved status
   const navigate = useNavigate();
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
-  // const images = [act1, act2, act3, act4, act5, act6, act7]; // Array of image imports
-  //  const selectedImage = images[id % images.length];
+
   useEffect(() => {
     const fetchAddress = async () => {
       try {
@@ -61,6 +60,22 @@ const ActivityCard = ({
     navigate(`/touristActivities/book/${activityId}`);
   };
 
+  const handleSaveActivity = async (activityId) => {
+    try {
+      await saveActivity(activityId);
+      if (!isSaved) {
+        message.success("Activity saved successfully!");
+      } else {
+        message.info("Activity removed from saved activities!");
+        await removeSavedActivity(activityId); // Save the activity
+      }
+
+      // setIsSaved(!isSaved); // Toggle saved status
+    } catch (error) {
+      console.error("Error saving activity:", error);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen py-10">
       <div
@@ -76,8 +91,7 @@ const ActivityCard = ({
             width: "120px",
             height: "80px",
             paddingBottom: "10px",
-            // Use Tailwind for responsive design
-            "@media (max-width: 640px)": { width: "100px", height: "60px" }, // smaller on mobile
+            "@media (max-width: 640px)": { width: "100px", height: "60px" },
           }}
         >
           <span className="text-white font-bold text-xl">
@@ -85,8 +99,22 @@ const ActivityCard = ({
           </span>
         </div>
 
-        {/* Card Header: Name */}
+        {/* Save/Like Button */}
+        <div className="absolute top-0 right-0 m-4" style={{ opacity: 0.7 }}>
+          <Button
+            shape="circle"
+            icon={
+              isSaved ? (
+                <HeartFilled style={{ color: "red" }} />
+              ) : (
+                <HeartOutlined />
+              )
+            }
+            onClick={() => handleSaveActivity(id)}
+          />
+        </div>
 
+        {/* Card Header: Name */}
         <div className="p-4">
           <h2
             className="font-bold text-5xl mb-1 text-left"
@@ -146,13 +174,13 @@ const ActivityCard = ({
               <p
                 className={`font-semibold mt-4 mb-2 px-4 py-1 rounded-full ${
                   isBookingOpen
-                    ? "bg-yellow-100 text-green-600" // Light red background and red text for "Book your spot"
-                    : "bg-gray-100 text-gray-600" // Gray background for "Fully Booked!"
+                    ? "bg-yellow-100 text-green-600"
+                    : "bg-gray-100 text-gray-600"
                 }`}
                 style={{
-                  display: "block", // Ensures the background fits exactly the text size
-                  maxWidth: "fit-content", // Makes sure the text container adapts to text width
-                  whiteSpace: "nowrap", // Prevents the text from wrapping to a new line
+                  display: "block",
+                  maxWidth: "fit-content",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {isBookingOpen ? <>🎟️ Book your spot</> : "Fully Booked! :("}

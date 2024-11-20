@@ -74,6 +74,17 @@ export const saveActivity = async (activityId) => {
   );
 };
 
+export const removeSavedActivity = async (activityId) => {
+  return await axios.delete(
+    `${process.env.REACT_APP_BACKEND_URL}/Profile/remove/save/activity/${activityId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    }
+  );
+};
+
 export const getSavedActivities = async () => {
   return await axios.get(
     `${process.env.REACT_APP_BACKEND_URL}/Profile/saved/activities`,
