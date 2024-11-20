@@ -319,7 +319,10 @@ exports.getProductReport = async (req, res) => {
                         {
                             $match: {
                                 $expr: {
-                                    $in: ["$$productId", "$products.product"]
+                                    $and: [
+                                        { $in: ["$$productId", "$products.product"] },
+                                        { $eq: ["$status", "Completed"] }  // Only completed orders
+                                    ]
                                 }
                             }
                         },
@@ -341,12 +344,6 @@ exports.getProductReport = async (req, res) => {
                 $unwind: {
                     path: "$orders",
                     preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                // Add a match stage to filter only completed bookings
-                $match: {
-                    "$orders.status": "Completed"
                 }
             },
             {
@@ -417,163 +414,175 @@ exports.getProductReport = async (req, res) => {
 
 exports.getAdminRevenueReport = async (req, res) => {
     try {
-        const report = {
-            itineraryRevenue: [],
-            activityRevenue: [],
-            productRevenue: [],
-            totalRevenue: 0
-        };
-
-        // 1. Calculate Revenue from Booked Itineraries (excluding bookings created by admin)
+        // Calculate revenue from Itineraries (10% of completed bookings)
         const itineraryRevenue = await BookedItinerary.aggregate([
-            { $match: { status: 'Completed'} },
+            {
+                $match: {
+                    status: "Completed"
+                }
+            },
+            {
+                $addFields: {
+                    month: { $month: "$date" },
+                    year: { $year: "$date" },
+                    adminRevenue: {
+                        $multiply: ["$price", 0.10] // 10% of the booking price
+                    }
+                }
+            },
             {
                 $group: {
-                    _id: "$itinerary",
-                    totalSales: { $sum: "$price" },
+                    _id: {
+                        year: "$year",
+                        month: "$month"
+                    },
+                    revenue: { $sum: "$adminRevenue" },
                     bookingsCount: { $sum: 1 },
-                }
-            },
-            {
-                $lookup: {
-                    from: "itineraries", // Join with itineraries collection
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "itineraryDetails"
-                }
-            },
-            { $unwind: "$itineraryDetails" },
-            {
-                $lookup: {
-                    from: "users", // Join with users collection to get createdBy username
-                    localField: "itineraryDetails.createdBy",
-                    foreignField: "_id",
-                    as: "createdByDetails"
-                }
-            },
-            { $unwind: "$createdByDetails" },
-            {
-                $project: {
-                    itineraryId: "$_id",
-                    itineraryName: "$itineraryDetails.name",
-                    totalSales: 1,
-                    bookingsCount: 1,
-                    createdByUsername: "$createdByDetails.username", // Add username of the creator
-                    revenue: { $multiply: ["$totalSales", 0.1] } // 10% app fee revenue
+                    uniqueCustomers: { $addToSet: "$createdBy" }
                 }
             }
         ]);
 
-        report.itineraryRevenue = itineraryRevenue;
-
-        // 2. Calculate Revenue from Booked Activities (excluding bookings created by admin)
+        // Calculate revenue from Activities (10% of completed bookings)
         const activityRevenue = await BookedActivity.aggregate([
-            { $match: { status: 'Completed' } }, // Match completed bookings only
             {
-                $lookup: { // Join with User collection to get username of the booking creator
-                    from: "users",
-                    localField: "createdBy",
-                    foreignField: "_id",
-                    as: "createdByDetails"
+                $match: {
+                    status: "Completed"
                 }
             },
-            { $unwind: "$createdByDetails" }, // Flatten the createdByDetails to access username
+            {
+                $addFields: {
+                    month: { $month: "$date" },
+                    year: { $year: "$date" },
+                    adminRevenue: {
+                        $multiply: ["$price", 0.10] // 10% of the booking price
+                    }
+                }
+            },
             {
                 $group: {
-                    _id: "$activity",
-                    totalSales: { $sum: "$price" },         // Sum total sales for each activity
-                    bookingsCount: { $sum: 1 },             // Total number of bookings per activity
-                }
-            },
-            {
-                $lookup: { // Join with Activity collection to get activity details
-                    from: "activities",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "activityDetails"
-                }
-            },
-            { $unwind: "$activityDetails" }, // Flatten activity details
-            {
-                $lookup: { // Join with User collection to get the username of the activity creator
-                    from: "users",
-                    localField: "activityDetails.createdBy",
-                    foreignField: "_id",
-                    as: "activityCreatedByDetails"
-                }
-            },
-            { $unwind: "$activityCreatedByDetails" }, // Flatten the activity creator details
-            {
-                $project: { // Format output fields, including admin revenue calculation
-                    activityId: "$_id",
-                    activityName: "$activityDetails.name",
-                    totalSales: 1,
-                    bookingsCount: 1,
-                    createdByUsername: "$activityCreatedByDetails.username", // Activity creator's username
-                    revenue: { $multiply: ["$totalSales", 0.1] },             // Admin revenue as 10% of total sales
-                    bookings: 1                                              // Detailed bookings for each activity
+                    _id: {
+                        year: "$year",
+                        month: "$month"
+                    },
+                    revenue: { $sum: "$adminRevenue" },
+                    bookingsCount: { $sum: 1 },
+                    uniqueCustomers: { $addToSet: "$createdBy" }
                 }
             }
         ]);
 
-
-        report.activityRevenue = activityRevenue;
-
-        // 3. Calculate Revenue from Product Orders (excluding products created by admin users)
-        const orderRevenue = await Order.aggregate([
-            { $match: { status: 'Completed'} },
-            { $unwind: "$products" }, // Unwind products array for processing each product
+        // Calculate revenue from Transportation (10% of completed bookings)
+        const transportationRevenue = await BookedTransportation.aggregate([
             {
-                $lookup: {
-                    from: "products", // Join with products collection
-                    localField: "products.product",
-                    foreignField: "_id",
-                    as: "productDetails"
+                $match: {
+                    status: "Completed"
                 }
             },
-            { $unwind: "$productDetails" },
             {
-                $lookup: {
-                    from: "users", // Join with users collection to get createdBy username for each product
-                    localField: "productDetails.createdBy",
-                    foreignField: "_id",
-                    as: "productCreatedByDetails"
+                $addFields: {
+                    month: { $month: "$date" },
+                    year: { $year: "$date" },
+                    adminRevenue: {
+                        $multiply: ["$price", 0.10] // 10% of the booking price
+                    }
                 }
-            },
-            { $unwind: "$productCreatedByDetails" },
-            {
-                $match: { "productCreatedByDetails.role": { $ne: "Admin" } } // Filter out products created by admin users
             },
             {
                 $group: {
-                    _id: "$products.product",
-                    totalSales: { $sum: { $multiply: ["$products.quantity", "$products.price"] } },
-                    productName: { $first: "$productDetails.name" },
-                    productPrice: { $first: "$productDetails.price" },
-                    createdByUsername: { $first: "$productCreatedByDetails.username" } // Add username of product creator
-                }
-            },
-            {
-                $project: {
-                    productId: "$_id",
-                    productName: 1,
-                    createdByUsername: 1,
-                    totalSales: 1,
-                    revenue: { $multiply: ["$totalSales", 0.1] } // 10% app fee revenue
+                    _id: {
+                        year: "$year",
+                        month: "$month"
+                    },
+                    revenue: { $sum: "$adminRevenue" },
+                    bookingsCount: { $sum: 1 },
+                    uniqueCustomers: { $addToSet: "$createdBy" }
                 }
             }
         ]);
 
-        report.productRevenue = orderRevenue;
+        // Calculate revenue from Product Orders (10% of completed orders)
+        const productRevenue = await Order.aggregate([
+            {
+                $match: {
+                    status: "Completed"
+                }
+            },
+            {
+                $addFields: {
+                    month: { $month: "$createdAt" },
+                    year: { $year: "$createdAt" },
+                    adminRevenue: {
+                        $multiply: ["$totalPrice", 0.10] // 10% of the order total
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        year: "$year",
+                        month: "$month"
+                    },
+                    revenue: { $sum: "$adminRevenue" },
+                    ordersCount: { $sum: 1 },
+                    uniqueCustomers: { $addToSet: "$createdBy" }
+                }
+            }
+        ]);
 
-        // 4. Calculate Total Revenue for the Admin (sum of all revenue sources)
-        report.totalRevenue = report.itineraryRevenue.reduce((sum, item) => sum + item.revenue, 0) +
-            report.activityRevenue.reduce((sum, item) => sum + item.revenue, 0) +
-            report.productRevenue.reduce((sum, item) => sum + item.revenue, 0);
+        // Combine all revenues by month
+        const allRevenues = [...itineraryRevenue, ...activityRevenue, ...transportationRevenue, ...productRevenue];
 
-        // Send the detailed revenue report
-        res.json(report);
+        // Group all revenues by year and month
+        const monthlyReport = {};
+        allRevenues.forEach(item => {
+            const key = `${item._id.year}-${item._id.month}`;
+            if (!monthlyReport[key]) {
+                monthlyReport[key] = {
+                    year: item._id.year,
+                    month: item._id.month,
+                    totalRevenue: 0,
+                    totalBookings: 0,
+                    uniqueCustomers: new Set()
+                };
+            }
+            monthlyReport[key].totalRevenue += item.revenue;
+            monthlyReport[key].totalBookings += (item.bookingsCount || item.ordersCount);
+            item.uniqueCustomers.forEach(customerId =>
+                monthlyReport[key].uniqueCustomers.add(customerId.toString())
+            );
+        });
+
+        // Format the final response
+        const formattedReport = Object.values(monthlyReport).map(month => ({
+            year: month.year,
+            month: month.month,
+            revenue: Number(month.totalRevenue.toFixed(2)),
+            totalTransactions: month.totalBookings,
+            uniqueCustomers: month.uniqueCustomers.size,
+        })).sort((a, b) => {
+            // Sort by year and month
+            if (a.year !== b.year) return b.year - a.year;
+            return b.month - a.month;
+        });
+
+        // Calculate overall totals
+        const overallStats = formattedReport.reduce((acc, month) => {
+            acc.totalRevenue += month.revenue;
+            acc.totalTransactions += month.totalTransactions;
+            return acc;
+        }, { totalRevenue: 0, totalTransactions: 0 });
+
+        res.json({
+            monthlyReports: formattedReport,
+            overallStats: {
+                totalRevenue: Number(overallStats.totalRevenue.toFixed(2)),
+                totalTransactions: overallStats.totalTransactions,
+            }
+        });
+
     } catch (error) {
+        console.error(error);
         errorHandler.SendError(res, error);
     }
 };
