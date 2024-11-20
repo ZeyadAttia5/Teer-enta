@@ -59,9 +59,9 @@ const BookingGrid = () => {
           console.log(transportations) ;
           setBookedActivities(activities.data);
           setBookedItineraries(itineraries);
-          setBookedHotels(hotels);
-          setBookedFlights(flights);
-          setBookedTransportations(transportations);
+          setBookedHotels(hotels.data);
+          setBookedFlights(flights.data);
+          setBookedTransportations(transportations.data);
         } catch (error) {
           message.error('Error fetching bookings. Please try again.');
         }
@@ -141,26 +141,39 @@ const BookingGrid = () => {
             },
         }));
     };
+    let filteredActivities ;
+    let filteredItineraries ;
+    let filteredHotels ;
+    let filteredFlights ;
+    let filteredTransportations ;
+    console.log("here",bookedHotels);
+    if(bookedActivities && bookedActivities.length !==0){
+         filteredActivities = bookedActivities.filter(activity =>
+            activityStatus === 'All' || activity.status === activityStatus
+        );
+    }
+    if (bookedItineraries && bookedItineraries.length !==0){
+         filteredItineraries = bookedItineraries.filter(itinerary =>
+            itineraryStatus === 'All' || itinerary.status === itineraryStatus
+        );
+    }
+    if (bookedHotels && bookedHotels.length !==0){
+         filteredHotels = bookedHotels.filter(hotel =>
+            hotelStatus === 'All' || hotel.status === hotelStatus
+        );
+    }
+    if (bookedFlights && bookedFlights.length !==0){
+         filteredFlights = bookedFlights.filter(flight =>
+            flightStatus === 'All' || flight.status === flightStatus
+        );
+    }
+    if (bookedTransportations && bookedTransportations.length !==0){
+         filteredTransportations = bookedTransportations.filter(transportation =>
+            transportationStatus === 'All' || transportation.status === transportationStatus
+        );
+    }
 
-    const filteredActivities = bookedActivities.filter(activity =>
-        activityStatus === 'All' || activity.status === activityStatus
-    );
 
-    const filteredItineraries = bookedItineraries.filter(itinerary =>
-        itineraryStatus === 'All' || itinerary.status === itineraryStatus
-    );
-
-    const filteredHotels = bookedHotels.filter(hotel =>
-        hotelStatus === 'All' || hotel.status === hotelStatus
-    );
-
-    const filteredFlights = bookedFlights.filter(flight =>
-        flightStatus === 'All' || flight.status === flightStatus
-    );
-
-    const filteredTransportations = bookedTransportations.filter(transportation =>
-        transportationStatus === 'All' || transportation.status === transportationStatus
-    );
 
 
     return (
@@ -246,7 +259,7 @@ const BookingGrid = () => {
 
             {selectedType === 'Itineraries' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                    {filteredItineraries.map((itinerary) => (
+                    {filteredItineraries && filteredItineraries.length !==0 && filteredItineraries.map((itinerary) => (
                         itinerary.itinerary ? (
                             <Card key={itinerary._id} title={itinerary.itinerary.name} className="shadow-lg p-4" hoverable>
                                 <div className="flex justify-between items-center mb-4">
@@ -291,7 +304,7 @@ const BookingGrid = () => {
 
             {selectedType === 'Activities' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                    {filteredActivities.map((activity) => (
+                    {filteredActivities && filteredActivities.length !==0 && filteredActivities.map((activity) => (
                         activity.activity ? (
                             <Card key={activity._id} title={activity.activity.name} className="shadow-lg p-4" hoverable>
                                 <div className="flex justify-between items-center mb-4">
@@ -325,7 +338,7 @@ const BookingGrid = () => {
 
             {selectedType === 'Flights' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                {filteredFlights.map((flight) => (
+                {filteredFlights && filteredFlights.length !==0 && filteredFlights.map((flight) => (
                     <Card key={flight._id} title={`Flight from ${flight.departureAirport} to ${flight.arrivalAirport}`} className="shadow-lg p-4" hoverable>
                         <div className="flex justify-between items-center mb-4">
                             <span>{new Date(flight.departureDate).toLocaleDateString()}</span> {/* Departure Date */}
@@ -348,7 +361,7 @@ const BookingGrid = () => {
         
         {selectedType === 'Hotels' && ( 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-            {filteredHotels.map((hotel) => (
+            {filteredHotels && filteredHotels.length !==0 && filteredHotels.map((hotel) => (
                 hotel.hotel ? (
                     <Card key={hotel._id} title={hotel.hotel.name} className="shadow-lg p-4" hoverable>
                         <div className="flex justify-between items-center mb-4">
@@ -380,7 +393,7 @@ const BookingGrid = () => {
 
             {selectedType === 'Transportations' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                {filteredTransportations.map((transportation) => (
+                {filteredTransportations && filteredTransportations.length !==0 && filteredTransportations.map((transportation) => (
                     transportation.transportation ? (
                         <Card key={transportation._id} title={transportation.transportation.name} className="shadow-lg p-4" hoverable>
                             <div className="flex justify-between items-center mb-4">

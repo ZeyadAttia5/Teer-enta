@@ -52,10 +52,10 @@ exports.getItineraryReport = async (req, res) => {
     try {
         const report = await Itinerary.aggregate([
             {
-                $match: { createdBy: new mongoose.Types.ObjectId(req.user._id) } // Filter itineraries created by the user
+                $match: { createdBy: new mongoose.Types.ObjectId(req.user._id) }
             },
             {
-                $lookup: { // Join with BookedItinerary to find associated bookings
+                $lookup: {
                     from: "bookeditineraries",
                     localField: "_id",
                     foreignField: "itinerary",
@@ -65,16 +65,16 @@ exports.getItineraryReport = async (req, res) => {
             {
                 $unwind: {
                     path: "$bookings",
-                    preserveNullAndEmptyArrays: true // Include itineraries with no bookings
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
                 $addFields: {
                     month: {
-                        $month: "$bookings.date" // Extract the month from the booking date
+                        $month: "$bookings.date"
                     },
                     year: {
-                        $year: "$bookings.date" // Extract the year from the booking date
+                        $year: "$bookings.date"
                     }
                 }
             },
@@ -86,7 +86,11 @@ exports.getItineraryReport = async (req, res) => {
                         year: "$year",
                         month: "$month"
                     },
-                    monthlyRevenue: { $sum: "$bookings.price" }, // Sum of prices for each month
+                    monthlyRevenue: { $sum: "$bookings.price" },
+                    // Count unique tourists per month
+                    touristCount: {
+                        $addToSet: "$bookings.createdBy"
+                    }
                 }
             },
             {
@@ -99,7 +103,8 @@ exports.getItineraryReport = async (req, res) => {
                         $push: {
                             year: "$_id.year",
                             month: "$_id.month",
-                            revenue: "$monthlyRevenue"
+                            revenue: "$monthlyRevenue",
+                            numberOfTourists: { $size: "$touristCount" }  // Calculate the size of the unique tourists array
                         }
                     }
                 }
@@ -114,7 +119,7 @@ exports.getItineraryReport = async (req, res) => {
             }
         ]);
 
-        res.json(report); // Return the report
+        res.json(report);
     } catch (error) {
         errorHandler.SendError(res, error);
     }
@@ -122,14 +127,14 @@ exports.getItineraryReport = async (req, res) => {
 
 exports.getActivityReport = async (req, res) => {
     try {
-        const userId = new mongoose.Types.ObjectId(req.user._id); // Ensure user ID is an ObjectId
+        const userId = new mongoose.Types.ObjectId(req.user._id);
 
         const report = await Activity.aggregate([
             {
-                $match: { createdBy: userId } // Filter activities created by the current user
+                $match: { createdBy: userId }
             },
             {
-                $lookup: { // Join with BookedActivity collection to get booking details
+                $lookup: {
                     from: "bookedactivities",
                     localField: "_id",
                     foreignField: "activity",
@@ -139,16 +144,16 @@ exports.getActivityReport = async (req, res) => {
             {
                 $unwind: {
                     path: "$bookings",
-                    preserveNullAndEmptyArrays: true // Include activities with no bookings
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
                 $addFields: {
                     month: {
-                        $month: "$bookings.date" // Extract the month from the booking date
+                        $month: "$bookings.date"
                     },
                     year: {
-                        $year: "$bookings.date" // Extract the year from the booking date
+                        $year: "$bookings.date"
                     }
                 }
             },
@@ -160,7 +165,11 @@ exports.getActivityReport = async (req, res) => {
                         year: "$year",
                         month: "$month"
                     },
-                    monthlyRevenue: { $sum: "$bookings.price" }, // Sum of prices for each month
+                    monthlyRevenue: { $sum: "$bookings.price" },
+                    // Count unique tourists per month
+                    touristCount: {
+                        $addToSet: "$bookings.createdBy"
+                    }
                 }
             },
             {
@@ -173,7 +182,8 @@ exports.getActivityReport = async (req, res) => {
                         $push: {
                             year: "$_id.year",
                             month: "$_id.month",
-                            revenue: "$monthlyRevenue"
+                            revenue: "$monthlyRevenue",
+                            numberOfTourists: { $size: "$touristCount" }  // Calculate the number of unique tourists
                         }
                     }
                 }
@@ -188,7 +198,7 @@ exports.getActivityReport = async (req, res) => {
             }
         ]);
 
-        res.json(report); // Return the report
+        res.json(report);
     } catch (error) {
         console.error(error);
         errorHandler.SendError(res, error);
@@ -197,14 +207,14 @@ exports.getActivityReport = async (req, res) => {
 
 exports.getTransportationReport = async (req, res) => {
     try {
-        const userId = new mongoose.Types.ObjectId(req.user._id); // Ensure user ID is an ObjectId
+        const userId = new mongoose.Types.ObjectId(req.user._id);
 
         const report = await Transportation.aggregate([
             {
-                $match: { createdBy: userId } // Filter transportation options created by the user
+                $match: { createdBy: userId }
             },
             {
-                $lookup: { // Join with BookedTransportation collection to get booking details
+                $lookup: {
                     from: "bookedtransportations",
                     localField: "_id",
                     foreignField: "transportation",
@@ -214,16 +224,16 @@ exports.getTransportationReport = async (req, res) => {
             {
                 $unwind: {
                     path: "$bookings",
-                    preserveNullAndEmptyArrays: true // Include transportation options with no bookings
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
                 $addFields: {
                     month: {
-                        $month: "$bookings.date" // Extract the month from the booking date
+                        $month: "$bookings.date"
                     },
                     year: {
-                        $year: "$bookings.date" // Extract the year from the booking date
+                        $year: "$bookings.date"
                     }
                 }
             },
@@ -235,7 +245,11 @@ exports.getTransportationReport = async (req, res) => {
                         year: "$year",
                         month: "$month"
                     },
-                    monthlyRevenue: { $sum: "$bookings.price" }, // Sum of prices for each month
+                    monthlyRevenue: { $sum: "$bookings.price" },
+                    // Count unique tourists per month
+                    touristCount: {
+                        $addToSet: "$bookings.createdBy"
+                    }
                 }
             },
             {
@@ -248,7 +262,8 @@ exports.getTransportationReport = async (req, res) => {
                         $push: {
                             year: "$_id.year",
                             month: "$_id.month",
-                            revenue: "$monthlyRevenue"
+                            revenue: "$monthlyRevenue",
+                            numberOfTourists: { $size: "$touristCount" }  // Calculate the number of unique tourists
                         }
                     }
                 }
@@ -263,13 +278,12 @@ exports.getTransportationReport = async (req, res) => {
             }
         ]);
 
-        res.json(report); // Return the report as JSON response
+        res.json(report);
     } catch (error) {
         console.error(error);
         errorHandler.SendError(res, error);
     }
 };
-
 
 exports.getProductReport = async (req, res) => {
     try {
