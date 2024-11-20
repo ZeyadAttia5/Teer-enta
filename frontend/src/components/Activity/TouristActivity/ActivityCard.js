@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Rate, Button, Tooltip, message } from "antd";
 import { getGoogleMapsAddress } from "../../../api/googleMaps.ts";
-import { saveActivity, removeSavedActivity } from "../../../api/profile.ts"; // Import the save activity method
+import { saveActivity, removeSavedActivity } from "../../../api/profile.ts";
 import { useNavigate } from "react-router-dom";
 import {
   CalendarOutlined,
@@ -9,17 +9,10 @@ import {
   FolderOutlined,
   DollarOutlined,
   EnvironmentOutlined,
-} from "@ant-design/icons";
-import { Card } from "antd";
-import {
-  // CalendarOutlined,
-  // ClockCircleOutlined,
-  // FolderOutlined,
-  // DollarOutlined,
   HeartOutlined,
   HeartFilled,
-  // Message,
 } from "@ant-design/icons";
+import { Card } from "antd";
 
 const ActivityCard = ({
   id,
@@ -36,13 +29,11 @@ const ActivityCard = ({
   currencyCode,
   currencyRate,
   imageUrl,
-  isSaved,
+  isSaved: initialSavedState,
 }) => {
   const [address, setAddress] = useState("");
+  const [isSaved, setIsSaved] = useState(initialSavedState);
   const navigate = useNavigate();
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user"))
-    : null;
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -68,15 +59,14 @@ const ActivityCard = ({
 
   const handleSaveActivity = async (activityId) => {
     try {
-      await saveActivity(activityId);
       if (!isSaved) {
+        await saveActivity(activityId);
         message.success("Activity saved successfully!");
       } else {
+        await removeSavedActivity(activityId);
         message.info("Activity removed from saved activities!");
-        await removeSavedActivity(activityId); // Save the activity
       }
-
-      // setIsSaved(!isSaved); // Toggle saved status
+      setIsSaved(!isSaved); // Toggle saved state
     } catch (error) {
       console.error("Error saving activity:", error);
     }
@@ -84,7 +74,24 @@ const ActivityCard = ({
 
   return (
     <div className="flex justify-center items-center min-h-screen py-10">
-      <div className="max-w-4xl w-full rounded-lg overflow-hidden shadow-lg bg-[#ffffff] text-third m-2">
+      <div className="max-w-4xl w-full rounded-lg overflow-hidden shadow-lg bg-[#ffffff] text-third m-2 relative">
+        {/* Like/Save Button */}
+        <div className="absolute top-4 right-4 z-10">
+          <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
+            <Button
+              type="text"
+              icon={
+                isSaved ? (
+                  <HeartFilled style={{ color: "red", fontSize: "24px" }} />
+                ) : (
+                  <HeartOutlined style={{ color: "gray", fontSize: "24px" }} />
+                )
+              }
+              onClick={() => handleSaveActivity(id)}
+            />
+          </Tooltip>
+        </div>
+
         {/* Top Block: Name and Book Now Button */}
         <div className="flex items-center p-4 bg-first text-[#ffffff] flex-col sm:flex-row">
           <h2 className="font-bold text-xl sm:text-5xl flex-grow break-words">
@@ -121,7 +128,7 @@ const ActivityCard = ({
           <div className="flex flex-col sm:flex-row justify-between items-center flex-wrap">
             {/* Category with Tooltip */}
             <Tooltip title="Category" overlayClassName="bg-fourth">
-              <p className="flex items-center text- sm:text-base font-bold text-first">
+              <p className="flex items-center text-sm sm:text-base font-bold text-first">
                 <FolderOutlined className="mr-2" /> {category || "N/A"}
               </p>
             </Tooltip>
