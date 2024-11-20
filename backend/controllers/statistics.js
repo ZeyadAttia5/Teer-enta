@@ -69,6 +69,12 @@ exports.getItineraryReport = async (req, res) => {
                 }
             },
             {
+                // Add a match stage to filter only completed bookings
+                $match: {
+                    "bookings.status": "Completed"
+                }
+            },
+            {
                 $addFields: {
                     month: {
                         $month: "$bookings.date"
@@ -145,6 +151,12 @@ exports.getActivityReport = async (req, res) => {
                 $unwind: {
                     path: "$bookings",
                     preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                // Add a match stage to filter only completed bookings
+                $match: {
+                    "bookings.status": "Completed"
                 }
             },
             {
@@ -225,6 +237,12 @@ exports.getTransportationReport = async (req, res) => {
                 $unwind: {
                     path: "$bookings",
                     preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                // Add a match stage to filter only completed bookings
+                $match: {
+                    "bookings.status": "Completed"
                 }
             },
             {
@@ -323,6 +341,12 @@ exports.getProductReport = async (req, res) => {
                 $unwind: {
                     path: "$orders",
                     preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                // Add a match stage to filter only completed bookings
+                $match: {
+                    "$orders.status": "Completed"
                 }
             },
             {
