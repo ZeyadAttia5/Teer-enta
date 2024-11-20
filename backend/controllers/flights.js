@@ -71,17 +71,18 @@ exports.bookFlight = async (req, res) => {
     const promoCode = req.body.promoCode;
 
     try {
-        const existingPromoCode = await PromoCodes.findOne({
-            code: promoCode,
-            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
-        });
-
-        if (!existingPromoCode) {
-            return res.status(400).json({ message: "Invalid or expired Promo Code" });
-        }
-
-        if (existingPromoCode.usageLimit <= 0) {
-            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+        let existingPromoCode ;
+        if(promoCode ){
+            existingPromoCode = await PromoCodes.findOne({
+                code: promoCode,
+                expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+            });
+            if (!existingPromoCode) {
+                return res.status(400).json({ message: "Invalid or expired Promo Code" });
+            }
+            if (existingPromoCode.usageLimit <= 0) {
+                return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+            }
         }
         // Get the pricing for the flight offer
         const pricingResponse = await amadeus.shopping.flightOffers.pricing.post(
@@ -125,7 +126,7 @@ exports.bookFlight = async (req, res) => {
 
         // Calculate the total price for the flight
         let totalPrice = offer.price.total;
-        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
+        totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
         // Handle payment method
         const tourist = await Tourist.findById(userId);
         if (!tourist) {
