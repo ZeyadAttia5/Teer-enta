@@ -59,20 +59,21 @@ exports.bookHotel = async (req, res) => {
     }
 
     try {
-        const existingPromoCode = await PromoCodes.findOne({
-            code: promoCode,
-            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
-        });
-
-        if (!existingPromoCode) {
-            return res.status(400).json({ message: "Invalid or expired Promo Code" });
-        }
-
-        if (existingPromoCode.usageLimit <= 0) {
-            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+        let existingPromoCode ;
+        if(promoCode ){
+            existingPromoCode = await PromoCodes.findOne({
+                code: promoCode,
+                expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+            });
+            if (!existingPromoCode) {
+                return res.status(400).json({ message: "Invalid or expired Promo Code" });
+            }
+            if (existingPromoCode.usageLimit <= 0) {
+                return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+            }
         }
         let totalPrice = offer.price.total; // Get total price for the booking
-        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
+        totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
         const userId = req.user._id;
 
         // Retrieve the tourist's details (e.g., wallet balance)

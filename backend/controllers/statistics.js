@@ -287,58 +287,87 @@ exports.getTransportationReport = async (req, res) => {
 
 exports.getProductReport = async (req, res) => {
     try {
-        const userId = new mongoose.Types.ObjectId(req.user._id); // Ensure the user ID is an ObjectId
+        const userId = new mongoose.Types.ObjectId(req.user._id);
 
         const report = await Product.aggregate([
             {
-                $match: { createdBy: userId } // Only products created by the user
+                $match: { createdBy: userId }
             },
             {
                 $lookup: {
-                    from: "orders", // Left join with Orders collection to find orders with this product
-                    localField: "_id", // Match product's ID with products in orders
-                    foreignField: "products.product", // Match the field where products are listed in the orders
+                    from: "orders",
+                    let: { productId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $in: ["$$productId", "$products.product"]
+                                }
+                            }
+                        },
+                        {
+                            $unwind: "$products"
+                        },
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$products.product", "$$productId"]
+                                }
+                            }
+                        }
+                    ],
                     as: "orders"
                 }
             },
             {
+                $unwind: {
+                    path: "$orders",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
                 $addFields: {
-                    // Calculate total sales and quantity using the orders array
-                    totalSales: {
-                        $sum: {
-                            $map: {
-                                input: "$orders",
-                                as: "order",
-                                in: {
-                                    $sum: {
-                                        $map: {
-                                            input: "$$order.products", // Accessing individual products in each order
-                                            as: "product",
-                                            in: {
-                                                $multiply: [
-                                                    "$$product.quantity", // Get quantity
-                                                    "$$product.price"     // Get price
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    month: {
+                        $month: "$orders.createdAt"
                     },
-                    totalQuantity: {
-                        $sum: {
-                            $map: {
-                                input: "$orders",
-                                as: "order",
-                                in: {
-                                    $sum: {
-                                        $map: {
-                                            input: "$$order.products",
-                                            as: "product",
-                                            in: "$$product.quantity" // Get quantity for each product in order
-                                        }
-                                    }
+                    year: {
+                        $year: "$orders.createdAt"
+                    },
+                    orderRevenue: {
+                        $multiply: ["$orders.products.quantity", "$orders.products.price"]
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        productId: "$_id",
+                        productName: "$name",
+                        year: "$year",
+                        month: "$month"
+                    },
+                    monthlyRevenue: { $sum: "$orderRevenue" },
+                    touristCount: {
+                        $addToSet: "$orders.createdBy"
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        productId: "$_id.productId",
+                        productName: "$_id.productName"
+                    },
+                    revenueByMonth: {
+                        $push: {
+                            year: "$_id.year",
+                            month: "$_id.month",
+                            revenue: { $ifNull: ["$monthlyRevenue", 0] },
+                            numberOfTourists: {
+                                $cond: {
+                                    if: { $eq: [{ $size: "$touristCount" }, 0] },
+                                    then: 0,
+                                    else: { $size: "$touristCount" }
                                 }
                             }
                         }
@@ -348,22 +377,14 @@ exports.getProductReport = async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    productId: "$_id",
-                    productName: "$name",
-                    totalSales: { $ifNull: ["$totalSales", 0] }, // If no sales, set totalSales to 0
-                    totalQuantity: { $ifNull: ["$totalQuantity", 0] }, // If no quantity sold, set to 0
-                    orders: {
-                        $cond: {
-                            if: { $eq: [{ $size: "$orders" }, 0] },
-                            then: "No orders", // If no orders, show 'No orders'
-                            else: "$orders" // Include order details if orders exist
-                        }
-                    }
+                    productId: "$_id.productId",
+                    productName: "$_id.productName",
+                    revenueByMonth: 1
                 }
             }
         ]);
 
-        res.json(report); // Send the report data as a JSON response
+        res.json(report);
     } catch (error) {
         console.error(error);
         errorHandler.SendError(res, error);

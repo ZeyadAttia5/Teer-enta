@@ -80,17 +80,18 @@ exports.checkOutOrder = async (req, res) => {
         if (!user || !user.cart || user.cart.length === 0) {
             return res.status(400).json({ message: 'No products in the cart to create an order.' });
         }
-        const existingPromoCode = await PromoCodes.findOne({
-            code: promoCode,
-            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
-        });
-
-        if (!existingPromoCode) {
-            return res.status(400).json({ message: "Invalid or expired Promo Code" });
-        }
-
-        if (existingPromoCode.usageLimit <= 0) {
-            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+        let existingPromoCode ;
+        if(promoCode ){
+            existingPromoCode = await PromoCodes.findOne({
+                code: promoCode,
+                expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+            });
+            if (!existingPromoCode) {
+                return res.status(400).json({ message: "Invalid or expired Promo Code" });
+            }
+            if (existingPromoCode.usageLimit <= 0) {
+                return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+            }
         }
 
         let totalPrice = 0;
@@ -114,7 +115,7 @@ exports.checkOutOrder = async (req, res) => {
             });
             totalPrice += cartItem.quantity * product.price;
         }
-        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
+        totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
 
         if (paymentMethod === 'wallet') {
             if (user.wallet < totalPrice) {
