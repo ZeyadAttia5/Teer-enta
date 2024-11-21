@@ -3,6 +3,13 @@ const errorHandler = require('../Util/ErrorHandler/errorSender');
 const {generateRandomCode} = require("../Util/promoCodeGenerator");
 const PromoCodes = require("../models/PromoCodes");
 
+exports.getAllPromoCodes = async (req, res) => {
+    try {
+        const promoCodes = await PromoCode.find();
+        res.status(200).json({ promoCodes });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+}
 
 exports.createPromoCode = async (req, res) => {
     try {
