@@ -85,8 +85,10 @@ exports.bookTransportation = async (req, res) => {
         let totalPrice = transportation.price; // Assuming you have a price field in the Transportation model
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
         console.log(totalPrice);
-        existingPromoCode.usageLimit -= 1;
-        await existingPromoCode.save();
+        if(promoCode){
+            existingPromoCode.usageLimit -= 1;
+            await existingPromoCode.save();
+        }
         const tourist = await Tourist.findById(userId);
         if (!tourist) {
             return res.status(404).json({ message: 'Tourist not found.' });

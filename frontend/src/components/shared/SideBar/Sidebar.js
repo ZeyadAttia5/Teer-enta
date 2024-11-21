@@ -176,12 +176,14 @@ const Sidebar = ({ visible, onClose }) => {
             <Menu.Item key="13" onClick={() => handleClick("/products")}>
               All Products
             </Menu.Item>
-            <Menu.Item
-              key="15"
-              onClick={() => handleClick("/wishlisted_products")}
-            >
-              Wishlist
-            </Menu.Item>
+            {user && user.userRole === "Tourist" && (
+              <Menu.Item
+                key="15"
+                onClick={() => handleClick("/wishlisted_products")}
+              >
+                Wish list
+              </Menu.Item>
+            )}
             {user &&
               (user.userRole === "Seller" || user.userRole === "Admin") && (
                 <>
@@ -257,6 +259,16 @@ const Sidebar = ({ visible, onClose }) => {
                 My Complaints
               </Menu.Item>
             )}
+          </Menu.SubMenu>
+        )}
+        {user && user.userRole === "Admin" && (
+          <Menu.SubMenu key="promo" title="Promo codes">
+            <Menu.Item
+              key="1701"
+              onClick={() => handleClick("/promoCodesAdmin")}
+            >
+              Promo codes
+            </Menu.Item>
           </Menu.SubMenu>
         )}
       </Menu>
