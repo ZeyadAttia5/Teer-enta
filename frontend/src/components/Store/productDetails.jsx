@@ -74,7 +74,7 @@ const ProductDetails = ({ setFlag }) => {
         setProduct(response.data);
 
         // Get the wishlist and check if the product id exists there
-        if(user){
+        if(user && user.userRole === "Tourist") {
           const wishlistResponse = await getWishlist();
           if (!wishlistResponse.data.wishlist || wishlistResponse.status === 404)
             return;
