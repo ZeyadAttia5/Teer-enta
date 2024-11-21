@@ -9,6 +9,7 @@ exports.getAllPromoCodes = async (req, res) => {
         res.status(200).json({ promoCodes });
     } catch (err) {
         errorHandler.SendError(res, err);
+    }
 }
 
 exports.createPromoCode = async (req, res) => {
