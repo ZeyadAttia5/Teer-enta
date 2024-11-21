@@ -418,22 +418,25 @@ exports.bookItinerary = async (req, res) => {
         if (existingBooking) {
             return res.status(400).json({ message: "You already have a pending booking for this itinerary on the selected date" });
         }
-        const existingPromoCode = await PromoCodes.findOne({
-            code: promoCode,
-            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
-        });
-
-        if (!existingPromoCode) {
-            return res.status(400).json({ message: "Invalid or expired Promo Code" });
-        }
-
-        if (existingPromoCode.usageLimit <= 0) {
-            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+        let existingPromoCode ;
+        if(promoCode ){
+             existingPromoCode = await PromoCodes.findOne({
+                code: promoCode,
+                expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+            });
+            if (!existingPromoCode) {
+                return res.status(400).json({ message: "Invalid or expired Promo Code" });
+            }
+            if (existingPromoCode.usageLimit <= 0) {
+                return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+            }
         }
 
         const tourist = await Tourist.findById(userId);
         let totalPrice = itinerary.price; // Adjust this if needed to dynamically handle different prices
-        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
+        totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
+        existingPromoCode.usageLimit -= 1;
+        await existingPromoCode.save();
         if (paymentMethod === 'wallet') {
             if (tourist.wallet < totalPrice) {
                 return res.status(400).json({ message: "Insufficient wallet balance" });
@@ -501,6 +504,7 @@ exports.bookItinerary = async (req, res) => {
             updatedWallet: paymentMethod === 'wallet' ? tourist.wallet : undefined
         });
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 };

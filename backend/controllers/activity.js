@@ -318,17 +318,18 @@ exports.bookActivity = async (req, res) => {
         if (existingBooking && existingBooking.date.toISOString().split('T')[0] === activity.date.toISOString().split('T')[0]) {
             return res.status(400).json({message: "You already have a pending booking for this activity on the same date"});
         }
-        const existingPromoCode = await PromoCodes.findOne({
-            code: promoCode,
-            expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
-        });
-
-        if (!existingPromoCode) {
-            return res.status(400).json({ message: "Invalid or expired Promo Code" });
-        }
-
-        if (existingPromoCode.usageLimit <= 0) {
-            return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+        let existingPromoCode ;
+        if(promoCode ){
+            existingPromoCode = await PromoCodes.findOne({
+                code: promoCode,
+                expiryDate: { $gt: Date.now() } // Ensure the expiry date is in the future
+            });
+            if (!existingPromoCode) {
+                return res.status(400).json({ message: "Invalid or expired Promo Code" });
+            }
+            if (existingPromoCode.usageLimit <= 0) {
+                return res.status(400).json({ message: "Promo Code usage limit exceeded" });
+            }
         }
 
         // Retrieve the tourist's wallet balance if needed
@@ -337,7 +338,9 @@ exports.bookActivity = async (req, res) => {
         const activeDiscount = activity.specialDiscounts.find(discount => discount.isAvailable);
         const maxPrice = activity.price.max;// TODO this should be reviewed
         let totalPrice = activeDiscount ? maxPrice * (1 - activeDiscount.discount / 100) : maxPrice;
-        totalPrice = totalPrice * (1 - existingPromoCode.discount / 100);
+        totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
+        existingPromoCode.usageLimit -= 1;
+        await existingPromoCode.save();
         // Handle payment method
         if (paymentMethod === 'wallet') {
             // Wallet payment method
