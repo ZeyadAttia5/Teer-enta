@@ -339,8 +339,10 @@ exports.bookActivity = async (req, res) => {
         const maxPrice = activity.price.max;// TODO this should be reviewed
         let totalPrice = activeDiscount ? maxPrice * (1 - activeDiscount.discount / 100) : maxPrice;
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
-        existingPromoCode.usageLimit -= 1;
-        await existingPromoCode.save();
+        if(promoCode){
+            existingPromoCode.usageLimit -= 1;
+            await existingPromoCode.save();
+        }
         // Handle payment method
         if (paymentMethod === 'wallet') {
             // Wallet payment method
