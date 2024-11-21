@@ -3,8 +3,8 @@ import {
     List, Card, Tag, Space, Typography, Avatar, Tooltip, Badge, message, Button, Input
 } from "antd";
 import {
-    CarOutlined, CompassOutlined, DollarOutlined, CalendarOutlined,
-    UserOutlined, GlobalOutlined, TagOutlined
+    CarOutlined ,CompassOutlined, DollarOutlined, CalendarOutlined,
+    UserOutlined, GlobalOutlined, TagOutlined, ArrowRightOutlined 
 } from "@ant-design/icons";
 import { applyPromoCode } from "../../api/promoCode.ts";
 import dayjs from "dayjs";
@@ -16,9 +16,9 @@ const { Text } = Typography;
 
 const getVehicleIcon = (type) => {
     const colors = {
-        Car: "#1890ff",
-        Scooter: "#52c41a",
-        Bus: "#722ed1",
+        Car: "#526D82",
+        Scooter: "#526D82",
+        Bus: "#526D82",
     };
     return (
         <Tag color={colors[type]} icon={<CarOutlined/>}>
@@ -31,6 +31,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
     const [promoCode, setPromoCode] = useState("");
     const [promoDiscount, setPromoDiscount] = useState(0);
     const [applyingPromo, setApplyingPromo] = useState(false);
+const [showAdvertiserInfo, setShowAdvertiserInfo] = useState(false);
 
     const handleApplyPromo = async () => {
         if (!promoCode.trim()) {
@@ -58,60 +59,70 @@ const TransportationCard = ({ item, currency, onBook }) => {
         return basePrice.toFixed(2);
     };
 
+    
+
     return (
-        <Badge.Ribbon
-          text={item.isActive ? "Active" : "Inactive"}
-          color={item.isActive ? "green" : "red"}
-        >
+      
+      <Badge.Ribbon
+      text={item.isActive ? "Active" : "Inactive"}
+      color={item.isActive ? "green" : "red"}
+    >
+      <Card
+        hoverable
+        title={
+          <Space align="center" size="large"> {/* Space between elements horizontally */}
+            <div style={{ color: item.isActive ? "#27374D" : "#526D82" }}>
+              {/* Vehicle Icon with color palette */}
+              {getVehicleIcon(item.vehicleType)}
+            </div>
+
+             <Space size="small" align="center">
+              <CalendarOutlined />
+              <Text className="text-first">
+                {dayjs(item.date).format("MMM D, YYYY")}
+              </Text>
+            </Space>
             
-          <Card
-            hoverable
-            title={
-              <Space>
-                {getVehicleIcon(item.vehicleType)}
-                <Text strong className="text-first">
-                  {`Trip #${item._id.slice(-6)}`}
-                </Text>
-              </Space>
-            }
-          >
-            {/* Trip Date */}
-            <Space>
-                <CalendarOutlined />
-                <Text className="text-first">
-                  {dayjs(item.date).format("MMM D, YYYY")}
-                </Text>
-              </Space>
+            <Text strong className="text-first">
+              {`Trip #${item._id.slice(-6)}`}
+            </Text>
+            
+           
+          </Space>
+        }
+      >
 
             <Space direction="vertical" size="large" className="w-full">
               {/* Pickup and Drop-Off Locations */}
-              <div className="flex justify-between items-center">
-                <div className="flex gap-4">
+              <div className="flex justify-between items-center ">
+                <div className="flex gap-6">
                   {/* Pickup Location */}
-                  <div className="flex items-center gap-2 text-first">
+                  <div className="flex items-center gap-1 text-first">
                     <CompassOutlined />
-                    <Text>Pickup:</Text>
+                    <Text className="font-bold" >Pickup:</Text>
                     <Tooltip title="View Pickup Location on Map">
                       <a
                         href={`https://maps.google.com/?q=${item.pickupLocation.lat},${item.pickupLocation.lng}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-second hover:underline"
+                        className="text-second hover:text-third hover:underline "
                       >
                         View on map
                       </a>
                     </Tooltip>
                   </div>
+                  <ArrowRightOutlined className="text-second" />
+
                   {/* Drop-Off Location */}
-                  <div className="flex items-center gap-2 text-first">
+                  <div className="flex items-center gap-1 text-first">
                     
-                    <Text>Drop-off:</Text>
+                    <Text className="font-bold">Drop-off:</Text>
                     <Tooltip title="View Drop-off Location on Map">
                       <a
                         href={`https://maps.google.com/?q=${item.dropOffLocation.lat},${item.dropOffLocation.lng}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-second hover:underline"
+                        className="text-second hover:text-third hover:underline "
                       >
                         View on map
                       </a>
@@ -144,7 +155,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
       onClick={handleApplyPromo}
       loading={applyingPromo}
       type="primary"
-      className="bg-second hover:bg-first border-second hover:border-first"
+      className="hover:bg-first bg-second  border-second hover:border-first mb-0"
     >
       Apply
     </Button>
@@ -179,41 +190,49 @@ const TransportationCard = ({ item, currency, onBook }) => {
                 type="primary"
                 block
                 onClick={() => onBook(item._id, promoCode)}
-                className="bg-second border-second hover:bg-first hover:border-first"
+                className="bg-second border-fourth hover:bg-fourth hover:border-first"
               >
                 Book Now
               </Button>
 
               {/* Advertiser Info */}
-              <Card size="small" title="Advertiser Info" className="mt-4 bg-fourth">
-                <Space align="start">
-                  <Avatar src={item.createdBy.logoUrl} icon={<UserOutlined />} />
-                  <Space direction="vertical" size={0}>
-                    <Text strong className="text-first">
-                      Username: {item.createdBy.username ?? "NA"}
-                    </Text>
-                    <Text strong className="text-first">
-                      Company: {item.createdBy.companyName ?? "NA"}
-                    </Text>
-                    <Text type="secondary" className="text-sm text-third">
-                      Industry: {item.createdBy.industry ?? "NA"}
-                    </Text>
-                    {item.createdBy.website && (
-                      <Space size={4}>
-                        <GlobalOutlined />
-                        <a
-                          href={item.createdBy.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-second hover:underline"
-                        >
-                          Website
-                        </a>
-                      </Space>
-                    )}
-                  </Space>
-                </Space>
-              </Card>
+<Card size="small" title="" className="mt-4 bg-fourth underline">
+  <Space align="start">
+    <Avatar src={item.createdBy.logoUrl} icon={<UserOutlined />} />
+    {/* Hover Text */}
+    <Text
+      className="text-second italic hover:cursor-pointer"
+      onMouseEnter={() => setShowAdvertiserInfo(true)} // Show info when hovered
+      onMouseLeave={() => setShowAdvertiserInfo(false)} // Hide info when mouse leaves
+    >
+      Advertiser
+    </Text>
+    {/* Conditional Rendering for Advertiser Info */}
+    {showAdvertiserInfo && (
+      <Space direction="horizontal" size={12}>
+        <Text strong>{`Username: ${item.createdBy.username ?? "NA"}`}</Text>
+        <Text strong>{`Company: ${item.createdBy.companyName ?? "NA"}`}</Text>
+        <Text type="secondary" className="text-sm text-third">
+          {`Industry: ${item.createdBy.industry ?? "NA"}`}
+        </Text>
+        {item.createdBy.website && (
+          <Space size={4}>
+            <GlobalOutlined />
+            <a
+              href={item.createdBy.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-second hover:underline"
+            >
+              Website
+            </a>
+          </Space>
+        )}
+      </Space>
+    )}
+  </Space>
+</Card>
+
       
               {/* Created Date */}
               <Text type="secondary" className="text-sm text-third">
