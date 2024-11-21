@@ -59,117 +59,174 @@ const TransportationCard = ({ item, currency, onBook }) => {
     };
 
     return (
-        <Badge.Ribbon text={item.isActive ? "Active" : "Inactive"} color={item.isActive ? "green" : "red"}>
-            <Card
-                hoverable
-                title={
-                    <Space>
-                        {getVehicleIcon(item.vehicleType)}
-                        <Text strong>{`Trip #${item._id.slice(-6)}`}</Text>
-                    </Space>
-                }
-            >
-                <Space direction="vertical" size="middle" style={{width: "100%"}}>
-                    <Space>
-                        <CompassOutlined/>
-                        <Text>Pickup: </Text>
-                        <Tooltip title={`${item.pickupLocation.lat}, ${item.pickupLocation.lng}`}>
-                            <Tag color="blue">View on map</Tag>
-                        </Tooltip>
-                    </Space>
-                    <StaticMap latitude={item.pickupLocation.lat} longitude={item.pickupLocation.lng}/>
+        <Badge.Ribbon
+          text={item.isActive ? "Active" : "Inactive"}
+          color={item.isActive ? "green" : "red"}
+        >
+            
+          <Card
+            hoverable
+            title={
+              <Space>
+                {getVehicleIcon(item.vehicleType)}
+                <Text strong className="text-first">
+                  {`Trip #${item._id.slice(-6)}`}
+                </Text>
+              </Space>
+            }
+          >
+            {/* Trip Date */}
+            <Space>
+                <CalendarOutlined />
+                <Text className="text-first">
+                  {dayjs(item.date).format("MMM D, YYYY")}
+                </Text>
+              </Space>
 
-                    <Space>
-                        <CompassOutlined/>
-                        <Text>Drop-off: </Text>
-                        <Tooltip title={`${item.dropOffLocation.lat}, ${item.dropOffLocation.lng}`}>
-                            <Tag color="purple">View on map</Tag>
-                        </Tooltip>
-                    </Space>
-                    <StaticMap latitude={item.dropOffLocation.lat} longitude={item.dropOffLocation.lng}/>
+            <Space direction="vertical" size="large" className="w-full">
+              {/* Pickup and Drop-Off Locations */}
+              <div className="flex justify-between items-center">
+                <div className="flex gap-4">
+                  {/* Pickup Location */}
+                  <div className="flex items-center gap-2 text-first">
+                    <CompassOutlined />
+                    <Text>Pickup:</Text>
+                    <Tooltip title="View Pickup Location on Map">
+                      <a
+                        href={`https://maps.google.com/?q=${item.pickupLocation.lat},${item.pickupLocation.lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-second hover:underline"
+                      >
+                        View on map
+                      </a>
+                    </Tooltip>
+                  </div>
+                  {/* Drop-Off Location */}
+                  <div className="flex items-center gap-2 text-first">
+                    
+                    <Text>Drop-off:</Text>
+                    <Tooltip title="View Drop-off Location on Map">
+                      <a
+                        href={`https://maps.google.com/?q=${item.dropOffLocation.lat},${item.dropOffLocation.lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-second hover:underline"
+                      >
+                        View on map
+                      </a>
+                    </Tooltip>
+                  </div>
+                </div>
+              </div>
+      
+              
 
-                    <div className="border-t pt-4">
-                        <Text className="block mb-3">Promo Code</Text>
-                        <div className="flex gap-2 mb-4">
-                            <Input
-                                prefix={<TagOutlined />}
-                                value={promoCode}
-                                onChange={e => setPromoCode(e.target.value)}
-                                placeholder="Enter promo code"
-                                className="flex-1"
-                            />
-                            <Button
-                                onClick={handleApplyPromo}
-                                loading={applyingPromo}
-                                type="primary"
-                            >
-                                Apply
-                            </Button>
-                        </div>
-                    </div>
+              {/* Promo Code Section */}
+              <div className="border-t border-gray-200 pt-4">
+  {/* Notes */}
+  {item.notes && (
+    <Text type="secondary" ellipsis={{ tooltip: item.notes }} className="text-third mb-4">
+      Notes: {item.notes}
+    </Text>
+  )}
 
-                    <Space direction="vertical">
-                        <DollarOutlined/>
-                        {promoDiscount > 0 && (
-                            <Text delete type="secondary">
-                                Original: {currency?.code} {(item.price * currency?.rate).toFixed(2)}
-                            </Text>
-                        )}
-                        <Text strong>
-                            Final Price: {currency?.code} {calculateFinalPrice(item.price)}
-                        </Text>
-                        {promoDiscount > 0 && (
-                            <Text type="success">Promo discount: {promoDiscount}% off</Text>
-                        )}
-                    </Space>
+  {/* Promo Code Section */}
+  <div className="flex gap-2 mb-4">
+    <Input
+      prefix={<TagOutlined />}
+      value={promoCode}
+      onChange={(e) => setPromoCode(e.target.value)}
+      placeholder="Enter promo code"
+      className="flex-1"
+    />
+    <Button
+      onClick={handleApplyPromo}
+      loading={applyingPromo}
+      type="primary"
+      className="bg-second hover:bg-first border-second hover:border-first"
+    >
+      Apply
+    </Button>
+  </div>
+</div>
 
-                    <Space>
-                        <CalendarOutlined/>
-                        <Text>{dayjs(item.date).format("MMM D, YYYY")}</Text>
-                    </Space>
-
-                    {item.notes && (
-                        <Text type="secondary" ellipsis={{tooltip: item.notes}}>
-                            Notes: {item.notes}
-                        </Text>
-                    )}
-
-                    <Card size="small" title="Advertiser Info">
-                        <Space align="start">
-                            <Avatar src={item.createdBy.logoUrl} icon={<UserOutlined/>}/>
-                            <Space direction="vertical" size={0}>
-                                <Text strong>Username: {item.createdBy.username ?? 'NA'}</Text>
-                                <Text strong>Company: {item.createdBy.companyName ?? 'NA'}</Text>
-                                <Text type="secondary" style={{fontSize: "12px"}}>
-                                    Industry: {item.createdBy.industry ?? 'NA'}
-                                </Text>
-                                {item.createdBy.website && (
-                                    <Space size={4}>
-                                        <GlobalOutlined/>
-                                        <a href={item.createdBy.website} target="_blank" rel="noopener noreferrer">
-                                            Website
-                                        </a>
-                                    </Space>
-                                )}
-                            </Space>
-                        </Space>
-                    </Card>
-
-                    <Text type="secondary" style={{fontSize: "12px"}}>
-                        Created: {dayjs(item.createdAt).format("MMM D, YYYY")}
+      
+              {/* Pricing Information */}
+              <Space direction="vertical" size="small">
+                <div className="flex items-center gap-2 text-first text-2xl">
+                  <DollarOutlined />
+                  {promoDiscount > 0 && (
+                    <Text delete type="secondary" className="text-third">
+                      Original: {currency?.code}{" "}
+                      {(item.price * currency?.rate).toFixed(2)}
                     </Text>
+                  )}
+                </div>
+                <Text strong className="text-xl text-first">
+                  Final Price: {currency?.code} {calculateFinalPrice(item.price)}
+                </Text>
+                {promoDiscount > 0 && (
+                  <Text type="success" className="text-first">
+                    Promo discount: {promoDiscount}% off
+                  </Text>
+                )}
+              </Space>
+      
 
-                    <Button
-                        type="primary"
-                        block
-                        onClick={() => onBook(item._id, promoCode)}
-                    >
-                        Book Now
-                    </Button>
+      {/* Book Now Button */}
+              <Button
+                type="primary"
+                block
+                onClick={() => onBook(item._id, promoCode)}
+                className="bg-second border-second hover:bg-first hover:border-first"
+              >
+                Book Now
+              </Button>
+
+              {/* Advertiser Info */}
+              <Card size="small" title="Advertiser Info" className="mt-4 bg-fourth">
+                <Space align="start">
+                  <Avatar src={item.createdBy.logoUrl} icon={<UserOutlined />} />
+                  <Space direction="vertical" size={0}>
+                    <Text strong className="text-first">
+                      Username: {item.createdBy.username ?? "NA"}
+                    </Text>
+                    <Text strong className="text-first">
+                      Company: {item.createdBy.companyName ?? "NA"}
+                    </Text>
+                    <Text type="secondary" className="text-sm text-third">
+                      Industry: {item.createdBy.industry ?? "NA"}
+                    </Text>
+                    {item.createdBy.website && (
+                      <Space size={4}>
+                        <GlobalOutlined />
+                        <a
+                          href={item.createdBy.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-second hover:underline"
+                        >
+                          Website
+                        </a>
+                      </Space>
+                    )}
+                  </Space>
                 </Space>
-            </Card>
+              </Card>
+      
+              {/* Created Date */}
+              <Text type="secondary" className="text-sm text-third">
+                Created at: {dayjs(item.createdAt).format("MMM D, YYYY")}
+              </Text>
+            </Space>
+          </Card>
         </Badge.Ribbon>
-    );
+      );
+      
+      
+      
+      
 };
 
 const BookTransportation = () => {
@@ -235,7 +292,7 @@ const BookTransportation = () => {
             dataSource={data}
             loading={loading}
             renderItem={(item) => (
-                <List.Item>
+                <List.Item style={{ marginLeft: '20px' , marginBottom: '20px'}}>
                     <TransportationCard
                         item={item}
                         currency={currency}
