@@ -435,6 +435,8 @@ exports.bookItinerary = async (req, res) => {
         const tourist = await Tourist.findById(userId);
         let totalPrice = itinerary.price; // Adjust this if needed to dynamically handle different prices
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
+        existingPromoCode.usageLimit -= 1;
+        await existingPromoCode.save();
         if (paymentMethod === 'wallet') {
             if (tourist.wallet < totalPrice) {
                 return res.status(400).json({ message: "Insufficient wallet balance" });
@@ -502,6 +504,7 @@ exports.bookItinerary = async (req, res) => {
             updatedWallet: paymentMethod === 'wallet' ? tourist.wallet : undefined
         });
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 };

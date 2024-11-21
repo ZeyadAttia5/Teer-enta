@@ -50,6 +50,8 @@ exports.bookTransportation = async (req, res) => {
         const userId = req.user._id;
         const promoCode = req.body.promoCode;
 
+        console.log(id);
+
         const transportation = await Transportation.findOne({ _id: id, isActive: true });
         if (!transportation) {
             return res.status(404).json({ message: 'Transportation not found or Inactive' });
@@ -82,6 +84,9 @@ exports.bookTransportation = async (req, res) => {
 
         let totalPrice = transportation.price; // Assuming you have a price field in the Transportation model
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
+        console.log(totalPrice);
+        existingPromoCode.usageLimit -= 1;
+        await existingPromoCode.save();
         const tourist = await Tourist.findById(userId);
         if (!tourist) {
             return res.status(404).json({ message: 'Tourist not found.' });
@@ -126,6 +131,7 @@ exports.bookTransportation = async (req, res) => {
         return res.status(200).json({ message: 'Transportation booked successfully' });
 
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 };

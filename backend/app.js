@@ -78,8 +78,8 @@ app.use("/auth" , authRoutes ) ;
 app.use("/Profile", profileRoutes);
 app.use("/account" , accountRoutes) ;
 app.use("/product" , productRoutes) ;
-app.use("/cart",cartRoutes)
-app.use("/order",orderRoutes)
+app.use("/cart",cartRoutes);
+app.use("/order",orderRoutes);
 app.use("/tourGuide",tourGuideRoutes);
 app.use("/transportation",transportationRoutes);
 app.use("/flights", flightsRoutes);

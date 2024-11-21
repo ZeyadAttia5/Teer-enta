@@ -116,7 +116,8 @@ exports.checkOutOrder = async (req, res) => {
             totalPrice += cartItem.quantity * product.price;
         }
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
-
+        existingPromoCode.usageLimit -= 1;
+        await existingPromoCode.save();
         if (paymentMethod === 'wallet') {
             if (user.wallet < totalPrice) {
                 return res.status(400).json({ message: 'Insufficient funds in wallet.' });

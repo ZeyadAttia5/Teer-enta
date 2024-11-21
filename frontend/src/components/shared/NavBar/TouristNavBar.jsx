@@ -1,11 +1,11 @@
 import { CalendarOutlined, MenuOutlined } from "@ant-design/icons";
 import AccountButton from "./AccountButton";
 import useMediaQuery from "use-media-antd-query";
-import { Drawer } from "antd";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FiLogOut } from "react-icons/fi"; // Importing a logout icon from react-icons
-import logo from "../../../assets/logo/logo.jpeg";
+import {Drawer} from "antd";
+import {useEffect, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {FiLogOut} from "react-icons/fi"; // Importing a logout icon from react-icons
+import logo from "../../../assets/logo/logo2.jpg";
 import ConfirmationModal from "../ConfirmationModal";
 import { on } from "events";
 import { set } from "date-fns";
@@ -15,21 +15,21 @@ const SideBar = ({ children, classNames }) => {
   const size = useMediaQuery();
   const [open, setOpen] = useState(false);
 
-  if (["xs", "sm", "md"].includes(size)) {
-    return (
-      <div>
-        <MenuOutlined onClick={() => setOpen(true)} />
-        <Drawer
-          open={open}
-          onClose={() => setOpen(false)}
-          classNames={classNames}
-        >
-          {children}
-        </Drawer>
-      </div>
-    );
-  }
-  return children;
+    if (["xs", "sm", "md"].includes(size)) {
+        return (
+            <div>
+                <MenuOutlined onClick={() => setOpen(true)}/>
+                <Drawer
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    classNames={classNames}
+                >
+                    {children}
+                </Drawer>
+            </div>
+        );
+    }
+    return children;
 };
 
 const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
@@ -70,10 +70,10 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
           {/* Logo Link */}
           <Link to={"/"} className="ring-0">
             <img
-              src={logo}
-              alt="Logo"
-              width={115}
-              className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
+                src={logo}
+                alt="Logo"
+                width={80}
+                className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
             />
           </Link>
         </div>
@@ -142,46 +142,45 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
             />
           </div>
 
-          {user && (
-            <button
-              onClick={() => setModalOpen(true)}
-              className={`flex items-center text-${
-                navbarColor === "first" ? "fourth" : "first"
-              } hover:text-${"white"} justify-center mt-4 p-2 bg-${navbarColor} hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none`}
-              aria-label="Logout"
-            >
-              <FiLogOut className={`w-6 h-6`} />
-            </button>
-          )}
-        </div>
-      )}
-      {["xs", "sm", "md"].includes(size) && (
-        <SideBar
-          classNames={{
-            body: "bg-[#075B4C] text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
-            header: "bg-[#075B4C] text-white font-bold text-lg p-4",
-          }}
-        >
-          <div className="flex justify-end items-center lg:flex-1 mt-4">
-            <AccountButton
-              extra_tw="bg-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
-              onClick={onAccountClick}
-            />
-          </div>
+                    {user && (
+                        <button
+                            onClick={() => setModalOpen(true)}
+                            className={`flex items-center text-${navbarColor === "first" ? "fourth" : "first"} hover:text-${"white"} justify-center mt-4 p-2 bg-${navbarColor} hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none`}
+                            aria-label="Logout"
+                        >
+                            <FiLogOut className={`w-6 h-6`}/>
+                        </button>
+                    )}
+                </div>
+            )}
+            {["xs", "sm", "md"].includes(size) && (
+                <SideBar
+                    classNames={{
+                        body: "bg-[#075B4C] text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
+                        header: "bg-[#075B4C] text-white font-bold text-lg p-4",
+                    }}
+                >
+                    <div className="flex justify-end items-center lg:flex-1 mt-4">
+                        <AccountButton
+                            extra_tw="bg-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
+                            onClick={onAccountClick}
+                        />
+                    </div>
 
-          {user && (
-            <button
-              onClick={() => setModalOpen(true)}
-              className="flex items-center justify-center mt-4 p-2 bg-first hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
-              aria-label="Logout"
-            >
-              <FiLogOut className="w-6 h-6" />
-            </button>
-          )}
-        </SideBar>
-      )}
-    </div>
-  );
+
+                    {user && (
+                        <button
+                            onClick={() => setModalOpen(true)}
+                            className="flex items-center text-first hover:text-white justify-center mt-4 p-2 bg-fourth hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
+                            aria-label="Logout"
+                        >
+                            <FiLogOut className="w-6 h-6"/>
+                        </button>
+                    )}
+                </SideBar>
+            )}
+        </div>
+    );
 };
 
 export default TouristNavBar;
