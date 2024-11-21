@@ -291,7 +291,7 @@ const TouristActivity = ({setFlag}) => {
     }, []);
 
     return (
-        <div className="p-16 bg-[#E0F0EE] ">
+        <div className="p-0 bg-fourth">
             {/* <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p> */}
 
             <div className="flex flex-col items-center space-y-4 mb-8">
@@ -440,7 +440,7 @@ const TouristActivity = ({setFlag}) => {
             </Checkbox>
 
             {/* Activity Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-0">
                 {filteredActivities?.length > 0 ? (
                     filteredActivities?.map((place) => (
                         // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
