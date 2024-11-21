@@ -53,6 +53,7 @@ import BookActivity from "./components/Activity/TouristActivity/bookActivity";
 import Bookings from "./components/Users/bookings/bookings";
 import UserReport from "./components/reports/UserReport.jsx";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
+import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -314,6 +315,7 @@ function App() {
             element={<BookActivity />}
           />
           <Route path="/bookings" element={<Bookings />} />
+          <Route path="/myActivities" element={<MyActivities />} />
         </Routes>
         <Toaster />
       </Router>

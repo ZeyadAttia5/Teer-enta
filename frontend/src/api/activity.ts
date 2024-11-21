@@ -76,10 +76,10 @@ const deleteActivity = async (activityId: string | Number) =>
 const getActivity = async (id: string | number) =>
     await axios.get<TActivity>(`${API_BASE_URL}/activity/one/${id}`);
 
-const bookActivity = async (activityId: string | number, paymentMethod ) =>
+const bookActivity = async (activityId: string | number, paymentMethod ,promoCode ) =>
     await axios.post<TActivity>(
         `${API_BASE_URL}/activity/book/${activityId}`,
-        {paymentMethod: paymentMethod},
+        {paymentMethod: paymentMethod , promoCode: promoCode},
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

@@ -127,6 +127,8 @@ exports.bookFlight = async (req, res) => {
         // Calculate the total price for the flight
         let totalPrice = offer.price.total;
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
+        existingPromoCode.usageLimit -= 1;
+        await existingPromoCode.save();
         // Handle payment method
         const tourist = await Tourist.findById(userId);
         if (!tourist) {

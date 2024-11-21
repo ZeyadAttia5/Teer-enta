@@ -158,7 +158,7 @@ const ActivityDetails: React.FC = () => {
         borderRadius: "10px",
         transition: "transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
         boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        backgroundColor: "#94A3B8",
+        backgroundColor: "var(--fourth)",
         color: "#496989",
     };
 
@@ -181,6 +181,7 @@ const ActivityDetails: React.FC = () => {
                     }}
                     onMouseEnter={() => setHoveredCard("header")}
                     onMouseLeave={() => setHoveredCard(null)}
+                    className="bg-white"
                 >
                     <Row justify="space-between" align="middle">
                         <Col>

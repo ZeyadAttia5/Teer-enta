@@ -72,10 +72,11 @@ export const getIternary = async (id: string | number) =>
 //     });
 // }
 
-export const bookItinerary = async (itineraryId, date, paymentMethod) => {
+export const bookItinerary = async (itineraryId, date, paymentMethod ,promoCode) => {
     return await axios.post(`${API_BASE_URL}/itinerary/book/${itineraryId}`, {
         date: date,
         paymentMethod: paymentMethod,
+        promoCode: promoCode
     }, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

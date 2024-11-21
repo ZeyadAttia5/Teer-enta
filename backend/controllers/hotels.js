@@ -74,6 +74,8 @@ exports.bookHotel = async (req, res) => {
         }
         let totalPrice = offer.price.total; // Get total price for the booking
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
+        existingPromoCode.usageLimit -= 1;
+        await existingPromoCode.save();
         const userId = req.user._id;
 
         // Retrieve the tourist's details (e.g., wallet balance)
