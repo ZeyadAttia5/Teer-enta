@@ -74,16 +74,17 @@ const ProductDetails = ({ setFlag }) => {
         setProduct(response.data);
 
         // Get the wishlist and check if the product id exists there
-        const wishlistResponse = await getWishlist();
-        if (!wishlistResponse.data.wishlist || wishlistResponse.status === 404)
-          return;
-        else {
-          const wishlist = new Set(
-            wishlistResponse.data.wishlist.map((product) => product._id)
-          );
-          setIsWished(wishlist.has(id));
+        if(user){
+          const wishlistResponse = await getWishlist();
+          if (!wishlistResponse.data.wishlist || wishlistResponse.status === 404)
+            return;
+          else {
+            const wishlist = new Set(
+                wishlistResponse.data.wishlist.map((product) => product._id)
+            );
+            setIsWished(wishlist.has(id));
+          }
         }
-
         // other product fetching and state updates here...
       } catch (err) {
         setError(err.message);
