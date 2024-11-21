@@ -1,6 +1,7 @@
 const PromoCode = require('../models/PromoCodes');
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 const {generateRandomCode} = require("../Util/promoCodeGenerator");
+const PromoCodes = require("../models/PromoCodes");
 
 
 exports.createPromoCode = async (req, res) => {
@@ -40,3 +41,27 @@ exports.createPromoCode = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 };
+
+exports.applyPromoCode = async (req, res) => {
+    try {
+        const {promoCode} = req.body;
+
+        let existingPromoCode;
+        if (promoCode) {
+            existingPromoCode = await PromoCodes.findOne({
+                code: promoCode,
+                expiryDate: {$gt: Date.now()} // Ensure the expiry date is in the future
+            });
+            if (!existingPromoCode) {
+                return res.status(400).json({message: "Invalid or expired Promo Code"});
+            }
+            if (existingPromoCode.usageLimit <= 0) {
+                return res.status(400).json({message: "Promo Code usage limit exceeded"});
+            }
+        }
+
+        res.status(200).json({message: "Promo Code applied successfully", promoCode: existingPromoCode.discount});
+    }catch (err) {
+        errorHandler.SendError(res, err);
+    }
+}

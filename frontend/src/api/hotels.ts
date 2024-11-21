@@ -14,10 +14,10 @@ export const getHotels = async ({ city, checkInDate, checkOutDate, adults }) => 
   });
 };
 
-export const bookHotel = async ({ hotel, offer, guests, payments }) => {
+export const bookHotel = async ({ hotel, offer, guests, payments ,promoCode}) => {
   return await axios.post(
     `${API_BASE_URL}/hotels/bookHotel`,
-    { hotel, offer, guests, payments },
+    { hotel, offer, guests, payments ,promoCode},
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
