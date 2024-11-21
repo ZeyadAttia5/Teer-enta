@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Table, Spin, message, Button, Modal, Input, Switch, Tag } from "antd";
+import {
+  Table,
+  Spin,
+  message,
+  Button,
+  Modal,
+  Input,
+  Switch,
+  Tag,
+  Descriptions,
+  Divider,
+} from "antd";
 import {
   getComplaints,
   getComplaint,
@@ -168,22 +179,6 @@ const ComplaintsManagement = () => {
           >
             View Details
           </Button>
-
-          {/* <Button
-            onClick={() => updateStatus(record._id, "Pending")}
-            disabled={record.status === "Pending"}
-            style={{ marginRight: 8 }}
-          >
-            Pending
-          </Button>
-          <Button
-            onClick={() => updateStatus(record._id, "Resolved")}
-            disabled={record.status === "Resolved"}
-            style={{ marginRight: 8 }}
-          >
-            Resolved
-          </Button>
-          <Button onClick={() => showReplyModal(record._id)}>Reply</Button> */}
         </div>
       ),
     },
@@ -266,30 +261,30 @@ const ComplaintsManagement = () => {
       >
         {selectedComplaint && (
           <div>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>Title:</strong> {selectedComplaint.title}
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>Body:</strong> {selectedComplaint.body}
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>User:</strong>{" "}
-              {selectedComplaint.createdBy.username || "Unknown"}
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>Status:</strong>{" "}
-              <Tag
-                color={
-                  selectedComplaint.status === "Pending" ? "orange" : "green"
-                }
-              >
-                {selectedComplaint.status}
-              </Tag>
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>Date Submitted:</strong>{" "}
-              {new Date(selectedComplaint.date).toLocaleDateString()}
-            </p>
+            <Descriptions bordered column={1} className="mb-4">
+              <Descriptions.Item label="Title">
+                {selectedComplaint.title}
+              </Descriptions.Item>
+              <Descriptions.Item label="Body">
+                {selectedComplaint.body}
+              </Descriptions.Item>
+              <Descriptions.Item label="User">
+                {selectedComplaint.createdBy.username || "Unknown"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Status">
+                <Tag
+                  color={
+                    selectedComplaint.status === "Pending" ? "orange" : "green"
+                  }
+                >
+                  {selectedComplaint.status}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Date Submitted">
+                {new Date(selectedComplaint.date).toLocaleDateString()}
+              </Descriptions.Item>
+            </Descriptions>
+            <Divider />
             <div>
               <strong>Reply:</strong>
               <Input.TextArea
