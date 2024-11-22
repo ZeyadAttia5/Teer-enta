@@ -78,7 +78,7 @@ const [pickupAddress, setPickupAddress] = useState(null);
           fetchAddress(item.pickupLocation.lat, item.pickupLocation.lng);
       }
   
-      if (item.dropOffLocation.lat && item.dropOffLocation.lng) {
+      if (item.dropOffLocation.lat && item?.dropOffLocation?.lng) {
           const fetchAddress = async (lat, lng) => {
               try {
                   const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=REACT_APP_GOOGLE_MAPS_API_KEY`);
@@ -90,9 +90,9 @@ const [pickupAddress, setPickupAddress] = useState(null);
                   console.error('Error fetching address:', error);
               }
           };
-          fetchAddress(item.dropOffLocation.lat, item.dropOffLocation.lng);
+          fetchAddress(item.dropOffLocation.lat, item?.dropOffLocation?.lng);
       }
-  }, [item.pickupLocation.lat, item.pickupLocation.lng, item.dropOffLocation.lat, item.dropOffLocation.lng]);
+  }, [item?.pickupLocation?.lat, item?.pickupLocation?.lng, item?.dropOffLocation?.lat, item?.dropOffLocation?.lng]);
 
   
     return (
@@ -153,7 +153,7 @@ const [pickupAddress, setPickupAddress] = useState(null);
                     <Text className="font-bold">Drop-off:</Text>
                     <Tooltip title="View Drop-off Location on Map">
                       <a
-                        href={`https://maps.google.com/?q=${item.dropOffLocation.lat},${item.dropOffLocation.lng}`}
+                        href={`https://maps.google.com/?q=${item.dropOffLocation.lat},${item?.dropOffLocation?.lng}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-second hover:text-third hover:underline "

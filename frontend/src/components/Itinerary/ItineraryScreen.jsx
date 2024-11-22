@@ -793,11 +793,14 @@ const ItineraryScreen = ({setFlag}) => {
     title={
         <>
             <span
-                className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out"
-                style={{ color: "#333333" }}
-            >
-                {itinerary?.name}<hr className="my-4 border-t-2 border-second" />
-            </span>
+  className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out"
+  style={{ color: "#333333" }}
+>
+  <Tooltip title={itinerary?.name}>
+    {itinerary?.name}
+  </Tooltip>
+  <hr className="my-4 border-t-2 border-second" />
+</span>
             {/* Travel Route */}
 
            
