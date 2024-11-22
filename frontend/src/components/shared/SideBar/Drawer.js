@@ -9,10 +9,10 @@ const DrawerBar = ({ showDrawer, drawerVisible, onClose }) => {
 
       {/* Floating Button */}
       <Button
-        type="primary"
+        type="danger"
         icon={<MenuOutlined className={`text-${navbarColor === "first" ? "fourth" : "first"}`}/>}
         onClick={showDrawer}
-        className={`bg-${navbarColor}`}
+        className={`bg-${navbarColor} hover:bg-third`}
       ></Button>
 
       <Sidebar visible={drawerVisible} onClose={onClose} />

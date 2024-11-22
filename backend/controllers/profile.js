@@ -179,14 +179,16 @@ exports.manageFieldNames = async (req, res, next) => {
 
 exports.getSavedActivities = async (req, res) => {
   try {
-    console.log(req.user);
     const userId = req.user._id;
-    console.log(req.user._id);
 
     const tourist = await Tourist.findById(userId).populate({
-      path: 'savedActivities', // Populate saved activities
-      model: 'Activity', // Assuming 'Activity' is the name of the model for activities
-      match: { isActive: true } // Optional: only include active activities
+      path: 'savedActivities',
+      model: 'Activity',
+      match: { isActive: true },
+      populate: {
+        path: 'category',
+        model: 'ActivityCategory'
+      }
     });
 
     if (!tourist) {
@@ -231,4 +233,35 @@ exports.addSavedActivity = async (req, res) => {
     res.status(500).json({ message: 'Error saving activity', error: err.message });
   }
 };
+exports.removeSavedActivity = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const  id = req.params.id ; // Assuming the activity ID is sent in the request body
+
+        // Check if the tourist exists
+        const tourist = await Tourist.findById(userId);
+        if (!tourist) {
+        return res.status(404).json({ message: 'Tourist not found.' });
+        }
+
+        // Check if the activity exists
+        const activity = await Activity.findOne({ _id: id, isActive: true });
+        if (!activity) {
+        return res.status(404).json({ message: 'Activity not found or inactive.' });
+        }
+
+        // Check if the activity is saved
+        if (!tourist.savedActivities.includes(id)) {
+        return res.status(400).json({ message: 'Activity not saved.' });
+        }
+        // Remove the activity from the savedActivities list
+        tourist.savedActivities = tourist.savedActivities.filter(savedActivity => savedActivity.toString() !== id);
+        await tourist.save();
+
+        res.status(200).json({ message: 'Activity removed successfully.', savedActivities: tourist.savedActivities });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error removing activity', error: err.message });
+    }
+}
 

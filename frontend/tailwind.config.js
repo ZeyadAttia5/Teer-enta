@@ -10,6 +10,7 @@ module.exports = {
         second: "#526D82",
         third: "#9DB2BF",
         fourth: "#DDE6ED",
+        bg: "#f9f9f9",
       },
       keyframes: {
         "tourist-background-keyframe": {
