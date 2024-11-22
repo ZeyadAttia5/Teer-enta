@@ -305,7 +305,7 @@ function App() {
             element={<BookActivity />}
           />
           <Route path="/bookings" element={<Bookings />} />
-          <Route path="/myActivities" element={<MyActivities />} />
+          <Route path="/savedActivities" element={<MyActivities />} />
           <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
         </Routes>
         <Toaster />
