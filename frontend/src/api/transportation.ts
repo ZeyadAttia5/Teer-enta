@@ -22,8 +22,8 @@ export const createTransportation = async (transportation) => {
     );
 }
 
-export const bookTransportation = async (transportationId) => {
-    return await axios.post(`${API_BASE_URL}/transportation/book/${transportationId}`, {}, {
+export const bookTransportation = async ({id ,promoCode}) => {
+    return await axios.post(`${API_BASE_URL}/transportation/book/${id}`, {promoCode:promoCode}, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
