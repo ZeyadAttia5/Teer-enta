@@ -5,7 +5,7 @@ import {Drawer} from "antd";
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {FiLogOut} from "react-icons/fi"; // Importing a logout icon from react-icons
-import logo from "../../../assets/logo/logo2.jpeg";
+import logo from "../../../assets/logo/logo2.jpg";
 import ConfirmationModal from "../ConfirmationModal";
 import { on } from "events";
 import { set } from "date-fns";
@@ -137,7 +137,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
             <AccountButton
               extra_tw={`bg-${navbarColor} hover:bg-${
                 navbarColor === "fourth" ? "third" : "second"
-              } transition duration-300 p-2 rounded-lg flex items-center justify-center transform hover:scale-110`}
+              } transition text-${navbarColor === "first" ? "fourth" : "first"} duration-300 p-2 rounded-lg flex items-center justify-center transform hover:scale-110`}
               onClick={onAccountClick}
             />
           </div>
@@ -156,13 +156,13 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
             {["xs", "sm", "md"].includes(size) && (
                 <SideBar
                     classNames={{
-                        body: "bg-[#075B4C] text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
-                        header: "bg-[#075B4C] text-white font-bold text-lg p-4",
+                        body: "bg-fourth text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
+                        header: "bg-fourth text-white font-bold text-lg p-4",
                     }}
                 >
                     <div className="flex justify-end items-center lg:flex-1 mt-4">
                         <AccountButton
-                            extra_tw="bg-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
+                            extra_tw="bg-fourth text-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
                             onClick={onAccountClick}
                         />
                     </div>
