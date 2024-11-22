@@ -81,7 +81,12 @@ const PromoCodesAdmin = () => {
             <div className=" p-8 rounded shadow-lg bg-white w-full max-w-4xl">
                 <h2 className="text-2xl font-bold mb-6 text-center">Promo Codes</h2>
 
-                
+                <button
+            className="mb-4 text-second hover:underline"
+            onClick={() => window.history.back()}
+          >
+            <span className=" text-2xl">←</span>Go back
+          </button>
                 <Table
                     columns={columns}
                     dataSource={promoCodes}
