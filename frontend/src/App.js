@@ -53,6 +53,7 @@ import BookActivity from "./components/Activity/TouristActivity/bookActivity";
 import Bookings from "./components/Users/bookings/bookings";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
+import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -305,6 +306,7 @@ function App() {
           />
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/myActivities" element={<MyActivities />} />
+          <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
         </Routes>
         <Toaster />
       </Router>

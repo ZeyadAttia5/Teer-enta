@@ -31,7 +31,7 @@ const AccountButton = ({ extra_tw, onClick }) => {
             fill={`${navbarColor === "first" ? "white" : "black"}`}
           />
         </svg>
-        <span className={`font-bold text-${navbarColor === "first" ? "fourth" : "first"} ml-2 text-lg leading-5"`}>
+        <span className={`font-bold ml-2 text-lg leading-5"`}>
           {str}
         </span>
       </button>
