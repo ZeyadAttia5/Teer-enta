@@ -259,17 +259,16 @@ const Sidebar = ({ visible, onClose }) => {
             )}
           </Menu.SubMenu>
         )}
+        {user && user.userRole === "Admin" && (
           <Menu.SubMenu key="promo" title="Promo codes">
-            {user && user.userRole === "Admin" && (
-              <Menu.Item
-                key="1701"
-                onClick={() => handleClick("/promoCodesAdmin")}
-              >
-                Promo codes
-              </Menu.Item>
-            )}
-           
+            <Menu.Item
+              key="1701"
+              onClick={() => handleClick("/promoCodesAdmin")}
+            >
+              Promo codes
+            </Menu.Item>
           </Menu.SubMenu>
+        )}
       </Menu>
     </Drawer>
   );

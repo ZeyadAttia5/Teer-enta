@@ -60,6 +60,11 @@ const PromoCodesAdmin = () => {
 
     const columns = [
         {
+            title: "Promo code",
+            dataIndex: "code",
+            key: "promo",
+        },
+        {
             title: "Discount (%)",
             dataIndex: "discount",
             key: "discount",

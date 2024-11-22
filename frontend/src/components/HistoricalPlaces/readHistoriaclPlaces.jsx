@@ -280,13 +280,13 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
 
                
                 <Button
-                    type="primary"
+                    type="danger"
                     
                     icon={<ReloadOutlined/>}
                     onClick={resetFilters}
-                    className="ml-4 h-9 bg-second hover:bg-third"
+                    className="ml-4 h-9 text-white bg-second hover:bg-third"
                 >
-                    Reset
+                    Remove filters
                 </Button>
             </div>
 
