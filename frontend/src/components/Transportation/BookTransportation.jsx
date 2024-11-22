@@ -32,6 +32,8 @@ const TransportationCard = ({ item, currency, onBook }) => {
     const [promoDiscount, setPromoDiscount] = useState(0);
     const [applyingPromo, setApplyingPromo] = useState(false);
 const [showAdvertiserInfo, setShowAdvertiserInfo] = useState(false);
+const [pickupAddress, setPickupAddress] = useState(null);
+  const [dropOffAddress, setDropOffAddress] = useState(null);
 
     const handleApplyPromo = async () => {
         if (!promoCode.trim()) {
@@ -60,7 +62,39 @@ const [showAdvertiserInfo, setShowAdvertiserInfo] = useState(false);
     };
 
     
+    useEffect(() => {
+      if (item.pickupLocation.lat && item.pickupLocation.lng) {
+          const fetchAddress = async (lat, lng) => {
+              try {
+                  const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=REACT_APP_GOOGLE_MAPS_API_KEY`);
+                  const data = await response.json();
+                  if (data.status === 'OK') {
+                      setPickupAddress(data.results[0].formatted_address);
+                  }
+              } catch (error) {
+                  console.error('Error fetching address:', error);
+              }
+          };
+          fetchAddress(item.pickupLocation.lat, item.pickupLocation.lng);
+      }
+  
+      if (item.dropOffLocation.lat && item.dropOffLocation.lng) {
+          const fetchAddress = async (lat, lng) => {
+              try {
+                  const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=REACT_APP_GOOGLE_MAPS_API_KEY`);
+                  const data = await response.json();
+                  if (data.status === 'OK') {
+                      setDropOffAddress(data.results[0].formatted_address);
+                  }
+              } catch (error) {
+                  console.error('Error fetching address:', error);
+              }
+          };
+          fetchAddress(item.dropOffLocation.lat, item.dropOffLocation.lng);
+      }
+  }, [item.pickupLocation.lat, item.pickupLocation.lng, item.dropOffLocation.lat, item.dropOffLocation.lng]);
 
+  
     return (
       
       <Badge.Ribbon
@@ -94,7 +128,7 @@ const [showAdvertiserInfo, setShowAdvertiserInfo] = useState(false);
 
             <Space direction="vertical" size="large" className="w-full">
               {/* Pickup and Drop-Off Locations */}
-              <div className="flex justify-between items-center ">
+              <div className="flex justify-between items-center  ">
                 <div className="flex gap-6">
                   {/* Pickup Location */}
                   <div className="flex items-center gap-1 text-first">
@@ -196,7 +230,7 @@ const [showAdvertiserInfo, setShowAdvertiserInfo] = useState(false);
               </Button>
 
               {/* Advertiser Info */}
-<Card size="small" title="" className="mt-4 bg-fourth underline">
+<Card size="small" title="" className="mt-1 bg-fourth underline mb-0">
   <Space align="start">
     <Avatar src={item.createdBy.logoUrl} icon={<UserOutlined />} />
     {/* Hover Text */}

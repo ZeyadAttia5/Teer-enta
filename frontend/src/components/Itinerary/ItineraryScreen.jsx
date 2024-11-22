@@ -613,7 +613,7 @@ const ItineraryScreen = ({setFlag}) => {
     ];
 
     return (
-        <div className="p-6 bg-[#E0F0EE] min-h-screen">
+        <div className="p-6 bg-fourth min-h-screen">
             {/* <h1 className="text-9xl font-bold mb-4 text-[#496989]">Itineraries</h1> */}
             {user && user.userRole === "TourGuide" && (
                 <Button
@@ -626,7 +626,7 @@ const ItineraryScreen = ({setFlag}) => {
                     Add Itinerary
                 </Button>
             )}
-            <div className="p-8 bg-[#E0F0EE]">
+            <div className="p-8 bg-fourth">
                 <div className="mb-6 flex flex-col items-center space-y-4">
                     {/* Centered, smaller search bar */}
                     <Search
@@ -766,7 +766,7 @@ const ItineraryScreen = ({setFlag}) => {
                             onClick={resetFilters}
                             className="ml-4 h-9"
                         >
-                            Reset
+                            Unfilter
                         </Button2>
                     </div>
 
@@ -781,7 +781,7 @@ const ItineraryScreen = ({setFlag}) => {
                         className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
                     >
                         {/* Book Now Circle */}
-                        <div className="absolute top-4 left-4 bg-[#58A399] text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
+                        <div className="absolute top-4 left-4 bg-second text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
                             <span>Book Now</span>
                         </div>
             
@@ -790,57 +790,66 @@ const ItineraryScreen = ({setFlag}) => {
                             style={{ backgroundColor: "#ffffff" }} // Default background color
                         >
                             <Card.Meta
-                                title={
-                                    <span
-                                        className="font-bold text-4xl mb-2 transition-transform duration-500 ease-out" // Increased font size
-                                        style={{ color: "#333333" }}
-                                    >
-                                        {itinerary?.name}
-                                    </span>
-                                }
-                                description={
-                                    <div className="flex flex-col space-y-3" style={{ color: "#333333" }}>
-                                        {/* Horizontal Line to Split the Card */}
-                                        <hr className="my-4 border-t-2 border-[#58A399]" /> {/* Green line */}
-                                        <Tooltip title="Language">
-                                            <span className="font-semibold text-lg hover:text-[#58A399]">
-                                                <GlobalOutlined style={{ marginRight: 8 }} />
-                                                {itinerary?.language}
-                                            </span>
-                                        </Tooltip>
-                                        <Tooltip title="Price">
-                                            <span className="font-semibold text-lg hover:text-[#58A399]">
-                                                <DollarCircleOutlined style={{ marginRight: 8 }} />
-                                                {currency?.code} {(itinerary?.price * currency?.rate).toFixed(2)}
-                                            </span>
-                                        </Tooltip>
-                                        <Tooltip title="Accessibility">
-                                            <span className="font-semibold text-lg hover:text-[#58A399]">
-                                                <TeamOutlined style={{ marginRight: 8 }} />
-                                                {itinerary?.accessibility || "N/A"}
-                                            </span>
-                                        </Tooltip>
-                                        <Tooltip title="Travel Route">
-    <span className="font-semibold text-lg hover:text-[#58A399] flex items-center">
-        <EnvironmentTwoTone
-            twoToneColor="#000000" // Set the color to black
-            style={{ marginRight: 8 }}
-        />
-        {itinerary?.pickupLocation}
-        <span className="mx-2 text-[#333333]">⇢</span>
-        {itinerary?.dropOffLocation}
-    </span>
-</Tooltip>
+    title={
+        <>
+            <span
+                className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out"
+                style={{ color: "#333333" }}
+            >
+                {itinerary?.name}<hr className="my-4 border-t-2 border-second" />
+            </span>
+            {/* Travel Route */}
 
-                                    </div>
-                                }
-                            />
+           
+            <Tooltip title="Travel Route">
+                <span className="font-semibold text-xl hover:text-third flex items-center mt-2">
+                    <EnvironmentTwoTone
+                        twoToneColor="#000000"
+                        style={{ marginRight: 8 }}
+                    />
+                    {itinerary?.pickupLocation}
+                    <span className="mx-2 text-[#333333]">⇢</span>
+                    {itinerary?.dropOffLocation}
+                </span>
+            </Tooltip>
+        </>
+    }
+    
+    description={
+        <div className="flex flex-col space-y-1" style={{ color: "#333333" }}>
+            {/* Horizontal Line to Split the Card */}
+            
+            <Tooltip title="Language">
+                <span className="font-semibold text-lg hover:text-third">
+                    <GlobalOutlined style={{ marginRight: 8 }} />
+                    {itinerary?.language}
+                </span>
+            </Tooltip>
+            <Tooltip title="Accessibility">
+                <span className="font-semibold text-lg hover:text-third">
+                    <TeamOutlined style={{ marginRight: 8 }} />
+                    {itinerary?.accessibility || "N/A"}
+                </span>
+            </Tooltip>
+            {/* Price Tooltip at the End */}
+<div className="flex justify-center items-center mt-4">
+    <Tooltip title="Price">
+        <span className="font-semibold text-4xl hover:text-third flex items-center">
+            {currency?.code} {(itinerary?.price * currency?.rate).toFixed(2)}
+        </span>
+    </Tooltip>
+</div>
+
+        </div>
+    }
+/>
+
                         </Card>
             
                         <div className="flex justify-center items-center gap-4 p-4">
                             <Button
                                 onClick={() => navigate(`iternaryDetails/${itinerary?._id}`)}
-                                className="text-white bg-[#58A399] hover:bg-[#4a8f7a] transition-all duration-300"
+                                className="text-white bg-second hover:bg-[#4a8f7a] transition-all duration-300"
                             >
                                 Show Details
                             </Button>
