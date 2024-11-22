@@ -5,7 +5,7 @@ import {Drawer} from "antd";
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {FiLogOut} from "react-icons/fi"; // Importing a logout icon from react-icons
-import logo from "../../../assets/logo/logo.jpeg";
+import logo from "../../../assets/logo/logo2.jpg";
 import ConfirmationModal from "../ConfirmationModal";
 import {on} from "events";
 import {set} from "date-fns";
@@ -17,7 +17,7 @@ const SideBar = ({children, classNames}) => {
     if (["xs", "sm", "md"].includes(size)) {
         return (
             <div>
-                <MenuOutlined onClick={() => setOpen(true)}/>
+                <MenuOutlined onClick={() => setOpen(true)} className="text-first"/>
                 <Drawer
                     open={open}
                     onClose={() => setOpen(false)}
@@ -71,7 +71,7 @@ const TouristNavBar = ({setModalOpen, isNavigate, setIsNavigate}) => {
             <img
                 src={logo}
                 alt="Logo"
-                width={115}
+                width={80}
                 className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
             />
           </Link>
@@ -129,13 +129,13 @@ const TouristNavBar = ({setModalOpen, isNavigate, setIsNavigate}) => {
             {["xs", "sm", "md"].includes(size) && (
                 <SideBar
                     classNames={{
-                        body: "bg-[#075B4C] text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
-                        header: "bg-[#075B4C] text-white font-bold text-lg p-4",
+                        body: "bg-fourth text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
+                        header: "bg-fourth text-white font-bold text-lg p-4",
                     }}
                 >
                     <div className="flex justify-end items-center lg:flex-1 mt-4">
                         <AccountButton
-                            extra_tw="bg-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
+                            extra_tw="bg-fourth hover:bg-third transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
                             onClick={onAccountClick}
                         />
                     </div>
@@ -144,7 +144,7 @@ const TouristNavBar = ({setModalOpen, isNavigate, setIsNavigate}) => {
                     {user && (
                         <button
                             onClick={() => setModalOpen(true)}
-                            className="flex items-center justify-center mt-4 p-2 bg-first hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
+                            className="flex items-center text-first hover:text-white justify-center mt-4 p-2 bg-fourth hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
                             aria-label="Logout"
                         >
                             <FiLogOut className="w-6 h-6"/>
