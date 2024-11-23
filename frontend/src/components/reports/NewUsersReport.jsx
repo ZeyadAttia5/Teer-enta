@@ -1,10 +1,11 @@
-import { Select } from "antd";
+import { Select, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Legend,
+  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
@@ -41,7 +42,7 @@ const transformNewUsersData = (data) => {
   return res;
 };
 
-const NewUsersReport = () => {
+const NewUsersReport = ({ title }) => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [newUsersPerMonth, setNewUsersPerMonth] = useState({});
   const [selectedYear, setSelectedYear] = useState(2024);
@@ -79,7 +80,8 @@ const NewUsersReport = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="size-fit flex flex-col border p-2 border-black shadow-lg hover:scale-105 transition-all ">
+    <div className="flex-1 min-w-[500px] flex flex-col border p-2 border-black shadow-lg hover:scale-105 transition-all ">
+      <Typography  className="text-center text-lg">{title}</Typography>
       <Select
         options={Object.keys(newUsersPerMonth).map((year) => ({
           value: year,
@@ -90,9 +92,10 @@ const NewUsersReport = () => {
         className=" self-end"
       />
       <h1 className="text-center">Total Users: {totalUsers}</h1>
+      <ResponsiveContainer width="100%" height={400}>
       <BarChart
-        width={750}
-        height={500}
+        // width={750}
+        // height={500}
         className="size-fit"
         data={newUsersPerMonth[selectedYear]}
       >
@@ -104,6 +107,7 @@ const NewUsersReport = () => {
         {/* {/* <Bar dataKey="pv" fill="#8884d8" /> */}
         <Bar dataKey="totalUsers" fill="#82ca9d" />
       </BarChart>
+        </ResponsiveContainer>
     </div>
   );
 };

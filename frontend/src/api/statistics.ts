@@ -46,3 +46,11 @@ export const getOrderReport = async () =>
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
   });
+
+
+export const getAdminRevenue = async () =>
+  await axios.get(`${API_BASE_URL}/statistics/report/adminRevenue`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
