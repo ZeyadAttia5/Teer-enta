@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Table, Form, Input, Button, Modal, Tag, message } from "antd";
+import {
+  Table,
+  Form,
+  Input,
+  Button,
+  Modal,
+  Tag,
+  message,
+  Descriptions,
+  Divider,
+} from "antd";
 import {
   getComplaint,
   getMyComplaints,
   addComplaint,
 } from "../../../api/complaint.ts";
-// import { set } from "mongoose";
 const { TextArea } = Input;
 
 const MyComplaints = () => {
@@ -15,11 +24,11 @@ const MyComplaints = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [form] = Form.useForm();
+
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
         const response = await getMyComplaints();
-        console.log(response);
         setComplaints(response.data);
       } catch (error) {
         console.error("Failed to fetch complaints:", error);
@@ -37,7 +46,6 @@ const MyComplaints = () => {
 
   const handleViewDetails = async (complaintId) => {
     try {
-      console.log(complaintId);
       const response = await getComplaint(complaintId);
       setSelectedComplaint(response.data);
       setModalVisible(true);
@@ -60,20 +68,16 @@ const MyComplaints = () => {
   };
 
   const onFinish = async (values) => {
-    const data = {
-      ...values,
-    };
+    const data = { ...values };
 
     try {
       const response = await addComplaint(data);
-      console.log("Response: ", response);
       form.resetFields(); // Reset form fields
     } catch (error) {
       console.error("There was an error submitting the complaint: ", error);
     }
 
     handleCloseCreateModal();
-    // Re-fetch complaints to rerender the table
     const response = await getMyComplaints();
     setComplaints(response.data);
   };
@@ -165,36 +169,36 @@ const MyComplaints = () => {
       >
         {selectedComplaint && (
           <div>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>Title:</strong> {selectedComplaint.title}
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>Body:</strong> {selectedComplaint.body}
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>Date Submitted:</strong>{" "}
-              {formatDate(selectedComplaint.date)}
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>Status:</strong>{" "}
-              <Tag
-                color={
-                  selectedComplaint.status === "Pending" ? "orange" : "green"
-                }
-              >
-                {selectedComplaint.status}
-              </Tag>
-            </p>
-            <p style={{ marginBottom: "1rem" }}>
-              <strong>Reply:</strong>{" "}
-              {selectedComplaint.reply ? (
-                <span style={{ color: "grey", fontStyle: "italic" }}>
-                  {selectedComplaint.reply}
-                </span>
-              ) : (
-                "No reply yet"
-              )}
-            </p>
+            <Descriptions bordered column={1} className="mb-4">
+              <Descriptions.Item label="Title">
+                {selectedComplaint.title}
+              </Descriptions.Item>
+              <Descriptions.Item label="Body">
+                {selectedComplaint.body}
+              </Descriptions.Item>
+              <Descriptions.Item label="Status">
+                <Tag
+                  color={
+                    selectedComplaint.status === "Pending" ? "orange" : "green"
+                  }
+                >
+                  {selectedComplaint.status}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Date Submitted">
+                {formatDate(selectedComplaint.date)}
+              </Descriptions.Item>
+              <Descriptions.Item label="Reply">
+                {selectedComplaint.reply ? (
+                  <span style={{ color: "grey", fontStyle: "italic" }}>
+                    {selectedComplaint.reply}
+                  </span>
+                ) : (
+                  "No reply yet"
+                )}
+              </Descriptions.Item>
+            </Descriptions>
+            <Divider />
           </div>
         )}
       </Modal>
@@ -212,36 +216,35 @@ const MyComplaints = () => {
           height: "calc(100% - 55px)",
         }}
       >
-        {
-          <Form layout="vertical" onFinish={onFinish} form={form}>
-            <Form.Item
-              label="Title"
-              name="title"
-              rules={[{ required: true, message: "Please input the title!" }]}
-            >
-              <Input />
-            </Form.Item>
+        <Form layout="vertical" onFinish={onFinish} form={form}>
+          <Form.Item
+            label="Title"
+            name="title"
+            rules={[{ required: true, message: "Please input the title!" }]}
+          >
+            <Input />
+          </Form.Item>
 
-            <Form.Item
-              label="Body"
-              name="body"
-              rules={[{ required: true, message: "Please input the body!" }]}
+          <Form.Item
+            label="Body"
+            name="body"
+            rules={[{ required: true, message: "Please input the body!" }]}
+          >
+            <TextArea rows={6} />
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="bg-blue-500 text-white hover:bg-blue-600"
             >
-              <TextArea rows={6} />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                Submit
-              </Button>
-            </Form.Item>
-          </Form>
-        }
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );
 };
+
 export default MyComplaints;
