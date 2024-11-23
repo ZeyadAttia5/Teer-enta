@@ -181,7 +181,7 @@ const Sidebar = ({ visible, onClose }) => {
                 key="15"
                 onClick={() => handleClick("/wishlisted_products")}
               >
-                Wish list
+                Wishlist
               </Menu.Item>
             )}
             {user &&
