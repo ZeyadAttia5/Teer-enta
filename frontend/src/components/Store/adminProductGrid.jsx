@@ -4,7 +4,7 @@ import FilterDropdown from "./filterDropdown";
 import StarRating from "../shared/starRating";
 import { Input, Row, Col, Button } from "antd";
 import { FaHeart } from "react-icons/fa";
-import { getProducts, getArchivedProducts } from "../../api/products.ts";
+import { getProducts, getArchivedProducts, archiveProduct, unArchiveProduct } from "../../api/products.ts";
 import { getCurrency } from "../../api/account.ts";
 import {
   addToWishlist,
@@ -14,8 +14,12 @@ import {
 } from "../../api/cart.ts";
 import cartIconPlus from './sampleImages/cartIcon.png';
 import cartIcon from './sampleImages/cartwithout.png';
+import addSign from './sampleImages/addsign.png';
 const AdminProductGrid = ({ setFlag }) => {
   setFlag(false);
+  const backURL = process.env.REACT_APP_BACKEND_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem("accessToken");
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [showArchived, setShowArchived] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -136,7 +140,31 @@ const AdminProductGrid = ({ setFlag }) => {
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
-
+  const handleArchiveToggle = async (productId, isActive) => {
+    try {
+      if (isActive) {
+        await archiveProduct(productId);
+        setFeedbackMessage("Product Successfully Archived");
+      } else {
+        await unArchiveProduct(productId);
+        setFeedbackMessage("Product Successfully Unarchived");
+      }
+  
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product._id === productId
+            ? { ...product, isActive: !isActive }
+            : product
+        )
+      );
+  
+      // Clear the message after 3 seconds
+      setTimeout(() => setFeedbackMessage(""), 3000);
+  
+    } catch (err) {
+      setError("Failed to update archive status");
+    }
+  };
   return (
     <div className="container mx-auto p-5 relative">
       {feedbackMessage && (
@@ -147,26 +175,58 @@ const AdminProductGrid = ({ setFlag }) => {
           {feedbackMessage}
         </div>
       )}
-      <div className="absolute top-24 right-5 z-10">
+    <div className="absolute top-24 right-5 z-10 flex flex-row gap-2">
+  {/* Add Product Button */}
+  {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
+    <Link to="/products/create">
+      <Button
+        type="primary"
+        className="bg-first text-white flex items-center justify-center h-12 w-20 bg-no-repeat bg-center bg-[length:50%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
+        style={{
+          backgroundImage: `url(${addSign})`
+        }}
+        title="Add Product"
+      ></Button>
+    </Link>
+  )}
+
+
+  {/* Reports Button */}
+  {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
+    <Link to="/products/quantity&Sales">
+      <Button
+        type="primary"
+        className="bg-first text-white flex items-center justify-center h-12 w-20 bg-no-repeat bg-center bg-[length:50%] border-none hover:scale-110 transition-transform duration-300 ease-in-outt"
+      >
+        Reports
+      </Button>
+    </Link>
+  )}
+
+  
+  {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
     <Button
-      className="bg-first text-white flex items-center justify-center transform hover:bg-darkerGreen hover:scale-110 transition-all duration-300 ease-in-out"
-      style={{
-        height: "50px",
-        width: "80px",
-        backgroundImage: `url(${cartIcon})`, // Replace with your image path
-        backgroundSize: "50%",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        border: "none",
-      }}
-      title="Check Cart"
-      onClick={() => {
-        // Add functionality to redirect or show cart
-        console.log('Redirecting to Cart...');
-      }}
+      type="primary"
+      className="bg-first text-white flex items-center justify-center h-12 w-20 bg-no-repeat bg-center bg-[length:50%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
+      onClick={() => setShowArchived(!showArchived)}
     >
+      {showArchived ? "Archived" : "Active"}
     </Button>
-  </div>
+  )}
+
+<Button
+  className="bg-first text-white flex items-center justify-center h-12 w-20 bg-no-repeat bg-center bg-[length:55%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
+  style={{
+    backgroundImage: `url(${cartIcon})`,
+  }}
+  title="Check Cart"
+  onClick={() => {
+    console.log("Redirecting to Cart...");
+  }}
+></Button>
+
+</div>
+
       <div className="flex justify-between items-center mt-24 mb-5">
         <div className="flex justify-center items-center gap-4 mx-auto">
           <Input
@@ -220,7 +280,7 @@ const AdminProductGrid = ({ setFlag }) => {
               {(currency?.rate * product.price).toFixed(2)}
             </p>
             <StarRating rating={calculateAverageRating(product.ratings)} />
-            <div className="flex items-center gap-2 mt-2">
+            <div className="flex items-center gap-2 mt-4">
               <Button
                 className="bg-first flex items-center justify-center transform hover:bg-darkerGreen hover:scale-110 transition-all duration-300 ease-in-out"
                 style={{
@@ -235,6 +295,37 @@ const AdminProductGrid = ({ setFlag }) => {
                 title="Add to Cart"
                 onClick={() => handleAddToCart(product._id)} // Prevent navigation on button click
               />
+              {user &&
+                user._id === product.createdBy &&
+                (user.userRole === "Admin" || user.userRole === "Seller") && (
+                  <>
+                    {/* Edit Button */}
+                    <Link to={`/products/edit/${product._id}`}>
+                      <Button
+                        className="bg-customGreen hover:bg-darkerGreen text-white"
+                        style={{ marginLeft: "5px" }}
+                      >
+                        Edit
+                      </Button>
+                    </Link>
+
+                    {/* Archive/Unarchive Button */}
+                    <Button
+                      className={`${
+                        product.isActive
+                          ? "bg-red-500 hover:bg-red-600"
+                          : "bg-gray-500 hover:bg-gray-600"
+                      } text-white`}
+                      onClick={(e) => {
+                        e.preventDefault(); // Prevent navigation
+                        handleArchiveToggle(product._id, product.isActive);
+                      }}
+                      style={{ marginLeft: "5px" }}
+                    >
+                      {product.isActive ? "Archive" : "Unarchive"}
+                    </Button>
+                  </>
+                )}
             </div>
           </div>
         </div>
@@ -242,6 +333,7 @@ const AdminProductGrid = ({ setFlag }) => {
     </Col>
   ))}
 </Row>
+
 
     </div>
   );
