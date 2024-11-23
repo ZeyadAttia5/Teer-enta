@@ -78,7 +78,7 @@ function App() {
   };
 
   return (
-    <div className="App relative min-h-screen">
+    <div className="App relative bg-fourth min-h-screen">
       <Router>
         {!flag && (
           <DrawerBar
