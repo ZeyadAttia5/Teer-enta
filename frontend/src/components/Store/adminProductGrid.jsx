@@ -10,8 +10,10 @@ import {
   addToWishlist,
   deleteWishlistProduct,
   getWishlist,
+  addToCart,
 } from "../../api/cart.ts";
-
+import cartIconPlus from './sampleImages/cartIcon.png';
+import cartIcon from './sampleImages/cartwithout.png';
 const AdminProductGrid = ({ setFlag }) => {
   setFlag(false);
   const [feedbackMessage, setFeedbackMessage] = useState("");
@@ -91,7 +93,13 @@ const AdminProductGrid = ({ setFlag }) => {
       console.error("Wishlist toggle error: ", err);
     }
   };
-
+  const handleAddToCart = async (productId) => {
+    try {
+      await addToCart(productId); // Call addToCart API
+    } catch (err) {
+      console.error("Add to cart error: ", err);
+    }
+  };
   const calculateAverageRating = (ratings) => {
     if (ratings.length === 0) return 0;
     const total = ratings.reduce((acc, rating) => acc + rating.rating, 0);
@@ -139,6 +147,26 @@ const AdminProductGrid = ({ setFlag }) => {
           {feedbackMessage}
         </div>
       )}
+      <div className="absolute top-24 right-5 z-10">
+    <Button
+      className="bg-first text-white flex items-center justify-center transform hover:bg-darkerGreen hover:scale-110 transition-all duration-300 ease-in-out"
+      style={{
+        height: "50px",
+        width: "80px",
+        backgroundImage: `url(${cartIcon})`, // Replace with your image path
+        backgroundSize: "50%",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        border: "none",
+      }}
+      title="Check Cart"
+      onClick={() => {
+        // Add functionality to redirect or show cart
+        console.log('Redirecting to Cart...');
+      }}
+    >
+    </Button>
+  </div>
       <div className="flex justify-between items-center mt-24 mb-5">
         <div className="flex justify-center items-center gap-4 mx-auto">
           <Input
@@ -154,52 +182,67 @@ const AdminProductGrid = ({ setFlag }) => {
         </div>
       </div>
       <Row gutter={[16, 16]} className="mt-5">
-        {filteredProducts.map((product) => (
-          <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
-            <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-third transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
-              <div className="relative">
-                <img
-                  className="w-full h-48 object-cover"
-                  src={product.image || product.imageUrl}
-                  alt={product.name}
-                  loading="lazy"
-                />
-                <button
-                  onClick={() => handleWishlistToggle(product._id)}
-                  className={`absolute top-2 right-2 flex items-center transition duration-200 ${
-                    wishlist.has(product._id)
-                      ? "bg-red-500 text-white"
-                      : "bg-white text-black border-black border"
-                  } rounded-full p-2 hover:scale-110`}
-                  onMouseEnter={(e) => (e.currentTarget.style.width = "auto")}
-                  onMouseLeave={(e) => (e.currentTarget.style.width = "36px")}
-                >
-                  <FaHeart
-                    className={`text-lg ${
-                      wishlist.has(product._id) ? "text-white" : "text-black"
-                    }`}
-                  />
-                </button>
-              </div>
-              <div className="p-4">
-                <h2 className="font-bold text-xl">{product.name}</h2>
-                <p className="text-gray-700">
-                  <span className="font-semibold">{currency?.code}</span>{" "}
-                  {(currency?.rate * product.price).toFixed(2)}
-                </p>
-                <StarRating rating={calculateAverageRating(product.ratings)} />
-                <div className="flex justify-start items-center">
-                  <Link to={`/products/${product._id}`}>
-                    <Button className="bg-first hover:bg-darkerGreen text-white mt-2">
-                      View Details
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+  {filteredProducts.map((product) => (
+    <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
+      <Link to={`/products/${product._id}`} className="hover:text-black">
+        <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-third transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
+          <div className="relative">
+            <img
+              className="w-full h-48 object-cover"
+              src={product.image || product.imageUrl}
+              alt={product.name}
+              loading="lazy"
+            />
+            <button
+              onClick={(e) => {
+                e.preventDefault(); // Prevent navigation when toggling wishlist
+                handleWishlistToggle(product._id);
+              }}
+              className={`absolute top-2 right-2 flex items-center transition duration-200 ${
+                wishlist.has(product._id)
+                  ? "bg-red-500 text-white"
+                  : "bg-white text-black border-black border"
+              } rounded-full p-2 hover:scale-110`}
+              onMouseEnter={(e) => (e.currentTarget.style.width = "auto")}
+              onMouseLeave={(e) => (e.currentTarget.style.width = "36px")}
+            >
+              <FaHeart
+                className={`text-lg ${
+                  wishlist.has(product._id) ? "text-white" : "text-black"
+                }`}
+              />
+            </button>
+          </div>
+          <div className="p-4">
+            <h2 className="font-bold text-xl">{product.name}</h2>
+            <p className="text-gray-700">
+              <span className="font-semibold">{currency?.code}</span>{" "}
+              {(currency?.rate * product.price).toFixed(2)}
+            </p>
+            <StarRating rating={calculateAverageRating(product.ratings)} />
+            <div className="flex items-center gap-2 mt-2">
+              <Button
+                className="bg-first flex items-center justify-center transform hover:bg-darkerGreen hover:scale-110 transition-all duration-300 ease-in-out"
+                style={{
+                  height: "32px",
+                  width: "50px",
+                  backgroundImage: `url(${cartIconPlus})`,
+                  backgroundSize: "80%",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center",
+                  border: "none",
+                }}
+                title="Add to Cart"
+                onClick={() => handleAddToCart(product._id)} // Prevent navigation on button click
+              />
             </div>
-          </Col>
-        ))}
-      </Row>
+          </div>
+        </div>
+      </Link>
+    </Col>
+  ))}
+</Row>
+
     </div>
   );
 };

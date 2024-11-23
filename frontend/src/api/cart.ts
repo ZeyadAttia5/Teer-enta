@@ -48,7 +48,7 @@ export const addToCartFromWishlist = async (productId) => {
   }
 }
 export const addToCart = async (productId) => {
-    return await axios.post(`${API_BASE_URL}/cart/wishlist/add/${productId}`)
+    return await axios.post(`${API_BASE_URL}/add/cart/product/${productId}`)
 }
 export const updateCartProductAmount = async (productId) => {
     return await axios.put(`${API_BASE_URL}/cart/update/cart/productAmount/${productId}`)
