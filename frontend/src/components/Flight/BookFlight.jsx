@@ -10,9 +10,15 @@ import {
   Spin,
   Typography,
   Space,
+  Row,
+  Col,
   message,
 } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  ArrowRightOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 import AutoComplete from "react-google-autocomplete";
 import { bookFlight, getAirports, getFlightOffers } from "../../api/flights.ts";
 
@@ -92,69 +98,76 @@ const BookFlight = () => {
               />
             </div>
           ) : (
-            <Space direction="vertical" className="w-full">
-              <Form.Item
-                name="departure"
-                label="Departure City"
-                rules={[
-                  { required: true, message: "Please input departure city!" },
-                ]}
-              >
-                <AutoComplete
-                  className="w-full border shadow-sm p-2 rounded"
-                  apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
-                  onPlaceSelected={(place) => {
-                    let departureCity = place?.address_components[0].long_name;
-                    let departureCountry =
-                      place?.address_components[
-                        place.address_components.length - 1
-                      ].short_name;
+            <Row gutter={16} className="w-full">
+              <Col span={10}>
+                <Form.Item
+                  name="departure"
+                  label="Departure City"
+                  rules={[
+                    { required: true, message: "Please input departure city!" },
+                  ]}
+                >
+                  <AutoComplete
+                    className="w-full border shadow-sm p-2 rounded"
+                    apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+                    onPlaceSelected={(place) => {
+                      let departureCity =
+                        place?.address_components[0].long_name;
+                      let departureCountry =
+                        place?.address_components[
+                          place.address_components.length - 1
+                        ].short_name;
 
-                    setDeparture({
-                      city: departureCity,
-                      country: departureCountry,
-                    });
-                    form.setFieldsValue({
-                      departure: `${departureCity}, ${departureCountry}`,
-                    });
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="arrival"
-                label="Arrival City"
-                rules={[
-                  { required: true, message: "Please input arrival city!" },
-                ]}
-              >
-                <AutoComplete
-                  className="w-full border shadow-sm p-2 rounded"
-                  apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
-                  onPlaceSelected={(place) => {
-                    let destinationCity =
-                      place?.address_components[0].long_name;
-                    let destinationCountry =
-                      place?.address_components[
-                        place.address_components.length - 1
-                      ].short_name;
-                    setDestination({
-                      city: destinationCity,
-                      country: destinationCountry,
-                    });
-                    form.setFieldsValue({
-                      arrival: `${destinationCity}, ${destinationCountry}`,
-                    });
-                  }}
-                />
-              </Form.Item>
-            </Space>
+                      setDeparture({
+                        city: departureCity,
+                        country: departureCountry,
+                      });
+                      form.setFieldsValue({
+                        departure: `${departureCity}, ${departureCountry}`,
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={4} className="flex items-center justify-center">
+                <ArrowRightOutlined style={{ fontSize: "24px" }} />
+              </Col>
+              <Col span={10}>
+                <Form.Item
+                  name="arrival"
+                  label="Arrival City"
+                  rules={[
+                    { required: true, message: "Please input arrival city!" },
+                  ]}
+                >
+                  <AutoComplete
+                    className="w-full border shadow-sm p-2 rounded"
+                    apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+                    onPlaceSelected={(place) => {
+                      let destinationCity =
+                        place?.address_components[0].long_name;
+                      let destinationCountry =
+                        place?.address_components[
+                          place.address_components.length - 1
+                        ].short_name;
+                      setDestination({
+                        city: destinationCity,
+                        country: destinationCountry,
+                      });
+                      form.setFieldsValue({
+                        arrival: `${destinationCity}, ${destinationCountry}`,
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
           )}
         </Form.Item>
       ),
     },
     {
-      title: "Select AirPorts and Departure Date",
+      title: "Select Airports and Departure Date",
       content: (
         <Form.Item className="mt-8">
           {loading ? (
@@ -229,7 +242,6 @@ const BookFlight = () => {
                   disabledDate={(current) => {
                     return current && current < new Date();
                   }}
-                  
                   onChange={(date) => {
                     form.setFieldsValue({
                       departureDate: date.format("YYYY-MM-DD"),
@@ -254,28 +266,32 @@ const BookFlight = () => {
               />
             </div>
           ) : (
-            <Form.Item
-              name="selectedFlight"
-              label="Available Flights"
-              rules={[{ required: true, message: "Please select a flight!" }]}
-            >
-              <Select
-                placeholder="Choose your flight"
-                onChange={(value) => {
-                  const flight = flights.find((f) => f.id === value);
-                  setSelectedFlight(flight);
-                }}
-              >
-                {flights?.map((flight) => (
-                  <Option key={flight.id} value={flight.id}>
+            <div className="flight-list">
+              {flights?.map((flight) => (
+                <Card
+                  key={flight.id}
+                  className={`flight-card ${
+                    selectedFlight?.id === flight.id ? "selected-flight" : ""
+                  }`}
+                  hoverable
+                  onClick={() => setSelectedFlight(flight)}
+                  style={{ marginBottom: "16px" }}
+                >
+                  <Text strong>
                     {flight.itineraries[0].segments[0].departure.iataCode} →{" "}
-                    {flight.itineraries[0].segments[0].arrival.iataCode} |{" "}
-                    {flight.itineraries[0].segments[0].departure.at} |
-                    {flight.price.total} {flight.price.currency}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
+                    {flight.itineraries[0].segments[0].arrival.iataCode}
+                  </Text>
+                  <br />
+                  <Text type="secondary">
+                    Departure: {flight.itineraries[0].segments[0].departure.at}
+                  </Text>
+                  <br />
+                  <Text type="secondary">
+                    Price: {flight.price.total} {flight.price.currency}
+                  </Text>
+                </Card>
+              ))}
+            </div>
           )}
         </Form.Item>
       ),
@@ -337,27 +353,21 @@ const BookFlight = () => {
             <Input placeholder="Enter email address" />
           </Form.Item>
 
-          <Space className="w-full">
-            <Form.Item
-              label="Country Code"
-              name={["passenger", "contact", "phones", 0, "countryCallingCode"]}
-              rules={[
-                { required: true, message: "Please input country code!" },
-              ]}
-            >
-              <Input placeholder="e.g. 34" style={{ width: "120px" }} />
-            </Form.Item>
+          <Form.Item
+            label="Country Code"
+            name={["passenger", "contact", "phones", 0, "countryCallingCode"]}
+            rules={[{ required: true, message: "Please input country code!" }]}
+          >
+            <Input placeholder="e.g. 34" style={{ width: "120px" }} />
+          </Form.Item>
 
-            <Form.Item
-              label="Phone Number"
-              name={["passenger", "contact", "phones", 0, "number"]}
-              rules={[
-                { required: true, message: "Please input phone number!" },
-              ]}
-            >
-              <Input placeholder="Enter phone number" />
-            </Form.Item>
-          </Space>
+          <Form.Item
+            label="Phone Number"
+            name={["passenger", "contact", "phones", 0, "number"]}
+            rules={[{ required: true, message: "Please input phone number!" }]}
+          >
+            <Input placeholder="Enter phone number" />
+          </Form.Item>
         </Space>
       ),
     },
@@ -383,8 +393,8 @@ const BookFlight = () => {
     setLoading(true);
     try {
       const user = localStorage.getItem("user");
-      if(user){
-        let data =await bookFlight(selectedFlight, [
+      if (user) {
+        let data = await bookFlight(selectedFlight, [
           {
             id: 1,
             ...values.passenger,
@@ -402,11 +412,11 @@ const BookFlight = () => {
         ]);
         console.log(data.data);
         message.success("Booking submitted successfully!");
-        }else{
-            message.error("Please login to book a flight");
-        }
+      } else {
+        message.error("Please login to book a flight");
+      }
     } catch (error) {
-      console.log("Error submitting booking:", );
+      console.log("Error submitting booking:");
       message.error(error.response.data.message);
     } finally {
       setLoading(false);
@@ -426,15 +436,31 @@ const BookFlight = () => {
 
         {selectedFlight && (
           <Card className="mb-4" size="small">
-            <Text strong>Selected Flight:</Text>
-            <br />
-
-            <Text type="secondary">
-              {selectedFlight?.itineraries[0]?.segments[0]?.departure?.iataCode} →{" "}
-              {selectedFlight?.itineraries[0]?.segments[0]?.arrival?.iataCode} |{" "}
-              {selectedFlight?.itineraries[0]?.segments[0]?.departure?.at} |
-              {selectedFlight?.price?.total} {selectedFlight?.price?.currency}
-            </Text>
+            <div className="flex justify-between items-center">
+              <div>
+                <Text strong>Selected Flight:</Text>
+                <br />
+                <Text type="secondary">
+                  {
+                    selectedFlight?.itineraries[0]?.segments[0]?.departure
+                      ?.iataCode
+                  }{" "}
+                  →{" "}
+                  {
+                    selectedFlight?.itineraries[0]?.segments[0]?.arrival
+                      ?.iataCode
+                  }{" "}
+                  | {selectedFlight?.itineraries[0]?.segments[0]?.departure?.at}{" "}
+                  |{selectedFlight?.price?.total}{" "}
+                  {selectedFlight?.price?.currency}
+                </Text>
+              </div>
+              <Button
+                type="text"
+                icon={<CloseOutlined />}
+                onClick={() => setSelectedFlight(null)}
+              />
+            </div>
           </Card>
         )}
 
@@ -444,7 +470,7 @@ const BookFlight = () => {
           )}
 
           {currentStep < steps?.length - 1 && (
-            <Button type="primary" onClick={handleNextStep}>
+            <Button type="primary" onClick={handleNextStep} className="ml-auto">
               Next
             </Button>
           )}
@@ -456,6 +482,16 @@ const BookFlight = () => {
           )}
         </div>
       </Form>
+
+      {currentStep === 2 && selectedFlight && (
+        <Button
+          type="primary"
+          onClick={handleNextStep}
+          style={{ position: "fixed", bottom: "256px", right: "16px" }}
+        >
+          Next
+        </Button>
+      )}
     </Card>
   );
 };

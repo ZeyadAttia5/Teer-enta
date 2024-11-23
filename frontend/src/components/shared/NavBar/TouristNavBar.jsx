@@ -62,7 +62,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
 
   return (
     <div
-      className={`w-full flex justify-between items-center bg-${navbarColor} shadow-md to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
+      className={`w-full flex bg-${navbarColor} justify-between items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
     >
       {/* Logo Section */}
       <span className="ml-16 text-lg leading-7">
@@ -179,6 +179,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
                     )}
                 </SideBar>
             )}
+            
         </div>
     );
 };

@@ -88,7 +88,7 @@ function App() {
           />
         )}
         {!flag && (
-          <div className="relative bg-[#075B4C] z-10 size-full flex flex-col items-center">
+          <div className="relative  z-10 size-full flex flex-col items-center">
             <TouristNavBar
               setModalOpen={setModalOpen}
               isNavigate={isNavigate}
@@ -103,6 +103,8 @@ function App() {
           onConfirm={onLogout}
           message={`Are you sure you want to log out?`}
         />
+
+        
 
         <Routes>
           {/* General Routes */}
@@ -305,7 +307,7 @@ function App() {
             element={<BookActivity />}
           />
           <Route path="/bookings" element={<Bookings />} />
-          <Route path="/myActivities" element={<MyActivities />} />
+          <Route path="/savedActivities" element={<MyActivities />} />
           <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
         </Routes>
         <Toaster />
