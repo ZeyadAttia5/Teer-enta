@@ -78,7 +78,7 @@ function App() {
   };
 
   return (
-    <div className="App relative bg-fourth min-h-screen">
+    <div className="App relative min-h-screen">
       <Router>
         {!flag && (
           <DrawerBar
@@ -88,7 +88,7 @@ function App() {
           />
         )}
         {!flag && (
-          <div className="relative bg-[#075B4C] z-10 size-full flex flex-col items-center">
+          <div className="relative  z-10 size-full flex flex-col items-center">
             <TouristNavBar
               setModalOpen={setModalOpen}
               isNavigate={isNavigate}
@@ -103,6 +103,8 @@ function App() {
           onConfirm={onLogout}
           message={`Are you sure you want to log out?`}
         />
+
+        <hr className="border-gray-200 border border-1" />
 
         <Routes>
           {/* General Routes */}

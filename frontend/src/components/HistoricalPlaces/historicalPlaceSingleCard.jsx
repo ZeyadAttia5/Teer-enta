@@ -34,7 +34,7 @@ const HistoricalPlaceSingleCard = ({currency, places}) => {
     return (
         <Link to={`/historicalPlace/details/${places?._id}`}>
         <div
-            className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform hover:bg-[#E2F4C5] hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
+            className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform  hover:shadow-xl transition-all duration-300 ease-in-out m-4">
             <img
                 className="w-full h-48 object-cover"
                 src={
