@@ -12,7 +12,11 @@ export const getWishlist = async () => {
 };
 
 export const getCart = async () => {
-    return await axios.get(`${API_BASE_URL}/cart`);
+  return await axios.get(`${API_BASE_URL}/cart`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
 }
 export const addToWishlist = async (productId) => {
     try {
