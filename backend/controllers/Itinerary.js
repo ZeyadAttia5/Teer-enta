@@ -11,6 +11,8 @@ const brevoService = new BrevoService(brevoConfig);
 const FlaggedItineraryTemplate = require("../Util/mailsHandler/mailTemplets/1FlaggedItineraryTemplate");
 const PaymentReceiptItemTemplate = require("../Util/mailsHandler/mailTemplets/2PaymentReceiptItemTemplate");
 const PromoCodes = require("../models/PromoCodes");
+const getFCMToken = require("../Util/Notification/FCMTokenGetter");
+const sendNotification = require("../Util/Notification/NotificationSender");
 
 exports.getItineraries = async (req, res, next) => {
     try {
@@ -348,7 +350,15 @@ exports.flagInappropriate = async (req, res) => {
         );
 
         await brevoService.send(template,updatedItinerary.createdBy.email);
-
+        const fcmToken = await getFCMToken(updatedItinerary.createdBy._id);
+        console.log(fcmToken);
+        if (fcmToken) {
+            await sendNotification({
+                title: "Itinerary Flagged",
+                body:`Your Itinerary ${updatedItinerary.name} has been flagged as inappropriate`,
+                tokens: [fcmToken],
+            })
+        }
         return res.status(200).json({message: "Itinerary flagged inappropriate and users refunded successfully"});
     } catch (err) {
         errorHandler.SendError(res, err);

@@ -10,6 +10,8 @@ const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
 const brevoService = new BrevoService(brevoConfig);
 const FlaggedActivityTemplate = require("../Util/mailsHandler/mailTemplets/7FlaggedActivityTemplate")
 const PaymentReceiptItemTemplate = require("../Util/mailsHandler/mailTemplets/2PaymentReceiptItemTemplate")
+const getFCMToken = require('../Util/Notification/FCMTokenGetter');
+const sendNotification = require('../Util/Notification/NotificationSender');
 exports.getActivities = async (req, res, next) => {
     try {
         const activities = await Activity
@@ -287,6 +289,14 @@ exports.flagInappropriate = async (req, res) => {
         );
 
         await brevoService.send(template, activity.createdBy.email);
+        const fcmToken = await getFCMToken(activity.createdBy._id);
+        if (fcmToken) {
+           await sendNotification({
+               title: "Activity Flagged",
+                body:`Your activity ${activity.name} has been flagged as inappropriate`,
+               tokens: [fcmToken],
+            })
+        }
 
         //refunding the user to be handled
         return res.status(200).json({message: "activity flagged inappropriate successfully"});

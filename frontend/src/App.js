@@ -1,5 +1,5 @@
 import "./index.css";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Signup from "./components/Auth/Signup/Signup.js";
@@ -54,12 +54,72 @@ import Bookings from "./components/Users/bookings/bookings";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
+import TestNotification from './components/notifications/TestNotification';
+import {toast, ToastContainer} from "react-toastify";
+import {checkPermission, requestForToken} from "./services/firebase";
+import {getMessaging, onMessage} from "firebase/messaging";
+import {saveFCMTokenToServer} from "./api/notifications.ts";
+import Notification from "./components/notifications/Notification";
 
 function App() {
   const [flag, setFlag] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isNavigate, setIsNavigate] = useState(false);
+  const [notification, setNotification] = useState({ title: '', body: '' });
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+          .register('/firebase-messaging-sw.js')
+          .then((registration) => {
+            // console.log('Service Worker registered:', registration);
+          })
+          .catch((error) => {
+            console.error('Service Worker registration failed:', error);
+          });
+    }
+
+    const initializeNotifications = async () => {
+      try {
+        const permission = await checkPermission();
+        if (permission === 'granted') {
+          const token = await requestForToken();
+          if (token) {
+            await saveFCMTokenToServer(token);
+            setupForegroundListener();
+          }
+        }
+      } catch (error) {
+        console.error('Error initializing notifications:', error);
+      }
+    };
+
+    const setupForegroundListener = () => {
+      const messaging = getMessaging();
+
+      onMessage(messaging, (payload) => {
+        console.log('Received foreground message:', payload);
+
+        setNotification({
+          title: payload.notification.title,
+          body: payload.notification.body
+        });
+
+        toast.info(`${payload.notification.title}: ${payload.notification.body}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+    };
+
+    initializeNotifications();
+  }, []);
 
   const showDrawer = () => {
     setVisible(true);
@@ -77,9 +137,12 @@ function App() {
     setModalOpen(false);
   };
 
+
+
   return (
     <div className="App relative bg-fourth min-h-screen">
       <Router>
+        <ToastContainer />
         {!flag && (
           <DrawerBar
             onClose={onClose}
@@ -106,6 +169,8 @@ function App() {
 
         <Routes>
           {/* General Routes */}
+          {/*<Route path="/Notification" element={<Notification />} />*/}
+          {/*<Route path="/test-notification" element={<TestNotification />} />*/}
           <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
           <Route path="/signup" element={<Signup setFlag={setFlag} />} />
           <Route

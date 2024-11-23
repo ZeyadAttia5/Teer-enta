@@ -2,11 +2,15 @@ const express = require("express");
 
 const router = express.Router();
 
-const notificationController = require("../controllers/notifications");
 
 const isAuth = require("../middlewares/isAuth");
+const notificationsController = require("../controllers/notifications");
 
-router.post("/create", isAuth, notificationController.createNotificationRequest);
+router.get("/my", isAuth, notificationsController.getAllMyNotifications);
+router.post("/createRequest", isAuth, notificationsController.createNotificationRequest);
+router.post('/send', isAuth,notificationsController.sendNotification);
+router.post('/saveFCMToken', isAuth, notificationsController.SaveFCMToken);
+router.delete('/delete/:id', isAuth, notificationsController.deleteNotification);
 
 
 
