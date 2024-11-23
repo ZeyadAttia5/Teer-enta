@@ -11,6 +11,7 @@ import {
   deleteWishlistProduct,
   getWishlist,
 } from "../../api/cart.ts";
+import SearchBar from "../shared/SearchBar/SearchBar.js";
 
 const AdminProductGrid = ({ setFlag }) => {
   setFlag(false);
@@ -139,14 +140,15 @@ const AdminProductGrid = ({ setFlag }) => {
           {feedbackMessage}
         </div>
       )}
-      <div className="flex justify-between items-center mt-24 mb-5">
-        <div className="flex justify-center items-center gap-4 mx-auto">
-          <Input
+      <div className="flex justify-between items-center mb-5">
+        <div className="flex flex-col gap-4 justify-center items-center mx-auto">
+          {/* <Input
             placeholder="Search for products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-72 border-first rounded-full border-2 focus:border-customGreen transition-colors duration-300"
-          />
+          /> */}
+          <SearchBar placeHolder="products" searchTerm={searchTerm} setSearchTerm={(e) => setSearchTerm(e.target.value)} />
           <FilterDropdown
             filters={filters}
             onFilterChange={handleFilterChange}
@@ -155,15 +157,10 @@ const AdminProductGrid = ({ setFlag }) => {
       </div>
       <Row gutter={[16, 16]} className="mt-5">
         {filteredProducts.map((product) => (
-          <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
-            <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-third transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
-              <div className="relative">
-                <img
-                  className="w-full h-48 object-cover"
-                  src={product.image || product.imageUrl}
-                  alt={product.name}
-                  loading="lazy"
-                />
+          <Col key={product._id} xs={24} sm={12} md={8} lg={8}>
+{/* <Link to={`/products/${product._id}`}> */}
+            <div className="max-w-sm relative w-full rounded-lg overflow-hidden shadow-lg bg-white transform  hover:shadow-xl transition-all duration-300 ease-in-out m-4">
+              
                 <button
                   onClick={() => handleWishlistToggle(product._id)}
                   className={`absolute top-2 right-2 flex items-center transition duration-200 ${
@@ -180,23 +177,25 @@ const AdminProductGrid = ({ setFlag }) => {
                     }`}
                   />
                 </button>
+              <div className=" cursor-pointer"  onClick={() => window.location.href = `/products/${product._id}`}>
+                <img
+                  className="w-full h-48 object-cover"
+                  src={product.image || product.imageUrl}
+                  alt={product.name}
+                  loading="lazy"
+                />
               </div>
-              <div className="p-4">
-                <h2 className="font-bold text-xl">{product.name}</h2>
-                <p className="text-gray-700">
-                  <span className="font-semibold">{currency?.code}</span>{" "}
-                  {(currency?.rate * product.price).toFixed(2)}
-                </p>
+              <div className="p-4 cursor-pointer"  onClick={() => window.location.href = `/products/${product._id}`}>
+                <h2 className="font-bold text-2xl mb-2 text-[#496989]">{product.name}</h2>
                 <StarRating rating={calculateAverageRating(product.ratings)} />
-                <div className="flex justify-start items-center">
-                  <Link to={`/products/${product._id}`}>
-                    <Button className="bg-first hover:bg-darkerGreen text-white mt-2">
-                      View Details
-                    </Button>
-                  </Link>
-                </div>
+                <p className="text-gray-700 mt-3">
+                  <span className="font-semibold">{currency?.code}</span>{" "}
+                  <span className="text-xl font-bold">{(currency?.rate * product.price).toFixed(2)}</span>
+                </p>
+                
               </div>
             </div>
+          {/* </Link> */}
           </Col>
         ))}
       </Row>
