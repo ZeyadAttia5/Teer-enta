@@ -15,6 +15,10 @@ import logo from "../../../assets/logo/logo.jpeg";
 import SelectPrefrences from "../../shared/SelectPrefrences.jsx";
 import { Button } from "antd";
 import WavingHand from "../../../assets/svgs/hand-shake-svgrepo-com.svg";
+import { checkPermission, requestForToken } from "../../../services/firebase";
+import { saveFCMTokenToServer } from "../../../api/notifications.ts";
+import { getMessaging, onMessage } from 'firebase/messaging';
+import { toast } from 'react-toastify';
 
 function Login({ setFlag, flag }) {
   if (!flag) {
@@ -67,6 +71,27 @@ function Login({ setFlag, flag }) {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images?.length);
   };
 
+  const initializeNotifications = async (accessToken) => {
+    try {
+      if ('serviceWorker' in navigator) {
+        await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      }
+
+      const permission = await checkPermission();
+      if (permission === 'granted') {
+        const token = await requestForToken();
+        if (token) {
+          await saveFCMTokenToServer(token, accessToken);
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error('Error initializing notifications:', error);
+      return false;
+    }
+  };
+
   const URL = `${process.env.REACT_APP_BACKEND_URL}`;
   const handleLoginSubmission = async (e) => {
     e.preventDefault();
@@ -88,6 +113,8 @@ function Login({ setFlag, flag }) {
       }
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
+      // Initialize notifications after storing credentials
+      await initializeNotifications(accessToken);
       setMessage(response.data.message);
       navigate("/");
       setFlag(false);
@@ -97,6 +124,7 @@ function Login({ setFlag, flag }) {
       return false;
     }
   };
+
 
   function isValid() {
     if (username === "" || password === "") {

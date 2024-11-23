@@ -69,56 +69,37 @@ function App() {
   const [notification, setNotification] = useState({ title: '', body: '' });
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-          .register('/firebase-messaging-sw.js')
-          .then((registration) => {
-            // console.log('Service Worker registered:', registration);
-          })
-          .catch((error) => {
-            console.error('Service Worker registration failed:', error);
-          });
-    }
-
-    const initializeNotifications = async () => {
+    const setupForegroundListener = () => {
       try {
-        const permission = await checkPermission();
-        if (permission === 'granted') {
-          const token = await requestForToken();
-          if (token) {
-            await saveFCMTokenToServer(token);
-            setupForegroundListener();
-          }
-        }
+        const messaging = getMessaging();
+        onMessage(messaging, (payload) => {
+          console.log('Received foreground message:', payload);
+
+          setNotification({
+            title: payload.notification.title,
+            body: payload.notification.body
+          });
+
+          toast.info(`${payload.notification.title}: ${payload.notification.body}`, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        });
       } catch (error) {
-        console.error('Error initializing notifications:', error);
+        console.error('Error setting up notification listener:', error);
       }
     };
 
-    const setupForegroundListener = () => {
-      const messaging = getMessaging();
-
-      onMessage(messaging, (payload) => {
-        console.log('Received foreground message:', payload);
-
-        setNotification({
-          title: payload.notification.title,
-          body: payload.notification.body
-        });
-
-        toast.info(`${payload.notification.title}: ${payload.notification.body}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      });
-    };
-
-    initializeNotifications();
+    // Only setup listener if user is logged in
+    const user = localStorage.getItem('user');
+    if (user) {
+      setupForegroundListener();
+    }
   }, []);
 
   const showDrawer = () => {
@@ -168,9 +149,6 @@ function App() {
         />
 
         <Routes>
-          {/* General Routes */}
-          {/*<Route path="/Notification" element={<Notification />} />*/}
-          {/*<Route path="/test-notification" element={<TestNotification />} />*/}
           <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
           <Route path="/signup" element={<Signup setFlag={setFlag} />} />
           <Route
