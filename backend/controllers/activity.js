@@ -3,6 +3,7 @@ const Itinerary = require('../models/Itinerary/Itinerary');
 const BookedActivity = require('../models/Booking/BookedActivitie');
 const Tourist = require('../models/Users/Tourist');
 const PromoCodes = require('../models/PromoCodes');
+const NotificationsRequests = require('../models/Notifications/NotificationsRequests');
 const mongoose = require('mongoose')
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 const BrevoService = require("../Util/mailsHandler/brevo/brevoService");
@@ -12,6 +13,7 @@ const FlaggedActivityTemplate = require("../Util/mailsHandler/mailTemplets/7Flag
 const PaymentReceiptItemTemplate = require("../Util/mailsHandler/mailTemplets/2PaymentReceiptItemTemplate")
 const getFCMToken = require('../Util/Notification/FCMTokenGetter');
 const sendNotification = require('../Util/Notification/NotificationSender');
+const {up} = require("yarn/lib/cli");
 exports.getActivities = async (req, res, next) => {
     try {
         const activities = await Activity
@@ -222,15 +224,34 @@ exports.updateActivity = async (req, res, next) => {
 
         const updates = req.body;
 
+        const activity = await Activity.findById(id);
+        if (!activity) {
+            return res.status(404).json({message: 'ActivityList not found'});
+        }
+        const oldIsBooking  = activity.isBookingOpen;
 
         const updatedActivity = await Activity.findByIdAndUpdate(
             id,
             updates,
             {new: true, runValidators: true, overwrite: false} // Options: return the updated document and run validators
         );
-
         if (!updatedActivity) {
             return res.status(404).json({message: 'ActivityList not found or inactive'});
+        }
+        const newIsBooking = updatedActivity.isBookingOpen;
+        if(oldIsBooking !== newIsBooking && newIsBooking === true){
+            const interestedUsersRequests = await NotificationsRequests.find({activity: id});
+            const interestedUsers = interestedUsersRequests.map(request => request.createdBy);
+            for(const user of interestedUsers){
+                const fcmToken = await getFCMToken(user);
+                if (fcmToken) {
+                    await sendNotification({
+                        title: 'Activity Booking Open',
+                        body: `The activity ${updatedActivity.name} is now open for booking`,
+                        tokens: [fcmToken],
+                    });
+                }
+            }
         }
 
         res.status(200).json({
@@ -290,6 +311,8 @@ exports.flagInappropriate = async (req, res) => {
 
         await brevoService.send(template, activity.createdBy.email);
         const fcmToken = await getFCMToken(activity.createdBy._id);
+        console.log(activity.createdBy._id);
+        // console.log(fcmToken);s
         if (fcmToken) {
            await sendNotification({
                title: "Activity Flagged",
