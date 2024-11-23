@@ -104,7 +104,7 @@ function App() {
           message={`Are you sure you want to log out?`}
         />
 
-        <hr className="border-gray-200 border border-1" />
+        
 
         <Routes>
           {/* General Routes */}
