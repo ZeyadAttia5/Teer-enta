@@ -61,20 +61,22 @@ const ActivityCard = ({
   const handleSaveActivity = async (activityId) => {
     try {
       if (!isSaved) {
+        setIsSaved(!isSaved); // Toggle saved state
         await saveActivity(activityId);
         message.success("Activity saved successfully!");
       } else {
+        setIsSaved(!isSaved); // Toggle saved state
         await removeSavedActivity(activityId);
         message.info("Activity removed from saved activities!");
       }
-      setIsSaved(!isSaved); // Toggle saved state
+      // setIsSaved(!isSaved); // Toggle saved state
     } catch (error) {
       console.error("Error saving activity:", error);
     }
   };
 
   return (
-    <div className="flex justify-center items-center w-1/3" >
+    <div className="flex justify-center items-center w-1/3">
       <div className="w-full rounded-lg overflow-hidden shadow-lg bg-[#ffffff] text-third m-2 mb-8 relative">
         {/* Like/Save Button */}
         <div className="absolute top-4 right-4 z-10">
@@ -94,11 +96,14 @@ const ActivityCard = ({
         </div>
 
         {/* Top Block: Name and Book Now Button */}
-        <div className="flex items-center cursor-pointer p-4 bg-first text-[#ffffff] flex-col sm:flex-row" onClick={() => handleActivityDetails(id)}>
+        <div
+          className="flex items-center cursor-pointer p-4 bg-first text-[#ffffff] flex-col sm:flex-row"
+          onClick={() => handleActivityDetails(id)}
+        >
           <h2 className="font-bold text-xl sm:text-5xl flex-grow break-words">
             {name}
           </h2>
-          
+
           {/* <Button
             onClick={() => handleActivityDetails(id)}
             className="rounded-full bg-third text-white border-white hover:bg-second hover:text-third transition duration-200 text-sm md:text-base font-bold"
@@ -112,7 +117,10 @@ const ActivityCard = ({
         <div className="border-t-4 border-fourth"></div>
 
         {/* Middle Block: Date, Time, Category, and Price */}
-        <div className="p-4 space-y-2 cursor-pointer bg-[#ffffff] text-first " onClick={() => handleActivityDetails(id)}>
+        <div
+          className="p-4 space-y-2 cursor-pointer bg-[#ffffff] text-first "
+          onClick={() => handleActivityDetails(id)}
+        >
           <div className="flex flex-col sm:flex-row justify-between items-center flex-wrap">
             <Tooltip title="Date" overlayClassName="bg-fourth">
               <p className="flex items-center text-lg sm:text-xl font-bold">
@@ -157,7 +165,7 @@ const ActivityCard = ({
         <div className="flex justify-between items-center p-4 bg-[#ffffff] text-first  flex-col sm:flex-row">
           <Tooltip title="Join us!">
             <Button
-            type="danger"
+              type="danger"
               onClick={() => handleActivityBooking(id)}
               className="bg-first  text-[#ffffff] hover:bg-third hover:text-[#ffffff] transition duration-200 text-xl sm:text-2xl px-6 py-3"
             >
