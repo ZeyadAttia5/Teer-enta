@@ -214,6 +214,7 @@ const AdminProductGrid = ({ setFlag }) => {
     </Button>
   )}
 
+<Link Link to="/products/cart">
 <Button
   className="bg-first text-white flex items-center justify-center h-12 w-20 bg-no-repeat bg-center bg-[length:55%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
   style={{
@@ -224,7 +225,7 @@ const AdminProductGrid = ({ setFlag }) => {
     console.log("Redirecting to Cart...");
   }}
 ></Button>
-
+</Link>
 </div>
 
       <div className="flex justify-between items-center mt-24 mb-5">
