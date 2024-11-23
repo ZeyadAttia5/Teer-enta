@@ -11,6 +11,7 @@ import {
   deleteWishlistProduct,
   getWishlist,
 } from "../../api/cart.ts";
+import SearchBar from "../shared/SearchBar/SearchBar.js";
 
 const AdminProductGrid = ({ setFlag }) => {
   setFlag(false);
@@ -139,14 +140,15 @@ const AdminProductGrid = ({ setFlag }) => {
           {feedbackMessage}
         </div>
       )}
-      <div className="flex justify-between items-center mt-24 mb-5">
-        <div className="flex justify-center items-center gap-4 mx-auto">
-          <Input
+      <div className="flex justify-between items-center mb-5">
+        <div className="flex flex-col gap-4 justify-center items-center mx-auto">
+          {/* <Input
             placeholder="Search for products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-72 border-first rounded-full border-2 focus:border-customGreen transition-colors duration-300"
-          />
+          /> */}
+          <SearchBar placeHolder="products" searchTerm={searchTerm} setSearchTerm={(e) => setSearchTerm(e.target.value)} />
           <FilterDropdown
             filters={filters}
             onFilterChange={handleFilterChange}
