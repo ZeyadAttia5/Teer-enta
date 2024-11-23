@@ -180,8 +180,8 @@ const AdminProductGrid = ({ setFlag }) => {
   {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
     <Link to="/products/create">
       <Button
-        type="danger"
-        className="bg-second text-white hover:bg-black flex items-center justify-center  bg-no-repeat bg-center bg-[length:55%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
+        type="primary"
+        className="bg-first text-white flex items-center justify-center h-12 w-20 bg-no-repeat bg-center bg-[length:50%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
         style={{
           backgroundImage: `url(${addSign})`
         }}
@@ -195,8 +195,8 @@ const AdminProductGrid = ({ setFlag }) => {
   {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
     <Link to="/products/quantity&Sales">
       <Button
-        type="danger"
-        className="bg-second text-white hover:bg-black flex items-center justify-center bg-no-repeat bg-center bg-[length:55%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
+        type="primary"
+        className="bg-first text-white flex items-center justify-center h-12 w-20 bg-no-repeat bg-center bg-[length:50%] border-none hover:scale-110 transition-transform duration-300 ease-in-outt"
       >
         Reports
       </Button>
@@ -206,18 +206,16 @@ const AdminProductGrid = ({ setFlag }) => {
   
   {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
     <Button
-      type="danger"
-      className="bg-second text-white hover:bg-black flex items-center justify-center bg-no-repeat bg-center bg-[length:55%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
+      type="primary"
+      className="bg-first text-white flex items-center justify-center h-12 w-20 bg-no-repeat bg-center bg-[length:50%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
       onClick={() => setShowArchived(!showArchived)}
     >
       {showArchived ? "Archived" : "Active"}
     </Button>
   )}
 
-<Link Link to="/products/cart">
 <Button
-type="danger"
-  className="bg-second text-white hover:bg-black flex items-center justify-center w-12  bg-no-repeat bg-center bg-[length:55%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
+  className="bg-first text-white flex items-center justify-center h-12 w-20 bg-no-repeat bg-center bg-[length:55%] border-none hover:scale-110 transition-transform duration-300 ease-in-out"
   style={{
     backgroundImage: `url(${cartIcon})`,
   }}
@@ -226,7 +224,7 @@ type="danger"
     console.log("Redirecting to Cart...");
   }}
 ></Button>
-</Link>
+
 </div>
 
       <div className="flex justify-between items-center mt-24 mb-5">
