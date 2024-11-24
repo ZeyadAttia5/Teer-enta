@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { NotificationContext } from "../../notifications/NotificationContext";
 import { Bell, X, Check, CheckCheck, Clock, AlertCircle, Trash2 } from "lucide-react";
-import {deleteNotification} from "../../../api/notifications.ts";
+import { deleteNotification } from "../../../api/notifications.ts";
 
 // NotificationIcon Component stays the same
 const NotificationIcon = ({ navbarcolor = "first" }) => {
@@ -85,14 +85,23 @@ const NotificationIcon = ({ navbarcolor = "first" }) => {
 // NotificationDropdown Component with enhanced delete functionality
 const NotificationDropdown = ({ onClose, navbarcolor }) => {
     const {
-        notifications,
+        notifications: contextNotifications,
         loading,
         error,
         markAllAsRead,
-        markAsRead
+        markAsRead,
+        refreshNotifications
     } = useContext(NotificationContext);
+
+    // Local state for notifications
+    const [localNotifications, setLocalNotifications] = useState([]);
     const dropdownRef = useRef(null);
     const [deletingIds, setDeletingIds] = useState(new Set());
+
+    // Sync local notifications with context
+    useEffect(() => {
+        setLocalNotifications(contextNotifications);
+    }, [contextNotifications]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -108,11 +117,20 @@ const NotificationDropdown = ({ onClose, navbarcolor }) => {
     const handleDelete = async (notificationId) => {
         try {
             setDeletingIds(prev => new Set([...prev, notificationId]));
-            // Add your delete API call here
-            // await deleteNotification(notificationId);
 
-           await deleteNotification(notificationId);
-            // Remove from deletingIds after successful deletion
+            // Optimistically update UI
+            setLocalNotifications(prev =>
+                prev.filter(notification =>
+                    (notification._id || notification.id) !== notificationId
+                )
+            );
+
+            // Make API call
+            await deleteNotification(notificationId);
+
+            // Refresh notifications from server
+            await refreshNotifications();
+
             setDeletingIds(prev => {
                 const next = new Set(prev);
                 next.delete(notificationId);
@@ -120,6 +138,8 @@ const NotificationDropdown = ({ onClose, navbarcolor }) => {
             });
         } catch (error) {
             console.error('Error deleting notification:', error);
+            // Revert optimistic update on error
+            setLocalNotifications(contextNotifications);
             setDeletingIds(prev => {
                 const next = new Set(prev);
                 next.delete(notificationId);
@@ -189,11 +209,11 @@ const NotificationDropdown = ({ onClose, navbarcolor }) => {
                 <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-gray-900">Notifications</h3>
                     <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
-                        {notifications.filter(n => !n.isSeen).length} new
+                        {localNotifications.filter(n => !n.isSeen).length} new
                     </span>
                 </div>
                 <div className="flex items-center gap-3">
-                    {notifications.some(n => !n.isSeen) && (
+                    {localNotifications.some(n => !n.isSeen) && (
                         <button
                             onClick={markAllAsRead}
                             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
@@ -221,14 +241,14 @@ const NotificationDropdown = ({ onClose, navbarcolor }) => {
                         <AlertCircle className="w-12 h-12 mx-auto mb-2" />
                         <p>{error}</p>
                     </div>
-                ) : notifications.length === 0 ? (
+                ) : localNotifications.length === 0 ? (
                     <div className="p-8 text-center text-gray-500">
                         <Bell className="w-12 h-12 mx-auto mb-2 opacity-20" />
                         <p>No notifications yet</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-gray-100">
-                        {notifications.map((notification) => (
+                        {localNotifications.map((notification) => (
                             <div
                                 key={notification._id || notification.id}
                                 className={`
