@@ -177,12 +177,20 @@ const Sidebar = ({ visible, onClose }) => {
               All Products
             </Menu.Item>
             {user && user.userRole === "Tourist" && (
-              <Menu.Item
-                key="15"
-                onClick={() => handleClick("/wishlisted_products")}
-              >
-                Wish list
-              </Menu.Item>
+                <>
+                  <Menu.Item
+                      key="15"
+                      onClick={() => handleClick("/wishlisted_products")}
+                  >
+                    Wish list
+                  </Menu.Item>
+                  <Menu.Item
+                      key="16"
+                      onClick={() => handleClick("/orderHistory")}
+                    >
+                        Orders History
+                    </Menu.Item>
+                </>
             )}
             {user &&
               (user.userRole === "Seller" || user.userRole === "Admin") && (

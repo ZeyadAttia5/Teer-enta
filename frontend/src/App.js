@@ -20,6 +20,7 @@ import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
 import EditProductForm from "./components/Store/editProductForm";
 import QuantityAndSales from "./components/Store/quantityAndSales.jsx";
+import CartComponent from "./components/Store/cart.jsx";
 import IternaryScreen from "./components/Itinerary/ItineraryScreen.jsx";
 import PreferenceTags from "./components/Tags/PrefrenceTags.tsx";
 import ActivityCategories from "./components/Activity/ActivityCategories.tsx";
@@ -54,6 +55,9 @@ import Bookings from "./components/Users/bookings/bookings";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
+import CheckOutOrder from "./components/Store/checkOutOrder";
+import OrderHistory from "./components/Store/orderHistory";
+import OrderDetails from "./components/Store/orderDetails";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -224,6 +228,19 @@ function App() {
             path="/products/quantity&sales"
             element={<QuantityAndSales setFlag={setFlag} />}
           />
+            <Route
+            path="/products/cart"
+            element={<CartComponent setFlag={setFlag} />}
+          />
+          <Route
+            path="/checkOutOrder"
+            element={<CheckOutOrder setFlag={setFlag} />}
+            />
+          <Route
+            path="/orderHistory"
+            element={<OrderHistory setFlag={setFlag} />}
+            />
+          <Route path="/order/:id" element={<OrderDetails />} />
           {/* Itinerary Routes */}
           <Route
             path="/itinerary/*"
