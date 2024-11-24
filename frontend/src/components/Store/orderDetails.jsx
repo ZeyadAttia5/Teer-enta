@@ -285,7 +285,7 @@ const OrderDetails = () => {
                             label={<Text strong>Payment Method</Text>}
                         >
                             <Tag color="blue">
-                                {order?.paymentMethod === 'wallet' ? 'Wallet Balance' : 'Cash on Delivery'}
+                                {order.paymentMethod}
                             </Tag>
                         </Descriptions.Item>
                         <Descriptions.Item
