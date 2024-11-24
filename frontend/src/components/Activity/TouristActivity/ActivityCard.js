@@ -34,6 +34,7 @@ const ActivityCard = ({
   const [address, setAddress] = useState("");
   const [isSaved, setIsSaved] = useState(initialSavedState);
   const navigate = useNavigate();
+  const user  = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -79,21 +80,21 @@ const ActivityCard = ({
     <div className="flex justify-center items-center w-1/3">
       <div className="w-full rounded-lg overflow-hidden shadow-lg bg-[#ffffff] text-third m-2 mb-8 relative">
         {/* Like/Save Button */}
-        <div className="absolute top-4 right-4 z-10">
+        {user &&(<div className="absolute top-4 right-4 z-10">
           <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
             <Button
-              type="text"
-              icon={
-                isSaved ? (
-                  <HeartFilled style={{ color: "red", fontSize: "24px" }} />
-                ) : (
-                  <HeartOutlined style={{ color: "gray", fontSize: "24px" }} />
-                )
-              }
-              onClick={() => handleSaveActivity(id)}
+                type="text"
+                icon={
+                  isSaved ? (
+                      <HeartFilled style={{color: "red", fontSize: "24px"}}/>
+                  ) : (
+                      <HeartOutlined style={{color: "gray", fontSize: "24px"}}/>
+                  )
+                }
+                onClick={() => handleSaveActivity(id)}
             />
           </Tooltip>
-        </div>
+        </div>)}
 
         {/* Top Block: Name and Book Now Button */}
         <div
