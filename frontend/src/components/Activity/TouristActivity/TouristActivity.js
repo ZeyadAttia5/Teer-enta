@@ -46,8 +46,7 @@ const Button2 = ({ children, onClick, variant = "default" }) => {
     <Button
       className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`}
       onClick={onClick}
-      type="primary"
-      danger
+      type="danger"
       icon={<ReloadOutlined />}
     >
       {children}
@@ -171,7 +170,7 @@ const TouristActivity = ({ setFlag }) => {
   const [sortBy, setSortBy] = useState(""); // To track sorting preference
   const [showUpcoming, setShowUpcoming] = useState(false); // State for upcoming activities
   const [currency, setCurrency] = useState(null);
-
+  const user = JSON.parse(localStorage.getItem("user"));
   const location = useLocation();
 
   const resetFilters = () => {
@@ -212,22 +211,21 @@ const TouristActivity = ({ setFlag }) => {
           console.log({ ...activity, averageRating: parseFloat(avgRating) });
           return { ...activity, averageRating: parseFloat(avgRating) }; // Ensure averageRating is a number
         });
-
-        const savedActivitiesResponse = await getSavedActivities();
-        const savedActivitiesId =
-          savedActivitiesResponse.data.savedActivities.map(
-            (activity) => activity._id
-          );
-        console.log("Saved ActivitiesId:", savedActivitiesId);
-
-        // Check if the activity is saved by the user
-        activitiesWithAvgRating.forEach((activity) => {
-          if (savedActivitiesId.includes(activity._id)) {
-            activity.isSaved = true;
-          } else {
-            activity.isSaved = false;
-          }
-        });
+        if(user){
+          const savedActivitiesResponse = await getSavedActivities();
+          const savedActivitiesId =
+              savedActivitiesResponse.data.savedActivities.map(
+                  (activity) => activity._id
+              );
+          // Check if the activity is saved by the user
+          activitiesWithAvgRating.forEach((activity) => {
+            if (savedActivitiesId.includes(activity._id)) {
+              activity.isSaved = true;
+            } else {
+              activity.isSaved = false;
+            }
+          });
+        }
 
         setActivities(activitiesWithAvgRating);
         setFilteredActivities(activitiesWithAvgRating);
@@ -328,12 +326,12 @@ const TouristActivity = ({ setFlag }) => {
     <div className="p-0 bg-fourth">
       {/* <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p> */}
 
-      <div className="flex flex-col items-center space-y-4 mb-8">
+      <div className="flex flex-col items-center space-y-4">
         {/* Centered Search Bar */}
         <Search
           placeholder="Search by name, category, or tag"
           onSearch={handleSearch}
-          enterButton={<SearchOutlined />}
+          // enterButton={<SearchOutlined />}
           className="p-2 rounded-md w-[400px]"
           allowClear
         />
@@ -344,8 +342,21 @@ const TouristActivity = ({ setFlag }) => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button1 variant="outline">
-                <Filter className="mr-2 h-4 w-4" />
-                Budget
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
+                  />
+                </svg>
+                <span className="ml-1">Budget</span>
               </Button1>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
@@ -455,8 +466,7 @@ const TouristActivity = ({ setFlag }) => {
 
           {/* Reset Button */}
           <Button2
-            type="primary"
-            danger
+            type="danger"
             icon={<ReloadOutlined />}
             onClick={resetFilters}
             className="h-9"
@@ -466,47 +476,50 @@ const TouristActivity = ({ setFlag }) => {
         </div>
       </div>
 
-      {/* Checkbox for Upcoming Activities */}
-      <Checkbox
-        checked={showUpcoming}
-        onChange={(e) => setShowUpcoming(e.target.checked)}
-      >
-        Show Upcoming Activities
-      </Checkbox>
-
-      {/* Activity Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredActivities?.length > 0 ? (
-          filteredActivities?.map((place) => (
-            // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
-            <ActivityCard
-              id={place._id}
-              name={place.name}
-              date={dayjs(place.date).format("MMM DD, YYYY")}
-              time={place.time}
-              isBookingOpen={place.isBookingOpen}
-              location={{
-                lat: place.location.lat,
-                lng: place.location.lng,
-              }}
-              price={place.price} // Using price.min for display and filtering
-              category={place.category ? place.category.category : "N/A"}
-              preferenceTags={
-                place.preferenceTags
-                  ? place.preferenceTags.map((tag) => tag.tag)
-                  : []
-              }
-              image={place.imagePath}
-              averageRating={place.averageRating} // Pass average rating to ActivityCard
-              isSaved={place.isSaved} // Pass isSaved to ActivityCard
-              currencyCode={currency?.code}
-              currencyRate={currency?.rate}
-            />
-            // </Link>
-          ))
-        ) : (
-          <p>No activities found based on the applied filters.</p>
-        )}
+      <div className="mt-8">
+        {/* Activity Cards */}
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"> */}
+        <div className="flex justify-center">
+          <div className="flex flex-wrap justify-between w-[80%]">
+            <Checkbox
+              checked={showUpcoming}
+              onChange={(e) => setShowUpcoming(e.target.checked)}
+            >
+              Show Upcoming Activities
+            </Checkbox>
+            {filteredActivities?.length > 0 ? (
+              filteredActivities?.map((place) => (
+                // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
+                <ActivityCard
+                  id={place._id}
+                  name={place.name}
+                  date={dayjs(place.date).format("MMM DD, YYYY")}
+                  time={place.time}
+                  isBookingOpen={place.isBookingOpen}
+                  location={{
+                    lat: place.location.lat,
+                    lng: place.location.lng,
+                  }}
+                  price={place.price} // Using price.min for display and filtering
+                  category={place.category ? place.category.category : "N/A"}
+                  preferenceTags={
+                    place.preferenceTags
+                      ? place.preferenceTags.map((tag) => tag.tag)
+                      : []
+                  }
+                  image={place.imagePath}
+                  averageRating={place.averageRating} // Pass average rating to ActivityCard
+                  isSaved={place.isSaved} // Pass isSaved to ActivityCard
+                  currencyCode={currency?.code}
+                  currencyRate={currency?.rate}
+                />
+                // </Link>
+              ))
+            ) : (
+              <p>No activities found based on the applied filters.</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

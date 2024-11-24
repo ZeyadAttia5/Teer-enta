@@ -1,22 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Tooltip } from "antd";
-import { CalendarOutlined, ClockCircleOutlined, FolderOutlined, EnvironmentOutlined } from "@ant-design/icons";
+import { Rate, Button, Card,Tooltip, message } from "antd";
 import { getGoogleMapsAddress } from "../../../api/googleMaps.ts";
+import { saveActivity, removeSavedActivity } from "../../../api/profile.ts";
 import { useNavigate } from "react-router-dom";
+import {
+  CalendarOutlined,
+  ClockCircleOutlined,
+  FolderOutlined,
+  DollarOutlined,
+  EnvironmentOutlined,
+  HeartOutlined,
+  HeartFilled,
+} from "@ant-design/icons";
 
 const ActivityCard = ({
   id,
   name,
   date,
   time,
+  isBookingOpen,
   location,
   price,
   category,
+  specialDiscounts,
+  ratings,
+  averageRating,
   currencyCode,
   currencyRate,
+  imageUrl,
+  isSaved: initialSavedState,
 }) => {
   const [address, setAddress] = useState("");
+  const [isSaved, setIsSaved] = useState(initialSavedState);
   const navigate = useNavigate();
+  const user  = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -42,11 +59,44 @@ const ActivityCard = ({
 
   const handleLocationClick = () => {
     window.open(`https://www.google.com/maps?q=${location?.lat},${location?.lng}`, "_blank");
+  }
+  const handleSaveActivity = async (activityId) => {
+    try {
+      if (!isSaved) {
+        setIsSaved(!isSaved); // Toggle saved state
+        await saveActivity(activityId);
+        message.success("Activity saved successfully!");
+      } else {
+        setIsSaved(!isSaved); // Toggle saved state
+        await removeSavedActivity(activityId);
+        message.info("Activity removed from saved activities!");
+      }
+      // setIsSaved(!isSaved); // Toggle saved state
+    } catch (error) {
+      console.error("Error saving activity:", error);
+    }
   };
 
   return (
-    <main className="flex flex-wrap justify-center items-center py-6"> {/* Adjusted padding */}
-      <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-2 cursor-pointer hover:border-2 hover:border-third">
+      <main className="flex flex-wrap justify-center items-center py-6"> {/* Adjusted padding */}
+          <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-2 cursor-pointer hover:border-2 hover:border-third">
+
+        {/* Like/Save Button */}
+        {user &&(<div className="absolute top-4 right-4 z-10">
+          <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
+            <Button
+                type="text"
+                icon={
+                  isSaved ? (
+                      <HeartFilled style={{color: "red", fontSize: "24px"}}/>
+                  ) : (
+                      <HeartOutlined style={{color: "gray", fontSize: "24px"}}/>
+                  )
+                }
+                onClick={() => handleSaveActivity(id)}
+            />
+          </Tooltip>
+        </div>)}
 
         <Card
           className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
