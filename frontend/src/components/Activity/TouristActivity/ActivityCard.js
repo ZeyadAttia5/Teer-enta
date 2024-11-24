@@ -3,7 +3,7 @@ import { Rate, Button, Tooltip, message } from "antd";
 import { getGoogleMapsAddress } from "../../../api/googleMaps.ts";
 import { saveActivity, removeSavedActivity } from "../../../api/profile.ts";
 import {
-  createNotificationRequest,
+  createNotificationRequest, getMyRequest,
   updateNotificationRequestStatus,
 } from "../../../api/notifications.ts";
 import { useNavigate } from "react-router-dom";
@@ -85,16 +85,19 @@ const ActivityCard = ({
 
   const handleNotificationToggle = async (activityId) => {
     try {
+
       if (isNotificationEnabled) {
         setIsNotificationEnabled(!isNotificationEnabled);
-
         await updateNotificationRequestStatus(activityId, "Cancelled");
         message.success("Notifications disabled for this activity");
       } else {
-        setIsNotificationEnabled(!isNotificationEnabled);
-
-        await createNotificationRequest(activityId);
-
+        const response = await getMyRequest(activityId);
+        if(response.data.length > 0){
+          await updateNotificationRequestStatus(activityId, "Pending");
+        }else{
+          setIsNotificationEnabled(!isNotificationEnabled);
+          await createNotificationRequest(activityId);
+        }
         message.success("You will be notified about updates for this activity");
       }
     } catch (error) {

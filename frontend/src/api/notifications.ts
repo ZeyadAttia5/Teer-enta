@@ -22,13 +22,29 @@ export const createNotificationRequest = async (activityId) => {
   );
 };
 
+export const getMyRequest = async (activityId) => {
+    return await axios.get(`${API_BASE_URL}/notification/myRequest/${activityId}`, {
+        headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
+
+export const getAllMyRequests = async () => {
+    return await axios.get(`${API_BASE_URL}/notification/allMyRequests`, {
+        headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
+
 export const updateNotificationRequestStatus = async (
-  notificationRequestId,
+  activityId,
   status
 ) => {
   return await axios.patch(
-    `${API_BASE_URL}/notification/updateRequestStatus/${notificationRequestId}`,
-    { status },
+    `${API_BASE_URL}/notification/updateRequestStatus`,
+    { status ,activityId},
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
