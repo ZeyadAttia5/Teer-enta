@@ -1,15 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
-import {getHistoricalPlace} from '../../api/historicalPlaces.ts';
-import {Button, message, Space} from "antd";
-import {CopyOutlined, MailOutlined} from "@ant-design/icons";
-import {getCurrency} from "../../api/account.ts";
-
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getHistoricalPlace } from '../../api/historicalPlaces.ts';
+import { Button, message, Space } from "antd";
+import { CopyOutlined, MailOutlined } from "@ant-design/icons";
+import { getCurrency } from "../../api/account.ts";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
 const ShowHistoricalPlaces = () => {
-    const {id} = useParams();
+    const { id } = useParams();
     const [historicalPlace, setHistoricalPlace] = useState(null);
     const [currency, setCurrency] = useState(null);
 
@@ -24,7 +23,6 @@ const ShowHistoricalPlaces = () => {
         };
         fetchHistoricalPlace();
     }, [id]);
-
 
     const fetchCurrency = async () => {
         try {
@@ -76,31 +74,28 @@ const ShowHistoricalPlaces = () => {
         window.location.href = mailtoLink;
     };
 
-
     if (!historicalPlace) {
         return <p className="text-center text-gray-500">Loading...</p>;
     }
 
     return (
-        <div
-            className="max-w-3xl mx-auto mt-10 p-8 pb-10 mb-16 bg-white shadow-lg rounded-lg border border-gray-200  transition-transform duration-300 ease-in-out">
-            <h2 className="text-3xl font-semibold mb-6 text-gray-700 text-center">{historicalPlace?.name}</h2>
+        <div className="max-w-5xl mx-auto mt-10 px-4 sm:px-6 lg:px-8 pb-7">
+            <h1 className="text-4xl font-bold mb-8 text-gray-900 text-center">{historicalPlace?.name}</h1>
             <div className="mb-8 text-center">
                 <Space>
-                    <Button icon={<CopyOutlined/>} onClick={handleCopyLink}>
+                    <Button icon={<CopyOutlined />} onClick={handleCopyLink}>
                         Copy Link
                     </Button>
-                    <Button icon={<MailOutlined/>} onClick={handleShareEmail}>
+                    <Button icon={<MailOutlined />} onClick={handleShareEmail}>
                         Share via Email
                     </Button>
                 </Space>
             </div>
 
-            {/* Image section */}
             {historicalPlace?.images && historicalPlace?.images.length > 0 && (
-                <div className="mb-8 group">
+                <div className="mb-12 group">
                     <img
-                        className="w-full h-64 object-cover rounded-lg shadow-md transition-transform duration-300 ease-in-out group-hover:scale-775 group-hover:h-screen"
+                        className="w-full max-h-96 object-cover rounded-lg shadow-md transition-transform duration-300 ease-in-out"
                         src={historicalPlace?.images[0]}
                         alt={historicalPlace?.name}
                     />
@@ -125,14 +120,14 @@ const ShowHistoricalPlaces = () => {
 
                 <div className="md:col-span-2">
                     <h3 className="text-xl font-semibold mb-2 text-gray-600">Tags</h3>
-                    <ul className="space-y-2">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {historicalPlace?.tags?.map((tag, index) => (
                             <li
                                 key={index}
-                                className="flex justify-between bg-gray-100 p-3 rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-[#496989] hover:text-white"
+                                className="bg-gray-100 p-3 rounded-md transition-colors duration-300 hover:bg-gray-200"
                             >
                                 <span className="font-medium">{tag.name}</span>
-                                <span className="font-semibold">({tag.type})</span>
+                                <span className="font-semibold block mt-1">({tag.type})</span>
                             </li>
                         ))}
                     </ul>
@@ -141,15 +136,16 @@ const ShowHistoricalPlaces = () => {
                 <div className="md:col-span-2">
                     <h3 className="text-xl font-semibold mb-2 text-gray-600">Tickets</h3>
                     {historicalPlace?.tickets?.length > 0 ? (
-                        <ul className="space-y-2">
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             {historicalPlace?.tickets?.map((ticket, index) => (
                                 <li
                                     key={index}
-                                    className="flex justify-between bg-gray-100 p-3 rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:bg-[#496989] hover:text-white"
+                                    className="bg-gray-100 p-3 rounded-md transition-colors duration-300 hover:bg-gray-200"
                                 >
-                                    <span className="font-medium">{ticket.type}</span>
-                                    <span
-                                        className="font-semibold"> {currency?.rate * ticket.price} {currency?.code}</span>
+                                    <span className="font-medium block">{ticket.type}</span>
+                                    <span className="font-semibold block mt-1">
+                                        {currency?.rate * ticket.price} {currency?.code}
+                                    </span>
                                 </li>
                             ))}
                         </ul>
@@ -163,3 +159,4 @@ const ShowHistoricalPlaces = () => {
 };
 
 export default ShowHistoricalPlaces;
+

@@ -1,6 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import {
+  Button,
+  Drawer,
+  Slider,
+  Radio,
+  Space,
+  Divider,
+  Typography,
+  InputNumber,
+  Tooltip,
+  Badge ,
+    Tag
+} from 'antd';
+import {
+  FilterOutlined,
+  SortAscendingOutlined,
+  DollarOutlined,
+  StarOutlined,
+  OrderedListOutlined,
+  ClearOutlined
+} from '@ant-design/icons';
+
+const { Title, Text } = Typography;
 
 const FilterDropdown = ({ filters, onFilterChange }) => {
+  const defaultFilters = {
+    minPrice: 0,
+    maxPrice: 1000,
+    sortBy: 'rating',
+    sortOrder: 'desc'
+  };
+
   const [minPrice, setMinPrice] = useState(filters.minPrice);
   const [maxPrice, setMaxPrice] = useState(filters.maxPrice);
   const [sortBy, setSortBy] = useState(filters.sortBy);
@@ -12,130 +42,239 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
     setSortOrder(filters.sortOrder || "desc");
   }, [filters]);
 
+  // Function to check if any filters are active
+  const hasActiveFilters = () => {
+    return (
+        minPrice !== defaultFilters.minPrice ||
+        maxPrice !== defaultFilters.maxPrice ||
+        sortBy !== defaultFilters.sortBy ||
+        sortOrder !== defaultFilters.sortOrder
+    );
+  };
+
   const handleApply = () => {
     onFilterChange({ minPrice, maxPrice, sortBy, sortOrder });
     setIsOpen(false);
   };
 
-  const handleSortChange = (e) => {
-    const selectedValue = e.target.value;
-    setSortBy(selectedValue);
-
-    // Automatically set sortOrder based on selectedValue
-    if (selectedValue === "rating") {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc"); // Toggle order for ratings
-    } else if (selectedValue === "price") {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc"); // Toggle order for price
-    }
+  const handleClearAll = () => {
+    setMinPrice(defaultFilters.minPrice);
+    setMaxPrice(defaultFilters.maxPrice);
+    setSortBy(defaultFilters.sortBy);
+    setSortOrder(defaultFilters.sortOrder);
+    onFilterChange(defaultFilters);
   };
 
-  const handleMouseEnter = () => setIsOpen(true);
-  const handleMouseLeave = () => setIsOpen(false);
+  const handleSortChange = (value) => {
+    const [sort, order] = value.split('-');
+    setSortBy(sort);
+    setSortOrder(order);
+  };
+
+  const handlePriceChange = (values) => {
+    setMinPrice(values[0]);
+    setMaxPrice(values[1]);
+  };
+
+  const sortOptions = [
+    {
+      label: (
+          <Space>
+            <StarOutlined />
+            Ratings: High to Low
+          </Space>
+      ),
+      value: 'rating-desc'
+    },
+    {
+      label: (
+          <Space>
+            <StarOutlined className="rotate-180" />
+            Ratings: Low to High
+          </Space>
+      ),
+      value: 'rating-asc'
+    },
+    {
+      label: (
+          <Space>
+            <DollarOutlined />
+            Price: High to Low
+          </Space>
+      ),
+      value: 'price-desc'
+    },
+    {
+      label: (
+          <Space>
+            <DollarOutlined className="rotate-180" />
+            Price: Low to High
+          </Space>
+      ),
+      value: 'price-asc'
+    },
+    {
+      label: (
+          <Space>
+            <OrderedListOutlined />
+            Alphabetically
+          </Space>
+      ),
+      value: 'name-asc'
+    }
+  ];
 
   return (
-    <div
-      className="relative inline-block"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <button className="bg-white flex gap-2 text-first py-1 px-2 rounded-md focus:outline-none">
-        <span className="mt-0.5">Filter & Sort</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-          />
-        </svg>
-      </button>
-      {isOpen && (
-        <div className="absolute bg-white shadow-md rounded-lg p-5 min-w-[200px] z-10">
-          <div className="flex flex-col gap-3 mb-3">
-            <label className="flex justify-between items-center">
-              Min Price:
-              <input
-                type="number"
-                value={minPrice}
-                onChange={(e) => setMinPrice(Number(e.target.value))}
-                className="w-16 p-1 border border-[#58A399] rounded focus:outline-none"
-              />
-            </label>
-            <label className="flex justify-between items-center">
-              Max Price:
-              <input
-                type="number"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-16 p-1 border border-customGreen rounded focus:outline-none"
-              />
-            </label>
-          </div>
-
-          <div className="flex flex-col gap-3 mb-3">
-            <span>Sort by:</span>
-            <label className="cursor-pointer">
-              <input
-                type="radio"
-                value="rating"
-                checked={sortBy === "rating" && sortOrder === "desc"}
-                onChange={handleSortChange}
-              />
-              Ratings: High to Low
-            </label>
-            <label className="cursor-pointer">
-              <input
-                type="radio"
-                value="rating"
-                checked={sortBy === "rating" && sortOrder === "asc"}
-                onChange={handleSortChange}
-              />
-              Rating: Low to High
-            </label>
-            <label className="cursor-pointer">
-              <input
-                type="radio"
-                value="price"
-                checked={sortBy === "price" && sortOrder === "desc"}
-                onChange={handleSortChange}
-              />
-              Price: High to Low
-            </label>
-            <label className="cursor-pointer">
-              <input
-                type="radio"
-                value="price"
-                checked={sortBy === "price" && sortOrder === "asc"}
-                onChange={handleSortChange}
-              />
-              Price: Low to High
-            </label>
-            <label className="cursor-pointer">
-              <input
-                type="radio"
-                value="name"
-                checked={sortBy === "name"}
-                onChange={handleSortChange}
-              />
-              Sort Alphabetically
-            </label>
-          </div>
-
-          <button
-            className="bg-[#58A399] text-white border-none rounded-md py-1 px-3 cursor-pointer transition-colors duration-300 hover:bg-darkerGreen"
-            onClick={handleApply}
+      <div className="relative inline-block">
+        <Badge dot={hasActiveFilters()} offset={[-2, 2]}>
+          <Button
+              type="primary"
+              icon={<FilterOutlined />}
+              onClick={() => setIsOpen(true)}
+              className="flex-1 bg-first hover:bg-customGreen"
           >
-            Apply
-          </button>
-        </div>
-      )}
-    </div>
+            Filters & Sort
+          </Button>
+        </Badge>
+
+        <Drawer
+            title={
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <FilterOutlined />
+                  <span>Filters & Sort</span>
+                </div>
+                {hasActiveFilters() && (
+                    <Tooltip title="Clear all filters">
+                      <Button
+                          icon={<ClearOutlined />}
+                          onClick={handleClearAll}
+                          type="text"
+                          className="hover:text-[#458177]"
+                      >
+                        Clear All
+                      </Button>
+                    </Tooltip>
+                )}
+              </div>
+            }
+            placement="right"
+            onClose={() => setIsOpen(false)}
+            open={isOpen}
+            width={320}
+            footer={
+              <div className="flex justify-between gap-2">
+                <Button
+                    onClick={() => setIsOpen(false)}
+                    className="w-1/3"
+                >
+                  Cancel
+                </Button>
+                <Button
+                    type="primary"
+                    onClick={handleApply}
+                    className="bg-first hover:bg-[#458177] w-2/3 text-white"
+                >
+                  Apply Filters
+                </Button>
+              </div>
+            }
+        >
+          <div className="space-y-6">
+            {/* Active Filters Summary */}
+            {hasActiveFilters() && (
+                <div className="bg-first rounded-md">
+                  <Text type="secondary">Active Filters:</Text>
+                  <div className="flex flex-wrap bg-first mt-2">
+                    {minPrice !== defaultFilters.minPrice || maxPrice !== defaultFilters.maxPrice ? (
+                        <Tag closable onClose={() => {
+                          setMinPrice(defaultFilters.minPrice);
+                          setMaxPrice(defaultFilters.maxPrice);
+                        }}>
+                          Price: ${minPrice} - ${maxPrice}
+                        </Tag>
+                    ) : null}
+                    {(sortBy !== defaultFilters.sortBy || sortOrder !== defaultFilters.sortOrder) && (
+                        <Tag closable onClose={() => {
+                          setSortBy(defaultFilters.sortBy);
+                          setSortOrder(defaultFilters.sortOrder);
+                        }}>
+                          Sort: {sortOptions.find(opt => opt.value === `${sortBy}-${sortOrder}`)?.label?.props?.children[1]}
+                        </Tag>
+                    )}
+                  </div>
+                </div>
+            )}
+
+            {/* Price Range Section */}
+            <div>
+              <Title level={5} className="mb-4 flex items-center gap-2">
+                <DollarOutlined />
+                Price Range
+              </Title>
+              <div className="px-2">
+                <Slider
+                    range
+                    min={0}
+                    max={1000}
+                    value={[minPrice, maxPrice]}
+                    onChange={handlePriceChange}
+                    className="mb-4"
+                    tooltip={{
+                      formatter: (value) => `$${value}`
+                    }}
+                />
+                <div className="flex justify-between items-center gap-4">
+                  <InputNumber
+                      min={0}
+                      max={maxPrice}
+                      value={minPrice}
+                      onChange={(value) => setMinPrice(value)}
+                      prefix="$"
+                      className="w-full"
+                  />
+                  <Text type="secondary">to</Text>
+                  <InputNumber
+                      min={minPrice}
+                      max={1000}
+                      value={maxPrice}
+                      onChange={(value) => setMaxPrice(value)}
+                      prefix="$"
+                      className="w-full"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Divider />
+
+            {/* Sort Options Section */}
+            <div>
+              <Title level={5} className="mb-4 flex items-center gap-2">
+                <SortAscendingOutlined />
+                Sort By
+              </Title>
+              <Radio.Group
+                  value={`${sortBy}-${sortOrder}`}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  className="w-full space-y-3"
+              >
+                <Space direction="vertical" className="w-full">
+                  {sortOptions.map(option => (
+                      <Radio
+                          key={option.value}
+                          value={option.value}
+                          className="w-full p-2 hover:bg-gray-50 rounded-md transition-colors"
+                      >
+                        {option.label}
+                      </Radio>
+                  ))}
+                </Space>
+              </Radio.Group>
+            </div>
+          </div>
+        </Drawer>
+      </div>
   );
 };
 

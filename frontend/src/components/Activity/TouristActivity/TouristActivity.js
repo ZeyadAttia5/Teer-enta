@@ -170,7 +170,7 @@ const TouristActivity = ({ setFlag }) => {
   const [sortBy, setSortBy] = useState(""); // To track sorting preference
   const [showUpcoming, setShowUpcoming] = useState(false); // State for upcoming activities
   const [currency, setCurrency] = useState(null);
-
+  const user = JSON.parse(localStorage.getItem("user"));
   const location = useLocation();
 
   const resetFilters = () => {
@@ -211,22 +211,21 @@ const TouristActivity = ({ setFlag }) => {
           console.log({ ...activity, averageRating: parseFloat(avgRating) });
           return { ...activity, averageRating: parseFloat(avgRating) }; // Ensure averageRating is a number
         });
-
-        const savedActivitiesResponse = await getSavedActivities();
-        const savedActivitiesId =
-          savedActivitiesResponse.data.savedActivities.map(
-            (activity) => activity._id
-          );
-        console.log("Saved ActivitiesId:", savedActivitiesId);
-
-        // Check if the activity is saved by the user
-        activitiesWithAvgRating.forEach((activity) => {
-          if (savedActivitiesId.includes(activity._id)) {
-            activity.isSaved = true;
-          } else {
-            activity.isSaved = false;
-          }
-        });
+        if(user){
+          const savedActivitiesResponse = await getSavedActivities();
+          const savedActivitiesId =
+              savedActivitiesResponse.data.savedActivities.map(
+                  (activity) => activity._id
+              );
+          // Check if the activity is saved by the user
+          activitiesWithAvgRating.forEach((activity) => {
+            if (savedActivitiesId.includes(activity._id)) {
+              activity.isSaved = true;
+            } else {
+              activity.isSaved = false;
+            }
+          });
+        }
 
         setActivities(activitiesWithAvgRating);
         setFilteredActivities(activitiesWithAvgRating);
