@@ -33,13 +33,17 @@ const Sidebar = ({ visible, onClose }) => {
       closable={true}
       onClose={onClose}
       visible={visible}
+      classNames={{
+        body: "bg-fourth text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
+        header: "bg-fourth text-first font-bold text-lg p-4",
+      }}
     >
       <Menu
         mode="inline"
         defaultSelectedKeys={[]}
         openKeys={openKeys}
         onOpenChange={onOpenChange}
-        className=""
+        className="bg-fourth"
       >
         {user &&
           (user.userRole === "Admin" ||

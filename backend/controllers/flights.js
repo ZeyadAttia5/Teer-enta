@@ -4,7 +4,8 @@ const Tourist = require("../models/Users/Tourist");
 const {getCountryCode} = require("../Util/LocationCodes");
 const Amadeus = require('amadeus');
 const PromoCodes = require("../models/PromoCodes");
-
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const amadeus = new Amadeus({
     clientId: process.env.AMADEUS_CLIENT_ID,
     clientSecret: process.env.AMADEUS_CLIENT_SECRET
@@ -127,6 +128,10 @@ exports.bookFlight = async (req, res) => {
         // Calculate the total price for the flight
         let totalPrice = offer.price.total;
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
+        if(promoCode){
+            existingPromoCode.usageLimit -= 1;
+            await existingPromoCode.save();
+        }
         // Handle payment method
         const tourist = await Tourist.findById(userId);
         if (!tourist) {
@@ -140,20 +145,12 @@ exports.bookFlight = async (req, res) => {
             }
             tourist.wallet -= totalPrice;  // Deduct from wallet
             await tourist.save();
-        } else if (paymentMethod === 'credit_card') {
-            // Example for Stripe (uncomment and configure the actual integration):
-            /*
-            const paymentIntent = await stripe.paymentIntents.create({
-                amount: totalPrice * 100,  // Stripe expects amount in cents
-                currency: 'usd',  // Use your actual currency
-                payment_method: req.body.paymentMethodId,  // Payment method ID from frontend
-                confirm: true,
+        } else if (paymentMethod === 'Card') {
+            await stripe.paymentIntents.create({
+                amount: Math.round(totalPrice* 100),
+                currency: 'EGP',
+                payment_method_types: ['card'],
             });
-
-            if (!paymentIntent) {
-                return res.status(500).json({ message: 'Payment failed.' });
-            }
-            */
         }else {
             return res.status(400).json({message: 'Invalid payment method selected.'});
         }

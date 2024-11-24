@@ -17,7 +17,7 @@ const {Search} = Input;
 
 
 const Button1 = ({children, onClick, variant = 'default'}) => {
-    const baseClasses = "inline-flex text-white  items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-second hover:bg-third";
+    const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
     const variantClasses = variant === 'outline'
         ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
         : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
@@ -236,7 +236,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
         <div className="py-6 px-16">
             <div className="mb-6 flex justify-center">
                 <Search
-                    enterButton={<SearchOutlined/>}
+                    // enterButton={<SearchOutlined className=""/>}
                     placeholder="Search by name, location, or tag..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -248,7 +248,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
                 {/* Tag Filter Dropdown */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button1 variant="outline" className="bg-second">
+                        <Button1 variant="outline" className="">
                             <Filter className="mr-2 h-4 w-4"/>
                             Filter by Tag
                         </Button1>
@@ -280,13 +280,13 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
 
                
                 <Button
-                    type="primary"
+                    type="danger"
                     
                     icon={<ReloadOutlined/>}
                     onClick={resetFilters}
-                    className="ml-4 h-9 bg-second hover:bg-third"
+                    className="ml-4 h-9 text-black bg-white hover:bg-gray-100"
                 >
-                    Reset
+                    Remove filters
                 </Button>
             </div>
 
@@ -295,7 +295,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
                 <div className="flex justify-end p-4 w-full">
                     <Link to="/historicalPlace/create">
                         <button
-                            className="flex items-center px-4 py-2 bg-sky-800 text-white rounded-lg shadow hover:bg-sky-700 hover:scale-105 transition-all duration-300 ease-in-out">
+                            className="flex items-center px-4 py-2 bg-sky-800 text-white rounded-lg shadow hover:bg-sky-700 transition-all duration-300 ease-in-out">
                             <span className="mr-2">Create New</span>
                             <MdOutlineAddBox className="text-2xl"/>
                         </button>

@@ -19,6 +19,7 @@ import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
 import EditProductForm from "./components/Store/editProductForm";
 import QuantityAndSales from "./components/Store/quantityAndSales.jsx";
+import CartComponent from "./components/Store/cart.jsx";
 import IternaryScreen from "./components/Itinerary/ItineraryScreen.jsx";
 import PreferenceTags from "./components/Tags/PrefrenceTags.tsx";
 import ActivityCategories from "./components/Activity/ActivityCategories.tsx";
@@ -51,6 +52,11 @@ import BookItinerary from "./components/Itinerary/bookItinerary";
 import BookActivity from "./components/Activity/TouristActivity/bookActivity";
 import Bookings from "./components/Users/bookings/bookings";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
+import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
+import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
+import CheckOutOrder from "./components/Store/checkOutOrder";
+import OrderHistory from "./components/Store/orderHistory";
+import OrderDetails from "./components/Store/orderDetails";
 
 function AppContent() {
   const [flag, setFlag] = useState(false);
@@ -76,7 +82,7 @@ function AppContent() {
     setIsNavigate(true);
     setModalOpen(false);
   };
-
+  const [navbarColor, setNavbarColor] = useState("first");
   return (
     <div className="App relative bg-fourth min-h-screen">
       {!flag && (
@@ -84,14 +90,16 @@ function AppContent() {
           onClose={onClose}
           showDrawer={showDrawer}
           drawerVisible={visible}
+            navbarColor={navbarColor}
         />
       )}
       {!flag && (
-        <div className="relative bg-[#075B4C] z-10 size-full flex flex-col items-center">
+        <div className="relative  z-10 size-full flex flex-col items-center">
           <TouristNavBar
             setModalOpen={setModalOpen}
             isNavigate={isNavigate}
             setIsNavigate={setIsNavigate}
+              setNavbarColor={setNavbarColor}
           />
         </div>
       )}
@@ -184,82 +192,94 @@ function AppContent() {
           element={<ShowHistoricalPlaces setFlag={setFlag} />}
         />
 
-        {/* User Management Routes */}
-        <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />
-        <Route
-          path="/pendingUsers"
-          element={<PendingUsers setFlag={setFlag} />}
-        />
-        <Route path="/showDocuments/:id" element={<ShowDocuments />} />
-        <Route path="/addUser" element={<AddUser setFlag={setFlag} />} />
-        <Route
-          path="/changePassword"
-          element={<ChangePassword setFlag={setFlag} />}
-        />
-        <Route
-          path="/requestAccountDeletion"
-          element={<DeleteAccountButton setFlag={setFlag} />}
-        />
-        <Route path="/newProfile" element={<NewProfile />} />
+          {/* User Management Routes */}
+          <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />
+          <Route
+            path="/pendingUsers"
+            element={<PendingUsers setFlag={setFlag} />}
+          />
+          <Route path="/showDocuments/:id" element={<ShowDocuments />} />
+          <Route path="/addUser" element={<AddUser setFlag={setFlag} />} />
+          <Route
+            path="/changePassword"
+            element={<ChangePassword setFlag={setFlag} />}
+          />
+          <Route
+            path="/requestAccountDeletion"
+            element={<DeleteAccountButton setFlag={setFlag} />}
+          />
+          <Route path="/newProfile" element={<NewProfile />} />
+          {/* Product Management Routes */}
+          <Route
+            path="/products"
+            element={<AdminProductGrid setFlag={setFlag} />}
+          />
+          <Route
+            path="/wishlisted_products"
+            element={<WishlistedProductGrid setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/:id"
+            element={<ProductDetails setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/create"
+            element={<AdminProductForm setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/edit/:productId"
+            element={<EditProductForm setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/quantity&sales"
+            element={<QuantityAndSales setFlag={setFlag} />}
+          />
+          <Route
+            path="/products/cart"
+            element={<CartComponent setFlag={setFlag} />}
+          />
+          <Route
+            path="/checkOutOrder"
+            element={<CheckOutOrder setFlag={setFlag} />}
+            />
+          <Route
+            path="/orderHistory"
+            element={<OrderHistory setFlag={setFlag} />}
+            />
+          <Route path="/order/:id" element={<OrderDetails />} />
 
-        {/* Product Management Routes */}
-        <Route
-          path="/products"
-          element={<AdminProductGrid setFlag={setFlag} />}
-        />
-        <Route
-          path="/wishlisted_products"
-          element={<WishlistedProductGrid setFlag={setFlag} />}
-        />
-        <Route
-          path="/products/:id"
-          element={<ProductDetails setFlag={setFlag} />}
-        />
-        <Route
-          path="/products/create"
-          element={<AdminProductForm setFlag={setFlag} />}
-        />
-        <Route
-          path="/products/edit/:productId"
-          element={<EditProductForm setFlag={setFlag} />}
-        />
-        <Route
-          path="/products/quantity&sales"
-          element={<QuantityAndSales setFlag={setFlag} />}
-        />
-
-        {/* Itinerary Routes */}
-        <Route
-          path="/itinerary/*"
-          element={
-            <Routes>
-              <Route
-                path="activityDetails/:id"
-                element={<ActivityDetails setFlag={setFlag} />}
-              />
-              <Route
-                path="/"
-                element={<IternaryScreen setFlag={setFlag} />}
-              />
-              <Route
-                path="flaggedIternaries"
-                element={<FlaggedIternary setFlag={setFlag} />}
-              />
-              <Route
-                path="unActiveIternaries"
-                element={<UnActiveIternaries setFlag={setFlag} />}
-              />
-              <Route
-                path="iternaryDetails/:id"
-                element={<IternaryDetails setFlag={setFlag} />}
-              />
-            </Routes>
-          }
-        />
-        <Route
-          path="/itinerary/my"
-          element={<IternaryScreen setFlag={setFlag} />}
-        />
+          {/* Itinerary Routes */}
+          <Route
+            path="/itinerary/*"
+            element={
+              <Routes>
+                <Route
+                  path="activityDetails/:id"
+                  element={<ActivityDetails setFlag={setFlag} />}
+                />
+                <Route
+                  path="/"
+                  element={<IternaryScreen setFlag={setFlag} />}
+                />
+                <Route
+                  path="flaggedIternaries"
+                  element={<FlaggedIternary setFlag={setFlag} />}
+                />
+                <Route
+                  path="unActiveIternaries"
+                  element={<UnActiveIternaries setFlag={setFlag} />}
+                />
+                <Route
+                  path="iternaryDetails/:id"
+                  element={<IternaryDetails setFlag={setFlag} />}
+                />
+              </Routes>
+            }
+          />
+          <Route
+            path="/itinerary/my"
+            element={<IternaryScreen setFlag={setFlag} />}
+          />
 
         {/* Hotel Routes */}
         <Route
@@ -288,34 +308,35 @@ function AppContent() {
           }
         />
 
-        {/* Flight Routes */}
-        <Route
-          path="/flight/*"
-          element={
-            <Routes>
-              <Route
-                path="bookFlight"
-                element={<BookFlight setFlag={setFlag} />}
-              />
-            </Routes>
-          }
-        />
-
-        {/* Complaints Routes */}
-        <Route
-          path="/ComplaintsManagement"
-          element={<ComplaintsManagement />}
-        />
-        <Route path="/myComplaints" element={<MyComplaints />} />
-        <Route path="/aboutUs" element={<AboutUs />} />
-        <Route path="/itinerary/book/:id" element={<BookItinerary />} />
-        <Route
-          path="/touristActivities/book/:id"
-          element={<BookActivity />}
-        />
-        <Route path="/bookings" element={<Bookings />} />
-      </Routes>
-      <Toaster />
+          {/* Flight Routes */}
+          <Route
+            path="/flight/*"
+            element={
+              <Routes>
+                <Route
+                  path="bookFlight"
+                  element={<BookFlight setFlag={setFlag} />}
+                />
+              </Routes>
+            }
+          />
+          {/* Complaints Routes */}
+          <Route
+            path="/ComplaintsManagement"
+            element={<ComplaintsManagement />}
+          />
+          <Route path="/myComplaints" element={<MyComplaints />} />
+          <Route path="/aboutUs" element={<AboutUs />} />
+          <Route path="/itinerary/book/:id" element={<BookItinerary />} />
+          <Route
+            path="/touristActivities/book/:id"
+            element={<BookActivity />}
+          />
+          <Route path="/bookings" element={<Bookings />} />
+          <Route path="/savedActivities" element={<MyActivities />} />
+          <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
+        </Routes>
+        <Toaster />
     </div>
   );
 }

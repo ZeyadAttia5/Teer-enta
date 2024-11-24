@@ -11,7 +11,8 @@ const brevoService = new BrevoService(brevoConfig);
 const FlaggedItineraryTemplate = require("../Util/mailsHandler/mailTemplets/1FlaggedItineraryTemplate");
 const PaymentReceiptItemTemplate = require("../Util/mailsHandler/mailTemplets/2PaymentReceiptItemTemplate");
 const PromoCodes = require("../models/PromoCodes");
-
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 exports.getItineraries = async (req, res, next) => {
     try {
         const itineraries = await Itinerary
@@ -435,25 +436,21 @@ exports.bookItinerary = async (req, res) => {
         const tourist = await Tourist.findById(userId);
         let totalPrice = itinerary.price; // Adjust this if needed to dynamically handle different prices
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
+        if(promoCode){
+            existingPromoCode.usageLimit -= 1;
+            await existingPromoCode.save();
+        }
         if (paymentMethod === 'wallet') {
             if (tourist.wallet < totalPrice) {
                 return res.status(400).json({ message: "Insufficient wallet balance" });
             }
             tourist.wallet -= totalPrice;
-        } else if (paymentMethod === 'credit_card') {
-            // Implement credit card payment handling with a provider like Stripe here
-            // Uncomment and configure if using Stripe:
-            /*
-            const paymentIntent = await stripe.paymentIntents.create({
-                amount: totalPrice * 100, // Convert to cents if in USD
-                currency: 'usd',
-                payment_method: req.body.paymentMethodId, // Payment method ID from frontend
-                confirm: true
+        } else if (paymentMethod === 'Card') {
+            await stripe.paymentIntents.create({
+                amount: Math.round(totalPrice* 100),
+                currency: 'EGP',
+                payment_method_types: ['card'],
             });
-            if (!paymentIntent) {
-                return res.status(500).json({ message: "Credit card payment failed" });
-            }
-            */
         }else {
             return res.status(400).json({message: 'Invalid payment method selected.'});
         }
@@ -502,6 +499,7 @@ exports.bookItinerary = async (req, res) => {
             updatedWallet: paymentMethod === 'wallet' ? tourist.wallet : undefined
         });
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 };
@@ -528,14 +526,15 @@ exports.cancelItineraryBooking = async (req, res) => {
         const currentDate = new Date();
         const itineraryDate = new Date(bookedItinerary.date);
         const hoursDifference = (itineraryDate - currentDate) / (1000 * 60 * 60);
-
-        if (hoursDifference < 48) {
+        console.log(hoursDifference);
+        if (hoursDifference < 48 && hoursDifference > 0) {
             return res.status(400).json({message: "Cannot cancel the booking less than 48 hours before the itinerary"});
         }
 
         const tourist = await Tourist.findById(userId);
-        if (bookedItinerary.status === 'Completed') {
+        if (bookedItinerary.status === 'Pending') {
             tourist.wallet += bookedItinerary.itinerary.price; // Adjust as needed for different price structures
+            console.log(bookedItinerary.itinerary.price);
             await tourist.save();
         }
 
