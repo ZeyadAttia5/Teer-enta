@@ -173,7 +173,7 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
                 <Button
                     type="primary"
                     onClick={handleApply}
-                    className="bg-[#58A399] hover:bg-[#458177] w-2/3"
+                    className="bg-first hover:bg-[#458177] w-2/3 text-white"
                 >
                   Apply Filters
                 </Button>
@@ -183,9 +183,9 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
           <div className="space-y-6">
             {/* Active Filters Summary */}
             {hasActiveFilters() && (
-                <div className="bg-gray-50 p-3 rounded-md">
+                <div className="bg-first rounded-md">
                   <Text type="secondary">Active Filters:</Text>
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="flex flex-wrap bg-first mt-2">
                     {minPrice !== defaultFilters.minPrice || maxPrice !== defaultFilters.maxPrice ? (
                         <Tag closable onClose={() => {
                           setMinPrice(defaultFilters.minPrice);
