@@ -1,5 +1,5 @@
 import "./index.css";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Signup from "./components/Auth/Signup/Signup.js";
@@ -54,11 +54,11 @@ import Bookings from "./components/Users/bookings/bookings";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
-import TestNotification from './components/notifications/TestNotification';
-import {toast, ToastContainer} from "react-toastify";
-import {checkPermission, requestForToken} from "./services/firebase";
-import {getMessaging, onMessage} from "firebase/messaging";
-import {saveFCMTokenToServer} from "./api/notifications.ts";
+import TestNotification from "./components/notifications/TestNotification";
+import { toast, ToastContainer } from "react-toastify";
+import { checkPermission, requestForToken } from "./services/firebase";
+import { getMessaging, onMessage } from "firebase/messaging";
+import { saveFCMTokenToServer } from "./api/notifications.ts";
 import Notification from "./components/notifications/Notification";
 
 function App() {
@@ -66,37 +66,40 @@ function App() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isNavigate, setIsNavigate] = useState(false);
-  const [notification, setNotification] = useState({ title: '', body: '' });
+  const [notification, setNotification] = useState({ title: "", body: "" });
 
   useEffect(() => {
     const setupForegroundListener = () => {
       try {
         const messaging = getMessaging();
         onMessage(messaging, (payload) => {
-          console.log('Received foreground message:', payload);
+          console.log("Received foreground message:", payload);
 
           setNotification({
             title: payload.notification.title,
-            body: payload.notification.body
+            body: payload.notification.body,
           });
 
-          toast.info(`${payload.notification.title}: ${payload.notification.body}`, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          toast.info(
+            `${payload.notification.title}: ${payload.notification.body}`,
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            }
+          );
         });
       } catch (error) {
-        console.error('Error setting up notification listener:', error);
+        console.error("Error setting up notification listener:", error);
       }
     };
 
     // Only setup listener if user is logged in
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem("user");
     if (user) {
       setupForegroundListener();
     }
@@ -118,8 +121,6 @@ function App() {
     setModalOpen(false);
   };
 
-
-
   return (
     <div className="App relative bg-fourth min-h-screen">
       <Router>
@@ -132,7 +133,7 @@ function App() {
           />
         )}
         {!flag && (
-          <div className="relative bg-[#075B4C] z-10 size-full flex flex-col items-center">
+          <div className="relative bg-[#075B4C] z-50 size-full flex flex-col items-center">
             <TouristNavBar
               setModalOpen={setModalOpen}
               isNavigate={isNavigate}
