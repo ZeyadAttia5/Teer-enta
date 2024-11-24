@@ -55,6 +55,7 @@ import Bookings from "./components/Users/bookings/bookings";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
+import CheckOutOrder from "./components/Store/checkOutOrder";
 
 function App() {
   const [flag, setFlag] = useState(false);
@@ -225,6 +226,10 @@ function App() {
             path="/products/cart"
             element={<CartComponent setFlag={setFlag} />}
           />
+          <Route
+            path="/checkOutOrder"
+            element={<CheckOutOrder setFlag={setFlag} />}
+            />
           {/* Itinerary Routes */}
           <Route
             path="/itinerary/*"

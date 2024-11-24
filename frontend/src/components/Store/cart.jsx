@@ -12,16 +12,21 @@ import {
   Spin,
   Empty,
   Space,
-  Divider, Alert, Image
+  Divider,
+  Alert,
+  Image,
+  Tooltip
 } from "antd";
 import {
   ShoppingCartOutlined,
   DeleteOutlined,
   PlusOutlined,
   MinusOutlined,
-  ShoppingOutlined
+  ShoppingOutlined,
+  DollarOutlined
 } from "@ant-design/icons";
 import { getCart, updateCartProductAmount, deleteCartProduct } from "../../api/cart.ts";
+import { getMyCurrency } from "../../api/profile.ts";
 
 const { Title, Text } = Typography;
 
@@ -29,16 +34,21 @@ const CartComponent = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currency, setCurrency] = useState(null);
 
   useEffect(() => {
-    fetchCartItems();
+    fetchInitialData();
   }, []);
 
-  const fetchCartItems = async () => {
+  const fetchInitialData = async () => {
     setLoading(true);
     try {
-      const response = await getCart();
-      setCartItems(response.data.cart);
+      const [cartResponse, currencyResponse] = await Promise.all([
+        getCart(),
+        getMyCurrency()
+      ]);
+      setCartItems(cartResponse.data.cart);
+      setCurrency(currencyResponse.data);
     } catch (err) {
       setError("Failed to fetch cart items");
       message.error("Failed to load cart items");
@@ -51,9 +61,9 @@ const CartComponent = () => {
     try {
       await updateCartProductAmount(productId, newAmount);
       message.success("Cart updated successfully");
-      fetchCartItems();
+      fetchInitialData();
     } catch (err) {
-      message.error("Failed to update quantity");
+      message.error(err.response.data.message);
     }
   };
 
@@ -61,20 +71,31 @@ const CartComponent = () => {
     try {
       await deleteCartProduct(productId);
       message.success("Product removed from cart");
-      fetchCartItems();
+      fetchInitialData();
     } catch (err) {
       message.error("Failed to remove item");
     }
   };
 
+  const getPriceDisplay = (price) => {
+    if (!price) return '0.00';
+    const convertedPrice = price * (currency?.rate || 1);
+    return `${currency?.code || '$'} ${convertedPrice.toFixed(2)}`;
+  };
+
   const calculateTotal = () => {
-    return cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+    const total = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+    return getPriceDisplay(total);
+  };
+
+  const calculateItemTotal = (price, quantity) => {
+    return getPriceDisplay(price * quantity);
   };
 
   if (loading) {
     return (
         <div className="flex items-center justify-center h-screen">
-          <Spin size="large" />
+          <Spin size="large" tip="Loading cart..." />
         </div>
     );
   }
@@ -92,9 +113,16 @@ const CartComponent = () => {
         <Card
             className="shadow-lg rounded-lg"
             title={
-              <div className="flex items-center">
-                <ShoppingCartOutlined className="text-2xl mr-2" />
-                <Title level={2} className="m-0">Your Shopping Cart</Title>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <ShoppingCartOutlined className="text-2xl mr-2" />
+                  <Title level={2} className="m-0">Your Shopping Cart</Title>
+                </div>
+                {currency && (
+                    <Text className="text-gray-500">
+                      Prices shown in {currency.code} (1 USD = {currency.rate} {currency.code})
+                    </Text>
+                )}
               </div>
             }
         >
@@ -122,8 +150,7 @@ const CartComponent = () => {
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center flex-1">
-                              <div
-                                  className="w-24 h-24 bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
+                              <div className="w-24 h-24 bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
                                 {item.product.imageUrl ? (
                                     <Image
                                         src={item.product.imageUrl}
@@ -143,13 +170,38 @@ const CartComponent = () => {
                                     <ShoppingCartOutlined className="text-3xl text-gray-400"/>
                                 )}
                               </div>
-                              <div className="ml-4">
+                              <div className="ml-4 flex-1">
                                 <Title level={4} className="m-0">
                                   {item.product.name}
                                 </Title>
-                                <Text className="text-lg font-semibold text-blue-600">
-                                  ${item.product.price.toFixed(2)}
-                                </Text>
+
+                                <div className="flex items-center space-x-4 mt-2">
+                                  <Tooltip title="Unit Price">
+                                    <div className="flex items-center">
+                                      <Text className="text-lg font-semibold text-blue-600">
+                                        {getPriceDisplay(item.product.price)}
+                                      </Text>
+                                    </div>
+                                  </Tooltip>
+
+                                  <Text className="text-gray-400">×</Text>
+
+                                  <Tooltip title="Quantity">
+                                    <Text className="text-gray-600 font-medium">
+                                      {item.quantity} {item.quantity > 1 ? 'items' : 'item'}
+                                    </Text>
+                                  </Tooltip>
+
+                                  <Text className="text-gray-400">=</Text>
+
+                                  <Tooltip title="Total for this item">
+                                    <div className="flex items-center">
+                                      <Text className="text-lg font-semibold text-green-600">
+                                        {calculateItemTotal(item.product.price, item.quantity)}
+                                      </Text>
+                                    </div>
+                                  </Tooltip>
+                                </div>
                               </div>
                             </div>
 
@@ -190,8 +242,9 @@ const CartComponent = () => {
 
                 <div className="flex justify-between items-center mt-8">
                   <div>
-                    <Title level={3} className="m-0">
-                      Total: ${calculateTotal().toFixed(2)}
+                    <Title level={3} className="m-0 flex items-center">
+                      <DollarOutlined className="mr-2" />
+                      Total: {calculateTotal()}
                     </Title>
                     <Text className="text-gray-500">
                       {cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in cart
@@ -203,9 +256,11 @@ const CartComponent = () => {
                         Continue Shopping
                       </Button>
                     </Link>
-                    <Button type="primary" size="large">
-                      Proceed to Checkout
-                    </Button>
+                    <Link to="/checkOutOrder">
+                      <Button type="primary" size="large" className="bg-blue-600 hover:bg-blue-700">
+                        Proceed to Checkout
+                      </Button>
+                    </Link>
                   </Space>
                 </div>
               </>

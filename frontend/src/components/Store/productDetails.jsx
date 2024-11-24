@@ -106,8 +106,7 @@ const ProductDetails = ({ setFlag }) => {
         setAddedToCart(false);
       }, 2000);
     } catch (error) {
-      message.error('Failed to add to cart. Please try again.');
-      console.error('Add to cart error:', error);
+      message.error(error.response.data.message);
     } finally {
       setIsAddingToCart(false);
     }
@@ -346,12 +345,14 @@ const ProductDetails = ({ setFlag }) => {
 
               {/* Feedback and Reviews Section */}
               <div className="max-w-7xl mx-auto mt-12 space-y-8">
-                {!hasReviewedOrRated && (
-                    <Card className="shadow-md rounded-lg">
-                      <Title level={3} className="mb-6 font-bold">Leave Your Feedback</Title>
-                      <FeedbackForm entity={product} onSubmit={onSubmit} />
-                    </Card>
-                )}
+                {user && user.userRole === "Tourist" && (!hasReviewedOrRated && (
+                  <Card className="shadow-md rounded-lg">
+                  <Title level={3} className="mb-6 font-bold">Leave Your Feedback
+              </Title>
+              <FeedbackForm entity={product} onSubmit={onSubmit}/>
+            </Card>
+                    )
+            )}
 
                 <Card className="shadow-md rounded-lg">
                   <Title level={3} className="mb-6 font-bold">Product Reviews</Title>

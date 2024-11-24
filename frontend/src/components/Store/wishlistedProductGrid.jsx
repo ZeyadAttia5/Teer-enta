@@ -12,7 +12,7 @@ import {
   Typography,
   Empty,
   Spin,
-  Badge
+  Badge, Tooltip , Tag
 } from "antd";
 import {
   FaHeart,
@@ -23,7 +23,7 @@ import {
 import {
   ShoppingCartOutlined,
   HeartFilled,
-  SearchOutlined
+  SearchOutlined, StarOutlined, EyeOutlined
 } from "@ant-design/icons";
 import {addToCartFromWishlist, addToWishlist, deleteWishlistProduct, getWishlist} from "../../api/cart.ts";
 import {getCurrency} from "../../api/account.ts";
@@ -46,6 +46,7 @@ const WishlistedProductGrid = ({ setFlag }) => {
   const [error, setError] = useState(null);
   const [currency, setCurrency] = useState();
   const [changeWislist, setChangeWishlist] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -92,7 +93,7 @@ const WishlistedProductGrid = ({ setFlag }) => {
       setWishlist(updatedWishlist);
 
     } catch (err) {
-      console.error("Add to cart error: ", err);
+      message.error(err.response.data.message);
     }
   };
 
@@ -160,16 +161,18 @@ const WishlistedProductGrid = ({ setFlag }) => {
   };
 
   return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
-        <div className="max-w-7xl mx-auto mb-8">
-          <Title level={2} className="text-center mb-4">
-            My Wishlist
-            <HeartFilled className="text-red-500 ml-2" />
-          </Title>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4">
+          {/* Header Section */}
+          <div className="mb-8">
+            <Title level={2} className="mb-0 text-gray-800 flex items-center justify-center gap-2">
+              My Wishlist
+              <HeartFilled className="text-red-500" />
+            </Title>
+          </div>
 
-          {/* Search and Filter Bar */}
-          <Card className="shadow-md mb-8">
+          {/* Search and Filter Section */}
+          <Card className="mb-6 shadow-sm border-0">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <Input
                   prefix={<SearchOutlined className="text-gray-400" />}
@@ -185,104 +188,178 @@ const WishlistedProductGrid = ({ setFlag }) => {
               />
             </div>
           </Card>
-        </div>
 
-        {/* Feedback Message */}
-        {feedbackMessage && (
-            <div className="fixed top-5 left-1/2 transform -translate-x-1/2 z-50">
-              <div className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
-                {feedbackMessage}
+          {/* Feedback Message */}
+          {feedbackMessage && (
+              <div className="fixed top-5 left-1/2 transform -translate-x-1/2 z-50">
+                <div className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+                  {feedbackMessage}
+                </div>
               </div>
-            </div>
-        )}
+          )}
 
-        {/* Content Section */}
-        <div className="max-w-7xl mx-auto">
-          {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <Spin size="large" />
-              </div>
-          ) : error ? (
-              <Card className="text-center py-12">
+          {/* Products Grid */}
+          <div className="max-w-7xl mx-auto">
+            {loading ? (
+                <div className="flex justify-center items-center h-64">
+                  <Spin size="large" />
+                </div>
+            ) : error ? (
+                <Card className="text-center py-12">
+                  <Empty
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description={
+                        <div className="space-y-4">
+                          <Text className="text-lg text-gray-500">{error}</Text>
+                          <Link to="/products">
+                            <Button
+                                type="primary"
+                                size="large"
+                                icon={<ShoppingCartOutlined />}
+                                className="mt-4 bg-first hover:bg-customGreen"
+                            >
+                              Continue Shopping
+                            </Button>
+                          </Link>
+                        </div>
+                      }
+                  />
+                </Card>
+            ) : (
+                <Row gutter={[24, 24]}>
+                  {filteredProducts.map((product) => (
+                      <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
+                        <Card
+                            hoverable
+                            className="h-full overflow-hidden rounded-lg border-0 shadow-sm transition-all duration-300 hover:shadow-lg"
+                            bodyStyle={{ padding: 0 }}
+                            cover={
+                              <div className="group relative pt-[100%]">
+                                {/* Product Image */}
+                                <img
+                                    src={product.image || product.imageUrl}
+                                    alt={product.name}
+                                    className="absolute top-0 left-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                />
+
+                                {/* Overlay with Actions */}
+                                <div className="absolute inset-0 bg-black bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-20">
+                                  <div className="absolute top-4 right-4 flex flex-col gap-2">
+                                    <Tooltip title="Remove from Wishlist">
+                                      <Button
+                                          shape="circle"
+                                          className={`transition-all duration-300 bg-red-500 border-red-500 hover:bg-red-600`}
+                                          icon={
+                                            <FaHeart
+                                                className="text-white"
+                                            />
+                                          }
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            handleWishlistToggle(product._id);
+                                          }}
+                                      />
+                                    </Tooltip>
+
+                                    <Link to={`/products/${product._id}`}>
+                                      <Tooltip title="View Details">
+                                        <Button
+                                            shape="circle"
+                                            className="bg-white hover:bg-first hover:border-first"
+                                            icon={<FaEye className="text-gray-400 hover:text-white" />}
+                                        />
+                                      </Tooltip>
+                                    </Link>
+                                  </div>
+                                </div>
+                              </div>
+                            }
+                        >
+                          <div className="p-4">
+                            {/* Product Info */}
+                            <Link to={`/products/${product._id}`}>
+                              <div className="mb-3">
+                                <Text strong className="text-lg text-gray-800 hover:text-first transition-colors duration-300">
+                                  {product.name}
+                                </Text>
+                              </div>
+
+                              <div className="space-y-3">
+                                {/* Price and Rating */}
+                                <div className="flex items-center justify-between">
+                                  <Text className="text-xl font-semibold text-first">
+                                    {currency?.code} {(currency?.rate * product.price).toFixed(2)}
+                                  </Text>
+                                  <div className="flex items-center gap-1">
+                                    <StarOutlined className="text-yellow-400" />
+                                    <Text className="text-gray-600">
+                                      {calculateAverageRating(product.ratings).toFixed(1)}
+                                    </Text>
+                                  </div>
+                                </div>
+
+                                {/* Additional Info Tags */}
+                                <div className="flex flex-wrap gap-2">
+                                  {product.ratings.length > 0 && (
+                                      <Tag color="blue">{product.ratings.length} Reviews</Tag>
+                                  )}
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex gap-2 pt-2">
+                                  {
+                                      user && user.userRole === "Tourist" && (
+                                  <Button
+                                      type="primary"
+                                      icon={<ShoppingCartOutlined />}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        addToCart(product._id);
+                                      }}
+                                      className="flex-1 bg-first hover:bg-customGreen"
+                                  >
+                                    Add to Cart
+                                  </Button>
+                                      )}
+
+                                  <Link to={`/products/${product._id}`}>
+                                    <Tooltip title="View Details">
+                                      <Button
+                                          icon={<EyeOutlined />}
+                                          className="border-first text-first hover:bg-first hover:text-white"
+                                      />
+                                    </Tooltip>
+                                  </Link>
+                                </div>
+                              </div>
+                            </Link>
+                          </div>
+                        </Card>
+                      </Col>
+                  ))}
+                </Row>
+            )}
+
+            {!loading && filteredProducts.length === 0 && !error && (
                 <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
                     description={
                       <div className="space-y-4">
-                        <Text className="text-lg text-gray-500">{error}</Text>
+                        <Text className="text-lg text-gray-500">No items in your wishlist</Text>
                         <Link to="/products">
                           <Button
                               type="primary"
                               size="large"
                               icon={<ShoppingCartOutlined />}
-                              className="mt-4 bg-blue-500 hover:bg-blue-600"
+                              className="mt-4 bg-first hover:bg-customGreen"
                           >
-                            Continue Shopping
+                            Browse Products
                           </Button>
                         </Link>
                       </div>
                     }
                 />
-              </Card>
-          ) : (
-              <Row gutter={[24, 24]}>
-                {filteredProducts.map((product) => (
-                    <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
-                      <Card
-                          hoverable
-                          className="h-full overflow-hidden"
-                          cover={
-                            <div className="relative pt-[100%] overflow-hidden">
-                              <img
-                                  src={product.image || product.imageUrl}
-                                  alt={product.name}
-                                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                              />
-                              <button
-                                  onClick={() => handleWishlistToggle(product._id)}
-                                  className="absolute top-4 right-4 p-3 rounded-full bg-white shadow-lg transition-transform duration-300 hover:scale-110"
-                              >
-                                <FaHeart className="text-xl text-red-500" />
-                              </button>
-                            </div>
-                          }
-                      >
-                        <div className="space-y-4">
-                          <Link to={`/products/${product._id}`}>
-                            <Title level={4} className="mb-2 line-clamp-2 hover:text-blue-500">
-                              {product.name}
-                            </Title>
-                          </Link>
-
-                          <div className="flex items-center justify-between">
-                            <Text className="text-2xl font-bold text-green-600">
-                              {currency?.code} {(currency?.rate * product.price).toFixed(2)}
-                            </Text>
-                            <StarRating rating={calculateAverageRating(product.ratings)} />
-                          </div>
-
-                          <div className="flex gap-2 pt-4">
-                            <Link to={`/products/${product._id}`} className="flex-1">
-                              <Button
-                                  icon={<FaEye />}
-                                  className="w-full bg-gray-100 hover:bg-gray-200 border-none"
-                              >
-                                View
-                              </Button>
-                            </Link>
-                            <Button
-                                icon={<FaShoppingCart />}
-                                onClick={() => addToCart(product._id)}
-                                className="flex-1 bg-blue-500 text-white hover:bg-blue-600 border-none"
-                            >
-                              Add to Cart
-                            </Button>
-                          </div>
-                        </div>
-                      </Card>
-                    </Col>
-                ))}
-              </Row>
-          )}
+            )}
+          </div>
         </div>
       </div>
   );
