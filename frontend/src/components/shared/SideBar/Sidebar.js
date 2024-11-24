@@ -190,6 +190,12 @@ const Sidebar = ({ visible, onClose }) => {
               <Menu.Item key="15" onClick={() => handleClick("/wishlisted_products")}>
                 Wishlist
               </Menu.Item>,
+              <Menu.Item
+              key="16"
+              onClick={() => handleClick("/orderHistory")}
+            >
+                Orders History
+            </Menu.Item>,
               (user &&
                 (user.userRole === "Seller" || user.userRole === "Admin")) && (
                 <>
@@ -254,6 +260,19 @@ const Sidebar = ({ visible, onClose }) => {
             ),
           ])
         )}
+        {user && user.userRole === "Admin" && (
+          <Menu.SubMenu key="promo" title="Promo codes">
+            {renderMenuItems([
+            <Menu.Item
+              key="1701"
+              onClick={() => handleClick("/promoCodesAdmin")}
+            >
+              Promo codes
+            </Menu.Item>
+            ])}
+          </Menu.SubMenu>
+            )
+          }
       </Menu>
     </Drawer>
   );
