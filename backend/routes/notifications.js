@@ -10,6 +10,8 @@ router.get("/my", isAuth, notificationsController.getAllMyNotifications);
 router.post("/createRequest", isAuth, notificationsController.createNotificationRequest);
 router.post('/send',notificationsController.sendNotification);
 router.post('/saveFCMToken', isAuth, notificationsController.SaveFCMToken);
+router.post('/markAllAsRead',isAuth,notificationsController.markAllAsRead);
+router.post('/markAsRead/:id',isAuth,notificationsController.markAsRead);
 router.delete('/delete/:id', isAuth, notificationsController.deleteNotification);
 
 

@@ -24,6 +24,27 @@ export const createNotificationRequest = async (activityId) => {
       }
     );
 }
+
+export const markAllAsRead = async () => {
+    return await axios.post(
+      `${API_BASE_URL}/notification/markAllAsRead`,
+      {},
+      {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+        });
+}
+export const markAsRead = async (notificationId) => {
+    return await axios.post(
+      `${API_BASE_URL}/notification/markAsRead/${notificationId}`,
+      {},
+      {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+        });
+}
 // for test
 export const sendNotifications = async ({title , body ,tokens}) => {
     return await axios.post(

@@ -9,13 +9,35 @@ exports.getAllMyNotifications = async (req, res) => {
     try {
         const notifications = await Notification.find(
             { sentTo: req.user._id ,status: 'sent' },
-            { title: 1, body: 1, _id: 0 }
-        );
-        await Notification.updateMany(
-            { sentTo: req.user._id, status: 'sent' },
-            { isSeen: true }
         );
         res.status(200).json({ notifications });
+    } catch (error) {
+        errorHandler.SendError(res, error);
+    }
+}
+
+exports.markAllAsRead = async (req, res) => {
+    try {
+        await Notification.updateMany(
+            { sentTo: req.user._id  ,status: 'sent' },
+            { isSeen: true }
+        );
+        res.status(200).json({ message: 'All notifications marked as read' });
+    } catch (error) {
+        errorHandler.SendError(res, error);
+    }
+}
+
+exports.markAsRead = async (req, res) => {
+    try {
+        const notificationId = req.params.id;
+        const notification = await Notification.findById(notificationId);
+        if (!notification) {
+            return res.status(404).json({ error: 'Notification not found' });
+        }
+
+        await Notification.findByIdAndUpdate(notificationId, { isSeen: true });
+        res.status(200).json({ message: 'Notification marked as read' });
     } catch (error) {
         errorHandler.SendError(res, error);
     }

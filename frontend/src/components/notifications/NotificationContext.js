@@ -15,6 +15,7 @@ export const NotificationProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       const response = await getAllMyNotifications();
+      console.log(response.data.notifications); // Make sure the response is as expected
       setNotifications(response.data.notifications);
 
       // Calculate unread count from fetched notifications
@@ -49,25 +50,19 @@ export const NotificationProvider = ({ children }) => {
     setUnreadCount((prevCount) => prevCount + 1);
   };
 
-  // Mark all notifications as read
   const markAllAsRead = async () => {
     try {
-      // Update local state
       setNotifications((prevNotifications) =>
         prevNotifications.map((notif) => ({ ...notif, isSeen: true }))
       );
       setUnreadCount(0);
-
-      // You can add an API call here to update the backend
-      // await updateNotificationsAsRead();
+      await markAllAsRead();
     } catch (err) {
       console.error("Error marking notifications as read:", err);
-      // Revert local state if backend update fails
       await fetchNotifications();
     }
   };
 
-  // Mark a single notification as read
   const markAsRead = async (notificationId) => {
     try {
       setNotifications((prevNotifications) =>
@@ -77,8 +72,7 @@ export const NotificationProvider = ({ children }) => {
       );
       setUnreadCount((prevCount) => Math.max(0, prevCount - 1));
 
-      // You can add an API call here to update the backend
-      // await updateNotificationAsRead(notificationId);
+        await markAsRead(notificationId);
     } catch (err) {
       console.error("Error marking notification as read:", err);
       // Revert local state if backend update fails
