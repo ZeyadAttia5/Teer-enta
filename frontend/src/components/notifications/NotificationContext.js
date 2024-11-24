@@ -19,12 +19,12 @@ export const NotificationProvider = ({ children }) => {
 
       // Calculate unread count from fetched notifications
       const unseenCount = response.data.notifications.filter(
-          (notif) => !notif.isSeen
+        (notif) => !notif.isSeen
       ).length;
       setUnreadCount(unseenCount);
     } catch (err) {
-      setError(err.message || 'Failed to fetch notifications');
-      console.error('Error fetching notifications:', err);
+      setError(err.message || "Failed to fetch notifications");
+      console.error("Error fetching notifications:", err);
     } finally {
       setLoading(false);
     }
@@ -54,14 +54,14 @@ export const NotificationProvider = ({ children }) => {
     try {
       // Update local state
       setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) => ({ ...notif, isSeen: true }))
+        prevNotifications.map((notif) => ({ ...notif, isSeen: true }))
       );
       setUnreadCount(0);
 
       // You can add an API call here to update the backend
       // await updateNotificationsAsRead();
     } catch (err) {
-      console.error('Error marking notifications as read:', err);
+      console.error("Error marking notifications as read:", err);
       // Revert local state if backend update fails
       await fetchNotifications();
     }
@@ -71,16 +71,16 @@ export const NotificationProvider = ({ children }) => {
   const markAsRead = async (notificationId) => {
     try {
       setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) =>
-              notif._id === notificationId ? { ...notif, isSeen: true } : notif
-          )
+        prevNotifications.map((notif) =>
+          notif._id === notificationId ? { ...notif, isSeen: true } : notif
+        )
       );
       setUnreadCount((prevCount) => Math.max(0, prevCount - 1));
 
       // You can add an API call here to update the backend
       // await updateNotificationAsRead(notificationId);
     } catch (err) {
-      console.error('Error marking notification as read:', err);
+      console.error("Error marking notification as read:", err);
       // Revert local state if backend update fails
       await fetchNotifications();
     }
@@ -92,20 +92,20 @@ export const NotificationProvider = ({ children }) => {
   };
 
   return (
-      <NotificationContext.Provider
-          value={{
-            notifications,
-            unreadCount,
-            loading,
-            error,
-            addNotification,
-            markAllAsRead,
-            markAsRead,
-            refreshNotifications,
-          }}
-      >
-        {children}
-      </NotificationContext.Provider>
+    <NotificationContext.Provider
+      value={{
+        notifications,
+        unreadCount,
+        loading,
+        error,
+        addNotification,
+        markAllAsRead,
+        markAsRead,
+        refreshNotifications,
+      }}
+    >
+      {children}
+    </NotificationContext.Provider>
   );
 };
 

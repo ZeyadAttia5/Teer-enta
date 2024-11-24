@@ -1,10 +1,10 @@
 import { CalendarOutlined, MenuOutlined } from "@ant-design/icons";
 import AccountButton from "./AccountButton";
 import useMediaQuery from "use-media-antd-query";
-import {Drawer} from "antd";
-import {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import {FiLogOut} from "react-icons/fi"; // Importing a logout icon from react-icons
+import { Drawer } from "antd";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FiLogOut } from "react-icons/fi"; // Importing a logout icon from react-icons
 import logo from "../../../assets/logo/logo2.jpg";
 import ConfirmationModal from "../ConfirmationModal";
 import { on } from "events";
@@ -15,21 +15,21 @@ const SideBar = ({ children, classNames }) => {
   const size = useMediaQuery();
   const [open, setOpen] = useState(false);
 
-    if (["xs", "sm", "md"].includes(size)) {
-        return (
-            <div>
-                <MenuOutlined onClick={() => setOpen(true)}/>
-                <Drawer
-                    open={open}
-                    onClose={() => setOpen(false)}
-                    classNames={classNames}
-                >
-                    {children}
-                </Drawer>
-            </div>
-        );
-    }
-    return children;
+  if (["xs", "sm", "md"].includes(size)) {
+    return (
+      <div>
+        <MenuOutlined onClick={() => setOpen(true)} />
+        <Drawer
+          open={open}
+          onClose={() => setOpen(false)}
+          classNames={classNames}
+        >
+          {children}
+        </Drawer>
+      </div>
+    );
+  }
+  return children;
 };
 
 const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
@@ -62,7 +62,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
 
   return (
     <div
-      className={`w-full flex justify-between items-center bg-${navbarColor} shadow-md to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
+      className={`w-full flex justify-between items-center bg-${navbarColor} shadow-md to-teal-700%  p-6 z-50 h-20 text-white font-bold space-x-8`} // Changed z-10 to z-50
     >
       {/* Logo Section */}
       <span className="ml-16 text-lg leading-7">
@@ -70,10 +70,10 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
           {/* Logo Link */}
           <Link to={"/"} className="ring-0">
             <img
-                src={logo}
-                alt="Logo"
-                width={80}
-                className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
+              src={logo}
+              alt="Logo"
+              width={80}
+              className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
             />
           </Link>
         </div>
@@ -121,7 +121,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
                 />
               </div>
               <div
-                className={`flex items-center justify-center p-2  bg-${navbarColor} mt-3 rounded-full shadow-md transition-transform transform hover:scale-110 hover:bg-${
+                className={`flex items-center justify-center p-2  bg-${navbarColor} mt-3 rounded-full shadow-md transition-transform transform hover:scale-110 z-50 hover:bg-${
                   navbarColor === "fourth" ? "third" : "second"
                 } hover:text-yellow-500 cursor-pointer`}
               >
@@ -137,50 +137,53 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
             <AccountButton
               extra_tw={`bg-${navbarColor} hover:bg-${
                 navbarColor === "fourth" ? "third" : "second"
-              } transition text-${navbarColor === "first" ? "fourth" : "first"} duration-300 p-2 rounded-lg flex items-center justify-center transform hover:scale-110`}
+              } transition text-${
+                navbarColor === "first" ? "fourth" : "first"
+              } duration-300 p-2 rounded-lg flex items-center justify-center transform hover:scale-110`}
               onClick={onAccountClick}
             />
           </div>
 
-                    {user && (
-                        <button
-                            onClick={() => setModalOpen(true)}
-                            className={`flex items-center text-${navbarColor === "first" ? "fourth" : "first"} hover:text-${"white"} justify-center mt-4 p-2 bg-${navbarColor} hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none`}
-                            aria-label="Logout"
-                        >
-                            <FiLogOut className={`w-6 h-6`}/>
-                        </button>
-                    )}
-                </div>
-            )}
-            {["xs", "sm", "md"].includes(size) && (
-                <SideBar
-                    classNames={{
-                        body: "bg-fourth text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
-                        header: "bg-fourth text-white font-bold text-lg p-4",
-                    }}
-                >
-                    <div className="flex justify-end items-center lg:flex-1 mt-4">
-                        <AccountButton
-                            extra_tw="bg-fourth text-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
-                            onClick={onAccountClick}
-                        />
-                    </div>
-
-
-                    {user && (
-                        <button
-                            onClick={() => setModalOpen(true)}
-                            className="flex items-center text-first hover:text-white justify-center mt-4 p-2 bg-fourth hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
-                            aria-label="Logout"
-                        >
-                            <FiLogOut className="w-6 h-6"/>
-                        </button>
-                    )}
-                </SideBar>
-            )}
+          {user && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className={`flex items-center text-${
+                navbarColor === "first" ? "fourth" : "first"
+              } hover:text-${"white"} justify-center mt-4 p-2 bg-${navbarColor} hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none`}
+              aria-label="Logout"
+            >
+              <FiLogOut className={`w-6 h-6`} />
+            </button>
+          )}
         </div>
-    );
+      )}
+      {["xs", "sm", "md"].includes(size) && (
+        <SideBar
+          classNames={{
+            body: "bg-fourth text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
+            header: "bg-fourth text-white font-bold text-lg p-4",
+          }}
+        >
+          <div className="flex justify-end items-center lg:flex-1 mt-4">
+            <AccountButton
+              extra_tw="bg-fourth text-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
+              onClick={onAccountClick}
+            />
+          </div>
+
+          {user && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className="flex items-center text-first hover:text-white justify-center mt-4 p-2 bg-fourth hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
+              aria-label="Logout"
+            >
+              <FiLogOut className="w-6 h-6" />
+            </button>
+          )}
+        </SideBar>
+      )}
+    </div>
+  );
 };
 
 export default TouristNavBar;
