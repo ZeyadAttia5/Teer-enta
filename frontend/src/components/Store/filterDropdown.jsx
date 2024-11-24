@@ -34,12 +34,12 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
   const [minPrice, setMinPrice] = useState(filters.minPrice);
   const [maxPrice, setMaxPrice] = useState(filters.maxPrice);
   const [sortBy, setSortBy] = useState(filters.sortBy);
-  const [sortOrder, setSortOrder] = useState(filters.sortOrder || 'desc');
+  const [sortOrder, setSortOrder] = useState(filters.sortOrder || "desc");
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setSortBy(filters.sortBy);
-    setSortOrder(filters.sortOrder || 'desc');
+    setSortOrder(filters.sortOrder || "desc");
   }, [filters]);
 
   // Function to check if any filters are active

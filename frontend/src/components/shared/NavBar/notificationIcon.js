@@ -12,9 +12,9 @@ const NotificationIcon = ({ navbarcolor, onClick }) => {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="w-6 h-6"
-        fill="none"
+        fill="white"
         viewBox="0 0 24 24"
-        stroke={navbarcolor === "first" ? "white" : "black"}
+        stroke={navbarcolor === "first" ? "yellow" : "black"}
       >
         <path
           strokeLinecap="round"

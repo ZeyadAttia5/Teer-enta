@@ -6,17 +6,21 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
 import logo from "../../../assets/logo/logo2.jpg";
+import ConfirmationModal from "../ConfirmationModal";
+import { on } from "events";
+import { set } from "date-fns";
 import NotificationIcon from "./notificationIcon";
 import {getCart} from "../../../api/cart.ts";
 
 const SideBar = ({ children, classNames }) => {
   const size = useMediaQuery();
   const [open, setOpen] = useState(false);
+  const navbarColor = window.location.pathname === "/" ? "first" : "fourth";
 
     if (["xs", "sm", "md"].includes(size)) {
         return (
             <div>
-                <MenuOutlined onClick={() => setOpen(true)}/>
+                <MenuOutlined onClick={() => setOpen(true)} className={`text-${navbarColor === "first" ? "fourth" : "first"}`}/>
                 <Drawer
                     open={open}
                     onClose={() => setOpen(false)}
@@ -30,26 +34,12 @@ const SideBar = ({ children, classNames }) => {
     return children;
 };
 
-const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
+const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setNavbarColor }) => {
   const navigate = useNavigate();
   const size = useMediaQuery();
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
-  const [cartCount, setCartCount] = useState(0);
-  useEffect(() => {
-    const fetchCartCount = async () => {
-      try {
-        const response = await getCart(); // Replace with your actual API endpoint
-        setCartCount(response.data.cart.length);
-      } catch (error) {
-        console.error('Error fetching cart count:', error);
-      }
-    };
-
-    if (user && user.userRole === "Tourist") {
-      fetchCartCount();
-    }
-  }, [user]);
+    const [cartCount, setCartCount] = useState(0);
   const onAccountClick = () => {
     if (
       user &&
@@ -68,13 +58,25 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
       navigate("/");
       setIsNavigate(false);
     }
-  }, [isNavigate]);
+      const fetchCartCount = async () => {
+          try {
+              const response = await getCart(); // Replace with your actual API endpoint
+              setCartCount(response.data.cart.length);
+          } catch (error) {
+              console.error('Error fetching cart count:', error);
+          }
+      };
+
+      if (user && user.userRole === "Tourist") {
+          fetchCartCount();
+      }
+  }, [isNavigate,user]);
 
   const navbarColor = window.location.pathname === "/" ? "first" : "fourth";
-
+  setNavbarColor(navbarColor);
   return (
     <div
-      className={`w-full flex justify-between items-center bg-${navbarColor} shadow-md to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
+      className={`w-full flex bg-${navbarColor} justify-between items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
     >
       {/* Logo Section */}
       <span className="ml-16 text-lg leading-7">
@@ -231,19 +233,21 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
               />
             </div>
 
-            {user && (
-                <button
-                    onClick={() => setModalOpen(true)}
-                    className="flex items-center text-first hover:text-white justify-center mt-4 p-2 bg-fourth hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
-                    aria-label="Logout"
-                >
-                  <FiLogOut className="w-6 h-6" />
-                </button>
+
+                    {user && (
+                        <button
+                            onClick={() => setModalOpen(true)}
+                            className="flex items-center text-first hover:text-white justify-center mt-4 p-2 bg-fourth hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
+                            aria-label="Logout"
+                        >
+                            <FiLogOut className="w-6 h-6"/>
+                        </button>
+                    )}
+                </SideBar>
             )}
-          </SideBar>
-      )}
-    </div>
-  );
+
+        </div>
+    );
 };
 
 export default TouristNavBar;
