@@ -23,3 +23,27 @@ export const checkout = async ({deliveryAddress,paymentMethod,promoCode}) => {
         }
     );
 }
+
+export const getOrders = async () => {
+    return await axios.get(`${API_BASE_URL}/order`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
+
+export const getOrder = async (orderId) => {
+    return await axios.get(`${API_BASE_URL}/order/one/${orderId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
+
+export const cancelOrder = async (orderId) => {
+    return await axios.patch(`${API_BASE_URL}/order/cancel/${orderId}`, {}, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
+}
