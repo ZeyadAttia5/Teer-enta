@@ -634,7 +634,7 @@ const ItineraryScreen = ({ setFlag }) => {
         <div className="mb-6 flex flex-col items-center space-y-4">
           {/* Centered, smaller search bar */}
           <Search
-            enterButton={<SearchOutlined />}
+            // enterButton={<SearchOutlined />}
             placeholder="Search by name, category, or tag..."
             value={searchTerm}
             allowClear
@@ -782,11 +782,11 @@ const ItineraryScreen = ({ setFlag }) => {
         </div>
       </div>
       {user === null || user?.userRole === "Tourist" ? (
-        <main className="flex flex-wrap justify-center items-center min-h-screen py-10">
+        <main className="flex flex-wrap justify-center items-center min-h-screen">
           {sortedItineraries?.map((itinerary, index) => (
             <div
               key={index}
-              className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
+              className="max-w-sm w-1/4 rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
             >
               {/* Book Now Circle */}
               <div className="absolute top-4 left-4 bg-[#58A399] text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
