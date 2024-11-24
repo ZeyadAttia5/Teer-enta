@@ -430,7 +430,9 @@ const ItineraryScreen = ({ setFlag }) => {
       );
     }
   };
-
+  const handleBookItinerary = (id) => {
+    navigate(`/itinerary/book/${id}`);
+  }
   const onFinish = async (values) => {
     try {
       const formattedAvailableDates = values.availableDates.map(
