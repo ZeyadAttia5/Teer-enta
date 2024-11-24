@@ -76,7 +76,7 @@ function App() {
     setIsNavigate(true);
     setModalOpen(false);
   };
-
+  const [navbarColor, setNavbarColor] = useState("first");
   return (
     <div className="App relative bg-fourth min-h-screen">
       <Router>
@@ -85,6 +85,7 @@ function App() {
             onClose={onClose}
             showDrawer={showDrawer}
             drawerVisible={visible}
+            navbarColor={navbarColor}
           />
         )}
         {!flag && (
@@ -93,6 +94,7 @@ function App() {
               setModalOpen={setModalOpen}
               isNavigate={isNavigate}
               setIsNavigate={setIsNavigate}
+              setNavbarColor={setNavbarColor}
             />
           </div>
         )}

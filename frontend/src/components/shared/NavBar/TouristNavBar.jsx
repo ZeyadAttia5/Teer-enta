@@ -14,11 +14,12 @@ import NotificationIcon from "./notificationIcon";
 const SideBar = ({ children, classNames }) => {
   const size = useMediaQuery();
   const [open, setOpen] = useState(false);
+  const navbarColor = window.location.pathname === "/" ? "first" : "fourth";
 
     if (["xs", "sm", "md"].includes(size)) {
         return (
             <div>
-                <MenuOutlined onClick={() => setOpen(true)}/>
+                <MenuOutlined onClick={() => setOpen(true)} className={`text-${navbarColor === "first" ? "fourth" : "first"}`}/>
                 <Drawer
                     open={open}
                     onClose={() => setOpen(false)}
@@ -32,7 +33,7 @@ const SideBar = ({ children, classNames }) => {
     return children;
 };
 
-const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
+const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setNavbarColor }) => {
   const navigate = useNavigate();
   const size = useMediaQuery();
   const storedUser = localStorage.getItem("user");
@@ -59,7 +60,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
   }, [isNavigate]);
 
   const navbarColor = window.location.pathname === "/" ? "first" : "fourth";
-
+  setNavbarColor(navbarColor);
   return (
     <div
       className={`w-full flex bg-${navbarColor} justify-between items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
