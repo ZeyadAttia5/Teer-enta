@@ -43,6 +43,21 @@ exports.markAsRead = async (req, res) => {
     }
 }
 
+exports.updatedNotificationRequestStatus = async (req, res) => {
+    try {
+        const notificationRequestId = req.params.id;
+        const notificationRequest = await NotificationsRequests.findById(notificationRequestId);
+        if (!notificationRequest) {
+            return res.status(404).json({ error: 'Notification request not found' });
+        }
+
+        await NotificationsRequests.findByIdAndUpdate(notificationRequestId, { status: req.body.status });
+        res.status(200).json({ message: 'Notification request status updated' });
+    } catch (error) {
+        errorHandler.SendError(res, error);
+    }
+}
+
 exports.createNotificationRequest = async (req, res) => {
     try {
         const notificationRequest = new NotificationsRequests({

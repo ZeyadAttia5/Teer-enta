@@ -12,6 +12,7 @@ router.post('/send',notificationsController.sendNotification);
 router.post('/saveFCMToken', isAuth, notificationsController.SaveFCMToken);
 router.post('/markAllAsRead',isAuth,notificationsController.markAllAsRead);
 router.post('/markAsRead/:id',isAuth,notificationsController.markAsRead);
+router.patch('/updateRequestStatus/:id', isAuth, notificationsController.updatedNotificationRequestStatus);
 router.delete('/delete/:id', isAuth, notificationsController.deleteNotification);
 
 

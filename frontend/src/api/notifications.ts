@@ -25,7 +25,7 @@ export const createNotificationRequest = async (activityId) => {
     );
 }
 
-export const markAllAsRead = async () => {
+export const markAllAsReadd = async () => {
     return await axios.post(
       `${API_BASE_URL}/notification/markAllAsRead`,
       {},
@@ -35,7 +35,7 @@ export const markAllAsRead = async () => {
             },
         });
 }
-export const markAsRead = async (notificationId) => {
+export const markAsReadd = async (notificationId) => {
     return await axios.post(
       `${API_BASE_URL}/notification/markAsRead/${notificationId}`,
       {},

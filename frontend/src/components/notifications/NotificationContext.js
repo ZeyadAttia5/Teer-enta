@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getAllMyNotifications } from "../../api/notifications.ts"; // Adjust the import path as needed
+import {getAllMyNotifications, markAllAsReadd, markAsReadd} from "../../api/notifications.ts"; // Adjust the import path as needed
 
 export const NotificationContext = createContext();
 
@@ -56,7 +56,7 @@ export const NotificationProvider = ({ children }) => {
         prevNotifications.map((notif) => ({ ...notif, isSeen: true }))
       );
       setUnreadCount(0);
-      await markAllAsRead();
+      await markAllAsReadd();
     } catch (err) {
       console.error("Error marking notifications as read:", err);
       await fetchNotifications();
@@ -72,7 +72,7 @@ export const NotificationProvider = ({ children }) => {
       );
       setUnreadCount((prevCount) => Math.max(0, prevCount - 1));
 
-        await markAsRead(notificationId);
+        await markAsReadd(notificationId);
     } catch (err) {
       console.error("Error marking notification as read:", err);
       // Revert local state if backend update fails
