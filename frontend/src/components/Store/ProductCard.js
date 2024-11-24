@@ -10,64 +10,28 @@ import { getCurrency } from "../../api/account.ts";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 
-const HistoricalPlaceSingleCard = ({ currency, places }) => {
+const ProductCard = ({ currency, product }) => {
   const user = JSON.parse(localStorage.getItem("user"));
-  const id = places._id;
+  const id = product._id;
   const accessToken = localStorage.getItem("accessToken");
 
-  const handleDeleteHistoricalPlace = async () => {
-    try {
-      const response = await deleteHistoricalPlace(id);
-      if (response.status === 200) {
-        toast.success("Historical place deleted successfully!");
-        window.location.reload();
-      } else {
-        toast.error("Failed to delete the historical place.");
-      }
-    } catch (error) {
-      console.error("Error deleting historical place:", error);
-      toast.error("An error occurred while deleting the historical place.");
-    }
-  };
-
   return (
-    <Link to={`/historicalPlace/details/${places?._id}`}>
+    <Link to={`/products/${id}}`}>
       <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform  hover:shadow-xl transition-all duration-300 ease-in-out m-4">
         <img
           className="w-full h-48 object-cover"
           src={
-            places?.images && places?.images?.length > 0
-              ? places?.images[0]
+            product?.images && product?.images?.length > 0
+              ? product?.images[0]
               : "defaultImageUrl.jpg"
           }
-          alt={places?.name}
+          alt={product?.name}
           loading="lazy"
         />
         <div className="p-6">
           <h3 className="font-bold text-2xl mb-2 text-[#496989]">
-            {places?.name}
+            {product?.name}
           </h3>
-          {/* <p className="text-[#58A399] text-sm leading-relaxed mb-4">
-                    {places.description.length > 120
-                        ? places.description.slice(0, 100) + "..."
-                        : places.description}
-                </p> */}
-
-          <div className="mb-4">
-            <span className="inline-block text-sm text-gray-500 font-medium">
-              Opening Hours: {places?.openingHours}
-            </span>
-          </div>
-
-          <div className="mb-4">
-            <h4 className="font-bold text-gray-700 mb-2">Ticket Prices:</h4>
-            {places?.tickets?.map((ticket, index) => (
-              <div key={ticket.type + index} className="text-gray-600 text-sm">
-                <span className="font-medium">{ticket?.type}:</span>{" "}
-                {(currency?.rate * ticket?.price).toFixed(2)} {currency?.code}
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className="px-6 pb-4 flex flex-wrap">
@@ -119,4 +83,4 @@ const HistoricalPlaceSingleCard = ({ currency, places }) => {
     </Link>
   );
 };
-export default HistoricalPlaceSingleCard;
+export default ProductCard;

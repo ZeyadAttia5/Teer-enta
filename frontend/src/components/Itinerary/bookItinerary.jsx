@@ -9,6 +9,7 @@ import CheckoutForm from "../shared/CheckoutForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { TagOutlined } from '@ant-design/icons';
+import BackButton from "../shared/BackButton/BackButton.js";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -95,6 +96,7 @@ const BookItinerary = () => {
 
     return (
         <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+            <BackButton />
             <Card className="shadow-lg rounded-lg">
                 <Title level={2} className="text-center text-indigo-600 mb-6">
                     {itinerary?.name} Booking

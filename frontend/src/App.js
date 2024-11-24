@@ -1,6 +1,6 @@
 import "./index.css";
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route,useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Signup from "./components/Auth/Signup/Signup.js";
 import Login from "./components/Auth/Login/login.js";
@@ -14,12 +14,13 @@ import ShowHistoricalPlaces from "./components/HistoricalPlaces/showHistoricalPl
 import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 import AddUser from "./components/Users/addUser/addUser";
-
+import BackButton from "./components/shared/BackButton.js";
 import ProductDetails from "./components/Store/productDetails";
 import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
 import EditProductForm from "./components/Store/editProductForm";
 import QuantityAndSales from "./components/Store/quantityAndSales.jsx";
+import CartComponent from "./components/Store/cart.jsx";
 import IternaryScreen from "./components/Itinerary/ItineraryScreen.jsx";
 import PreferenceTags from "./components/Tags/PrefrenceTags.tsx";
 import ActivityCategories from "./components/Activity/ActivityCategories.tsx";
@@ -60,12 +61,18 @@ import { checkPermission, requestForToken } from "./services/firebase";
 import { getMessaging, onMessage } from "firebase/messaging";
 import { saveFCMTokenToServer } from "./api/notifications.ts";
 import Notification from "./components/notifications/Notification";
+import CheckOutOrder from "./components/Store/checkOutOrder";
+import OrderHistory from "./components/Store/orderHistory";
+import OrderDetails from "./components/Store/orderDetails";
 
-function App() {
+function AppContent() {
   const [flag, setFlag] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isNavigate, setIsNavigate] = useState(false);
+  const location = useLocation();
+
+  const showBackButton = location.pathname !== "/";
   const [notification, setNotification] = useState({ title: "", body: "" });
 
   useEffect(() => {
@@ -120,107 +127,115 @@ function App() {
     setIsNavigate(true);
     setModalOpen(false);
   };
-
+  const [navbarColor, setNavbarColor] = useState("first");
   return (
     <div className="App relative bg-fourth min-h-screen">
-      <Router>
-        <ToastContainer />
-        {!flag && (
-          <DrawerBar
-            onClose={onClose}
-            showDrawer={showDrawer}
-            drawerVisible={visible}
+      {!flag && (
+        <DrawerBar
+          onClose={onClose}
+          showDrawer={showDrawer}
+          drawerVisible={visible}
+            navbarColor={navbarColor}
+        />
+      )}
+      {!flag && (
+        <div className="relative  z-10 size-full flex flex-col items-center">
+          <TouristNavBar
+            setModalOpen={setModalOpen}
+            isNavigate={isNavigate}
+            setIsNavigate={setIsNavigate}
+              setNavbarColor={setNavbarColor}
           />
-        )}
-        {!flag && (
-          <div className="relative bg-[#075B4C] z-50 size-full flex flex-col items-center">
-            <TouristNavBar
-              setModalOpen={setModalOpen}
-              isNavigate={isNavigate}
-              setIsNavigate={setIsNavigate}
-            />
-          </div>
-        )}
+        </div>
+      )}
 
-        <ConfirmationModal
-          isOpen={isModalOpen}
-          onClose={() => setModalOpen(false)}
-          onConfirm={onLogout}
-          message={`Are you sure you want to log out?`}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={onLogout}
+        message={`Are you sure you want to log out?`}
+      />
+
+{showBackButton && (
+        <div className="p-4 bg-transparent">
+          <BackButton />
+        </div>
+      )}
+
+      <Routes>
+        {/* General Routes */}
+        <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
+        <Route path="/signup" element={<Signup setFlag={setFlag} />} />
+        <Route
+          path="/login"
+          element={<Login setFlag={setFlag} flag={flag} />}
+        />
+        <Route path="/profile" element={<Profile setFlag={setFlag} />} />
+        <Route
+          path="/preference-tags"
+          element={<PreferenceTags setFlag={setFlag} />}
+        />
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword setFlag={setFlag} />}
+        />
+        <Route
+          path="/reset-password/:token"
+          element={<ResetPassword setFlag={setFlag} />}
         />
 
-        <Routes>
-          <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
-          <Route path="/signup" element={<Signup setFlag={setFlag} />} />
-          <Route
-            path="/login"
-            element={<Login setFlag={setFlag} flag={flag} />}
-          />
-          <Route path="/profile" element={<Profile setFlag={setFlag} />} />
-          <Route
-            path="/preference-tags"
-            element={<PreferenceTags setFlag={setFlag} />}
-          />
-          <Route
-            path="/forgot-password"
-            element={<ForgotPassword setFlag={setFlag} />}
-          />
-          <Route
-            path="/reset-password/:token"
-            element={<ResetPassword setFlag={setFlag} />}
-          />
+        {/* Activity Routes */}
+        <Route
+          path="/activities"
+          element={<AllActivitiesCRUD setFlag={setFlag} />}
+        />
+        <Route
+          path="/flaggedActivities"
+          element={<FlaggedActivities setFlag={setFlag} />}
+        />
+        <Route
+          path="/activities/my"
+          element={<AllActivitiesCRUD setFlag={setFlag} />}
+        />
+        <Route
+          path="/activity-categories"
+          element={<ActivityCategories setFlag={setFlag} />}
+        />
+        <Route path="/tags" element={<Tags setFlag={setFlag} />} />
+        <Route
+          path="/activity"
+          element={<ActivityList setFlag={setFlag} />}
+        />
+        <Route
+          path="/unActiveActivity"
+          element={<UnActiveActivities setFlag={setFlag} />}
+        />
+        <Route
+          path="/touristActivities"
+          element={<TouristActivity setFlag={setFlag} />}
+        />
 
-          {/* Activity Routes */}
-          <Route
-            path="/activities"
-            element={<AllActivitiesCRUD setFlag={setFlag} />}
-          />
-          <Route
-            path="/flaggedActivities"
-            element={<FlaggedActivities setFlag={setFlag} />}
-          />
-          <Route
-            path="/activities/my"
-            element={<AllActivitiesCRUD setFlag={setFlag} />}
-          />
-          <Route
-            path="/activity-categories"
-            element={<ActivityCategories setFlag={setFlag} />}
-          />
-          <Route path="/tags" element={<Tags setFlag={setFlag} />} />
-          <Route
-            path="/activity"
-            element={<ActivityList setFlag={setFlag} />}
-          />
-          <Route
-            path="/unActiveActivity"
-            element={<UnActiveActivities setFlag={setFlag} />}
-          />
-          <Route
-            path="/touristActivities"
-            element={<TouristActivity setFlag={setFlag} />}
-          />
-          {/* Historical Places Routes */}
-          <Route
-            path="/historicalPlace"
-            element={<ReadHistoriaclPlaces setFlag={setFlag} />}
-          />
-          <Route
-            path="/historicalPlace/my"
-            element={<ReadHistoriaclPlaces setFlag={setFlag} />}
-          />
-          <Route
-            path="/historicalPlace/create"
-            element={<CreateHistoricalPlaces setFlag={setFlag} />}
-          />
-          <Route
-            path="/historicalPlace/update/:id"
-            element={<UpdateHistoricalPlaces setFlag={setFlag} />}
-          />
-          <Route
-            path="/historicalPlace/details/:id"
-            element={<ShowHistoricalPlaces setFlag={setFlag} />}
-          />
+        {/* Historical Places Routes */}
+        <Route
+          path="/historicalPlace"
+          element={<ReadHistoriaclPlaces setFlag={setFlag} />}
+        />
+        <Route
+          path="/historicalPlace/my"
+          element={<ReadHistoriaclPlaces setFlag={setFlag} />}
+        />
+        <Route
+          path="/historicalPlace/create"
+          element={<CreateHistoricalPlaces setFlag={setFlag} />}
+        />
+        <Route
+          path="/historicalPlace/update/:id"
+          element={<UpdateHistoricalPlaces setFlag={setFlag} />}
+        />
+        <Route
+          path="/historicalPlace/details/:id"
+          element={<ShowHistoricalPlaces setFlag={setFlag} />}
+        />
 
           {/* User Management Routes */}
           <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />
@@ -264,6 +279,20 @@ function App() {
             path="/products/quantity&sales"
             element={<QuantityAndSales setFlag={setFlag} />}
           />
+          <Route
+            path="/products/cart"
+            element={<CartComponent setFlag={setFlag} />}
+          />
+          <Route
+            path="/checkOutOrder"
+            element={<CheckOutOrder setFlag={setFlag} />}
+            />
+          <Route
+            path="/orderHistory"
+            element={<OrderHistory setFlag={setFlag} />}
+            />
+          <Route path="/order/:id" element={<OrderDetails />} />
+
           {/* Itinerary Routes */}
           <Route
             path="/itinerary/*"
@@ -297,32 +326,32 @@ function App() {
             element={<IternaryScreen setFlag={setFlag} />}
           />
 
-          {/* Hotel Routes */}
-          <Route
-            path="/hotel/*"
-            element={
-              <Routes>
-                <Route path="book" element={<BookHotel setFlag={setFlag} />} />
-              </Routes>
-            }
-          />
+        {/* Hotel Routes */}
+        <Route
+          path="/hotel/*"
+          element={
+            <Routes>
+              <Route path="book" element={<BookHotel setFlag={setFlag} />} />
+            </Routes>
+          }
+        />
 
-          {/* Transportation Routes */}
-          <Route
-            path="/transportation/*"
-            element={
-              <Routes>
-                <Route
-                  path="create"
-                  element={<CreateTransportation setFlag={setFlag} />}
-                />
-                <Route
-                  path="book"
-                  element={<BookTransportation setFlag={setFlag} />}
-                />
-              </Routes>
-            }
-          />
+        {/* Transportation Routes */}
+        <Route
+          path="/transportation/*"
+          element={
+            <Routes>
+              <Route
+                path="create"
+                element={<CreateTransportation setFlag={setFlag} />}
+              />
+              <Route
+                path="book"
+                element={<BookTransportation setFlag={setFlag} />}
+              />
+            </Routes>
+          }
+        />
 
           {/* Flight Routes */}
           <Route
@@ -349,12 +378,19 @@ function App() {
             element={<BookActivity />}
           />
           <Route path="/bookings" element={<Bookings />} />
-          <Route path="/myActivities" element={<MyActivities />} />
+          <Route path="/savedActivities" element={<MyActivities />} />
           <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
         </Routes>
         <Toaster />
-      </Router>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 
