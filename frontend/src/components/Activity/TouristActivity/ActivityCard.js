@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Rate, Button, Tooltip, message } from "antd";
 import { getGoogleMapsAddress } from "../../../api/googleMaps.ts";
 import { saveActivity, removeSavedActivity } from "../../../api/profile.ts";
+import {
+  createNotificationRequest,
+  updateNotificationRequestStatus,
+} from "../../../api/notifications.ts";
 import { useNavigate } from "react-router-dom";
 import {
   CalendarOutlined,
@@ -11,6 +15,8 @@ import {
   EnvironmentOutlined,
   HeartOutlined,
   HeartFilled,
+  BellOutlined,
+  BellFilled,
 } from "@ant-design/icons";
 import { Card } from "antd";
 
@@ -30,11 +36,14 @@ const ActivityCard = ({
   currencyRate,
   imageUrl,
   isSaved: initialSavedState,
+  isNotificationEnabled: initialNotificationState = false,
 }) => {
   const [address, setAddress] = useState("");
   const [isSaved, setIsSaved] = useState(initialSavedState);
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(
+    initialNotificationState
+  );
   const navigate = useNavigate();
-  const user  = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -62,41 +71,78 @@ const ActivityCard = ({
   const handleSaveActivity = async (activityId) => {
     try {
       if (!isSaved) {
-        setIsSaved(!isSaved); // Toggle saved state
         await saveActivity(activityId);
         message.success("Activity saved successfully!");
       } else {
-        setIsSaved(!isSaved); // Toggle saved state
         await removeSavedActivity(activityId);
         message.info("Activity removed from saved activities!");
       }
-      // setIsSaved(!isSaved); // Toggle saved state
+      setIsSaved(!isSaved);
     } catch (error) {
       console.error("Error saving activity:", error);
+    }
+  };
+
+  const handleNotificationToggle = async (activityId) => {
+    try {
+      if (isNotificationEnabled) {
+        setIsNotificationEnabled(!isNotificationEnabled);
+
+        await updateNotificationRequestStatus(activityId, "Cancelled");
+        message.success("Notifications disabled for this activity");
+      } else {
+        setIsNotificationEnabled(!isNotificationEnabled);
+
+        await createNotificationRequest(activityId);
+
+        message.success("You will be notified about updates for this activity");
+      }
+    } catch (error) {
+      console.error("Error toggling notification:", error);
+      message.error("Failed to update notification preferences");
     }
   };
 
   return (
     <div className="flex justify-center items-center w-1/3">
       <div className="w-full rounded-lg overflow-hidden shadow-lg bg-[#ffffff] text-third m-2 mb-8 relative">
-        {/* Like/Save Button */}
-        {user &&(<div className="absolute top-4 right-4 z-10">
-          <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
+        {/* Like/Save and Notification Buttons */}
+        <div className="absolute top-4 right-4 z-10 flex gap-2">
+          <Tooltip
+            title={
+              isNotificationEnabled
+                ? "Disable notifications"
+                : "Enable notifications"
+            }
+          >
             <Button
-                type="text"
-                icon={
-                  isSaved ? (
-                      <HeartFilled style={{color: "red", fontSize: "24px"}}/>
-                  ) : (
-                      <HeartOutlined style={{color: "gray", fontSize: "24px"}}/>
-                  )
-                }
-                onClick={() => handleSaveActivity(id)}
+              type="text"
+              icon={
+                isNotificationEnabled ? (
+                  <BellFilled style={{ color: "#1890ff", fontSize: "24px" }} />
+                ) : (
+                  <BellOutlined style={{ color: "gray", fontSize: "24px" }} />
+                )
+              }
+              onClick={() => handleNotificationToggle(id)}
             />
           </Tooltip>
-        </div>)}
+          <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
+            <Button
+              type="text"
+              icon={
+                isSaved ? (
+                  <HeartFilled style={{ color: "red", fontSize: "24px" }} />
+                ) : (
+                  <HeartOutlined style={{ color: "gray", fontSize: "24px" }} />
+                )
+              }
+              onClick={() => handleSaveActivity(id)}
+            />
+          </Tooltip>
+        </div>
 
-        {/* Top Block: Name and Book Now Button */}
+        {/* Rest of the component remains the same */}
         <div
           className="flex items-center cursor-pointer p-4 bg-first text-[#ffffff] flex-col sm:flex-row"
           onClick={() => handleActivityDetails(id)}
@@ -104,20 +150,10 @@ const ActivityCard = ({
           <h2 className="font-bold text-xl sm:text-5xl flex-grow break-words">
             {name}
           </h2>
-
-          {/* <Button
-            onClick={() => handleActivityDetails(id)}
-            className="rounded-full bg-third text-white border-white hover:bg-second hover:text-third transition duration-200 text-sm md:text-base font-bold"
-            style={{ border: "2px solid white" }}
-          >
-            See more
-          </Button> */}
         </div>
 
-        {/* Horizontal line */}
         <div className="border-t-4 border-fourth"></div>
 
-        {/* Middle Block: Date, Time, Category, and Price */}
         <div
           className="p-4 space-y-2 cursor-pointer bg-[#ffffff] text-first "
           onClick={() => handleActivityDetails(id)}
@@ -136,14 +172,11 @@ const ActivityCard = ({
             </Tooltip>
           </div>
           <div className="flex flex-col sm:flex-row justify-between items-center flex-wrap">
-            {/* Category with Tooltip */}
             <Tooltip title="Category" overlayClassName="bg-fourth">
               <p className="flex items-center text-sm sm:text-base font-bold text-first">
                 <FolderOutlined className="mr-2" /> {category || "N/A"}
               </p>
             </Tooltip>
-
-            {/* Price with two separate prices and tooltip */}
             <div className="flex items-center space-x-2">
               <Tooltip title="Price" overlayClassName="bg-fourth">
                 <p className="text-sm sm:text-base font-bold">
@@ -160,20 +193,20 @@ const ActivityCard = ({
             </div>
           </div>
         </div>
+
         <div className="border-t-4 border-first"></div>
 
-        {/* Bottom Block: View Details and Location */}
-        <div className="flex justify-between items-center p-4 bg-[#ffffff] text-first  flex-col sm:flex-row">
+        <div className="flex justify-between items-center p-4 bg-[#ffffff] text-first flex-col sm:flex-row">
           <Tooltip title="Join us!">
             <Button
               type="danger"
               onClick={() => handleActivityBooking(id)}
-              className="bg-first  text-[#ffffff] hover:bg-third hover:text-[#ffffff] transition duration-200 text-xl sm:text-2xl px-6 py-3"
+              className="bg-first text-[#ffffff] hover:bg-third hover:text-[#ffffff] transition duration-200 text-xl sm:text-2xl px-6 py-3"
             >
               Book Now!
             </Button>
           </Tooltip>
-          <div className="border-l-4 border-first  h-12 mx-4 my-4 sm:my-0"></div>
+          <div className="border-l-4 border-first h-12 mx-4 my-4 sm:my-0"></div>
           <Tooltip title="View Location on Google Maps">
             <EnvironmentOutlined
               onClick={() =>
