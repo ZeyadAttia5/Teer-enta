@@ -16,7 +16,7 @@ exports.getWishlist = async (req, res) => {
             return res.status(404).json({ message: 'Wishlist not found.' });
         }
         if(user.wishList.length === 0){
-            return res.status(404).json({ message: 'Wishlist is empty.' });
+            return res.status(200).json({ message: 'Wishlist is empty.' });
         }
         res.status(200).json({ wishlist: user.wishList });
     } catch (error) {

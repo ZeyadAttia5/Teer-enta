@@ -52,10 +52,18 @@ export const addToCartFromWishlist = async (productId) => {
   }
 }
 export const addToCart = async (productId) => {
-    return await axios.post(`${API_BASE_URL}/add/cart/product/${productId}`)
+    return await axios.post(`${API_BASE_URL}/cart/add/cart/product/${productId}`, {}, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
 }
-export const updateCartProductAmount = async (productId) => {
-    return await axios.put(`${API_BASE_URL}/cart/update/cart/productAmount/${productId}`)
+export const updateCartProductAmount = async (productId ,quantity) => {
+    return await axios.patch(`${API_BASE_URL}/cart/update/cart/productAmount/${productId}`, {quantity:quantity}, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+    });
 }
 export const deleteWishlistProduct = async (productId) => {
     return await axios.delete(`${API_BASE_URL}/cart/delete/wishlist/product/${productId}`, {

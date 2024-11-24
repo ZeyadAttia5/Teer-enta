@@ -8,6 +8,8 @@ const brevoService = new BrevoService(brevoConfig);
 const ProductOutOfStockTemplate = require("../Util/mailsHandler/mailTemplets/6ProductOutOfStockTemplate");
 const FlaggedActivityTemplate = require("../Util/mailsHandler/mailTemplets/7FlaggedActivityTemplate");
 const PromoCodes = require("../models/PromoCodes");
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 exports.getOrders = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -126,10 +128,12 @@ exports.checkOutOrder = async (req, res) => {
             }
             console.log(totalPrice);
             user.wallet -= totalPrice; // Deduct from wallet
-        } else if (paymentMethod === 'credit_card') {
-            // Here you would integrate with Stripe or your payment provider
-                // For example, you can create a payment intent with Stripe and handle it accordingly
-            // await stripe.paymentIntents.create({ amount: totalPrice, currency: 'usd', ... });
+        }  else if (paymentMethod === 'Card') {
+            await stripe.paymentIntents.create({
+                amount: Math.round(totalPrice* 100),
+                currency: 'EGP',
+                payment_method_types: ['card'],
+            });
         } else {
             return res.status(400).json({ message: 'Invalid payment method selected.' });
         }
