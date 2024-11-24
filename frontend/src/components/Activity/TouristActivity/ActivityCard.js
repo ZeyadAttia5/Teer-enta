@@ -85,23 +85,18 @@ const ActivityCard = ({
 
   const handleNotificationToggle = async (activityId) => {
     try {
-
-      if (isNotificationEnabled) {
+      const response = await getMyRequest(activityId);
+      if(response.data.length > 0){
         setIsNotificationEnabled(!isNotificationEnabled);
-        await updateNotificationRequestStatus(activityId, "Cancelled");
+        const updatedStatus = isNotificationEnabled ? "Cancelled" : "Pending";
+        await updateNotificationRequestStatus(activityId, updatedStatus);
         message.success("Notifications disabled for this activity");
-      } else {
-        const response = await getMyRequest(activityId);
-        if(response.data.length > 0){
-          await updateNotificationRequestStatus(activityId, "Pending");
-        }else{
-          setIsNotificationEnabled(!isNotificationEnabled);
-          await createNotificationRequest(activityId);
-        }
+      }else{
+        setIsNotificationEnabled(!isNotificationEnabled);
+        await createNotificationRequest(activityId);
         message.success("You will be notified about updates for this activity");
       }
     } catch (error) {
-      console.error("Error toggling notification:", error);
       message.error("Failed to update notification preferences");
     }
   };

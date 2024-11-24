@@ -4,7 +4,7 @@ const admin = require('../config/firebase-config');
 const Notification = require('../models/Notifications/Notification');
 const FCMTokens = require("../models/Notifications/FCMToken");
 const mongoose = require('mongoose');
-
+const Activity = require('../models/Activity/Activity');
 exports.getAllMyNotifications = async (req, res) => {
     try {
         const notifications = await Notification.find(
@@ -46,8 +46,9 @@ exports.markAsRead = async (req, res) => {
 exports.getMyRequest = async (req, res) => {
     try {
         const notificationsRequests = await NotificationsRequests.find(
-            { createdBy: req.user._id ,activity: new mongoose.Types.ObjectId(req.params.activityId)  },
+            { createdBy: req.user._id ,activity: req.params.activityId },
         );
+        console.log(notificationsRequests);
         res.status(200).json({ notificationsRequests });
     } catch (error) {
         errorHandler.SendError(res, error);
@@ -83,8 +84,10 @@ exports.updatedNotificationRequestStatus = async (req, res) => {
 
 exports.createNotificationRequest = async (req, res) => {
     try {
+        const activity = await Activity.find({ _id: req.body.activityId });
+        console.log("here",activity);
         const notificationRequest = new NotificationsRequests({
-            activity:new mongoose.Types.ObjectId(req.body.activityId) ,
+            activity:activity._id ,
             createdBy: req.user._id
         });
 
@@ -95,6 +98,7 @@ exports.createNotificationRequest = async (req, res) => {
             notificationRequest
         });
     } catch (error) {
+        console.error('Error creating notification request:', error);
         errorHandler.SendError(res, error);
     }
 }
