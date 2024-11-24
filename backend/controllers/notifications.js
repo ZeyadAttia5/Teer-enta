@@ -8,8 +8,12 @@ const mongoose = require('mongoose');
 exports.getAllMyNotifications = async (req, res) => {
     try {
         const notifications = await Notification.find(
-            { sentTo: req.user._id },
+            { sentTo: req.user._id ,status: 'sent' },
             { title: 1, body: 1, _id: 0 }
+        );
+        await Notification.updateMany(
+            { sentTo: req.user._id, status: 'sent' },
+            { isSeen: true }
         );
         res.status(200).json({ notifications });
     } catch (error) {

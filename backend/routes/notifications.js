@@ -8,7 +8,7 @@ const notificationsController = require("../controllers/notifications");
 
 router.get("/my", isAuth, notificationsController.getAllMyNotifications);
 router.post("/createRequest", isAuth, notificationsController.createNotificationRequest);
-router.post('/send', isAuth,notificationsController.sendNotification);
+router.post('/send',notificationsController.sendNotification);
 router.post('/saveFCMToken', isAuth, notificationsController.SaveFCMToken);
 router.delete('/delete/:id', isAuth, notificationsController.deleteNotification);
 
