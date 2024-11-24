@@ -105,7 +105,7 @@ const NotificationDropdown = ({ onClose, navbarcolor }) => {
 
     const getTimeAgo = (isoDateString) => {
         try {
-            console.log(isoDateString);
+            // console.log(isoDateString);
             if (!isoDateString) return 'Unknown time';
 
             // Parse the ISO date string

@@ -15,7 +15,7 @@ export const NotificationProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       const response = await getAllMyNotifications();
-      console.log(response.data.notifications); // Make sure the response is as expected
+      // console.log(response.data.notifications); // Make sure the response is as expected
       setNotifications(response.data.notifications);
 
       // Calculate unread count from fetched notifications
