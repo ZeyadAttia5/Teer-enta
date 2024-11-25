@@ -147,7 +147,7 @@ const ActivityCard = ({
                         </p>
                       </Tooltip>
                       <Tooltip title="Price" overlayClassName="bg-fourth">
-                        <p className="text-2xl sm:text-3xl font-bold hover:text-third"> {/* Larger price number */}
+                        <p className="text-2xl sm:text-3xl font-bold"> {/* Larger price number */}
                           {price?.min ? (currencyRate * price.min).toFixed(1) : "N/A"},
                         </p>
                       </Tooltip>
@@ -156,14 +156,14 @@ const ActivityCard = ({
                         <p className="text-xs font-bold mr-1"> {/* Smaller currency code */}</p>
                       </Tooltip>
                       <Tooltip title="Price" overlayClassName="bg-fourth">
-                        <p className="text-2xl sm:text-3xl font-bold hover:text-third"> {/* Larger price number */}
+                        <p className="text-2xl sm:text-3xl font-bold "> {/* Larger price number */}
                           {price?.max ? (currencyRate * price.max).toFixed(1) : "N/A"}
                         </p>
                       </Tooltip>
                     </div>
                   </div>
-                
-            
+                }
+            />
             {/* Buttons */}
             <div className="flex justify-center items-center gap-4 p-0 "> {/* Reduced gap */}
               <Button
@@ -181,7 +181,7 @@ const ActivityCard = ({
                 Location
               </Button>
             </div>
-          
+          </Card>
         </div>
       </main>
   );
