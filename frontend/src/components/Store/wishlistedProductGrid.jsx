@@ -2,15 +2,33 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import FilterDropdown from "./filterDropdown";
 import StarRating from "../shared/starRating";
-import { Input, Row, Col, Button, message } from "antd";
-import { FaHeart } from "react-icons/fa";
-import { getCurrency } from "../../api/account.ts";
 import {
-  addToCartFromWishlist,
-  addToWishlist,
-  deleteWishlistProduct,
-  getWishlist,
-} from "../../api/cart.ts";
+  Input,
+  Row,
+  Col,
+  Button,
+  message,
+  Card,
+  Typography,
+  Empty,
+  Spin,
+  Badge, Tooltip , Tag
+} from "antd";
+import {
+  FaHeart,
+  FaSearch,
+  FaShoppingCart,
+  FaEye
+} from "react-icons/fa";
+import {
+  ShoppingCartOutlined,
+  HeartFilled,
+  SearchOutlined, StarOutlined, EyeOutlined
+} from "@ant-design/icons";
+import {addToCartFromWishlist, addToWishlist, deleteWishlistProduct, getWishlist} from "../../api/cart.ts";
+import {getCurrency} from "../../api/account.ts";
+
+const { Title, Text } = Typography;
 
 const WishlistedProductGrid = ({ setFlag }) => {
   setFlag(false);
@@ -28,21 +46,29 @@ const WishlistedProductGrid = ({ setFlag }) => {
   const [error, setError] = useState(null);
   const [currency, setCurrency] = useState();
   const [changeWislist, setChangeWishlist] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const response = await getWishlist();
-        setProducts(response.data.wishlist);
-        setWishlist(
-          new Set(response.data.wishlist.map((product) => product._id))
-        );
+
+        if (!response.data.wishlist || response.data.wishlist.length === 0) {
+          setError("Your wishlist is empty");
+          setProducts([]);
+        } else {
+          setProducts(response.data.wishlist);
+          setWishlist(new Set(response.data.wishlist.map((product) => product._id)));
+        }
       } catch (err) {
-        if (err.response.status === 404) setError("Your wishlist is empty.");
+        setError(err.response?.status === 404 ? "Your wishlist is empty" : "Failed to load wishlist");
+        setProducts([]);
       } finally {
         setLoading(false);
       }
     };
+
     fetchCurrency();
     fetchProducts();
   }, [changeWislist]);
@@ -60,14 +86,14 @@ const WishlistedProductGrid = ({ setFlag }) => {
     try {
       await addToCartFromWishlist(productId);
       message.success("Product added to cart");
-      
+
       const updatedWishlist = new Set(wishlist);
       setChangeWishlist(!changeWislist);
       updatedWishlist.delete(productId);
       setWishlist(updatedWishlist);
 
     } catch (err) {
-      console.error("Add to cart error: ", err);
+      message.error(err.response.data.message);
     }
   };
 
@@ -135,81 +161,208 @@ const WishlistedProductGrid = ({ setFlag }) => {
   };
 
   return (
-    <div className="container mx-auto p-5 relative">
-      {feedbackMessage && (
-        <div
-          className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-first text-white px-4 py-2 rounded shadow-lg"
-          style={{ transition: "opacity 0.5s ease-in-out", zIndex: 9999 }}
-        >
-          {feedbackMessage}
-        </div>
-      )}
-      <div className="flex justify-between items-center mt-24 mb-5">
-        <div className="flex justify-center items-center gap-4 mx-auto">
-          <Input
-            placeholder="Search for products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-72 border-first rounded-full border-2 focus:border-customGreen transition-colors duration-300"
-          />
-          <FilterDropdown
-            filters={filters}
-            onFilterChange={handleFilterChange}
-          />
-        </div>
-      </div>
-      <Row gutter={[16, 16]} className="mt-5">
-        {filteredProducts.map((product) => (
-          <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
-            <div className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-third transform hover:scale-105 hover:shadow-xl transition-all duration-300 ease-in-out m-4">
-              <img
-                className="w-full h-48 object-cover"
-                src={product.image || product.imageUrl}
-                alt={product.name}
-                loading="lazy"
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4">
+          {/* Header Section */}
+          <div className="mb-8">
+            <Title level={2} className="mb-0 text-gray-800 flex items-center justify-center gap-2">
+              My Wishlist
+              <HeartFilled className="text-red-500" />
+            </Title>
+          </div>
+
+          {/* Search and Filter Section */}
+          <Card className="mb-6 shadow-sm border-0">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <Input
+                  prefix={<SearchOutlined className="text-gray-400" />}
+                  placeholder="Search wishlist items..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="max-w-md"
+                  size="large"
               />
-              <div className="p-4">
-                <h2 className="font-bold text-xl">{product.name}</h2>
-                <p className="text-gray-700">
-                  <span className="font-semibold">{currency?.code}</span>{" "}
-                  {(currency?.rate * product.price).toFixed(2)}
-                </p>
-                <StarRating rating={calculateAverageRating(product.ratings)} />
-                <div className="flex justify-evenly items-center w-full">
-                  <Link to={`/products/${product._id}`}>
-                    <Button className="bg-first hover:bg-darkerGreen text-white mt-3 mr-[10px] py-4 px-5 text-lg rounded-lg">
-                      View Details
-                    </Button>
-                  </Link>
-                  <Button
-                    className="bg-first hover:bg-darkerGreen text-white mt-3 mr-[10px] py-4 px-5 text-lg rounded-lg"
-                    onClick={() => addToCart(product._id)}
-                  >
-                    Add to Cart
-                  </Button>
-                  <button
-                    onClick={() => handleWishlistToggle(product._id)}
-                    className={`flex items-center mt-2 ml-2 transition duration-200 ${
-                      wishlist.has(product._id)
-                        ? "bg-red-500 text-white"
-                        : "bg-white text-black border-black border"
-                    } rounded-full p-2 hover:scale-110`}
-                    onMouseEnter={(e) => (e.currentTarget.style.width = "auto")}
-                    onMouseLeave={(e) => (e.currentTarget.style.width = "36px")}
-                  >
-                    <FaHeart
-                      className={`text-lg ${
-                        wishlist.has(product._id) ? "text-white" : "text-black"
-                      }`}
-                    />
-                  </button>
+              <FilterDropdown
+                  filters={filters}
+                  onFilterChange={handleFilterChange}
+              />
+            </div>
+          </Card>
+
+          {/* Feedback Message */}
+          {feedbackMessage && (
+              <div className="fixed top-5 left-1/2 transform -translate-x-1/2 z-50">
+                <div className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+                  {feedbackMessage}
                 </div>
               </div>
-            </div>
-          </Col>
-        ))}
-      </Row>
-    </div>
+          )}
+
+          {/* Products Grid */}
+          <div className="max-w-7xl mx-auto">
+            {loading ? (
+                <div className="flex justify-center items-center h-64">
+                  <Spin size="large" />
+                </div>
+            ) : error ? (
+                <Card className="text-center py-12">
+                  <Empty
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description={
+                        <div className="space-y-4">
+                          <Text className="text-lg text-gray-500">{error}</Text>
+                          <Link to="/products">
+                            <Button
+                                type="primary"
+                                size="large"
+                                icon={<ShoppingCartOutlined />}
+                                className="mt-4 bg-first hover:bg-customGreen"
+                            >
+                              Continue Shopping
+                            </Button>
+                          </Link>
+                        </div>
+                      }
+                  />
+                </Card>
+            ) : (
+                <Row gutter={[24, 24]}>
+                  {filteredProducts.map((product) => (
+                      <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
+                        <Card
+                            hoverable
+                            className="h-full overflow-hidden rounded-lg border-0 shadow-sm transition-all duration-300 hover:shadow-lg"
+                            bodyStyle={{ padding: 0 }}
+                            cover={
+                              <div className="group relative pt-[100%]">
+                                {/* Product Image */}
+                                <img
+                                    src={product.image || product.imageUrl}
+                                    alt={product.name}
+                                    className="absolute top-0 left-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                />
+
+                                {/* Overlay with Actions */}
+                                <div className="absolute inset-0 bg-black bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-20">
+                                  <div className="absolute top-4 right-4 flex flex-col gap-2">
+                                    <Tooltip title="Remove from Wishlist">
+                                      <Button
+                                          shape="circle"
+                                          className={`transition-all duration-300 bg-red-500 border-red-500 hover:bg-red-600`}
+                                          icon={
+                                            <FaHeart
+                                                className="text-white"
+                                            />
+                                          }
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            handleWishlistToggle(product._id);
+                                          }}
+                                      />
+                                    </Tooltip>
+
+                                    <Link to={`/products/${product._id}`}>
+                                      <Tooltip title="View Details">
+                                        <Button
+                                            shape="circle"
+                                            className="bg-white hover:bg-first hover:border-first"
+                                            icon={<FaEye className="text-gray-400 hover:text-white" />}
+                                        />
+                                      </Tooltip>
+                                    </Link>
+                                  </div>
+                                </div>
+                              </div>
+                            }
+                        >
+                          <div className="p-4">
+                            {/* Product Info */}
+                            <Link to={`/products/${product._id}`}>
+                              <div className="mb-3">
+                                <Text strong className="text-lg text-gray-800 hover:text-first transition-colors duration-300">
+                                  {product.name}
+                                </Text>
+                              </div>
+
+                              <div className="space-y-3">
+                                {/* Price and Rating */}
+                                <div className="flex items-center justify-between">
+                                  <Text className="text-xl font-semibold text-first">
+                                    {currency?.code} {(currency?.rate * product.price).toFixed(2)}
+                                  </Text>
+                                  <div className="flex items-center gap-1">
+                                    <StarOutlined className="text-yellow-400" />
+                                    <Text className="text-gray-600">
+                                      {calculateAverageRating(product.ratings).toFixed(1)}
+                                    </Text>
+                                  </div>
+                                </div>
+
+                                {/* Additional Info Tags */}
+                                <div className="flex flex-wrap gap-2">
+                                  {product.ratings.length > 0 && (
+                                      <Tag color="blue">{product.ratings.length} Reviews</Tag>
+                                  )}
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex gap-2 pt-2">
+                                  {
+                                      user && user.userRole === "Tourist" && (
+                                  <Button
+                                      type="primary"
+                                      icon={<ShoppingCartOutlined />}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        addToCart(product._id);
+                                      }}
+                                      className="flex-1 bg-first hover:bg-customGreen"
+                                  >
+                                    Add to Cart
+                                  </Button>
+                                      )}
+
+                                  <Link to={`/products/${product._id}`}>
+                                    <Tooltip title="View Details">
+                                      <Button
+                                          icon={<EyeOutlined />}
+                                          className="border-first text-first hover:bg-first hover:text-white"
+                                      />
+                                    </Tooltip>
+                                  </Link>
+                                </div>
+                              </div>
+                            </Link>
+                          </div>
+                        </Card>
+                      </Col>
+                  ))}
+                </Row>
+            )}
+
+            {!loading && filteredProducts.length === 0 && !error && (
+                <Empty
+                    description={
+                      <div className="space-y-4">
+                        <Text className="text-lg text-gray-500">No items in your wishlist</Text>
+                        <Link to="/products">
+                          <Button
+                              type="primary"
+                              size="large"
+                              icon={<ShoppingCartOutlined />}
+                              className="mt-4 bg-first hover:bg-customGreen"
+                          >
+                            Browse Products
+                          </Button>
+                        </Link>
+                      </div>
+                    }
+                />
+            )}
+          </div>
+        </div>
+      </div>
   );
 };
+
 export default WishlistedProductGrid;
