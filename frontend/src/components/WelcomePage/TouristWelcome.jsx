@@ -336,7 +336,7 @@ const TouristWelcome = ({ setFlag }) => {
                             className="font-bold text-4xl mb-2 transition-transform duration-500 ease-out" // Increased font size
                             style={{ color: "#333333" }}
                           >
-                            {itinerary?.name}hey
+                            {itinerary?.name}
                           </span>
                         }
                         description={

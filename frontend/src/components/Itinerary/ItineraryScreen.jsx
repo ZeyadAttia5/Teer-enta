@@ -430,7 +430,9 @@ const ItineraryScreen = ({ setFlag }) => {
       );
     }
   };
-
+  const handleBookItinerary = (id) => {
+    navigate(`/itinerary/book/${id}`);
+  }
   const onFinish = async (values) => {
     try {
       const formattedAvailableDates = values.availableDates.map(
@@ -630,11 +632,11 @@ const ItineraryScreen = ({ setFlag }) => {
           Add Itinerary
         </Button>
       )}
-      <div className="p-8">
+      <div className="p-8 bg-fourth">
         <div className="mb-6 flex flex-col items-center space-y-4">
           {/* Centered, smaller search bar */}
           <Search
-            // enterButton={<SearchOutlined />}
+            enterButton={<SearchOutlined />}
             placeholder="Search by name, category, or tag..."
             value={searchTerm}
             allowClear
@@ -770,119 +772,151 @@ const ItineraryScreen = ({ setFlag }) => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button2
-              type="danger"
-              icon={<ReloadOutlined />}
-              onClick={resetFilters}
-              className="ml-4 h-9 bg-third"
-            >
-              Remove filters
-            </Button2>
-          </div>
-        </div>
-      </div>
-      {user === null || user?.userRole === "Tourist" ? (
-        <main className="flex flex-wrap justify-center items-center min-h-screen">
-          {sortedItineraries?.map((itinerary, index) => (
-            <div
-              key={index}
-              className="max-w-sm w-1/4 rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
-            >
-              {/* Book Now Circle */}
-              <div className="absolute top-4 left-4 bg-[#58A399] text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
-                <span>Book Now</span>
-              </div>
-
-              <Card
-                onClick={() => navigate(`iternaryDetails/${itinerary?._id}`)}
-                className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
-                style={{ backgroundColor: "#ffffff" }} // Default background color
-              >
-                <Card.Meta
-                  title={
-                    <span
-                      className="font-bold text-4xl mb-2 transition-transform duration-500 ease-out" // Increased font size
-                      style={{ color: "#333333" }}
-                    >
-                      {itinerary?.name}
-                    </span>
-                  }
-                  description={
-                    <div
-                      className="flex flex-col space-y-3"
-                      style={{ color: "#333333" }}
-                    >
-                      {/* Horizontal Line to Split the Card */}
-                      <hr className="my-4 border-t-2 border-[#58A399]" />{" "}
-                      {/* Green line */}
-                      <Tooltip title="Language">
-                        <span className="font-semibold text-lg hover:text-[#58A399]">
-                          <GlobalOutlined style={{ marginRight: 8 }} />
-                          {itinerary?.language}
-                        </span>
-                      </Tooltip>
-                      <Tooltip title="Price">
-                        <span className="font-semibold text-lg hover:text-[#58A399]">
-                          <DollarCircleOutlined style={{ marginRight: 8 }} />
-                          {currency?.code}{" "}
-                          {(itinerary?.price * currency?.rate).toFixed(2)}
-                        </span>
-                      </Tooltip>
-                      <Tooltip title="Accessibility">
-                        <span className="font-semibold text-lg hover:text-[#58A399]">
-                          <TeamOutlined style={{ marginRight: 8 }} />
-                          {itinerary?.accessibility || "N/A"}
-                        </span>
-                      </Tooltip>
-                      <Tooltip title="Travel Route">
-                        <span className="font-semibold text-lg hover:text-[#58A399] flex items-center">
-                          <EnvironmentTwoTone
-                            twoToneColor="#000000" // Set the color to black
-                            style={{ marginRight: 8 }}
-                          />
-                          {itinerary?.pickupLocation}
-                          <span className="mx-2 text-[#333333]">⇢</span>
-                          {itinerary?.dropOffLocation}
-                        </span>
-                      </Tooltip>
+                        {/* Reset Button */}
+                        <Button2
+                            type="primary"
+                            danger
+                            icon={<ReloadOutlined/>}
+                            onClick={resetFilters}
+                            className="ml-4 h-9"
+                        >
+                            Unfilter
+                        </Button2>
                     </div>
-                  }
-                />
-              </Card>
+
+                </div>
+
             </div>
-          ))}
-        </main>
-      ) : (
-        <Table
-          dataSource={sortedItineraries}
-          columns={columns}
-          rowKey="_id"
-          loading={loading}
-          pagination={{ pageSize: 10 }}
-        />
-      )}
-      <Modal
-        title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-        width={1000}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          initialValues={{ isActive: true }}
-        >
-          <Form.Item
-            name="name"
-            label="Itinerary Name"
-            rules={[
-              { required: true, message: "Please enter the itinerary name" },
-            ]}
-          >
-            <Input placeholder="Enter itinerary name" />
-          </Form.Item>
+            {user === null || user?.userRole === "Tourist" ? (
+                <main className="flex flex-wrap justify-center items-center min-h-screen py-10">
+                {sortedItineraries?.map((itinerary, index) => (
+                    <div
+                        key={index}
+                        className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
+                    >
+                        {/* Book Now Circle */}
+                        <div className="absolute top-4 left-4 bg-second text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
+                            <span>Book Now</span>
+                        </div>
+
+                        <Card
+                            className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
+                            style={{ backgroundColor: "#ffffff" }} // Default background color
+                        >
+                            <Card.Meta
+    title={
+        <>
+            <span
+  className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out"
+  style={{ color: "#333333" }}
+>
+  <Tooltip title={itinerary?.name}>
+    {itinerary?.name}
+  </Tooltip>
+  <hr className="my-4 border-t-2 border-second" />
+</span>
+            {/* Travel Route */}
+
+
+            <Tooltip title="Travel Route">
+                <span className="font-semibold text-xl hover:text-third flex items-center mt-2">
+                    <EnvironmentTwoTone
+                        twoToneColor="#000000"
+                        style={{ marginRight: 8 }}
+                    />
+                    {itinerary?.pickupLocation}
+                    <span className="mx-2 text-[#333333]">⇢</span>
+                    {itinerary?.dropOffLocation}
+                </span>
+            </Tooltip>
+        </>
+    }
+
+    description={
+        <div className="flex flex-col space-y-1" style={{ color: "#333333" }}>
+            {/* Horizontal Line to Split the Card */}
+
+            <Tooltip title="Language">
+                <span className="font-semibold text-lg hover:text-third">
+                    <GlobalOutlined style={{ marginRight: 8 }} />
+                    {itinerary?.language}
+                </span>
+            </Tooltip>
+            <Tooltip title="Accessibility">
+                <span className="font-semibold text-lg hover:text-third">
+                    <TeamOutlined style={{ marginRight: 8 }} />
+                    {itinerary?.accessibility || "N/A"}
+                </span>
+            </Tooltip>
+            {/* Price Tooltip at the End */}
+<div className="flex justify-center items-center mt-4">
+    <Tooltip title="Price">
+        <span className="font-semibold text-4xl hover:text-third flex items-center">
+            {currency?.code} {(itinerary?.price * currency?.rate).toFixed(2)}
+        </span>
+    </Tooltip>
+</div>
+
+        </div>
+    }
+/>
+
+                        </Card>
+
+                        <div className="flex justify-center items-center gap-4 p-4">
+                            <Button
+                                onClick={() => navigate(`iternaryDetails/${itinerary?._id}`)}
+                                className="text-white bg-second hover:bg-[#4a8f7a] transition-all duration-300"
+                            >
+                                Show Details
+                            </Button>
+                            {user && user?.userRole === "Tourist" && (
+                                <Button
+                                    onClick={() => handleBookItinerary(itinerary?._id)}
+                                    className="text-white bg-[#496989] hover:bg-[#3b5b68] transition-all duration-300"
+                                >
+                                    Book
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </main>
+
+
+
+
+            ) : (
+                <Table
+                    dataSource={sortedItineraries}
+                    columns={columns}
+                    rowKey="_id"
+                    loading={loading}
+                    pagination={{pageSize: 10}}
+                />
+            )}
+            <Modal
+                title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
+                visible={isModalVisible}
+                onCancel={handleCancel}
+                footer={null}
+                width={1000}
+            >
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={onFinish}
+                    initialValues={{isActive: true}}
+                >
+                    <Form.Item
+                        name="name"
+                        label="Itinerary Name"
+                        rules={[
+                            {required: true, message: "Please enter the itinerary name"},
+                        ]}
+                    >
+                        <Input placeholder="Enter itinerary name"/>
+                    </Form.Item>
 
           <Form.Item
             name="language"
