@@ -14,6 +14,7 @@ import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 import AddUser from "./components/Users/addUser/addUser";
 import BackButton from "./components/shared/BackButton.js";
+import HomePage from "./components/shared/HomePage/HomePage.js";
 import ProductDetails from "./components/Store/productDetails";
 import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
@@ -65,7 +66,7 @@ function AppContent() {
   const [isNavigate, setIsNavigate] = useState(false);
   const location = useLocation();
 
-  const showBackButton = location.pathname !== "/";
+  const showBackButton = location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/signup";
 
   const showDrawer = () => {
     setVisible(true);
@@ -84,7 +85,7 @@ function AppContent() {
   };
   const [navbarColor, setNavbarColor] = useState("first");
   return (
-    <div className="App relative bg-fourth min-h-screen">
+    <div className="App relative">
       {!flag && (
         <DrawerBar
           onClose={onClose}
@@ -120,6 +121,7 @@ function AppContent() {
       <Routes>
         {/* General Routes */}
         <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
+        {/* <Route path="/" element={<HomePage setFlag={setFlag} />} /> */}
         <Route path="/signup" element={<Signup setFlag={setFlag} />} />
         <Route
           path="/login"

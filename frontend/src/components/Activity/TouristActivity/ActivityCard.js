@@ -162,8 +162,8 @@ const ActivityCard = ({
                       </Tooltip>
                     </div>
                   </div>
-                }
-            />
+                
+            
             {/* Buttons */}
             <div className="flex justify-center items-center gap-4 p-0 "> {/* Reduced gap */}
               <Button
@@ -181,7 +181,7 @@ const ActivityCard = ({
                 Location
               </Button>
             </div>
-          </Card>
+          
         </div>
       </main>
   );
