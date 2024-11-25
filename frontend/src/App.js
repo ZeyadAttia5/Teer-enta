@@ -192,14 +192,7 @@ function AppContent() {
           path="/historicalPlace/details/:id"
           element={<ShowHistoricalPlaces setFlag={setFlag} />}
         />
-        <Route
-          path="/reports/*"
-          element={
-            <Routes>
-              <Route path="/users" element={<UserReport />} />
-            </Routes>
-          }
-        />
+        <Route path="/reports/*" element={<UserReport />} />
 
         {/* User Management Routes */}
         <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />

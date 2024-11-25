@@ -14,7 +14,7 @@ import {
 const charts = [
   {
     title: "Admin Revenue Report",
-    component: "area",
+    component: SalesReport,
     api_func: getAdminRevenue,
     roles: ["admin"],
     isMonthlyReports: true,

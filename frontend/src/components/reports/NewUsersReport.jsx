@@ -81,7 +81,7 @@ const NewUsersReport = ({ title }) => {
 
   return (
     <div className="flex-1 min-w-[500px] flex flex-col border p-2 border-black shadow-lg hover:scale-105 transition-all ">
-      <Typography  className="text-center text-lg">{title}</Typography>
+      <Typography.Title  className="text-center text-lg">{title}</Typography.Title>
       <Select
         options={Object.keys(newUsersPerMonth).map((year) => ({
           value: year,
@@ -92,7 +92,7 @@ const NewUsersReport = ({ title }) => {
         className=" self-end"
       />
       <h1 className="text-center">Total Users: {totalUsers}</h1>
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" minHeight={400}>
       <BarChart
         // width={750}
         // height={500}

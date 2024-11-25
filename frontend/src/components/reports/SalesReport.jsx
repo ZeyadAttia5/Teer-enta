@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
-  getActivityReport,
-  getItineraryReport,
-  getOrderReport,
-  getTransportationReport,
-} from "../../api/statistics.ts";
-import {
   Area,
   AreaChart,
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -31,8 +26,7 @@ const months = [
   "December",
   "ALL",
 ];
-// const idKey = "itineraryId";
-// const nameKey = "itineraryName";
+
 const SalesReport = ({
   api_func,
   title,
@@ -52,13 +46,13 @@ const SalesReport = ({
   });
   useEffect(() => {
     api_func().then((res) => {
+      console.log(res.data);
       setData(res.data);
     });
   }, []);
 
   useEffect(() => {
-    if (isMonthlyReports)
-        return transformDataMarkII()
+    if (isMonthlyReports) return transformDataMarkII();
     transformData();
   }, [data, selectedMonth, selectedItem]);
 
@@ -123,7 +117,8 @@ const SalesReport = ({
   };
   const transformDataMarkII = () => {
     let finalAnswer = [];
-    data?.monthlyReports.forEach(({ year, month, revenue }) => {
+    console.log(data, isMonthlyReports);
+    data?.monthlyReports?.forEach(({ year, month, revenue }) => {
       if (year && month) {
         finalAnswer.push({
           year,
@@ -160,46 +155,47 @@ const SalesReport = ({
           placeholder="Select Month"
         />
         {!isMonthlyReports && (
-            <Select
-              options={[
-                ...data.map((item, index) => ({
-                  value: item[idKey],
-                  label: item[nameKey],
-                })),
-                { value: -1, label: "ALL" },
-              ]}
-              value={selectedItem}
-              onChange={(_, obj) => setSelectedItem(obj)}
-              // placeholder="Select Iterna"
-            />
+          <Select
+            options={[
+              ...data.map((item, index) => ({
+                value: item[idKey],
+                label: item[nameKey],
+              })),
+              { value: -1, label: "ALL" },
+            ]}
+            value={selectedItem}
+            onChange={(_, obj) => setSelectedItem(obj)}
+            // placeholder="Select Iterna"
+          />
         )}
       </div>
-      <ResponsiveContainer width="100%" height={400}>
-        <AreaChart
-          //   width={730}
-          //   height={250}
-          data={modifiedData}
-          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-        >
-          <defs>
-            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <XAxis dataKey="label" />
-          <YAxis />
-          <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
-          <Area
-            type="monotone"
-            dataKey="revenue"
-            stroke="#8884d8"
-            fillOpacity={1}
-            fill="url(#colorUv)"
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+      {modifiedData && (
+        <ResponsiveContainer width="100%" minHeight={400}>
+          <AreaChart
+            data={modifiedData}
+            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+          >
+            <defs>
+              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <XAxis dataKey="label" />
+            <YAxis />
+            <CartesianGrid strokeDasharray="3 3" />
+            <Tooltip />
+            <Legend verticalAlign='bottom' height={36}/>
+            <Area
+              type="monotone"
+              dataKey="revenue"
+              stroke="#8884d8"
+              fillOpacity={1}
+              fill="url(#colorUv)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 };
