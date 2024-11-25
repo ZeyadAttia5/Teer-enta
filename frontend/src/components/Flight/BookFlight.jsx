@@ -21,6 +21,7 @@ import {
 } from "@ant-design/icons";
 import AutoComplete from "react-google-autocomplete";
 import { bookFlight, getAirports, getFlightOffers } from "../../api/flights.ts";
+import BookingPayment from "../shared/BookingPayment.jsx";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -371,6 +372,16 @@ const BookFlight = () => {
         </Space>
       ),
     },
+    {
+      title: "Payment",
+      content: (
+        <BookingPayment
+          onBookingClick={form.submit}
+          isloading={loading}
+          amount={selectedFlight && selectedFlight.price.total}
+        />
+      ),
+    },
   ];
 
   const handleNextStep = async () => {
@@ -412,6 +423,7 @@ const BookFlight = () => {
         ]);
         console.log(data.data);
         message.success("Booking submitted successfully!");
+        setCurrentStep(0);
       } else {
         message.error("Please login to book a flight");
       }
@@ -475,11 +487,11 @@ const BookFlight = () => {
             </Button>
           )}
 
-          {currentStep === steps?.length - 1 && (
+          {/* {currentStep === steps?.length - 1 && (
             <Button type="primary" onClick={() => form.submit()}>
               Complete Booking
             </Button>
-          )}
+          )} */}
         </div>
       </Form>
 
