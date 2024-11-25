@@ -33,7 +33,7 @@ const { Text, Title } = Typography;
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 
-const HotelOfferCard = ({ offer,setLoading }) => {
+const HotelOfferCard = ({ offer, setLoading }) => {
   const { hotel, offers } = offer;
   const mainOffer = offers[0];
 
@@ -49,27 +49,27 @@ const HotelOfferCard = ({ offer,setLoading }) => {
     setLoading(true);
     try {
       const user = localStorage.getItem("user");
-      if(user){
-        const payments= [
+      if (user) {
+        const payments = [
           {
-            "method": "creditCard",
-            "card": {
-              "vendorCode": "VI",
-              "cardNumber": "4111111111111111",
-              "expiryDate": "2024-10",
-              "holderName": "John Doe"
-            }
-          }
-        ]
+            method: "creditCard",
+            card: {
+              vendorCode: "VI",
+              cardNumber: "4111111111111111",
+              expiryDate: "2024-10",
+              holderName: "John Doe",
+            },
+          },
+        ];
         let { data } = await bookHotel({
           hotel: hotel,
           offer: mainOffer,
           guests: mainOffer.guests,
-          payments
+          payments,
         });
         console.log("Hotel booked:", data);
         message.success("Hotel booked successfully!");
-      }else{
+      } else {
         message.error("You need to login first");
       }
     } catch (error) {
@@ -83,7 +83,7 @@ const HotelOfferCard = ({ offer,setLoading }) => {
   return (
     <Card
       hoverable
-      style={{ width: "100%", marginBottom: 16 }}
+      style={{ width: "75%", marginBottom: 16 }}
       onClick={() => console.log("Selected offer:", mainOffer?.id)}
     >
       <Space direction="vertical" size="middle" style={{ width: "100%" }}>
@@ -101,7 +101,9 @@ const HotelOfferCard = ({ offer,setLoading }) => {
           <Col>
             <Tag
               color={
-                mainOffer?.policies?.paymentType === "deposit" ? "blue" : "green"
+                mainOffer?.policies?.paymentType === "deposit"
+                  ? "blue"
+                  : "green"
               }
             >
               {mainOffer?.policies?.paymentType}
@@ -161,11 +163,12 @@ const HotelOfferCard = ({ offer,setLoading }) => {
         </Row>
 
         {/* Cancellation Policy */}
-        {(mainOffer?.policies?.cancellations && mainOffer?.policies?.cancellations[0]?.description) && (
-          <Text type="danger" style={{ fontSize: 12 }}>
-            {mainOffer?.policies?.cancellations[0]?.description?.text}
-          </Text>
-        )}
+        {mainOffer?.policies?.cancellations &&
+          mainOffer?.policies?.cancellations[0]?.description && (
+            <Text type="danger" style={{ fontSize: 12 }}>
+              {mainOffer?.policies?.cancellations[0]?.description?.text}
+            </Text>
+          )}
 
         {/* Action Button */}
         <Button
@@ -183,7 +186,7 @@ const HotelOfferCard = ({ offer,setLoading }) => {
   );
 };
 
-const ListOffers = ({ hotelOffers,setLoading }) => {
+const ListOffers = ({ hotelOffers, setLoading }) => {
   const [searchText, setSearchText] = React.useState("");
   const [filteredOffers, setFilteredOffers] = useState(hotelOffers);
 
@@ -228,7 +231,7 @@ const ListOffers = ({ hotelOffers,setLoading }) => {
         dataSource={filteredOffers}
         renderItem={(offer) => (
           <List.Item>
-            <HotelOfferCard offer={offer} setLoading={setLoading}/>
+            <HotelOfferCard offer={offer} setLoading={setLoading} />
           </List.Item>
         )}
         pagination={{
@@ -288,9 +291,9 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
             className="w-full border shadow-sm p-2 rounded"
             apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
             onPlaceSelected={(place) => {
-             console.log("Place selected:", !place);
-             if (!place?.address_components)
-               return message.error("Invalid city selected");
+              console.log("Place selected:", !place);
+              if (!place?.address_components)
+                return message.error("Invalid city selected");
               let destinationCity = place?.address_components[0].long_name;
 
               form.setFieldsValue({

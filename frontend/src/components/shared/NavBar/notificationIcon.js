@@ -12,9 +12,9 @@ const NotificationIcon = ({ navbarcolor, onClick }) => {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="w-6 h-6"
-        fill="none"
+        fill="white"
         viewBox="0 0 24 24"
-        stroke={navbarcolor === "first" ? "white" : "black"}
+        stroke={navbarcolor === "first" ? "yellow" : "black"}
       >
         <path
           strokeLinecap="round"
@@ -24,7 +24,7 @@ const NotificationIcon = ({ navbarcolor, onClick }) => {
         />
       </svg>
       {unreadCount > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+        <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
           {unreadCount}
         </span>
       )}

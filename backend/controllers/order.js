@@ -8,6 +8,8 @@ const brevoService = new BrevoService(brevoConfig);
 const ProductOutOfStockTemplate = require("../Util/mailsHandler/mailTemplets/6ProductOutOfStockTemplate");
 const FlaggedActivityTemplate = require("../Util/mailsHandler/mailTemplets/7FlaggedActivityTemplate");
 const PromoCodes = require("../models/PromoCodes");
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 exports.getOrders = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -67,7 +69,50 @@ exports.getOrder = async (req, res) => {
     }
 }
 
+exports.getCartDetails = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await Tourist.findById(userId).populate('cart.product');
 
+        if (!user || !user.cart || user.cart.length === 0) {
+            return res.status(400).json({
+                message: 'No products in the cart.',
+                cart: [],
+                totalPrice: 0
+            });
+        }
+
+        let totalPrice = 0;
+        const cartItems = user.cart.map(item => {
+            const itemTotal = item.quantity * item.product.price;
+            totalPrice += itemTotal;
+
+            return {
+                product: {
+                    _id: item.product._id,
+                    name: item.product.name,
+                    price: item.product.price,
+                    quantity: item.product.quantity, // available stock
+                    imageUrl: item.product.imageUrl // if available
+                },
+                quantity: item.quantity,
+                itemTotal: itemTotal
+            };
+        });
+            console.log("here",cartItems);
+        res.status(200).json({
+            cart: cartItems,
+            totalPrice: totalPrice,
+            totalItems: cartItems.length
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            message: 'Error fetching cart details',
+            error: err.message
+        });
+    }
+};
 
 exports.checkOutOrder = async (req, res) => {
     try {
@@ -116,18 +161,25 @@ exports.checkOutOrder = async (req, res) => {
             totalPrice += cartItem.quantity * product.price;
         }
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
-        existingPromoCode.usageLimit -= 1;
-        await existingPromoCode.save();
+        if(promoCode){
+            existingPromoCode.usageLimit -= 1;
+            await existingPromoCode.save();
+        }
         if (paymentMethod === 'wallet') {
             if (user.wallet < totalPrice) {
                 return res.status(400).json({ message: 'Insufficient funds in wallet.' });
             }
             console.log(totalPrice);
             user.wallet -= totalPrice; // Deduct from wallet
-        } else if (paymentMethod === 'credit_card') {
-            // Here you would integrate with Stripe or your payment provider
-                // For example, you can create a payment intent with Stripe and handle it accordingly
-            // await stripe.paymentIntents.create({ amount: totalPrice, currency: 'usd', ... });
+        }  else if (paymentMethod === 'Card') {
+            await stripe.paymentIntents.create({
+                amount: Math.round(totalPrice* 100),
+                currency: 'EGP',
+                payment_method_types: ['card'],
+            });
+        } else if(paymentMethod === "cash_on_delivery") {
+            // Do
+
         } else {
             return res.status(400).json({ message: 'Invalid payment method selected.' });
         }
@@ -137,8 +189,8 @@ exports.checkOutOrder = async (req, res) => {
             products,
             totalPrice,
             deliveryAddress,
-            // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
             status: 'Pending',
+            paymentMethod:paymentMethod ,
             isActive: true,
         });
 

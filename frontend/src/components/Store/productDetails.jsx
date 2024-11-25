@@ -1,23 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import StarRating from "../shared/starRating"; // Import StarRating component
-import { Button, Typography, Spin, Divider } from "antd";
-import { getProduct } from "../../api/products.ts"; // Import Ant Design components
-import Reviews from "../Store/reviews.jsx";
-import FeedbackForm from "../shared/FeedBackForm/FeedbackForm.jsx";
-import { message } from "antd";
-import { FaHeart } from "react-icons/fa";
 import {
-  getProductReviews,
-  getProductRatings,
-  addReviewToProduct,
+  Button,
+  Typography,
+  Card,
+  Skeleton,
+  Rate,
+  message,
+  Divider,
+  Alert,
+  Image, Spin
+} from "antd";
+import {
+  ShoppingCartOutlined,
+  RollbackOutlined,
+  ShopOutlined,
+  UserOutlined,
+  TagOutlined,
+  CheckCircleOutlined
+} from "@ant-design/icons";
+import { FaHeart } from "react-icons/fa";
+import {addToCart, addToWishlist, deleteWishlistProduct, getWishlist} from "../../api/cart.ts";
+import {
   addRatingToProduct,
+  addReviewToProduct,
+  getProduct,
+  getProductRatings,
+  getProductReviews
 } from "../../api/products.ts";
-import ProductReviews from "../Store/productReviews.jsx";
-import { getMyCurrency } from "../../api/profile.ts"; // Import the ProductReviews component
-import { addToWishlist, deleteWishlistProduct, getWishlist } from "../../api/cart.ts";
-const { Title, Paragraph } = Typography;
+import {getMyCurrency} from "../../api/profile.ts";
+import ProductReviews from "./productReviews";
+import FeedbackForm from "../shared/feedBackForm";
 
+const { Title, Text } = Typography;
 const ProductDetails = ({ setFlag }) => {
   setFlag(false);
   const { id } = useParams(); // Get the product ID from the URL parameters
@@ -29,6 +44,9 @@ const ProductDetails = ({ setFlag }) => {
   const [currency, setCurrency] = useState(null);
   const [refreshReviews, setRefreshReviews] = useState(false); // NEW STATE
   const [isWished, setIsWished] = useState(false); // New state for archive status
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
+
 
   const user = JSON.parse(localStorage.getItem("user"));
   const onSubmit = async (values) => {
@@ -67,6 +85,33 @@ const ProductDetails = ({ setFlag }) => {
     }
   };
 
+  const handleAddToCart = async () => {
+    if (isAddingToCart) return;
+
+    try {
+      setIsAddingToCart(true);
+      await addToCart(product._id);
+      message.success({
+        content: 'Added to cart successfully!',
+        icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />
+      });
+        if (isWished === true) {
+            await deleteWishlistProduct(product._id);
+            setIsWished(false);
+        }
+      setAddedToCart(true);
+
+      // Reset the added state after 2 seconds
+      setTimeout(() => {
+        setAddedToCart(false);
+      }, 2000);
+    } catch (error) {
+      message.error(error.response.data.message);
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -74,16 +119,17 @@ const ProductDetails = ({ setFlag }) => {
         setProduct(response.data);
 
         // Get the wishlist and check if the product id exists there
-        const wishlistResponse = await getWishlist();
-        if (!wishlistResponse.data.wishlist || wishlistResponse.status === 404)
-          return;
-        else {
-          const wishlist = new Set(
-            wishlistResponse.data.wishlist.map((product) => product._id)
-          );
-          setIsWished(wishlist.has(id));
+        if(user && user.userRole === "Tourist") {
+          const wishlistResponse = await getWishlist();
+          if (!wishlistResponse.data.wishlist || wishlistResponse.status === 404)
+            setIsWished(false);
+          else {
+            const wishlist = new Set(
+                wishlistResponse.data.wishlist.map((product) => product._id)
+            );
+            setIsWished(wishlist.has(id));
+          }
         }
-
         // other product fetching and state updates here...
       } catch (err) {
         setError(err.message);
@@ -157,102 +203,165 @@ const ProductDetails = ({ setFlag }) => {
   const averageRating = calculateAverageRating(product.ratings);
 
   return (
-    <div className="w-full min-h-screen bg-[#E0F0EE] py-16 px-5">
-      <div className="flex flex-col md:flex-row bg-[#496989] shadow-lg rounded-lg overflow-hidden">
-        {/* Product Image */}
-        <div className="md:w-1/2">
-          <img
-            src={product.image || product.imageUrl}
-            alt={product.name}
-            className="w-full h-full object-cover transition duration-300 ease-in-out transform hover:scale-105"
-          />
-        </div>
-
-        {/* Product Details */}
-        <div className="md:w-1/2 p-6 flex flex-col justify-between bg-white">
-          <div>
-            <Title level={2} className="text-[#58A399]">
-              {product.name}
-            </Title>
-            <div className="flex items-center space-x-2 mb-4">
-              <StarRating rating={averageRating} />
-              <span className="text-[#58A399] text-lg">
-                {averageRating.toFixed(1)} / 5
-              </span>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+        {loading ? (
+            <Card className="max-w-7xl mx-auto">
+              <Skeleton active paragraph={{ rows: 4 }} />
+            </Card>
+        ) : error ? (
+            <div className="text-center">
+              <Alert
+                  message="Error"
+                  description={error}
+                  type="error"
+                  showIcon
+              />
             </div>
+        ) : (
+            <>
+              <Card
+                  className="max-w-7xl mx-auto shadow-xl rounded-2xl overflow-hidden bg-white"
+                  bodyStyle={{ padding: 0 }}
+              >
+                <div className="flex flex-col lg:flex-row">
+                  {/* Image Section with Fixed Ratio */}
+                  <div className="lg:w-1/2 relative">
+                    <div className="relative" style={{paddingTop: '75%'}}> {/* 4:3 aspect ratio */}
+                      <img
+                          src={product.image || product.imageUrl}
+                          alt={product.name}
+                          className="absolute inset-0 w-full h-full object-contain hover:object-cover transition-all duration-500"
+                          style={{
+                            backgroundColor: '#f5f5f5',
+                            objectFit: 'contain'
+                          }}
+                      />
+                      {user && user.userRole === "Tourist" && (
+                          <button
+                              onClick={handleWishToggle}
+                              className={`absolute top-4 right-4 p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 ${
+                                  isWished
+                                      ? 'bg-red-500 hover:bg-red-600'
+                                      : 'bg-white hover:bg-gray-100'
+                              }`}
+                          >
+                            <FaHeart className={`text-xl ${isWished ? 'text-white' : 'text-gray-400'}`}/>
+                          </button>
+                      )}
+                    </div>
+                  </div>
 
-            <Divider />
+                  {/* Details Section */}
+                  <div className="lg:w-1/2 p-8">
+                    <div className="space-y-6">
+                      {/* Title and Rating */}
+                      <div>
+                        <Title level={2} className="text-gray-800 mb-2 font-bold">
+                          {product.name}
+                        </Title>
+                        <div className="flex items-center gap-3">
+                          <Rate disabled defaultValue={averageRating} className="text-yellow-400" />
+                          <Text className="text-lg text-gray-600">
+                            ({averageRating.toFixed(1)})
+                          </Text>
+                        </div>
+                      </div>
 
-            <Paragraph className="text-lg font-semibold text-[#58A399]">
-              Price:{" "}
-              <span className="text-xl">
-                {currency?.code} {(currency?.rate * product.price).toFixed(2)}
-              </span>
-            </Paragraph>
-            <Paragraph className="text-lg font-semibold">
-              Available Quantity:{" "}
-              <span className="text-[#58A399]">{product.quantity}</span>
-            </Paragraph>
-            <Paragraph className="text-lg font-semibold">
-              Seller:{" "}
-              <span className="text-[#58A399]">
-                {product.createdBy.userRole === "Admin"
-                  ? "Teer Enta"
-                  : product.createdBy.username}
-              </span>
-            </Paragraph>
-            <Paragraph className="mt-4 text-gray-700 text-base">
-              {product.description}
-            </Paragraph>
+                      <Divider className="my-6" />
 
-            {user && user.userRole === "Tourist" && (
-              <div className="flex items-center mt-1 space-x-6">
-                {/* Add to Cart Button */}
-                <Button
-                  type="primary"
-                  className="mt-6 bg-[#58A399] text-white hover:bg-[#A8CD9F] w-full text-lg font-bold py-3 rounded-lg transition duration-300 ease-in-out"
-                >
-                  Add to Cart
-                </Button>
+                      {/* Price and Details */}
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-3 bg-green-50 p-4 rounded-lg">
+                          <TagOutlined className="text-2xl text-green-500" />
+                          <Text className="text-3xl font-bold text-green-600">
+                            {currency?.code} {(currency?.rate * product.price).toFixed(2)}
+                          </Text>
+                        </div>
 
-                {/* Archive (Add to Wishlist) Button */}
-                <button
-                  onClick={() => handleWishToggle(product._id)}
-                  className={`flex items-center mt-2 ml-2 transition duration-200 ${
-                    isWished
-                      ? "bg-red-500 text-white"
-                      : "bg-white text-black border-black border"
-                  } rounded-full p-2 hover:scale-110`}
-                  onMouseEnter={(e) => (e.currentTarget.style.width = "auto")}
-                  onMouseLeave={(e) => (e.currentTarget.style.width = "36px")}
-                >
-                  <FaHeart
-                    className={`text-lg ${
-                      isWished ? "text-white" : "text-black"
-                    }`}
-                  />
-                </button>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg">
+                            <ShopOutlined className="text-xl text-blue-500" />
+                            <div>
+                              <Text className="text-sm text-blue-400 block">Available Stock</Text>
+                              <Text className="text-lg font-bold text-blue-600">{product.quantity}</Text>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg">
+                            <UserOutlined className="text-xl text-purple-500" />
+                            <div>
+                              <Text className="text-sm text-purple-400 block">Seller</Text>
+                              <Text className="text-lg font-bold text-purple-600">
+                                {product.createdBy.userRole === "Admin" ? "Teer Enta" : product.createdBy.username}
+                              </Text>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <div className="bg-gray-50 p-6 rounded-lg">
+                        <Text className="text-gray-700 leading-relaxed text-lg">
+                          {product.description}
+                        </Text>
+                      </div>
+
+                      {/* Actions */}
+                      {user && user.userRole === "Tourist" && (
+                          <div className="flex gap-4 mt-8">
+                            <Button
+                                type="primary"
+                                size="large"
+                                icon={<ShoppingCartOutlined />}
+                                onClick={handleAddToCart}
+                                loading={isAddingToCart}
+                                className={`flex-1 h-14 text-lg font-semibold transition-all duration-300 transform hover:scale-102 ${
+                                    addedToCart
+                                        ? 'bg-green-500 hover:bg-green-600'
+                                        : 'bg-blue-500 hover:bg-blue-600'
+                                } border-none`}
+                            >
+                              {isAddingToCart ? 'Adding...' : addedToCart ? 'Added to Cart!' : 'Add to Cart'}
+                            </Button>
+                          </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Navigation */}
+              <div className="max-w-7xl mx-auto mt-8 flex justify-between items-center">
+                <Link to="/products">
+                  <Button
+                      icon={<RollbackOutlined />}
+                      size="large"
+                      className="flex items-center gap-2 hover:bg-gray-100 h-12 px-6"
+                  >
+                    Back to Products
+                  </Button>
+                </Link>
               </div>
+
+              {/* Feedback and Reviews Section */}
+              <div className="max-w-7xl mx-auto mt-12 space-y-8">
+                {user && user.userRole === "Tourist" && (!hasReviewedOrRated && (
+                  <Card className="shadow-md rounded-lg">
+                  <Title level={3} className="mb-6 font-bold">Leave Your Feedback
+              </Title>
+              <FeedbackForm entity={product} onSubmit={onSubmit}/>
+            </Card>
+                    )
             )}
-          </div>
-        </div>
+
+                <Card className="shadow-md rounded-lg">
+                  <Title level={3} className="mb-6 font-bold">Product Reviews</Title>
+                  <ProductReviews productId={id} refresh={refreshReviews} />
+                </Card>
+              </div>
+            </>
+        )}
       </div>
-
-      {/* Back to Products Button */}
-      <Link to="/products" className="block mt-8 text-center">
-        <Button
-          type="default"
-          className="bg-[#F0F4F8] text-[#02735F] hover:bg-[#E0E8F0] hover:text-[#039F7B] border-none rounded-lg transition duration-300 ease-in-out px-6 py-3"
-        >
-          Back to Products
-        </Button>
-      </Link>
-
-      {!hasReviewedOrRated && (
-        <FeedbackForm entity={product} onSubmit={onSubmit} />
-      )}
-      <ProductReviews productId={id} refresh={refreshReviews} />
-    </div>
   );
 };
 
