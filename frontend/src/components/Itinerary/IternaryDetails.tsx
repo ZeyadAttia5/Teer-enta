@@ -150,7 +150,7 @@ const ItineraryDetails: React.FC = () => {
   return (
     <div className="items-center">
       <div className="min-h-screen p-8">
-        <BackButton />
+        
         <Space
           direction="vertical"
           size="large"

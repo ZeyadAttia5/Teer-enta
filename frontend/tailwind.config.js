@@ -11,6 +11,7 @@ module.exports = {
         third: "#9DB2BF",
         fourth: "#DDE6ED",
         bg: "#f9f9f9",
+        fifth: "#686d7e",
       },
       keyframes: {
         "tourist-background-keyframe": {
@@ -37,7 +38,7 @@ module.exports = {
         "tourist-background": "tourist-background-keyframe 5s linear infinite"
       },
       backgroundSize: {
-        'fit': '100% 100%',
+        'fit': '100% 80%',
       },
     },
   },

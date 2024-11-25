@@ -105,13 +105,6 @@ const ActivityCard = ({
             {name}
           </h2>
 
-          {/* <Button
-            onClick={() => handleActivityDetails(id)}
-            className="rounded-full bg-third text-white border-white hover:bg-second hover:text-third transition duration-200 text-sm md:text-base font-bold"
-            style={{ border: "2px solid white" }}
-          >
-            See more
-          </Button> */}
         </div>
 
         {/* Horizontal line */}

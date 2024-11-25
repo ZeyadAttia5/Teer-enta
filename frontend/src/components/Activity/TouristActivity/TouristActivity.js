@@ -321,7 +321,6 @@ const TouristActivity = ({ setFlag }) => {
     }
     return acc;
   }, []);
-
   return (
     <div className="p-0 bg-fourth">
       {/* <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p> */}
@@ -489,6 +488,7 @@ const TouristActivity = ({ setFlag }) => {
             </Checkbox>
             {filteredActivities?.length > 0 ? (
               filteredActivities?.map((place) => (
+                
                 // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
                 <ActivityCard
                   id={place._id}
@@ -507,7 +507,7 @@ const TouristActivity = ({ setFlag }) => {
                       ? place.preferenceTags.map((tag) => tag.tag)
                       : []
                   }
-                  image={place.imagePath}
+                  
                   averageRating={place.averageRating} // Pass average rating to ActivityCard
                   isSaved={place.isSaved} // Pass isSaved to ActivityCard
                   currencyCode={currency?.code}
