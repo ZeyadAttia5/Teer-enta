@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -34,7 +33,7 @@ const { Text, Title } = Typography;
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 
-const HotelOfferCard = ({ offer,setLoading,setOffer,setStep }) => {
+const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   const { hotel, offers } = offer;
   const mainOffer = offers[0];
 
@@ -46,42 +45,47 @@ const HotelOfferCard = ({ offer,setLoading,setOffer,setStep }) => {
     });
   };
 
-  const book = async () => {
-    const payments= [
+  const bookOffer = async () => {
+    const payments = [
       {
-        "method": "creditCard",
-        "card": {
-          "vendorCode": "VI",
-          "cardNumber": "4111111111111111",
-          "expiryDate": "2024-10",
-          "holderName": "John Doe"
-        }
-      }
-    ]
+        method: "creditCard",
+        card: {
+          vendorCode: "VI",
+          cardNumber: "4111111111111111",
+          expiryDate: "2024-10",
+          holderName: "John Doe",
+        },
+      },
+    ];
     setOffer({
       hotel: hotel,
       offer: mainOffer,
       guests: mainOffer.guests,
-      payments
-    })
-    setStep(2)
+      payments,
+    });
+    setStep(2);
   };
 
   return (
     <Card
       hoverable
-      style={{ width: "75%", marginBottom: 16 }}
+      className="w-3/4 mb-4 p-4 bg-white shadow-lg h-[500px] relative"
+      classNames={{ body: "h-full relative" }}
       onClick={() => console.log("Selected offer:", mainOffer?.id)}
     >
-      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-        {/* Header Section */}
+      <Space
+        direction="vertical"
+        size="middle"
+        className="w-full h-full  "
+        classNames={{ item: "h-full" }}
+      >
         <Row justify="space-between" align="top">
           <Col>
-            <Title level={4} style={{ marginBottom: 8 }}>
+            <Title level={4} className="mb-2 text-[#1a2b49]">
               {hotel?.name}
             </Title>
             <Space>
-              <EnvironmentOutlined style={{ color: "#666" }} />
+              <EnvironmentOutlined className="text-[#666]" />
               <Text type="secondary">{hotel?.cityCode}</Text>
             </Space>
           </Col>
@@ -98,12 +102,11 @@ const HotelOfferCard = ({ offer,setLoading,setOffer,setStep }) => {
           </Col>
         </Row>
 
-        {/* Dates Section */}
         <Row gutter={24}>
           <Col span={12}>
             <Space direction="vertical" size="small">
               <Space>
-                <CalendarOutlined style={{ color: "#666" }} />
+                <CalendarOutlined className="text-[#666]" />
                 <Text type="secondary">Check-in</Text>
               </Space>
               <Text strong>{formatDate(mainOffer?.checkInDate)}</Text>
@@ -112,7 +115,7 @@ const HotelOfferCard = ({ offer,setLoading,setOffer,setStep }) => {
           <Col span={12}>
             <Space direction="vertical" size="small">
               <Space>
-                <CalendarOutlined style={{ color: "#666" }} />
+                <CalendarOutlined className="text-[#666]" />
                 <Text type="secondary">Check-out</Text>
               </Space>
               <Text strong>{formatDate(mainOffer?.checkOutDate)}</Text>
@@ -120,15 +123,13 @@ const HotelOfferCard = ({ offer,setLoading,setOffer,setStep }) => {
           </Col>
         </Row>
 
-        {/* Guests Section */}
         <Space>
-          <UserOutlined style={{ color: "#666" }} />
+          <UserOutlined className="text-[#666]" />
           <Text type="secondary">{mainOffer?.guests?.adults} Adults</Text>
         </Space>
 
-        <Divider style={{ margin: "12px 0" }} />
+        <Divider className="my-3" />
 
-        {/* Price and Room Section */}
         <Row justify="space-between" align="bottom">
           {mainOffer?.room?.typeEstimated && (
             <Col>
@@ -142,38 +143,45 @@ const HotelOfferCard = ({ offer,setLoading,setOffer,setStep }) => {
             <br />
             <Space>
               <EuroOutlined />
-              <Text strong style={{ fontSize: 20 }}>
+              <Text strong className="text-2xl">
                 {parseFloat(mainOffer?.price?.total).toLocaleString()}
               </Text>
             </Space>
           </Col>
         </Row>
-
-        {/* Cancellation Policy */}
-        {mainOffer?.policies?.cancellations &&
-          mainOffer?.policies?.cancellations[0]?.description && (
-            <Text type="danger" style={{ fontSize: 12 }}>
-              {mainOffer?.policies?.cancellations[0]?.description?.text}
-            </Text>
-          )}
-
-        {/* Action Button */}
-        <Button
-          type="primary"
-          block
-          onClick={(e) => {
-            // e.stopPropagation();
-            book();
+        <Col
+          style={{
+            padding: 0,
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            left: 0,
           }}
         >
-          Book
-        </Button>
+          {mainOffer?.policies?.cancellations &&
+            mainOffer?.policies?.cancellations[0]?.description && (
+              <Text type="danger" className="text-xs">
+                {mainOffer?.policies?.cancellations[0]?.description?.text}
+              </Text>
+            )}
+
+          <Button
+            type="primary"
+            block
+            className="bg-[#1a2b49] border-[#1a2b49] "
+            onClick={() => {
+              bookOffer();
+            }}
+          >
+            Book
+          </Button>
+        </Col>
       </Space>
     </Card>
   );
 };
 
-const ListOffers = ({ hotelOffers,setLoading,setOffer,setStep }) => {
+const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
   const [searchText, setSearchText] = React.useState("");
   const [filteredOffers, setFilteredOffers] = useState(hotelOffers);
 
@@ -188,10 +196,12 @@ const ListOffers = ({ hotelOffers,setLoading,setOffer,setStep }) => {
   };
 
   return (
-    <div style={{ padding: "24px" }}>
-      <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
+    <div className="p-6">
+      <Row justify="space-between" align="middle" className="mb-6">
         <Col>
-          <Title level={2}>Hotel Offers</Title>
+          <Title level={2} className="text-[#1a2b49]">
+            Hotel Offers
+          </Title>
         </Col>
         <Col span={8}>
           <Search
@@ -218,7 +228,12 @@ const ListOffers = ({ hotelOffers,setLoading,setOffer,setStep }) => {
         dataSource={filteredOffers}
         renderItem={(offer) => (
           <List.Item>
-            <HotelOfferCard offer={offer} setLoading={setLoading}  setOffer={setOffer} setStep={setStep}/>
+            <HotelOfferCard
+              offer={offer}
+              setLoading={setLoading}
+              setOffer={setOffer}
+              setStep={setStep}
+            />
           </List.Item>
         )}
         pagination={{
@@ -259,7 +274,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
   };
 
   return (
-    <Card style={{ maxWidth: 600, margin: "24px auto" }}>
+    <Card className="max-w-xl mx-auto my-6 p-6 bg-[#DDE6ED]">
       <Form
         form={form}
         layout="vertical"
@@ -297,7 +312,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
           rules={[{ required: true, message: "Please select your dates" }]}
         >
           <RangePicker
-            style={{ width: "100%" }}
+            className="w-full"
             size="large"
             format="YYYY-MM-DD"
             placeholder={["Check-in", "Check-out"]}
@@ -315,7 +330,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
           <InputNumber
             min={1}
             max={10}
-            style={{ width: "100%" }}
+            className="w-full"
             size="large"
             prefix={<UserOutlined />}
           />
@@ -327,6 +342,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
             htmlType="submit"
             block
             size="large"
+            className="bg-[#1a2b49] border-[#1a2b49]"
             icon={<SearchOutlined />}
           >
             Search Hotels
@@ -334,8 +350,12 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
         </Form.Item>
       </Form>
 
-      <Space direction="vertical" style={{ width: "100%", marginTop: 16 }}>
-        <Button block onClick={() => form.resetFields()}>
+      <Space direction="vertical" className="w-full mt-4">
+        <Button
+          block
+          onClick={() => form.resetFields()}
+          className="bg-[#9DB2BF] border-[#9DB2BF]"
+        >
           Reset Form
         </Button>
       </Space>
@@ -347,20 +367,20 @@ const BookHotel = () => {
   const [step, setStep] = useState(0);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [offer, setOffer] = useState(null)
-  
+  const [offer, setOffer] = useState(null);
+
   const book = async () => {
     setLoading(true);
     try {
       const user = localStorage.getItem("user");
-      if(user){
+      if (user) {
         let { data } = await bookHotel(offer);
         console.log("Hotel booked:", data);
         message.success("Hotel booked successfully!");
-      }else{
+      } else {
         message.error("You need to login first");
       }
-      setStep(0)
+      setStep(0);
     } catch (error) {
       console.log("Error booking hotel:", error);
       message.error(error.response.data.message);
@@ -381,20 +401,29 @@ const BookHotel = () => {
     },
     {
       title: "Hotel Offers",
-      content: <ListOffers hotelOffers={offers} setLoading={setLoading} setOffer={setOffer} setStep={setStep} />,
+      content: (
+        <ListOffers
+          hotelOffers={offers}
+          setLoading={setLoading}
+          setOffer={setOffer}
+          setStep={setStep}
+        />
+      ),
     },
     {
-      title:'Payment',
-      content:<BookingPayment 
-                onBookingClick={book} 
-                isloading={loading} 
-                amount={offer && offer.offer.price.total}
-                />
-    }
+      title: "Payment",
+      content: (
+        <BookingPayment
+          onBookingClick={book}
+          isloading={loading}
+          amount={offer && offer.offer.price.total}
+        />
+      ),
+    },
   ];
   return (
-    <Card className="w-11/12 my-20 mx-auto shadow">
-      <Title level={4} className="mb-6">
+    <Card className="w-4/5 my-5 mx-auto p-6 bg-[#f9f9f9] shadow-lg">
+      <Title level={4} className="mb-6 text-[#1a2b49]">
         Book Your Hotel
       </Title>
       <Steps current={step} items={steps} className="mb-8" />
@@ -409,16 +438,7 @@ const BookHotel = () => {
         {step > 0 && (
           <Button onClick={() => setStep(step - 1)}>Previous</Button>
         )}
-        {/* {step < steps?.length - 1 && (
-          <Button type="primary" onClick={() => setStep(step + 1)}>
-            Next
-          </Button>
-        )}
-        {step === steps?.length - 1 && (
-          <Button type="primary">Complete Booking</Button>
-        )} */}
       </div>
-      {/* </Form> */}
     </Card>
   );
 };
