@@ -6,7 +6,7 @@ module.exports = {
       colors: {
         customGreen: '#02735F', // Your custom green color
         darkerGreen: '#075B4C', 
-        first: "#27374D",
+        first: "#1a2b49",
         second: "#526D82",
         third: "#9DB2BF",
         fourth: "#DDE6ED",
