@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Switch, notification, Popconfirm } from 'antd';
+import { Table, Button, Modal, Form, Input, Switch, notification, Popconfirm, ConfigProvider } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { getPreferenceTags, createPreferenceTag, updatePreferenceTag, deletePreferenceTag } from '../../api/preferenceTags.ts';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const { Item } = Form;
 
-const PreferenceTags = ({setFlag}) => {
-  setFlag(false);
+const PreferenceTags = ({ setFlag }) => {
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -14,10 +13,10 @@ const PreferenceTags = ({setFlag}) => {
   const [currentTag, setCurrentTag] = useState(null);
   const [form] = Form.useForm();
 
-  // Fetch tags when the component loads
   useEffect(() => {
+    setFlag(false);
     fetchTags();
-  }, []);
+  }, [setFlag]);
 
   const fetchTags = async () => {
     setLoading(true);
@@ -25,7 +24,11 @@ const PreferenceTags = ({setFlag}) => {
       const response = await getPreferenceTags();
       setTags(response.data);
     } catch (error) {
-      notification.error({ message: 'Error fetching preference tags' });
+      notification.error({
+        message: 'Error',
+        description: 'Failed to fetch preference tags',
+        className: 'bg-white shadow-lg'
+      });
     } finally {
       setLoading(false);
     }
@@ -49,10 +52,18 @@ const PreferenceTags = ({setFlag}) => {
     setLoading(true);
     try {
       await deletePreferenceTag(id);
-      notification.success({ message: 'Tag deleted successfully' });
+      notification.success({
+        message: 'Success',
+        description: 'Tag deleted successfully',
+        className: 'bg-white shadow-lg'
+      });
       fetchTags();
     } catch (error) {
-      notification.error({ message: 'Error deleting tag' });
+      notification.error({
+        message: 'Error',
+        description: 'Failed to delete tag',
+        className: 'bg-white shadow-lg'
+      });
     } finally {
       setLoading(false);
     }
@@ -63,79 +74,219 @@ const PreferenceTags = ({setFlag}) => {
     try {
       if (isEditing) {
         await updatePreferenceTag({ ...currentTag, ...values });
-        notification.success({ message: 'Tag updated successfully' });
+        notification.success({
+          message: 'Success',
+          description: 'Tag updated successfully',
+          className: 'bg-white shadow-lg'
+        });
       } else {
         await createPreferenceTag(values);
-        notification.success({ message: 'Tag created successfully' });
+        notification.success({
+          message: 'Success',
+          description: 'Tag created successfully',
+          className: 'bg-white shadow-lg'
+        });
       }
       fetchTags();
       setIsModalVisible(false);
     } catch (error) {
-      notification.error({ message: 'Error saving tag' });
+      notification.error({
+        message: 'Error',
+        description: 'Failed to save tag',
+        className: 'bg-white shadow-lg'
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const columns = [
-    { title: 'Tag', dataIndex: 'tag', key: 'tag' },
-    { title: 'Active', dataIndex: 'isActive', key: 'isActive', render: (text, record) => <Switch checked={record.isActive} disabled /> },
-    // { title: 'Created At', dataIndex: 'createdAt', key: 'createdAt' },
+    {
+      title: 'Tag',
+      dataIndex: 'tag',
+      key: 'tag',
+      className: 'font-medium'
+    },
+    {
+      title: 'Status',
+      dataIndex: 'isActive',
+      key: 'isActive',
+      render: (isActive) => (
+          <div className="flex items-center space-x-2">
+            <Switch
+                checked={isActive}
+                disabled
+                className={isActive ? "bg-emerald-500" : "bg-gray-200"}
+            />
+            <span className={`${isActive ? 'text-emerald-600 font-medium' : 'text-gray-500'} inline-flex items-center`}>
+            {isActive ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
+                  Active
+                </>
+            ) : (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-gray-400 mr-2"></span>
+                  Inactive
+                </>
+            )}
+          </span>
+          </div>
+      )
+    },
     {
       title: 'Actions',
       key: 'actions',
-      render: (text, record) => (
-          <>
-            <Button type="link" icon={<EditOutlined />} onClick={() => handleEditTag(record)} />
-            <Popconfirm title="Are you sure?" onConfirm={() => handleDeleteTag(record._id)}>
-              <Button type="link" icon={<DeleteOutlined />} />
+      render: (_, record) => (
+          <div className="flex space-x-2">
+            <Button
+                type="text"
+                icon={<EditOutlined className="text-[#1C325B]" />}
+                onClick={() => handleEditTag(record)}
+                className="hover:bg-[#1C325B]/10"
+            />
+            <Popconfirm
+                title="Delete Tag"
+                description="Are you sure you want to delete this tag?"
+                icon={<ExclamationCircleOutlined className="text-red-500" />}
+                okText="Delete"
+                cancelText="Cancel"
+                okButtonProps={{
+                  className: 'bg-red-500 hover:bg-red-600 border-red-500'
+                }}
+                onConfirm={() => handleDeleteTag(record._id)}
+            >
+              <Button
+                  type="text"
+                  icon={<DeleteOutlined className="text-red-500" />}
+                  className="hover:bg-red-50"
+              />
             </Popconfirm>
-          </>
+          </div>
       )
     }
   ];
 
   return (
-      <div className="p-8 bg-gray-100 min-h-screen">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold">Preference Tags</h1>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateTag}>
-            Create Tag
-          </Button>
-        </div>
+      <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: '#1C325B',
+            },
+          }}
+      >
+        <div className="min-h-screen bg-gray-50 p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-white rounded-lg shadow-sm">
+              {/* Header Section */}
+              <div className="px-6 py-4 border-b border-gray-200 bg-[#1C325B]/5">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h1 className="text-2xl font-semibold text-[#1C325B]">
+                      Preference Tags
+                    </h1>
+                    <p className="mt-1 text-sm text-gray-600">
+                      Manage your system preference tags
+                    </p>
+                  </div>
+                  <Button
+                      type="primary"
+                      icon={<PlusOutlined />}
+                      onClick={handleCreateTag}
+                      className="flex items-center bg-[#1C325B] hover:bg-[#1C325B]/90"
+                      size="large"
+                  >
+                    Create Tag
+                  </Button>
+                </div>
+              </div>
 
-        <Table
-            columns={columns}
-            dataSource={tags}
-            rowKey={(record) => record._id}
-            loading={loading}
-            className="bg-white shadow-md"
-        />
-
-        <Modal
-            title={isEditing ? 'Edit Tag' : 'Create Tag'}
-            visible={isModalVisible}
-            onCancel={() => setIsModalVisible(false)}
-            footer={null}
-        >
-          <Form form={form} onFinish={handleSubmit} layout="vertical">
-            <Item label="Tag" name="tag" rules={[{ required: true, message: 'Please input the tag name!' }]}>
-              <Input />
-            </Item>
-            <Item label="Active" name="isActive" valuePropName="checked">
-              <Switch />
-            </Item>
-            <div className="flex justify-end">
-              <Button onClick={() => setIsModalVisible(false)} className="mr-2">
-                Cancel
-              </Button>
-              <Button type="primary" htmlType="submit">
-                {isEditing ? 'Update' : 'Create'}
-              </Button>
+              {/* Table Section */}
+              <div className="px-6 py-4">
+                <Table
+                    columns={columns}
+                    dataSource={tags}
+                    rowKey={(record) => record._id}
+                    loading={loading}
+                    pagination={{
+                      defaultPageSize: 10,
+                      showSizeChanger: true,
+                      showTotal: (total) => `Total ${total} items`,
+                      className: 'mt-4'
+                    }}
+                    className="border border-gray-200 rounded-lg"
+                    locale={{
+                      emptyText: (
+                          <div className="py-8 text-center">
+                            <ExclamationCircleOutlined className="text-gray-400 text-2xl mb-2" />
+                            <p className="text-gray-500">No tags found</p>
+                          </div>
+                      )
+                    }}
+                    rowClassName="hover:bg-[#1C325B]/5"
+                />
+              </div>
             </div>
-          </Form>
-        </Modal>
-      </div>
+          </div>
+
+          {/* Modal */}
+          <Modal
+              title={
+                <div className="text-lg font-semibold text-[#1C325B]">
+                  {isEditing ? 'Edit Tag' : 'Create New Tag'}
+                </div>
+              }
+              open={isModalVisible}
+              onCancel={() => setIsModalVisible(false)}
+              footer={null}
+              className="top-8"
+          >
+            <Form
+                form={form}
+                onFinish={handleSubmit}
+                layout="vertical"
+                className="pt-4"
+            >
+              <Item
+                  label={<span className="text-gray-700">Tag Name</span>}
+                  name="tag"
+                  rules={[{ required: true, message: 'Please input the tag name!' }]}
+              >
+                <Input
+                    placeholder="Enter tag name"
+                    className="h-10"
+                />
+              </Item>
+
+              <Item
+                  label={<span className="text-gray-700">Status</span>}
+                  name="isActive"
+                  valuePropName="checked"
+                  initialValue={true}
+              >
+                <Switch className="bg-emerald-500" />
+              </Item>
+
+              <div className="flex justify-end space-x-2 mt-6">
+                <Button
+                    onClick={() => setIsModalVisible(false)}
+                    className="hover:bg-gray-50 border-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                    className="bg-[#1C325B] hover:bg-[#1C325B]/90"
+                >
+                  {isEditing ? 'Update' : 'Create'}
+                </Button>
+              </div>
+            </Form>
+          </Modal>
+        </div>
+      </ConfigProvider>
   );
 };
 

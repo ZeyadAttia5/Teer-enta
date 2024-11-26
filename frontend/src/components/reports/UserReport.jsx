@@ -67,7 +67,7 @@ const UserReport = () => {
   return (
     <div>
       <header className="text-center">
-        <Typography.Title className="text-center">Report</Typography.Title>
+        <Typography.Title className="text-center">Dashboard 📈</Typography.Title>
       </header>
       <main className="flex p-6 flex-wrap gap-5">
         {charts.map((chart, index) => {

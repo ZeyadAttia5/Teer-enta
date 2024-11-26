@@ -10,28 +10,40 @@ import {
   Tag,
   Descriptions,
   Divider,
+  ConfigProvider,
+  Select,
 } from "antd";
+import {
+  EyeOutlined,
+  FilterOutlined,
+  SortAscendingOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
 import {
   getComplaints,
   getComplaint,
   updateComplaint,
 } from "../../../api/complaint.ts";
 
+const { Option } = Select;
+
 const ComplaintsManagement = () => {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [replyModalVisible, setReplyModalVisible] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [replyText, setReplyText] = useState("");
-
   const [sortBy, setSortBy] = useState("");
-  const [selectedStatus, setselectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+
+  // Filtered and sorted complaints
   const filteredComplaints = complaints.filter((complaint) =>
-    selectedStatus
-      ? complaint.status.toLowerCase() === selectedStatus.toLowerCase()
-      : true
+      selectedStatus
+          ? complaint.status.toLowerCase() === selectedStatus.toLowerCase()
+          : true
   );
+
   const sortedComplaints = filteredComplaints.sort((a, b) => {
     if (sortBy === "Date ascending") {
       return new Date(a.date) - new Date(b.date);
@@ -42,25 +54,23 @@ const ComplaintsManagement = () => {
   });
 
   useEffect(() => {
-    const fetchComplaints = async () => {
-      try {
-        const data = await getComplaints();
-        console.log(data);
-        setComplaints(data.data);
-      } catch (error) {
-        message.error("Failed to fetch complaints");
-        setComplaints([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchComplaints();
   }, []);
 
+  const fetchComplaints = async () => {
+    try {
+      const { data } = await getComplaints();
+      setComplaints(data);
+    } catch (error) {
+      message.error("Failed to fetch complaints");
+      setComplaints([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const showComplaintDetails = async (complaintId) => {
     try {
-      console.log(complaintId);
       const response = await getComplaint(complaintId);
       setSelectedComplaint(response.data);
       setReplyText(response.data.reply || "");
@@ -70,52 +80,26 @@ const ComplaintsManagement = () => {
     }
   };
 
-  const showReplyModal = async (complaintId) => {
-    const complaint = await getComplaint(complaintId);
-    setSelectedComplaint(complaint.data);
-    setReplyText(complaint.data.reply || "");
-    setReplyModalVisible(true);
-  };
-
-  const handleReplySubmit = async () => {
+  const handleStatusChange = async (checked) => {
+    const newStatus = checked ? "Resolved" : "Pending";
     try {
       await updateComplaint({
         ...selectedComplaint,
-        reply: replyText,
+        status: newStatus,
       });
 
-      message.success("Reply submitted successfully");
-      setReplyModalVisible(false);
-      setReplyText("");
-      // Re-fetch the complaints list to update the UI
-      const response = await getComplaints();
-      setComplaints(response.data);
-    } catch (error) {
-      message.error("Failed to submit reply");
-    }
-  };
-
-  const updateStatus = async (complaint_id, status) => {
-    try {
-      // Update the complaint status on the backend
-      await updateComplaint({
-        ...selectedComplaint,
-        status: status,
-      });
-
-      // Update the complaint status locally
       setComplaints((prevComplaints) =>
-        prevComplaints.map((complaint) =>
-          complaint._id === complaint_id ? { ...complaint, status } : complaint
-        )
+          prevComplaints.map((complaint) =>
+              complaint._id === selectedComplaint._id
+                  ? { ...complaint, status: newStatus }
+                  : complaint
+          )
       );
 
-      if (modalVisible) {
-        setSelectedComplaint((prevComplaint) => ({
-          ...prevComplaint,
-          status,
-        }));
-      }
+      setSelectedComplaint((prev) => ({
+        ...prev,
+        status: newStatus,
+      }));
 
       message.success("Status updated successfully");
     } catch (error) {
@@ -123,29 +107,21 @@ const ComplaintsManagement = () => {
     }
   };
 
-  const updateReply = async (complaint_id) => {
+  const updateReply = async () => {
     try {
-      // Update the complaint reply on the backend
       await updateComplaint({
         ...selectedComplaint,
         reply: replyText,
       });
 
-      // Update the complaint reply locally
       setComplaints((prevComplaints) =>
-        prevComplaints.map((complaint) =>
-          complaint._id === complaint_id
-            ? { ...complaint, reply: replyText }
-            : complaint
-        )
+          prevComplaints.map((complaint) =>
+              complaint._id === selectedComplaint._id
+                  ? { ...complaint, reply: replyText }
+                  : complaint
+          )
       );
-
-      if (modalVisible) {
-        setSelectedComplaint((prevComplaint) => ({
-          ...prevComplaint,
-          reply: replyText,
-        }));
-      }
+        setModalVisible(false);
 
       message.success("Reply submitted successfully");
     } catch (error) {
@@ -153,197 +129,249 @@ const ComplaintsManagement = () => {
     }
   };
 
-  const handleStatusChange = async (checked) => {
-    const newStatus = checked ? "Resolved" : "Pending";
-    await updateStatus(selectedComplaint._id, newStatus);
-  };
-
   const columns = [
-    { title: "Title", dataIndex: "title", key: "title" },
-    { title: "User", dataIndex: ["createdBy", "username"], key: "username" },
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      className: "font-medium",
+    },
+    {
+      title: "User",
+      dataIndex: ["createdBy", "username"],
+      key: "username",
+      render: (username) => (
+          <span className="text-[#1C325B] font-medium">{username}</span>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+          <Tag
+              icon={status === "Resolved" ? <CheckCircleOutlined /> : <ClockCircleOutlined />}
+              color={status === "Resolved" ? "success" : "warning"}
+              className="px-3 py-1"
+          >
+            {status}
+          </Tag>
+      ),
+    },
     {
       title: "Date Submitted",
       dataIndex: "date",
       key: "date",
-      render: (date) => new Date(date).toLocaleDateString(),
+      render: (date) => (
+          <span className="text-gray-600">
+          {new Date(date).toLocaleDateString()}
+        </span>
+      ),
     },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <div>
           <Button
-            type="primary"
-            onClick={() => showComplaintDetails(record._id)}
-            style={{ marginRight: 8 }}
+              type="primary"
+              icon={<EyeOutlined />}
+              onClick={() => showComplaintDetails(record._id)}
+              className="bg-[#1C325B] hover:bg-[#1C325B]/90"
           >
             View Details
           </Button>
-        </div>
       ),
     },
   ];
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h2 className="text-3xl font-bold text-center mb-8 text-blue-600">
-        Complaints Management
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="flex flex-col">
-          <label
-            htmlFor="statusFilter"
-            className="font-semibold mb-2 text-gray-700"
-          >
-            Filter by Status:
-          </label>
-          <select
-            id="statusFilter"
-            value={selectedStatus}
-            onChange={(e) => setselectedStatus(e.target.value)}
-            className="p-3 border border-gray-300 rounded-md shadow-sm"
-          >
-            <option value="">All Statuses</option>
-            <option value="Pending">Pending</option>
-            <option value="Resolved">Resolved</option>
-          </select>
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="sortBy" className="font-semibold mb-2 text-gray-700">
-            Sort By:
-          </label>
-          <select
-            id="sortBy"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="p-3 border border-gray-300 rounded-md shadow-sm"
-          >
-            <option value="">Select an option</option>
-            <option value="Date ascending">Date (Ascending)</option>
-            <option value="Date descending">Date (Descending)</option>
-          </select>
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center h-screen">
-          <Spin size="large" />
-        </div>
-      ) : (
-        <Table
-          columns={columns}
-          dataSource={sortedComplaints}
-          rowKey="_id"
-          bordered
-          className="bg-white shadow-md rounded-lg"
-        />
-      )}
-      <Modal
-        title={<h2 className="font-bold text-center">Complaint Details</h2>}
-        visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
-        footer={[
-          <Button
-            key="close"
-            onClick={() => setModalVisible(false)}
-            className="bg-gray-500 text-white hover:bg-gray-600"
-          >
-            Close
-          </Button>,
-        ]}
-        className="top-5 p-5 h-4/5"
-        bodyStyle={{
-          fontFamily: "Arial, sans-serif",
-          fontSize: "16px",
-          lineHeight: "1.5",
-          height: "calc(100% - 55px)",
-        }}
+      <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#1C325B",
+            },
+          }}
       >
-        {selectedComplaint && (
-          <div>
-            <Descriptions bordered column={1} className="mb-4">
-              <Descriptions.Item label="Title">
-                {selectedComplaint.title}
-              </Descriptions.Item>
-              <Descriptions.Item label="Body">
-                {selectedComplaint.body}
-              </Descriptions.Item>
-              <Descriptions.Item label="User">
-                {selectedComplaint.createdBy.username || "Unknown"}
-              </Descriptions.Item>
-              <Descriptions.Item label="Status">
-                <Tag
-                  color={
-                    selectedComplaint.status === "Pending" ? "orange" : "green"
-                  }
-                >
-                  {selectedComplaint.status}
-                </Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="Date Submitted">
-                {new Date(selectedComplaint.date).toLocaleDateString()}
-              </Descriptions.Item>
-            </Descriptions>
-            <Divider />
-            <div>
-              <strong>Reply:</strong>
-              <Input.TextArea
-                rows={4}
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                placeholder="Enter your reply here"
-                className="mt-2 w-full"
-              />
-            </div>
+        <div className="min-h-screen bg-gray-50 p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-white rounded-lg shadow-sm">
+              {/* Header Section */}
+              <div className="px-6 py-4 border-b border-gray-200 bg-[#1C325B]/5">
+                <div className="flex flex-col">
+                  <h1 className="text-2xl font-semibold text-[#1C325B]">
+                    Complaints Management
+                  </h1>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Manage and respond to user complaints
+                  </p>
+                </div>
+              </div>
 
-            <div className="mt-5 flex items-center gap-2">
-              <Switch
-                checked={selectedComplaint.status === "Resolved"}
-                onChange={handleStatusChange}
-                checkedChildren="Resolved"
-                unCheckedChildren="Pending"
-                className={`${
-                  selectedComplaint.status === "Resolved"
-                    ? "bg-green-500"
-                    : "bg-red-500"
-                }`}
-                style={{ height: 30 }}
-              />
-              <Button
-                onClick={() => updateReply(selectedComplaint._id)}
-                type="primary"
-                className="ml-2"
-                style={{ alignSelf: "center" }}
-              >
-                Reply
-              </Button>
+              {/* Filters Section */}
+              <div className="p-6 border-b border-gray-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <FilterOutlined className="text-[#1C325B]" />
+                    <Select
+                        placeholder="Filter by Status"
+                        value={selectedStatus}
+                        onChange={setSelectedStatus}
+                        className="w-full"
+                        allowClear
+                    >
+                      <Option value="">All Statuses</Option>
+                      <Option value="Pending">Pending</Option>
+                      <Option value="Resolved">Resolved</Option>
+                    </Select>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <SortAscendingOutlined className="text-[#1C325B]" />
+                    <Select
+                        placeholder="Sort by Date"
+                        value={sortBy}
+                        onChange={setSortBy}
+                        className="w-full"
+                        allowClear
+                    >
+                      <Option value="">No Sorting</Option>
+                      <Option value="Date ascending">Date (Oldest first)</Option>
+                      <Option value="Date descending">Date (Newest first)</Option>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Table Section */}
+              <div className="p-6">
+                {loading ? (
+                    <div className="flex justify-center items-center py-12">
+                      <Spin size="large" />
+                    </div>
+                ) : (
+                    <Table
+                        columns={columns}
+                        dataSource={sortedComplaints}
+                        rowKey="_id"
+                        pagination={{
+                          pageSize: 10,
+                          showSizeChanger: true,
+                          showTotal: (total) => `Total ${total} complaints`,
+                        }}
+                        className="border border-gray-200 rounded-lg"
+                        rowClassName="hover:bg-[#1C325B]/5"
+                    />
+                )}
+              </div>
             </div>
           </div>
-        )}
-      </Modal>
 
-      <Modal
-        title="Reply to Complaint"
-        open={replyModalVisible}
-        onCancel={() => setReplyModalVisible(false)}
-        onOk={handleReplySubmit}
-        okText="Send Reply"
-        bodyStyle={{
-          padding: "20px",
-          fontFamily: "Arial, sans-serif",
-          fontSize: "16px",
-          lineHeight: "1.5",
-        }}
-      >
-        <Input.TextArea
-          rows={4}
-          value={replyText}
-          onChange={(e) => setReplyText(e.target.value)}
-          placeholder="Enter your reply here"
-          className="mt-2 w-full"
-        />
-      </Modal>
-    </div>
+          {/* Complaint Details Modal */}
+          <Modal
+              title={
+                <div className="text-lg font-semibold text-[#1C325B] pb-3 border-b">
+                  Complaint Details
+                </div>
+              }
+              open={modalVisible}
+              onCancel={() => setModalVisible(false)}
+              footer={null}
+              width={800}
+              className="top-8"
+          >
+            {selectedComplaint && (
+                <div className="py-4">
+                  <Descriptions
+                      bordered
+                      column={1}
+                      labelStyle={{
+                        backgroundColor: "#f8fafc",
+                        fontWeight: "600",
+                        width: "150px",
+                      }}
+                      contentStyle={{
+                        backgroundColor: "white",
+                      }}
+                  >
+                    <Descriptions.Item label="Title">
+                      {selectedComplaint.title}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Description">
+                      {selectedComplaint.body}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Submitted By">
+                      {selectedComplaint.createdBy.username}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Date">
+                      {new Date(selectedComplaint.date).toLocaleDateString()}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Status">
+                      <Tag
+                          icon={
+                            selectedComplaint.status === "Resolved" ? (
+                                <CheckCircleOutlined />
+                            ) : (
+                                <ClockCircleOutlined />
+                            )
+                          }
+                          color={
+                            selectedComplaint.status === "Resolved"
+                                ? "success"
+                                : "warning"
+                          }
+                          className="px-3 py-1"
+                      >
+                        {selectedComplaint.status}
+                      </Tag>
+                    </Descriptions.Item>
+                  </Descriptions>
+
+                  <Divider />
+
+                  <div className="space-y-4">
+                    <div className="font-semibold text-[#1C325B]">Reply</div>
+                    <Input.TextArea
+                        rows={4}
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Enter your reply here..."
+                        className="w-full"
+                    />
+
+                    <div className="flex items-center justify-between pt-4">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-600">Mark as resolved:</span>
+                        <Switch
+                            checked={selectedComplaint.status === "Resolved"}
+                            onChange={handleStatusChange}
+                            className={
+                              selectedComplaint.status === "Resolved"
+                                  ? "bg-emerald-500"
+                                  : ""
+                            }
+                        />
+                      </div>
+                      <div className="space-x-2">
+                        <Button
+                            onClick={() => setModalVisible(false)}
+                            className="hover:bg-gray-50"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                            type="primary"
+                            onClick={updateReply}
+                            className="bg-[#1C325B]"
+                        >
+                          Submit Reply
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            )}
+          </Modal>
+        </div>
+      </ConfigProvider>
   );
 };
 
