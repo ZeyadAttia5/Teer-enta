@@ -140,11 +140,10 @@ const TouristNavBar = ({
               {/* Notifications Icon */}
               {user && user.userRole === "Tourist" && (
                 <div
-                  onClick={() => (window.location.href = "/NotificationsPage")}
                   className=" text-first hover:border-b-2 px-2 pt-2 mt-2 hover:border-first transition-all duration-300 transform cursor-pointer"
                 >
                   <div className="flex justify-center">
-                    <NotificationIcon />
+                    <NotificationIcon  className={`text-fifth text-2xl transition-colors`} />
                   </div>
                   <span className="text-fifth text-sm">Notifications</span>
                 </div>
@@ -191,7 +190,6 @@ const TouristNavBar = ({
               </div>
               {/* Mobile Notifications Icon */}
               <div
-                onClick={() => (window.location.href = "/NotificationsPage")}
                 className=" text-first hover:border-b-2 hover:border-first shadow-md transition-all duration-300 transform hover:scale-110 cursor-pointer w-12 h-12"
               >
                 <NotificationIcon />
