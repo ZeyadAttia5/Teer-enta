@@ -1,6 +1,11 @@
 import "./index.css";
-import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route,useLocation } from "react-router-dom";
+import { useState ,useEffect } from "react";
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    useLocation,
+} from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Signup from "./components/Auth/Signup/Signup.js";
 import Login from "./components/Auth/Login/login.js";
@@ -15,6 +20,7 @@ import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 import AddUser from "./components/Users/addUser/addUser";
 import BackButton from "./components/shared/BackButton.js";
+import HomePage from "./components/shared/HomePage/HomePage.js";
 import ProductDetails from "./components/Store/productDetails";
 import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
@@ -52,6 +58,7 @@ import ResetPassword from "./components/Auth/Password/ResetPassword";
 import BookItinerary from "./components/Itinerary/bookItinerary";
 import BookActivity from "./components/Activity/TouristActivity/bookActivity";
 import Bookings from "./components/Users/bookings/bookings";
+import UserReport from "./components/reports/UserReport.jsx";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
@@ -72,7 +79,7 @@ function AppContent() {
   const [isNavigate, setIsNavigate] = useState(false);
   const location = useLocation();
 
-  const showBackButton = location.pathname !== "/";
+  const showBackButton = location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/signup";
   const [notification, setNotification] = useState({ title: "", body: "" });
 
   useEffect(() => {
@@ -129,13 +136,13 @@ function AppContent() {
   };
   const [navbarColor, setNavbarColor] = useState("first");
   return (
-    <div className="App relative bg-fourth min-h-screen">
+    <div className="App relative">
       {!flag && (
         <DrawerBar
           onClose={onClose}
           showDrawer={showDrawer}
           drawerVisible={visible}
-            navbarColor={navbarColor}
+          navbarColor={navbarColor}
         />
       )}
       {!flag && (
@@ -144,7 +151,7 @@ function AppContent() {
             setModalOpen={setModalOpen}
             isNavigate={isNavigate}
             setIsNavigate={setIsNavigate}
-              setNavbarColor={setNavbarColor}
+            setNavbarColor={setNavbarColor}
           />
         </div>
       )}
@@ -156,8 +163,8 @@ function AppContent() {
         message={`Are you sure you want to log out?`}
       />
 
-{showBackButton && (
-        <div className="p-4 bg-transparent">
+      {showBackButton && (
+        <div className="p-4 mt-16 bg-transparent">
           <BackButton />
         </div>
       )}
@@ -165,6 +172,7 @@ function AppContent() {
       <Routes>
         {/* General Routes */}
         <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
+        {/* <Route path="/" element={<HomePage setFlag={setFlag} />} /> */}
         <Route path="/signup" element={<Signup setFlag={setFlag} />} />
         <Route
           path="/login"
@@ -202,10 +210,7 @@ function AppContent() {
           element={<ActivityCategories setFlag={setFlag} />}
         />
         <Route path="/tags" element={<Tags setFlag={setFlag} />} />
-        <Route
-          path="/activity"
-          element={<ActivityList setFlag={setFlag} />}
-        />
+        <Route path="/activity" element={<ActivityList setFlag={setFlag} />} />
         <Route
           path="/unActiveActivity"
           element={<UnActiveActivities setFlag={setFlag} />}
@@ -214,8 +219,6 @@ function AppContent() {
           path="/touristActivities"
           element={<TouristActivity setFlag={setFlag} />}
         />
-
-        {/* Historical Places Routes */}
         <Route
           path="/historicalPlace"
           element={<ReadHistoriaclPlaces setFlag={setFlag} />}
@@ -236,95 +239,93 @@ function AppContent() {
           path="/historicalPlace/details/:id"
           element={<ShowHistoricalPlaces setFlag={setFlag} />}
         />
+        <Route path="/reports/*" element={<UserReport />} />
 
-          {/* User Management Routes */}
-          <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />
-          <Route
-            path="/pendingUsers"
-            element={<PendingUsers setFlag={setFlag} />}
-          />
-          <Route path="/showDocuments/:id" element={<ShowDocuments />} />
-          <Route path="/addUser" element={<AddUser setFlag={setFlag} />} />
-          <Route
-            path="/changePassword"
-            element={<ChangePassword setFlag={setFlag} />}
-          />
-          <Route
-            path="/requestAccountDeletion"
-            element={<DeleteAccountButton setFlag={setFlag} />}
-          />
-          <Route path="/newProfile" element={<NewProfile />} />
-          {/* Product Management Routes */}
-          <Route
-            path="/products"
-            element={<AdminProductGrid setFlag={setFlag} />}
-          />
-          <Route
-            path="/wishlisted_products"
-            element={<WishlistedProductGrid setFlag={setFlag} />}
-          />
-          <Route
-            path="/products/:id"
-            element={<ProductDetails setFlag={setFlag} />}
-          />
-          <Route
-            path="/products/create"
-            element={<AdminProductForm setFlag={setFlag} />}
-          />
-          <Route
-            path="/products/edit/:productId"
-            element={<EditProductForm setFlag={setFlag} />}
-          />
-          <Route
-            path="/products/quantity&sales"
-            element={<QuantityAndSales setFlag={setFlag} />}
-          />
-          <Route
-            path="/products/cart"
-            element={<CartComponent setFlag={setFlag} />}
-          />
-          <Route
-            path="/checkOutOrder"
-            element={<CheckOutOrder setFlag={setFlag} />}
-            />
-          <Route
-            path="/orderHistory"
-            element={<OrderHistory setFlag={setFlag} />}
-            />
-          <Route path="/order/:id" element={<OrderDetails />} />
+        {/* User Management Routes */}
+        <Route path="/allUsers" element={<AllUsers setFlag={setFlag} />} />
+        <Route
+          path="/pendingUsers"
+          element={<PendingUsers setFlag={setFlag} />}
+        />
+        <Route path="/showDocuments/:id" element={<ShowDocuments />} />
+        <Route path="/addUser" element={<AddUser setFlag={setFlag} />} />
+        <Route
+          path="/changePassword"
+          element={<ChangePassword setFlag={setFlag} />}
+        />
+        <Route
+          path="/requestAccountDeletion"
+          element={<DeleteAccountButton setFlag={setFlag} />}
+        />
+        <Route path="/newProfile" element={<NewProfile />} />
+        {/* Product Management Routes */}
+        <Route
+          path="/products"
+          element={<AdminProductGrid setFlag={setFlag} />}
+        />
+        <Route
+          path="/wishlisted_products"
+          element={<WishlistedProductGrid setFlag={setFlag} />}
+        />
+        <Route
+          path="/products/:id"
+          element={<ProductDetails setFlag={setFlag} />}
+        />
+        <Route
+          path="/products/create"
+          element={<AdminProductForm setFlag={setFlag} />}
+        />
+        <Route
+          path="/products/edit/:productId"
+          element={<EditProductForm setFlag={setFlag} />}
+        />
+        <Route
+          path="/products/quantity&sales"
+          element={<QuantityAndSales setFlag={setFlag} />}
+        />
+        <Route
+          path="/products/cart"
+          element={<CartComponent setFlag={setFlag} />}
+        />
+        <Route
+          path="/checkOutOrder"
+          element={<CheckOutOrder setFlag={setFlag} />}
+        />
+        <Route
+          path="/orderHistory"
+          element={<OrderHistory setFlag={setFlag} />}
+        />
+        <Route path="/order/:id" element={<OrderDetails />} />
 
-          {/* Itinerary Routes */}
-          <Route
-            path="/itinerary/*"
-            element={
-              <Routes>
-                <Route
-                  path="activityDetails/:id"
-                  element={<ActivityDetails setFlag={setFlag} />}
-                />
-                <Route
-                  path="/"
-                  element={<IternaryScreen setFlag={setFlag} />}
-                />
-                <Route
-                  path="flaggedIternaries"
-                  element={<FlaggedIternary setFlag={setFlag} />}
-                />
-                <Route
-                  path="unActiveIternaries"
-                  element={<UnActiveIternaries setFlag={setFlag} />}
-                />
-                <Route
-                  path="iternaryDetails/:id"
-                  element={<IternaryDetails setFlag={setFlag} />}
-                />
-              </Routes>
-            }
-          />
-          <Route
-            path="/itinerary/my"
-            element={<IternaryScreen setFlag={setFlag} />}
-          />
+        {/* Itinerary Routes */}
+        <Route
+          path="/itinerary/*"
+          element={
+            <Routes>
+              <Route
+                path="activityDetails/:id"
+                element={<ActivityDetails setFlag={setFlag} />}
+              />
+              <Route path="/" element={<IternaryScreen setFlag={setFlag} />} />
+              <Route
+                path="flaggedIternaries"
+                element={<FlaggedIternary setFlag={setFlag} />}
+              />
+              <Route
+                path="unActiveIternaries"
+                element={<UnActiveIternaries setFlag={setFlag} />}
+              />
+              <Route
+                path="iternaryDetails/:id"
+                element={<IternaryDetails setFlag={setFlag} />}
+              />
+            </Routes>
+          }
+        />
+        <Route
+          path="/itinerary/my"
+          element={<IternaryScreen setFlag={setFlag} />}
+        />
 
         {/* Hotel Routes */}
         <Route
@@ -353,35 +354,32 @@ function AppContent() {
           }
         />
 
-          {/* Flight Routes */}
-          <Route
-            path="/flight/*"
-            element={
-              <Routes>
-                <Route
-                  path="bookFlight"
-                  element={<BookFlight setFlag={setFlag} />}
-                />
-              </Routes>
-            }
-          />
-          {/* Complaints Routes */}
-          <Route
-            path="/ComplaintsManagement"
-            element={<ComplaintsManagement />}
-          />
-          <Route path="/myComplaints" element={<MyComplaints />} />
-          <Route path="/aboutUs" element={<AboutUs />} />
-          <Route path="/itinerary/book/:id" element={<BookItinerary />} />
-          <Route
-            path="/touristActivities/book/:id"
-            element={<BookActivity />}
-          />
-          <Route path="/bookings" element={<Bookings />} />
-          <Route path="/savedActivities" element={<MyActivities />} />
-          <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
-        </Routes>
-        <Toaster />
+        {/* Flight Routes */}
+        <Route
+          path="/flight/*"
+          element={
+            <Routes>
+              <Route
+                path="bookFlight"
+                element={<BookFlight setFlag={setFlag} />}
+              />
+            </Routes>
+          }
+        />
+        {/* Complaints Routes */}
+        <Route
+          path="/ComplaintsManagement"
+          element={<ComplaintsManagement />}
+        />
+        <Route path="/myComplaints" element={<MyComplaints />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
+        <Route path="/itinerary/book/:id" element={<BookItinerary />} />
+        <Route path="/touristActivities/book/:id" element={<BookActivity />} />
+        <Route path="/bookings" element={<Bookings />} />
+        <Route path="/savedActivities" element={<MyActivities />} />
+        <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
+      </Routes>
+      <Toaster />
     </div>
   );
 }

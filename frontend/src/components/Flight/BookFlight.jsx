@@ -21,6 +21,7 @@ import {
 } from "@ant-design/icons";
 import AutoComplete from "react-google-autocomplete";
 import { bookFlight, getAirports, getFlightOffers } from "../../api/flights.ts";
+import BookingPayment from "../shared/BookingPayment.jsx";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -108,7 +109,7 @@ const BookFlight = () => {
                   ]}
                 >
                   <AutoComplete
-                    className="w-full border shadow-sm p-2 rounded"
+                    className="w-full border shadow-sm p-2 rounded transition-all duration-300"
                     apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
                     onPlaceSelected={(place) => {
                       let departureCity =
@@ -141,7 +142,7 @@ const BookFlight = () => {
                   ]}
                 >
                   <AutoComplete
-                    className="w-full border shadow-sm p-2 rounded"
+                    className="w-full border shadow-sm p-2 rounded transition-all duration-300"
                     apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
                     onPlaceSelected={(place) => {
                       let destinationCity =
@@ -194,6 +195,7 @@ const BookFlight = () => {
                   onChange={(value) => {
                     form.setFieldsValue({ departureAirport: value });
                   }}
+                  className="transition-all duration-300"
                 >
                   {departureAirports?.map((airport, index) => (
                     <Option key={index} value={airport.iataCode}>
@@ -219,6 +221,7 @@ const BookFlight = () => {
                   onChange={(value) => {
                     form.setFieldsValue({ destinationAirport: value });
                   }}
+                  className="transition-all duration-300"
                 >
                   {destinationAirports?.map((airport, index) => (
                     <Option key={index} value={airport.iataCode}>
@@ -238,7 +241,7 @@ const BookFlight = () => {
               >
                 <DatePicker
                   name="departureDate"
-                  className="w-full"
+                  className="w-full transition-all duration-300"
                   disabledDate={(current) => {
                     return current && current < new Date();
                   }}
@@ -272,21 +275,33 @@ const BookFlight = () => {
                   key={flight.id}
                   className={`flight-card ${
                     selectedFlight?.id === flight.id ? "selected-flight" : ""
-                  }`}
+                  } transition-all duration-300`}
                   hoverable
                   onClick={() => setSelectedFlight(flight)}
-                  style={{ marginBottom: "16px" }}
+                  style={{
+                    marginBottom: "16px",
+                    border:
+                      selectedFlight?.id === flight.id
+                        ? "2px solid #1890ff"
+                        : "none",
+                    transform:
+                      selectedFlight?.id === flight.id ? "scale(1.03)" : "none",
+                    backgroundImage:
+                      "url('/path/to/your/travel-background.jpg')",
+                    backgroundSize: "cover",
+                    color: "#fff",
+                  }}
                 >
-                  <Text strong>
+                  <Text strong style={{ fontSize: "18px" }}>
                     {flight.itineraries[0].segments[0].departure.iataCode} →{" "}
                     {flight.itineraries[0].segments[0].arrival.iataCode}
                   </Text>
                   <br />
-                  <Text type="secondary">
+                  <Text type="secondary" style={{ fontSize: "16px" }}>
                     Departure: {flight.itineraries[0].segments[0].departure.at}
                   </Text>
                   <br />
-                  <Text type="secondary">
+                  <Text type="secondary" style={{ fontSize: "16px" }}>
                     Price: {flight.price.total} {flight.price.currency}
                   </Text>
                 </Card>
@@ -309,7 +324,10 @@ const BookFlight = () => {
             name={["passenger", "name", "firstName"]}
             rules={[{ required: true, message: "Please input first name!" }]}
           >
-            <Input placeholder="Enter first name" />
+            <Input
+              placeholder="Enter first name"
+              className="transition-all duration-300"
+            />
           </Form.Item>
 
           <Form.Item
@@ -317,7 +335,10 @@ const BookFlight = () => {
             name={["passenger", "name", "lastName"]}
             rules={[{ required: true, message: "Please input last name!" }]}
           >
-            <Input placeholder="Enter last name" />
+            <Input
+              placeholder="Enter last name"
+              className="transition-all duration-300"
+            />
           </Form.Item>
 
           <Form.Item
@@ -327,7 +348,7 @@ const BookFlight = () => {
               { required: true, message: "Please select date of birth!" },
             ]}
           >
-            <DatePicker className="w-full" />
+            <DatePicker className="w-full transition-all duration-300" />
           </Form.Item>
 
           <Form.Item
@@ -335,7 +356,10 @@ const BookFlight = () => {
             name={["passenger", "gender"]}
             rules={[{ required: true, message: "Please select gender!" }]}
           >
-            <Select placeholder="Select gender">
+            <Select
+              placeholder="Select gender"
+              className="transition-all duration-300"
+            >
               <Option value="MALE">Male</Option>
               <Option value="FEMALE">Female</Option>
               <Option value="OTHER">Other</Option>
@@ -350,7 +374,10 @@ const BookFlight = () => {
               { type: "email", message: "Please enter a valid email!" },
             ]}
           >
-            <Input placeholder="Enter email address" />
+            <Input
+              placeholder="Enter email address"
+              className="transition-all duration-300"
+            />
           </Form.Item>
 
           <Form.Item
@@ -358,7 +385,11 @@ const BookFlight = () => {
             name={["passenger", "contact", "phones", 0, "countryCallingCode"]}
             rules={[{ required: true, message: "Please input country code!" }]}
           >
-            <Input placeholder="e.g. 34" style={{ width: "120px" }} />
+            <Input
+              placeholder="e.g. 34"
+              style={{ width: "120px" }}
+              className="transition-all duration-300"
+            />
           </Form.Item>
 
           <Form.Item
@@ -366,9 +397,22 @@ const BookFlight = () => {
             name={["passenger", "contact", "phones", 0, "number"]}
             rules={[{ required: true, message: "Please input phone number!" }]}
           >
-            <Input placeholder="Enter phone number" />
+            <Input
+              placeholder="Enter phone number"
+              className="transition-all duration-300"
+            />
           </Form.Item>
         </Space>
+      ),
+    },
+    {
+      title: "Payment",
+      content: (
+        <BookingPayment
+          onBookingClick={form.submit}
+          isloading={loading}
+          amount={selectedFlight && selectedFlight.price.total}
+        />
       ),
     },
   ];
@@ -412,6 +456,7 @@ const BookFlight = () => {
         ]);
         console.log(data.data);
         message.success("Booking submitted successfully!");
+        setCurrentStep(0);
       } else {
         message.error("Please login to book a flight");
       }
@@ -422,6 +467,20 @@ const BookFlight = () => {
       setLoading(false);
     }
   };
+
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  const handleScroll = () => {
+    const bottom =
+      Math.ceil(window.innerHeight + window.scrollY) >=
+      document.documentElement.scrollHeight - 50;
+    setIsAtBottom(bottom);
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <Card className="w-11/12 my-20 mx-auto shadow">
@@ -475,19 +534,19 @@ const BookFlight = () => {
             </Button>
           )}
 
-          {currentStep === steps?.length - 1 && (
+          {/* {currentStep === steps?.length - 1 && (
             <Button type="primary" onClick={() => form.submit()}>
               Complete Booking
             </Button>
-          )}
+          )} */}
         </div>
       </Form>
 
-      {currentStep === 2 && selectedFlight && (
+      {currentStep === 2 && selectedFlight && !isAtBottom && (
         <Button
           type="primary"
           onClick={handleNextStep}
-          style={{ position: "fixed", bottom: "256px", right: "16px" }}
+          style={{ position: "fixed", bottom: "16px", right: "16px" }}
         >
           Next
         </Button>
