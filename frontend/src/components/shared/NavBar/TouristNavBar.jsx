@@ -89,7 +89,7 @@ const TouristNavBar = ({
   setNavbarColor(navbarColor);
   return (
     <div
-      className={`w-full flex justify-around items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
+      className={`w-full fixed bg-white flex justify-around items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
     >
       <div className="flex gap-8">
         {/* Logo Section */}
