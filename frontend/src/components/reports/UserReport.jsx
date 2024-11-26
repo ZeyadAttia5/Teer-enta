@@ -53,7 +53,7 @@ const charts = [
   },
   {
     title: "Order Report",
-    component: "area",
+    component: SalesReport,
     api_func: getOrderReport,
     roles: ["admin", "seller"],
     idKey: "productId",
