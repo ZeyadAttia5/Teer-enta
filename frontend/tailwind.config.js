@@ -13,6 +13,9 @@ module.exports = {
         bg: "#f9f9f9",
         fifth: "#686d7e",
       },
+      backgroundImage:{
+        "reports-bg": 'url("assets/lumber-bg2.webp")',
+      },
       keyframes: {
         "tourist-background-keyframe": {
           "0%": {
