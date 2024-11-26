@@ -156,7 +156,7 @@ const TouristWelcome = ({ setFlag }) => {
         !user.isTermsAndConditionsAccepted && (
           <TermsAndConditions setNotAccepted={setNotAccepted} />
         )}
-      <div className='relative z-10 flex flex-col  items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
+      <div className='relative flex flex-col  items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
         <Fade
           className="text-white left-[100px] top-[15%] absolute"
           direction="up"
@@ -198,7 +198,7 @@ const TouristWelcome = ({ setFlag }) => {
           <Button
             className={`p-8 px-12 font-bold text-2xl ${
               selectedButton === 1
-                ? "bg-white text-black"
+                ? "bg-white text-first"
                 : "bg-transparent text-white"
             }`}
             type="danger"
@@ -224,7 +224,7 @@ const TouristWelcome = ({ setFlag }) => {
           <Button
             className={`p-8 px-12 font-bold text-2xl ${
               selectedButton === 2
-                ? "bg-white text-black"
+                ? "bg-white text-first"
                 : "bg-transparent text-white"
             }`}
             type="danger"
@@ -237,7 +237,7 @@ const TouristWelcome = ({ setFlag }) => {
           <Button
             className={`p-8 px-12 font-bold text-2xl ${
               selectedButton === 3
-                ? "bg-white text-black"
+                ? "bg-white text-first"
                 : "bg-transparent text-white"
             }`}
             type="danger"
@@ -249,7 +249,7 @@ const TouristWelcome = ({ setFlag }) => {
           <Button
             className={`p-8 px-12 font-bold text-2xl ${
               selectedButton === 4
-                ? "bg-white text-black"
+                ? "bg-white text-first"
                 : "bg-transparent text-white"
             }`}
             type="danger"
@@ -262,7 +262,7 @@ const TouristWelcome = ({ setFlag }) => {
       </div>
       {selectedButton === 1 && (
         <div>
-          <span className="text-4xl font-bold text-black ml-12">
+          <span className="text-4xl font-bold text-first ml-12">
             Top historical places around the world
           </span>
 
@@ -277,7 +277,7 @@ const TouristWelcome = ({ setFlag }) => {
                       alt={historicalPlaces?.name}
                       loading="lazy"
                     />
-                    <span className="absolute top-1 left-1 text-white rounded-xl font-bold text-xl bg-blue-900 p-2">
+                    <span className="absolute top-1 left-1 text-white rounded-xl font-bold text-xl bg-first p-2">
                       {index + 1 + ". " + place.name}
                     </span>
                   </div>
@@ -309,7 +309,7 @@ const TouristWelcome = ({ setFlag }) => {
               </div>
             )}
           </div>
-          <span className="text-4xl font-bold text-black ml-12 mt-16 block">
+          <span className="text-4xl font-bold text-first ml-12 mt-16 block">
             Top activities you can't miss
           </span>
 
@@ -333,8 +333,8 @@ const TouristWelcome = ({ setFlag }) => {
                       <Card.Meta
                         title={
                           <span
-                            className="font-bold text-4xl mb-2 transition-transform duration-500 ease-out" // Increased font size
-                            style={{ color: "#333333" }}
+                            className="font-bold text-first text-4xl mb-2 transition-transform duration-500 ease-out" // Increased font size
+                            
                           >
                             {itinerary?.name}
                           </span>
