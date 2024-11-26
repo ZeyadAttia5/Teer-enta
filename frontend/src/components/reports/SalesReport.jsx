@@ -47,7 +47,6 @@ const SalesReport = ({
   });
   useEffect(() => {
     api_func().then((res) => {
-      console.log(res.data);
       setData(res.data);
     });
   }, []);
@@ -61,6 +60,7 @@ const SalesReport = ({
     let res = {};
     data.forEach(({ revenueByMonth = [] }) => {
       revenueByMonth.forEach(({ year, month, revenue }) => {
+        if (!year || !month) return;
         if (year in res) {
           if (month in res[year]) res[year][month] += revenue;
           else res[year][month] = revenue;
@@ -118,7 +118,6 @@ const SalesReport = ({
   };
   const transformDataMarkII = () => {
     let finalAnswer = [];
-    console.log(data, isMonthlyReports);
     data?.monthlyReports?.forEach(({ year, month, revenue }) => {
       if (year && month) {
         finalAnswer.push({
