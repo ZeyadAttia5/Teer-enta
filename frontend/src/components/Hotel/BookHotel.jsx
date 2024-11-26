@@ -28,12 +28,13 @@ import {
 } from "@ant-design/icons";
 import { bookHotel, getHotels } from "../../api/hotels.ts";
 import AutoComplete from "react-google-autocomplete";
+import BookingPayment from "../shared/BookingPayment.jsx";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 
-const HotelOfferCard = ({ offer, setLoading }) => {
+const HotelOfferCard = ({ offer,setLoading,setOffer,setStep }) => {
   const { hotel, offers } = offer;
   const mainOffer = offers[0];
 
@@ -46,38 +47,24 @@ const HotelOfferCard = ({ offer, setLoading }) => {
   };
 
   const book = async () => {
-    setLoading(true);
-    try {
-      const user = localStorage.getItem("user");
-      if (user) {
-        const payments = [
-          {
-            method: "creditCard",
-            card: {
-              vendorCode: "VI",
-              cardNumber: "4111111111111111",
-              expiryDate: "2024-10",
-              holderName: "John Doe",
-            },
-          },
-        ];
-        let { data } = await bookHotel({
-          hotel: hotel,
-          offer: mainOffer,
-          guests: mainOffer.guests,
-          payments,
-        });
-        console.log("Hotel booked:", data);
-        message.success("Hotel booked successfully!");
-      } else {
-        message.error("You need to login first");
+    const payments= [
+      {
+        "method": "creditCard",
+        "card": {
+          "vendorCode": "VI",
+          "cardNumber": "4111111111111111",
+          "expiryDate": "2024-10",
+          "holderName": "John Doe"
+        }
       }
-    } catch (error) {
-      console.log("Error booking hotel:", error);
-      message.error(error.response.data.message);
-    } finally {
-      setLoading(false);
-    }
+    ]
+    setOffer({
+      hotel: hotel,
+      offer: mainOffer,
+      guests: mainOffer.guests,
+      payments
+    })
+    setStep(2)
   };
 
   return (
@@ -186,7 +173,7 @@ const HotelOfferCard = ({ offer, setLoading }) => {
   );
 };
 
-const ListOffers = ({ hotelOffers, setLoading }) => {
+const ListOffers = ({ hotelOffers,setLoading,setOffer,setStep }) => {
   const [searchText, setSearchText] = React.useState("");
   const [filteredOffers, setFilteredOffers] = useState(hotelOffers);
 
@@ -231,7 +218,7 @@ const ListOffers = ({ hotelOffers, setLoading }) => {
         dataSource={filteredOffers}
         renderItem={(offer) => (
           <List.Item>
-            <HotelOfferCard offer={offer} setLoading={setLoading} />
+            <HotelOfferCard offer={offer} setLoading={setLoading}  setOffer={setOffer} setStep={setStep}/>
           </List.Item>
         )}
         pagination={{
@@ -360,6 +347,27 @@ const BookHotel = () => {
   const [step, setStep] = useState(0);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [offer, setOffer] = useState(null)
+  
+  const book = async () => {
+    setLoading(true);
+    try {
+      const user = localStorage.getItem("user");
+      if(user){
+        let { data } = await bookHotel(offer);
+        console.log("Hotel booked:", data);
+        message.success("Hotel booked successfully!");
+      }else{
+        message.error("You need to login first");
+      }
+      setStep(0)
+    } catch (error) {
+      console.log("Error booking hotel:", error);
+      message.error(error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   const steps = [
     {
       title: "Choose City and Dates",
@@ -373,8 +381,16 @@ const BookHotel = () => {
     },
     {
       title: "Hotel Offers",
-      content: <ListOffers hotelOffers={offers} setLoading={setLoading} />,
+      content: <ListOffers hotelOffers={offers} setLoading={setLoading} setOffer={setOffer} setStep={setStep} />,
     },
+    {
+      title:'Payment',
+      content:<BookingPayment 
+                onBookingClick={book} 
+                isloading={loading} 
+                amount={offer && offer.offer.price.total}
+                />
+    }
   ];
   return (
     <Card className="w-11/12 my-20 mx-auto shadow">
@@ -393,14 +409,14 @@ const BookHotel = () => {
         {step > 0 && (
           <Button onClick={() => setStep(step - 1)}>Previous</Button>
         )}
-        {step < steps?.length - 1 && (
+        {/* {step < steps?.length - 1 && (
           <Button type="primary" onClick={() => setStep(step + 1)}>
             Next
           </Button>
         )}
         {step === steps?.length - 1 && (
           <Button type="primary">Complete Booking</Button>
-        )}
+        )} */}
       </div>
       {/* </Form> */}
     </Card>
