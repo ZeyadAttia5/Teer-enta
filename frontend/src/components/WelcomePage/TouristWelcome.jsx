@@ -147,7 +147,7 @@ const TouristWelcome = ({ setFlag }) => {
   }, [touristActivities]);
 
   return (
-    <div className="relative">
+    <div className="relative mt-16">
       {notAccepted &&
         user &&
         (user.userRole === "TourGuide" ||

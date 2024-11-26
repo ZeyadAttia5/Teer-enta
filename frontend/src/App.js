@@ -119,7 +119,7 @@ function AppContent() {
       />
 
       {showBackButton && (
-        <div className="p-4 bg-transparent">
+        <div className="p-4 mt-16 bg-transparent">
           <BackButton />
         </div>
       )}
