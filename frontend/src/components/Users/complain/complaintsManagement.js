@@ -18,13 +18,15 @@ import {
   FilterOutlined,
   SortAscendingOutlined,
   CheckCircleOutlined,
-  ClockCircleOutlined,
+  ClockCircleOutlined, UserOutlined,
 } from "@ant-design/icons";
 import {
   getComplaints,
   getComplaint,
   updateComplaint,
 } from "../../../api/complaint.ts";
+import Title from "antd/es/skeleton/Title";
+import {BadgeIcon, FrownIcon} from "lucide-react";
 
 const { Option } = Select;
 
@@ -194,24 +196,25 @@ const ComplaintsManagement = () => {
       >
         <div className="min-h-screen bg-gray-50 p-6">
           <div className="max-w-7xl mx-auto">
-            <div className="bg-white rounded-lg shadow-sm">
-              {/* Header Section */}
-              <div className="px-6 py-4 border-b border-gray-200 bg-[#1C325B]/5">
-                <div className="flex flex-col">
-                  <h1 className="text-2xl font-semibold text-[#1C325B]">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+              <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 mb-8 text-white">
+                <div className="flex items-center gap-1 mb-2">
+                  <FrownIcon className="text-xl flex-shrink-0"/>
+                  <h3 className="m-0 text-lg font-semibold" style={{color: "white"}}>
                     Complaints Management
-                  </h1>
-                  <p className="mt-1 text-sm text-gray-600">
-                    Manage and respond to user complaints
-                  </p>
+                  </h3>
                 </div>
+                <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                  Manage and respond to user complaints
+                </p>
               </div>
+
 
               {/* Filters Section */}
               <div className="p-6 border-b border-gray-200">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center space-x-2">
-                    <FilterOutlined className="text-[#1C325B]" />
+                    <FilterOutlined className="text-[#1C325B]"/>
                     <Select
                         placeholder="Filter by Status"
                         value={selectedStatus}
@@ -225,7 +228,7 @@ const ComplaintsManagement = () => {
                     </Select>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <SortAscendingOutlined className="text-[#1C325B]" />
+                    <SortAscendingOutlined className="text-[#1C325B]"/>
                     <Select
                         placeholder="Sort by Date"
                         value={sortBy}
@@ -245,7 +248,7 @@ const ComplaintsManagement = () => {
               <div className="p-6">
                 {loading ? (
                     <div className="flex justify-center items-center py-12">
-                      <Spin size="large" />
+                      <Spin size="large"/>
                     </div>
                 ) : (
                     <Table

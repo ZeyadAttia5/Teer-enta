@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Switch, notification, Popconfirm, ConfigProvider } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import {PlusOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined, UserOutlined} from '@ant-design/icons';
 import { getPreferenceTags, createPreferenceTag, updatePreferenceTag, deletePreferenceTag } from '../../api/preferenceTags.ts';
+import {TagIcon} from "lucide-react";
 
 const { Item } = Form;
 
@@ -177,29 +178,39 @@ const PreferenceTags = ({ setFlag }) => {
       >
         <div className="min-h-screen bg-gray-50 p-6">
           <div className="max-w-7xl mx-auto">
-            <div className="bg-white rounded-lg shadow-sm">
+            {/*<div className="bg-white rounded-lg shadow-sm">*/}
               {/* Header Section */}
-              <div className="px-6 py-4 border-b border-gray-200 bg-[#1C325B]/5">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h1 className="text-2xl font-semibold text-[#1C325B]">
-                      Preference Tags
-                    </h1>
-                    <p className="mt-1 text-sm text-gray-600">
-                      Manage your system preference tags
-                    </p>
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <div
+                      className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
+                    {/* Header Section */}
+                    <div>
+                      <div className="flex items-center gap-1 mb-2">
+                        <TagIcon className="text-xl flex-shrink-0"/>
+                        <h3 className="m-0 text-lg font-semibold" style={{color: "white"}}>
+                          Preference Tags
+                        </h3>
+                      </div>
+                      <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                        Manage and organize your system preference tags.
+                      </p>
+                    </div>
+
+                    {/* Action Button */}
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined/>}
+                        onClick={handleCreateTag}
+                        className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
+                        size="large"
+                    >
+                      Create Tag
+                    </Button>
                   </div>
-                  <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      onClick={handleCreateTag}
-                      className="flex items-center bg-[#1C325B] hover:bg-[#1C325B]/90"
-                      size="large"
-                  >
-                    Create Tag
-                  </Button>
                 </div>
               </div>
+
 
               {/* Table Section */}
               <div className="px-6 py-4">
@@ -218,7 +229,7 @@ const PreferenceTags = ({ setFlag }) => {
                     locale={{
                       emptyText: (
                           <div className="py-8 text-center">
-                            <ExclamationCircleOutlined className="text-gray-400 text-2xl mb-2" />
+                            <ExclamationCircleOutlined className="text-gray-400 text-2xl mb-2"/>
                             <p className="text-gray-500">No tags found</p>
                           </div>
                       )
@@ -226,7 +237,7 @@ const PreferenceTags = ({ setFlag }) => {
                     rowClassName="hover:bg-[#1C325B]/5"
                 />
               </div>
-            </div>
+            {/*</div>*/}
           </div>
 
           {/* Modal */}
@@ -250,7 +261,7 @@ const PreferenceTags = ({ setFlag }) => {
               <Item
                   label={<span className="text-gray-700">Tag Name</span>}
                   name="tag"
-                  rules={[{ required: true, message: 'Please input the tag name!' }]}
+                  rules={[{required: true, message: 'Please input the tag name!'}]}
               >
                 <Input
                     placeholder="Enter tag name"

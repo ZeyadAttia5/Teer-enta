@@ -16,10 +16,13 @@ import {
     GiftOutlined,
     CalendarOutlined,
     PercentageOutlined,
-    TeamOutlined
+    TeamOutlined, UserOutlined
 } from '@ant-design/icons';
 import { createPromoCode, getPromoCodes } from "../../api/promoCode.ts";
 import dayjs from 'dayjs';
+import Title from "antd/es/skeleton/Title";
+import {IconsManifest} from "react-icons";
+import {TagsIcon} from "lucide-react";
 
 const PromoCodesAdmin = () => {
     const [promoCodes, setPromoCodes] = useState([]);
@@ -140,30 +143,29 @@ const PromoCodesAdmin = () => {
         >
             <div className="min-h-screen bg-gray-50 p-6">
                 <div className="max-w-6xl mx-auto">
-                    <div className="bg-white rounded-lg shadow-sm">
-                        {/* Header Section */}
-                        <div className="px-6 py-4 border-b border-gray-200 bg-[#1C325B]/5">
-                            <div className="flex items-center justify-between">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                        <div className="px-6 py-4 border-b border-gray-200 ">
+                            <div
+                                className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
+                                {/* Header Section */}
                                 <div>
-                                    <button
-                                        onClick={() => window.history.back()}
-                                        className="flex items-center text-[#1C325B] hover:text-[#1C325B]/80 mb-2"
-                                    >
-                                        <ArrowLeftOutlined className="mr-1" />
-                                        <span>Back</span>
-                                    </button>
-                                    <h1 className="text-2xl font-semibold text-[#1C325B]">
-                                        Promo Codes
-                                    </h1>
-                                    <p className="mt-1 text-sm text-gray-600">
-                                        Manage your promotional codes and discounts
+                                    <div className="flex items-center gap-1 mb-2">
+                                        <GiftOutlined className="text-xl flex-shrink-0"/>
+                                        <h3 className="m-0 text-lg font-semibold" style={{color: "white"}}>
+                                            Promo Code Management
+                                        </h3>
+                                    </div>
+                                    <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                                        Manage and monitor promo codes
                                     </p>
                                 </div>
+
+                                {/* Action Button */}
                                 <Button
                                     type="primary"
-                                    icon={<PlusOutlined />}
+                                    icon={<PlusOutlined/>}
                                     onClick={() => setModalVisible(true)}
-                                    className="bg-[#1C325B] hover:bg-[#1C325B]/90"
+                                    className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
                                     size="large"
                                 >
                                     Create Promo Code
@@ -171,11 +173,12 @@ const PromoCodesAdmin = () => {
                             </div>
                         </div>
 
+
                         {/* Table Section */}
                         <div className="p-6">
                             {loading ? (
                                 <div className="flex justify-center items-center py-12">
-                                    <Spin size="large" />
+                                    <Spin size="large"/>
                                 </div>
                             ) : (
                                 <Table
