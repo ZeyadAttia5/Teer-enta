@@ -16,7 +16,7 @@ exports.getWishlist = async (req, res) => {
             return res.status(404).json({ message: 'Wishlist not found.' });
         }
         if(user.wishList.length === 0){
-            return res.status(404).json({ message: 'Wishlist is empty.' });
+            return res.status(200).json({ message: 'Wishlist is empty.' });
         }
         res.status(200).json({ wishlist: user.wishList });
     } catch (error) {
@@ -73,12 +73,18 @@ exports.addToCartFromWishlist = async (req, res) => {
         if (!productExists) {
             return res.status(404).json({ message: 'Product not found.' });
         }
+        if(productExists.quantity < 1){
+            return res.status(400).json({ message: 'Product out of stock.' });
+        }
         const user = await Tourist.findById(userId);
         if (!user.wishList.includes(productId)) {
             return res.status(400).json({ message: 'Product not in wishlist.' });
         }
         const cartItem = user.cart.find(item => item.product.toString() === productId);
         if (cartItem) {
+            if(productExists.quantity < cartItem.quantity + 1){
+                return res.status(400).json({ message: 'Quantity exceeds stock.' });
+            }
             cartItem.quantity += 1;
         } else {
             user.cart.push({ product: productId, quantity: 1 });
@@ -100,11 +106,16 @@ exports.addToCart = async (req, res) => {
         if (!productExists) {
             return res.status(404).json({ message: 'Product not found.' });
         }
-
+        if (productExists.quantity < 1) {
+            return res.status(400).json({ message: 'Product out of stock.' });
+        }
         const user = await Tourist.findById(userId);
 
         const cartItem = user.cart.find(item => item.product.toString() === productId);
         if (cartItem) {
+            if (productExists.quantity < cartItem.quantity + 1) {
+                return res.status(400).json({ message: 'Quantity exceeds stock.' });
+            }
             cartItem.quantity += 1;
         } else {
             user.cart.push({ product: productId, quantity: 1 });
@@ -127,7 +138,10 @@ exports.updateCartProductAmount = async (req, res) => {
         if (quantity < 1) {
             return res.status(400).json({ message: 'Quantity must be at least 1.' });
         }
-
+        const productExists = await Product.findById(productId);
+        if(productExists.quantity < quantity){
+            return res.status(400).json({ message: 'Quantity exceeds stock.' });
+        }
         const user = await Tourist.findById(userId);
         const cartItem = user.cart.find(item => item.product.toString() === productId);
 

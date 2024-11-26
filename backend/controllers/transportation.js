@@ -3,7 +3,8 @@ const BookedTransportation = require('../models/Booking/BookedTransportation')
 const errorHandler = require("../Util/ErrorHandler/errorSender");
 const Tourist = require('../models/Users/Tourist');
 const PromoCodes = require("../models/PromoCodes");
-
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 exports.getAllTransportations = async (req, res) => {
     try{
         const transportations = await Transportation
@@ -103,20 +104,12 @@ exports.bookTransportation = async (req, res) => {
             // Deduct the amount from the wallet
             tourist.wallet -= totalPrice;
             await tourist.save();
-        } else if (paymentMethod === 'credit_card') {
-            // Credit card payment: Integrate with payment provider (e.g., Stripe)
-            /*
-            const paymentIntent = await stripe.paymentIntents.create({
-                amount: totalPrice * 100, // Stripe expects amount in cents
-                currency: 'usd',  // Replace with your desired currency
-                payment_method: payments.paymentMethodId,  // Payment method ID from frontend
-                confirm: true,
+        } else if (paymentMethod === 'Card') {
+            await stripe.paymentIntents.create({
+                amount: Math.round(totalPrice* 100),
+                currency: 'EGP',
+                payment_method_types: ['card'],
             });
-
-            if (!paymentIntent) {
-                return res.status(500).json({ message: 'Payment failed.' });
-            }
-            */
         } else {
             return res.status(400).json({ message: 'Invalid payment method selected.' });
         }

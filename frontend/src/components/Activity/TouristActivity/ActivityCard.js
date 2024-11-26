@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Rate, Button, Tooltip, message } from "antd";
+import { Rate, Button, Card,Tooltip, message } from "antd";
 import { getGoogleMapsAddress } from "../../../api/googleMaps.ts";
 import { saveActivity, removeSavedActivity } from "../../../api/profile.ts";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,6 @@ import {
   HeartOutlined,
   HeartFilled,
 } from "@ant-design/icons";
-import { Card } from "antd";
 
 const ActivityCard = ({
   id,
@@ -34,6 +33,7 @@ const ActivityCard = ({
   const [address, setAddress] = useState("");
   const [isSaved, setIsSaved] = useState(initialSavedState);
   const navigate = useNavigate();
+  const user  = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -41,7 +41,6 @@ const ActivityCard = ({
         const response = await getGoogleMapsAddress(location);
         const formattedAddress =
           response.data.results[0]?.formatted_address || "Address not found";
-
         setAddress(formattedAddress);
       } catch (error) {
         console.error("Error fetching address:", error);
@@ -50,69 +49,82 @@ const ActivityCard = ({
     fetchAddress();
   }, [location?.lat, location?.lng]);
 
-  const handleActivityDetails = (activityId) => {
-    navigate(`/itinerary/activityDetails/${activityId}`);
+  const handleActivityDetails = () => {
+    navigate(`/itinerary/activityDetails/${id}`);
   };
 
-  const handleActivityBooking = (activityId) => {
-    navigate(`/touristActivities/book/${activityId}`);
+  const handleActivityBooking = () => {
+    navigate(`/touristActivities/book/${id}`);
   };
 
-  const handleSaveActivity = async (activityId) => {
+  const handleLocationClick = () => {
+    window.open(`https://www.google.com/maps?q=${location?.lat},${location?.lng}`, "_blank");
+  }
+    const handleSaveActivity = async (activityId) => {
     try {
       if (!isSaved) {
+        setIsSaved(!isSaved); // Toggle saved state
         await saveActivity(activityId);
         message.success("Activity saved successfully!");
       } else {
+        setIsSaved(!isSaved); // Toggle saved state
         await removeSavedActivity(activityId);
         message.info("Activity removed from saved activities!");
       }
-      setIsSaved(!isSaved); // Toggle saved state
+      // setIsSaved(!isSaved); // Toggle saved state
     } catch (error) {
       console.error("Error saving activity:", error);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen py-10">
-      <div className="max-w-4xl w-full rounded-lg overflow-hidden shadow-lg bg-[#ffffff] text-third m-2 relative">
-        {/* Like/Save Button */}
-        <div className="absolute top-4 right-4 z-10">
-          <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
-            <Button
-              type="text"
-              icon={
-                isSaved ? (
-                  <HeartFilled style={{ color: "red", fontSize: "24px" }} />
-                ) : (
-                  <HeartOutlined style={{ color: "gray", fontSize: "24px" }} />
-                )
-              }
-              onClick={() => handleSaveActivity(id)}
-            />
-          </Tooltip>
-        </div>
+      <main className="flex flex-wrap justify-center items-center py-6"> {/* Adjusted padding */}
+        <div
+            className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-2 cursor-pointer hover:border-2 hover:border-third">
+
+          {/* Like/Save Button */}
+          {user && (<div className="absolute top-4 right-4 z-10">
+            <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
+              <Button
+                  type="text"
+                  icon={
+                    isSaved ? (
+                        <HeartFilled style={{color: "red", fontSize: "24px"}}/>
+                    ) : (
+                        <HeartOutlined style={{color: "gray", fontSize: "24px"}}/>
+                    )
+                  }
+                  onClick={() => handleSaveActivity(id)}
+              />
+            </Tooltip>
+          </div>)}
 
         {/* Top Block: Name and Book Now Button */}
-        <div className="flex items-center p-4 bg-first text-[#ffffff] flex-col sm:flex-row">
+        <div
+          className="flex items-center cursor-pointer p-4 bg-first text-[#ffffff] flex-col sm:flex-row"
+          onClick={() => handleActivityDetails(id)}
+        >
           <h2 className="font-bold text-xl sm:text-5xl flex-grow break-words">
             {name}
           </h2>
-          <div className="border-l-4 border-[#ffffff] h-auto mx-2 sm:my-0 my-2"></div>
-          <Button
+
+          {/* <Button
             onClick={() => handleActivityDetails(id)}
             className="rounded-full bg-third text-white border-white hover:bg-second hover:text-third transition duration-200 text-sm md:text-base font-bold"
             style={{ border: "2px solid white" }}
           >
             See more
-          </Button>
+          </Button> */}
         </div>
 
         {/* Horizontal line */}
         <div className="border-t-4 border-fourth"></div>
 
         {/* Middle Block: Date, Time, Category, and Price */}
-        <div className="p-4 space-y-2 bg-[#ffffff] text-first ">
+        <div
+          className="p-4 space-y-2 cursor-pointer bg-[#ffffff] text-first "
+          onClick={() => handleActivityDetails(id)}
+        >
           <div className="flex flex-col sm:flex-row justify-between items-center flex-wrap">
             <Tooltip title="Date" overlayClassName="bg-fourth">
               <p className="flex items-center text-lg sm:text-xl font-bold">
@@ -134,51 +146,38 @@ const ActivityCard = ({
               </p>
             </Tooltip>
 
-            {/* Price with two separate prices and tooltip */}
-            <div className="flex items-center space-x-2">
-              <Tooltip title="Price" overlayClassName="bg-fourth">
-                <p className="text-sm sm:text-base font-bold">
-                  <DollarOutlined className="mr-0" /> {currencyCode}{" "}
-                  {price?.min ? (currencyRate * price.min).toFixed(1) : "N/A"}
-                </p>
-              </Tooltip>
-              <Tooltip title="Price" overlayClassName="bg-fourth">
-                <p className="text-sm sm:text-base font-bold">
-                  {currencyCode}{" "}
-                  {price?.max ? (currencyRate * price.max).toFixed(1) : "N/A"}
-                </p>
-              </Tooltip>
-            </div>
-          </div>
-        </div>
-        <div className="border-t-4 border-first"></div>
+                      <Tooltip title="" overlayClassName="bg-fourth">
+                        <p className="text-xs font-bold mr-1"> {/* Smaller currency code */}</p>
+                      </Tooltip>
+                      <Tooltip title="Price" overlayClassName="bg-fourth">
+                        <p className="text-2xl sm:text-3xl font-bold"> {/* Larger price number */}
+                          {price?.max ? (currencyRate * price.max).toFixed(1) : "N/A"}
+                        </p>
+                      </Tooltip>
+                    </div>
+                  </div>
+                
+            
+            {/* Buttons */}
+            <div className="flex justify-center items-center gap-4 p-0 "> {/* Reduced gap */}
+              <Button
+                  onClick={handleActivityDetails}
+                  className="text-white bg-second hover:bg-[#4a8f7a] transition-all duration-300"
+              >
+                Show Details
+              </Button>
 
-        {/* Bottom Block: View Details and Location */}
-        <div className="flex justify-between items-center p-4 bg-[#ffffff] text-first  flex-col sm:flex-row">
-          <Tooltip title="Join us!">
-            <Button
-              onClick={() => handleActivityBooking(id)}
-              className="bg-first  text-[#ffffff] hover:bg-third hover:text-[#ffffff] transition duration-200 text-xl sm:text-2xl px-6 py-3"
-            >
-              Book Now!
-            </Button>
-          </Tooltip>
-          <div className="border-l-4 border-first  h-12 mx-4 my-4 sm:my-0"></div>
-          <Tooltip title="View Location on Google Maps">
-            <EnvironmentOutlined
-              onClick={() =>
-                window.open(
-                  `https://www.google.com/maps/search/?api=1&query=${location?.lat},${location?.lng}`,
-                  "_blank"
-                )
-              }
-              className="cursor-pointer text-3xl sm:text-5xl"
-              style={{ color: "first" }}
-            />
-          </Tooltip>
+              <Button
+                  onClick={handleLocationClick}
+                  className="text-white bg-third hover:bg-blue-600 transition-all duration-300"
+              >
+                <EnvironmentOutlined className="mr-2"/>
+                Location
+              </Button>
+            </div>
+          
         </div>
-      </div>
-    </div>
+      </main>
   );
 };
 

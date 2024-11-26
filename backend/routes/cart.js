@@ -3,7 +3,7 @@ const cartController = require('../controllers/cart');
 const isAuth = require("../middlewares/isAuth");
 
 router.get('/wishlist' ,isAuth , cartController.getWishlist); //MS3 91
-router.get('/cart' ,isAuth , cartController.getCart);
+router.get('/' ,isAuth , cartController.getCart);
 router.post('/add/wishlist/product/:id' ,isAuth , cartController.addToWishlist); //MS3 90
 router.post('/add/cartFromWishlist/product/:id' ,isAuth , cartController.addToCartFromWishlist); //MS3 93
 router.post('/add/cart/product/:id' ,isAuth , cartController.addToCart); //MS3 94

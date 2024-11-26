@@ -10,6 +10,8 @@ const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
 const brevoService = new BrevoService(brevoConfig);
 const FlaggedActivityTemplate = require("../Util/mailsHandler/mailTemplets/7FlaggedActivityTemplate")
 const PaymentReceiptItemTemplate = require("../Util/mailsHandler/mailTemplets/2PaymentReceiptItemTemplate")
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 exports.getActivities = async (req, res, next) => {
     try {
         const activities = await Activity
@@ -351,21 +353,12 @@ exports.bookActivity = async (req, res) => {
             }
             // Deduct the amount from the wallet
             tourist.wallet -= totalPrice;
-        } else if (paymentMethod === 'credit_card') {
-            // Credit card payment method
-            // Here you would integrate with Stripe or another payment provider
-            // Uncomment and configure if using Stripe:
-            /*
-            const paymentIntent = await stripe.paymentIntents.create({
-                amount: totalPrice * 100, // Convert to cents if in USD
-                currency: 'usd', // Define currency
-                payment_method: req.body.paymentMethodId, // Payment method ID from frontend
-                confirm: true
+        } else if (paymentMethod === 'Card') {
+             await stripe.paymentIntents.create({
+                amount: Math.round(totalPrice* 100),
+                currency: 'EGP',
+                payment_method_types: ['card'],
             });
-            if (!paymentIntent) {
-                return res.status(500).json({ message: "Credit card payment failed" });
-            }
-            */
 
         }else {
             return res.status(400).json({message: "Invalid payment method selected"});
@@ -445,12 +438,12 @@ exports.cancelActivityBooking = async (req, res) => {
         const currentDate = new Date();
         const activityDate = new Date(bookedActivity.date);
         const hoursDifference = (activityDate - currentDate) / (1000 * 60 * 60);
-
-        if (hoursDifference < 48) {
+        console.log(hoursDifference);
+        if (hoursDifference < 48 && hoursDifference > 0) {
             return res.status(400).json({message: "Cannot cancel the booking less than 48 hours before the activity"});
         }
         const tourist = await Tourist.findById(userId);
-        if (bookedActivity.status === 'Completed' || bookedActivity.status === 'Pending') {
+        if (bookedActivity.status === 'Pending') {
             const activeDiscount = bookedActivity.activity.specialDiscounts.find(discount => discount.isAvailable);
             const maxPrice = bookedActivity.activity.price.max;// TODO this should be reviewed
             const totalPrice = activeDiscount ? maxPrice * (1 - activeDiscount.discount / 100) : maxPrice;

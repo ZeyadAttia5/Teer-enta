@@ -6,11 +6,15 @@ module.exports = {
       colors: {
         customGreen: '#02735F', // Your custom green color
         darkerGreen: '#075B4C', 
-        first: "#27374D",
+        first: "#1a2b49",
         second: "#526D82",
         third: "#9DB2BF",
         fourth: "#DDE6ED",
         bg: "#f9f9f9",
+        fifth: "#686d7e",
+      },
+      backgroundImage:{
+        "reports-bg": 'url("assets/lumber-bg2.webp")',
       },
       keyframes: {
         "tourist-background-keyframe": {
@@ -37,7 +41,7 @@ module.exports = {
         "tourist-background": "tourist-background-keyframe 5s linear infinite"
       },
       backgroundSize: {
-        'fit': '100% 100%',
+        'fit': '100% 80%',
       },
     },
   },

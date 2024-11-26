@@ -236,7 +236,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
         <div className="py-6 px-16">
             <div className="mb-6 flex justify-center">
                 <Search
-                    enterButton={<SearchOutlined/>}
+                    // enterButton={<SearchOutlined className=""/>}
                     placeholder="Search by name, location, or tag..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
