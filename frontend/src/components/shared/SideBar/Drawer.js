@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Drawer } from "antd";
 import Sidebar from "./Sidebar";
 import { MenuOutlined } from "@ant-design/icons";
-const DrawerBar = ({ showDrawer, drawerVisible, onClose, navbarColor }) => {
+const DrawerBar = ({ showDrawer, drawerVisible, onClose }) => {
 
   
   return (
@@ -12,11 +12,11 @@ const DrawerBar = ({ showDrawer, drawerVisible, onClose, navbarColor }) => {
         type="danger"
         icon={
           <MenuOutlined
-            className={`text-${navbarColor === "first" ? "fourth" : "first"}`}
+            className={`text-white`}
           />
         }
         onClick={showDrawer}
-        className={`bg-${navbarColor} hover:bg-third`}
+        className={`bg-first hover:bg-third`}
       ></Button>
 
       <Sidebar visible={drawerVisible} onClose={onClose} />
