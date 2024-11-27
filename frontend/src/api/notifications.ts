@@ -10,17 +10,6 @@ export const getAllMyNotifications = async () => {
   });
 };
 
-export const createNotificationRequest = async (activityId) => {
-  return await axios.post(
-    `${API_BASE_URL}/notification/createRequest`,
-    activityId,
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      },
-    }
-  );
-};
 
 export const getMyRequest = async (activityId) => {
     return await axios.get(`${API_BASE_URL}/notification/myRequest/${activityId}`, {
@@ -52,6 +41,19 @@ export const updateNotificationRequestStatus = async (
     }
   );
 };
+
+export const createNotificationRequest = async (activityId) => {
+    return await axios.post(
+        `${API_BASE_URL}/notification/createRequest`,
+        activityId,
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+        }
+    );
+};
+
 
 export const markAllAsReadd = async () => {
   return await axios.post(

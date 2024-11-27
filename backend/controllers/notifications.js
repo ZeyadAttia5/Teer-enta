@@ -67,27 +67,53 @@ exports.getAllMyRequests = async (req, res) => {
 
 exports.updatedNotificationRequestStatus = async (req, res) => {
     try {
-        const activityId  = req.body.activityId;
-        const notificationRequest = await NotificationsRequests.find(
-            { activity: activityId , createdBy: req.user._id },
-        );
+        const { activityId, status } = req.body;
+
+        // Use findOne instead of find to get a single document
+        const notificationRequest = await NotificationsRequests.findOne({
+            activity: activityId,
+            createdBy: req.user._id
+        });
+
         if (!notificationRequest) {
             return res.status(404).json({ error: 'Notification request not found' });
         }
 
-        await NotificationsRequests.findByIdAndUpdate(notificationRequest._id, { status: req.body.status });
+        await NotificationsRequests.findByIdAndUpdate(
+            notificationRequest._id,
+            { status },
+            { new: true } // Return updated document
+        );
+
         res.status(200).json({ message: 'Notification request status updated' });
     } catch (error) {
         errorHandler.SendError(res, error);
     }
-}
+};
 
 exports.createNotificationRequest = async (req, res) => {
     try {
-        const activity = await Activity.find({ _id: req.body.activityId });
-        console.log("here",activity);
+        const { activityId } = req.body;
+
+        // Use findById for single document lookup
+        const activity = await Activity.findById(activityId);
+
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+
+        // Check if request already exists
+        const existingRequest = await NotificationsRequests.findOne({
+            activity: activityId,
+            createdBy: req.user._id
+        });
+
+        if (existingRequest) {
+            return res.status(400).json({ error: 'Notification request already exists' });
+        }
+
         const notificationRequest = new NotificationsRequests({
-            activity:activity._id ,
+            activity: activityId,
             createdBy: req.user._id
         });
 
@@ -101,7 +127,7 @@ exports.createNotificationRequest = async (req, res) => {
         console.error('Error creating notification request:', error);
         errorHandler.SendError(res, error);
     }
-}
+};
 
 exports.sendNotification = async (req, res) => {
     try {

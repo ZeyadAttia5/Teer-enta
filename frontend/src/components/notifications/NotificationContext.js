@@ -8,6 +8,7 @@ export const NotificationProvider = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   // Fetch notifications from backend
   const fetchNotifications = async () => {
@@ -33,7 +34,9 @@ export const NotificationProvider = ({ children }) => {
 
   // Initial fetch on mount
   useEffect(() => {
-    fetchNotifications();
+    if(user){
+      fetchNotifications();
+    }
   }, []);
 
   // Add a new notification locally
