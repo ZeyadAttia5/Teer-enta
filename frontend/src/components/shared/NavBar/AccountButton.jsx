@@ -6,8 +6,6 @@ const AccountButton = ({ extra_tw, onClick, setModalOpen }) => {
   var str;
   if (!user) {
     str = "Login now";
-  } else if (user.userRole === "Admin" || user.userRole === "TourismGovernor") {
-    str = "Change password";
   } else {
     str = user.username;
   }
