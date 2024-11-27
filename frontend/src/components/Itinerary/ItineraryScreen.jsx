@@ -780,7 +780,7 @@ const ItineraryScreen = ({ setFlag }) => {
                             onClick={resetFilters}
                             className="ml-4 h-9"
                         >
-                            Unfilter
+                            Reset Filters
                         </Button2>
                     </div>
 
