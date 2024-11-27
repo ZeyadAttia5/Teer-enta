@@ -37,6 +37,7 @@ import AboutUs from "./components/shared/NavBar/AboutUs/AboutUs.js";
 import AllActivitiesCRUD from "./components/Activity/AllActivitiesCRUD.tsx";
 import ConfirmationModal from "./components/shared/ConfirmationModal.js";
 import IternaryDetails from "./components/Itinerary/IternaryDetails.tsx";
+import MyItineraryScreen from "./components/Itinerary/myIternaryScreen.jsx";
 import ActivityDetails from "./components/Activity/ActivityDetails.tsx";
 import TouristActivity from "./components/Activity/TouristActivity/TouristActivity.js";
 import ChangePassword from "./components/Profile/ProfileComponents/ChangePassword.js";
@@ -134,15 +135,15 @@ function AppContent() {
     setIsNavigate(true);
     setModalOpen(false);
   };
-  const [navbarColor, setNavbarColor] = useState("first");
+  
   return (
-    <div className="App relative">
+    <div className="App relative mb-8">
       {!flag && (
         <DrawerBar
           onClose={onClose}
           showDrawer={showDrawer}
           drawerVisible={visible}
-          navbarColor={navbarColor}
+          
         />
       )}
       {!flag && (
@@ -151,7 +152,7 @@ function AppContent() {
             setModalOpen={setModalOpen}
             isNavigate={isNavigate}
             setIsNavigate={setIsNavigate}
-            setNavbarColor={setNavbarColor}
+            
           />
         </div>
       )}
@@ -324,7 +325,7 @@ function AppContent() {
         />
         <Route
           path="/itinerary/my"
-          element={<IternaryScreen setFlag={setFlag} />}
+          element={<MyItineraryScreen setFlag={setFlag} />}
         />
 
         {/* Hotel Routes */}

@@ -16,14 +16,14 @@ import SearchHome from "../HomePage/SearchHome.js";
 const SideBar = ({ children, classNames }) => {
   const size = useMediaQuery();
   const [open, setOpen] = useState(false);
-  const navbarColor = window.location.pathname === "/" ? "first" : "fourth";
+  
 
   if (["xs", "sm", "md"].includes(size)) {
     return (
       <div>
         <MenuOutlined
           onClick={() => setOpen(true)}
-          className={`text-${navbarColor === "first" ? "fourth" : "first"}`}
+          className={`text-first`}
         />
         <Drawer
           open={open}
@@ -42,7 +42,7 @@ const TouristNavBar = ({
   setModalOpen,
   isNavigate,
   setIsNavigate,
-  setNavbarColor,
+  
 }) => {
   const navigate = useNavigate();
   const size = useMediaQuery();
@@ -81,8 +81,8 @@ const TouristNavBar = ({
     }
   }, [isNavigate, user]);
 
-  const navbarColor = window.location.pathname === "/" ? "first" : "fourth";
-  setNavbarColor(navbarColor);
+  
+  
   return (
     <div
       className={`w-full fixed bg-white flex justify-around items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
