@@ -156,7 +156,7 @@ const ActivityCard = ({
                         <p className="text-xs font-bold mr-1"> {/* Smaller currency code */}</p>
                       </Tooltip>
                       <Tooltip title="Price" overlayClassName="bg-fourth">
-                        <p className="text-2xl sm:text-3xl font-bold "> {/* Larger price number */}
+                        <p className="text-2xl sm:text-3xl font-bold"> {/* Larger price number */}
                           {price?.max ? (currencyRate * price.max).toFixed(1) : "N/A"}
                         </p>
                       </Tooltip>

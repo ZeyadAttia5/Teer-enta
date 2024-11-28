@@ -35,7 +35,7 @@ import {TActivity} from "../../types/Activity/Activity";
 import StaticMap from "../shared/GoogleMaps/ViewLocation";
 import {getActivity} from "../../api/activity.ts";
 import {getMyCurrency} from "../../api/profile.ts";
-
+import { useNavigate } from "react-router-dom";
 const {Title, Text} = Typography;
 
 const ActivityDetails: React.FC = () => {
@@ -45,6 +45,7 @@ const ActivityDetails: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
     const [currency, setCurrency] = useState(null);
+    const navigate = useNavigate();  
 
     const fetchCurrency = async () => {
         try {
@@ -55,6 +56,12 @@ const ActivityDetails: React.FC = () => {
             console.error("Fetch currency error:", error);
         }
     }
+
+
+
+    const handleActivityBooking = (ActivityId: string) => {
+        navigate(`/touristActivities/book/${ActivityId}`);
+    };
 
 
     useEffect(() => {
@@ -240,6 +247,12 @@ const ActivityDetails: React.FC = () => {
                                     >
                                         Share via Email
                                     </Button>
+                                    <Button
+              onClick={() => handleActivityBooking(ActivityId)}
+              className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
+            >
+              Book Now
+            </Button>
                                 </Space>
                             </Space>
                         </Col>

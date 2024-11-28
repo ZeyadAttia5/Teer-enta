@@ -96,7 +96,7 @@ const [pickupAddress, setPickupAddress] = useState(null);
 
   
     return (
-      <div className="p-0 bg-fourth">
+      <div className="bg-fourth">
       <Badge.Ribbon
       text={item.isActive ? "Active" : "Inactive"}
       color={item.isActive ? "green" : "red"}
