@@ -22,7 +22,7 @@ const AccountButton = ({ extra_tw, onClick, setModalOpen }) => {
         onClick={onClick}
         className="cursor-pointer  text-black transition-all duration-300"
       >
-        <div className="flex justify-center">
+        <div className="flex justify-center text-black">
           <svg
             width={25}
             height={25}
