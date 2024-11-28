@@ -19,12 +19,12 @@ const UserCard = ({
   level,
 }) => {
   return (
-    <div className="bg-second  p-4 rounded-lg m-8 w-[350px] h-[300px] shadow-2xl flex flex-col justify-between">
+    <div className="bg-third  p-4 rounded-lg m-8 w-[350px] h-[300px] shadow-2xl flex flex-col justify-between">
       <style>
         {`
   .card_box span::before {
     content: '${level == 1 ? "Level 1" : level == 2 ? "Level 2" : "Level 3"}';
-    @apply text-white bg-blue-600 font-semibold text-sm px-2 py-1 rounded;
+    @apply text-white bg-first font-semibold text-sm px-2 py-1 rounded;
   }
   `}
       </style>
@@ -49,7 +49,7 @@ const UserCard = ({
           <div>
             {/* Name and Function */}
             <p className="text-xl font-medium text-white">{username}</p>
-            <p className="text-sm text-gray-400">{userRole}</p>
+            <p className="text-sm text-fifth">{userRole}</p>
           </div>
 
           {/* <div className="w-full bg-white rounded-lg p-2 text-sm text-black">

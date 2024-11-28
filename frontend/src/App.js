@@ -90,15 +90,15 @@ function AppContent() {
     setIsNavigate(true);
     setModalOpen(false);
   };
-  const [navbarColor, setNavbarColor] = useState("first");
+  
   return (
-    <div className="App relative">
+    <div className="App relative mb-8">
       {!flag && (
         <DrawerBar
           onClose={onClose}
           showDrawer={showDrawer}
           drawerVisible={visible}
-          navbarColor={navbarColor}
+          
         />
       )}
       {!flag && (
@@ -107,7 +107,7 @@ function AppContent() {
             setModalOpen={setModalOpen}
             isNavigate={isNavigate}
             setIsNavigate={setIsNavigate}
-            setNavbarColor={setNavbarColor}
+            
           />
         </div>
       )}
