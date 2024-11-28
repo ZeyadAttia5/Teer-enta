@@ -6,8 +6,6 @@ const AccountButton = ({ extra_tw, onClick, setModalOpen }) => {
   var str;
   if (!user) {
     str = "Login now";
-  } else if (user.userRole === "Admin" || user.userRole === "TourismGovernor") {
-    str = "Change password";
   } else {
     str = user.username;
   }
@@ -16,7 +14,7 @@ const AccountButton = ({ extra_tw, onClick, setModalOpen }) => {
 
   return (
     <div
-      className={` ${extra_tw} transition-all hover:border-b-2 hover:border-first duration-300 ease-in-out`}
+      className={` ${extra_tw} relative transition-all hover:border-b-2 hover:border-first duration-300 ease-in-out`}
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
@@ -24,7 +22,7 @@ const AccountButton = ({ extra_tw, onClick, setModalOpen }) => {
         onClick={onClick}
         className="cursor-pointer  text-black transition-all duration-300"
       >
-        <div className="flex justify-center">
+        <div className="flex justify-center text-black">
           <svg
             width={25}
             height={25}
@@ -45,33 +43,37 @@ const AccountButton = ({ extra_tw, onClick, setModalOpen }) => {
           {str}
         </span>
       </button>
-      {isOpen && user && user.userRole !== "Admin" && (
-        <div className="absolute left-0 z-10 w-40 mt-[11px] bg-white border rounded shadow-lg">
-          <button
-            className="w-full px-4 py-2 text-sm text-left text-black hover:bg-gray-100"
-            onClick={onClick}
-          >
-            profile
-          </button>
-          <hr className="border-gray-300" />
-          <button className="w-full px-4 py-2 text-sm text-left text-black hover:bg-gray-100">
-            change password
-          </button>
-          <hr className="border-gray-300" />
-          {user && (
-            <button
-              onClick={() => setModalOpen(true)}
-              className={`flex items-center text-${
-                navbarColor === "first" ? "fourth" : "first"
-              } hover:text-white justify-center mt-4 p-2 bg-black hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none`}
-              aria-label="Logout"
-            >
-              <FiLogOut className="" /> Logout
-            </button>
-          )}
-          <hr className="border-gray-300" />
-        </div>
-      )}
+      {isOpen && user && (
+  <div
+    className="absolute left-0 top-[56px] w-40 mt-0 bg-white border border-gray-300 rounded shadow-lg z-50"
+    onMouseEnter={() => setIsOpen(true)}
+  >
+    <button
+      className="w-full px-4 py-2 text-sm text-left text-black hover:bg-gray-100"
+      onClick={onClick}
+    >
+      Profile
+    </button>
+    <hr className="border-gray-300" />
+    <button className="w-full px-4 py-2 text-sm text-left text-black hover:bg-gray-100">
+      Change Password
+    </button>
+    <hr className="border-gray-300" />
+    {user && (
+      <button
+        onClick={() => setModalOpen(true)}
+        className={`flex items-center justify-center mt-4 p-2 bg-black text-${
+          navbarColor === "first" ? "fourth" : "first"
+        } hover:bg-red-700 hover:text-white rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none`}
+        aria-label="Logout"
+      >
+        <FiLogOut className="" /> Logout
+      </button>
+    )}
+    <hr className="border-gray-300" />
+  </div>
+)}
+
     </div>
   );
 };
