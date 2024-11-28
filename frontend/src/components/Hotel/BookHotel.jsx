@@ -24,6 +24,9 @@ import {
   EuroOutlined,
   SearchOutlined,
   LoadingOutlined,
+  HomeOutlined,
+  SolutionOutlined,
+  CreditCardOutlined,
 } from "@ant-design/icons";
 import { bookHotel, getHotels } from "../../api/hotels.ts";
 import AutoComplete from "react-google-autocomplete";
@@ -32,6 +35,36 @@ import BookingPayment from "../shared/BookingPayment.jsx";
 const { Text, Title } = Typography;
 const { Search } = Input;
 const { RangePicker } = DatePicker;
+
+const CustomProgressBar = ({ step }) => {
+  const steps = [
+    { label: "Choose City and Dates  ", icon: <SolutionOutlined /> },
+    { label: "Hotel Offers  ", icon: <HomeOutlined /> },
+    { label: "Payment  ", icon: <CreditCardOutlined /> },
+  ];
+  const colors = ["#1a2b49", "#526D82", "#9DB2BF"];
+
+  return (
+    <div className="flex justify-between items-center mb-8">
+      {steps.map((item, index) => (
+        <div key={index} className="flex-1 text-center">
+          <div
+            className={`py-2 px-4 rounded-full transition-all duration-300 ${
+              step === index ? "text-white" : "text-[#686d7e]"
+            }`}
+            style={{
+              backgroundColor: step === index ? colors[index] : "#DDE6ED",
+              transform: step === index ? "scale(1)" : "scale(1)",
+            }}
+          >
+            {item.label}
+            <Space>{(" ", item.icon)}</Space>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   const { hotel, offers } = offer;
@@ -166,9 +199,9 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
             )}
 
           <Button
-            type="primary"
+            type="danger"
             block
-            className="bg-[#1a2b49] border-[#1a2b49] "
+            className="bg-[#1a2b49] border-[#1a2b49] text-white hover:bg-[#526D82] hover:border-[#526D82]"
             onClick={() => {
               bookOffer();
             }}
@@ -197,23 +230,21 @@ const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
 
   return (
     <div className="p-6">
-      <Row justify="space-between" align="middle" className="mb-6">
-        <Col>
-          <Title level={2} className="text-[#1a2b49]">
-            Hotel Offers
-          </Title>
-        </Col>
-        <Col span={8}>
-          <Search
-            placeholder="Search hotels by name or city"
-            allowClear
-            enterButton={<SearchOutlined />}
-            size="large"
-            onChange={(e) => handleSearch(e.target.value)}
-            value={searchText}
-          />
-        </Col>
-      </Row>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-[#1a2b49]">Hotel Offers</h2>
+        <div className="w-1/3">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search hotels by name or city"
+              className="w-full py-2 px-4 border border-[#9DB2BF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#526D82]"
+              value={searchText}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+            <SearchOutlined className="absolute right-3 top-3 text-[#526D82]" />
+          </div>
+        </div>
+      </div>
 
       <List
         grid={{
@@ -273,6 +304,10 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
     }
   };
 
+  const disabledDate = (current) => {
+    return current && current < new Date().setHours(0, 0, 0, 0);
+  };
+
   return (
     <Card className="max-w-xl mx-auto my-6 p-6 bg-[#DDE6ED]">
       <Form
@@ -309,13 +344,35 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
         <Form.Item
           name="dates"
           label="Check-in and Check-out Dates"
-          rules={[{ required: true, message: "Please select your dates" }]}
+          rules={[
+            { required: true, message: "Please select your dates" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || value.length !== 2) {
+                  return Promise.reject(new Error("Please select your dates"));
+                }
+                const [start, end] = value;
+                if (start.isBefore(new Date().setHours(0, 0, 0, 0))) {
+                  return Promise.reject(
+                    new Error("Start date cannot be in the past")
+                  );
+                }
+                if (end.isBefore(start)) {
+                  return Promise.reject(
+                    new Error("End date cannot be before start date")
+                  );
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]}
         >
           <RangePicker
             className="w-full"
             size="large"
             format="YYYY-MM-DD"
             placeholder={["Check-in", "Check-out"]}
+            disabledDate={disabledDate}
           />
         </Form.Item>
 
@@ -338,11 +395,11 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
 
         <Form.Item>
           <Button
-            type="primary"
+            type="danger"
             htmlType="submit"
             block
             size="large"
-            className="bg-[#1a2b49] border-[#1a2b49]"
+            className="bg-[#1a2b49] border-[#1a2b49] hover:bg-[#526D82] hover:border-[#526D82] text-white"
             icon={<SearchOutlined />}
           >
             Search Hotels
@@ -354,7 +411,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
         <Button
           block
           onClick={() => form.resetFields()}
-          className="bg-[#9DB2BF] border-[#9DB2BF]"
+          className="bg-[#9DB2BF] border-[#9DB2BF] hover:bg-[#686d7e] hover:border-[#686d7e] text-white"
         >
           Reset Form
         </Button>
@@ -426,7 +483,7 @@ const BookHotel = () => {
       <Title level={4} className="mb-6 text-[#1a2b49]">
         Book Your Hotel
       </Title>
-      <Steps current={step} items={steps} className="mb-8" />
+      <CustomProgressBar step={step} />
       {loading ? (
         <div className="flex justify-center p-8">
           <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
@@ -436,7 +493,12 @@ const BookHotel = () => {
       )}
       <div className="flex justify-between mt-8">
         {step > 0 && (
-          <Button onClick={() => setStep(step - 1)}>Previous</Button>
+          <Button
+            onClick={() => setStep(step - 1)}
+            className="bg-[#9DB2BF] border-[#9DB2BF] hover:bg-[#686d7e] hover:border-[#686d7e] text-white"
+          >
+            Previous
+          </Button>
         )}
       </div>
     </Card>
