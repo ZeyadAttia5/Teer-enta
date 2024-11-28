@@ -53,7 +53,7 @@ const charts = [
   },
   {
     title: "Order Report",
-    component: "area",
+    component: SalesReport,
     api_func: getOrderReport,
     roles: ["admin", "seller"],
     idKey: "productId",
@@ -67,7 +67,7 @@ const UserReport = () => {
   return (
     <div>
       <header className="text-center">
-        <Typography.Title className="text-center">Report</Typography.Title>
+        <Typography.Title className="text-center">Dashboard 📈</Typography.Title>
       </header>
       <main className="flex p-6 flex-wrap gap-5">
         {charts.map((chart, index) => {

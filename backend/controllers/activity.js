@@ -304,7 +304,7 @@ exports.flagInappropriate = async (req, res) => {
         if (!activity) {
             return res.status(404).json({message: "activity not found"});
         }
-        // console.log("here",activity.createdBy);
+        console.log("here",activity.createdBy);
         const template = new FlaggedActivityTemplate(
             activity.name,
             activity.price.max,
@@ -326,6 +326,7 @@ exports.flagInappropriate = async (req, res) => {
         //refunding the user to be handled
         return res.status(200).json({message: "activity flagged inappropriate successfully"});
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 }
