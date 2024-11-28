@@ -183,15 +183,15 @@ const TouristActivity = ({ setFlag }) => {
     setSearchQuery("");
   };
 
-  const fetchCurrency = async () => {
-    try {
-      const response = await getCurrency();
-      setCurrency(response.data);
-      console.log("Currency:", response.data);
-    } catch (error) {
-      console.error("Fetch currency error:", error);
-    }
-  };
+  // const fetchCurrency = async () => {
+  //   try {
+  //     const response = await getCurrency();
+  //     setCurrency(response.data);
+  //     console.log("Currency:", response.data);
+  //   } catch (error) {
+  //     console.error("Fetch currency error:", error);
+  //   }
+  // };
 
   useEffect(() => {
     let mounted = true; // For cleanup

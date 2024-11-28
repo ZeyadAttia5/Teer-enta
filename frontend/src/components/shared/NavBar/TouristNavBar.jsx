@@ -138,7 +138,7 @@ const TouristNavBar = ({
               )}
 
               {/* Notifications Icon */}
-              {user && user.userRole === "Tourist" && (
+              {(user && (user.userRole === "Tourist" || user.userRole === "Advertiser" || user.userRole === "TourGuide") )&& (
                 <div
                   className=" text-first hover:border-b-2 px-2 pt-2 mt-2 hover:border-first transition-all duration-300 transform cursor-pointer"
                 >

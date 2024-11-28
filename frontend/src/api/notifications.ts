@@ -112,3 +112,11 @@ export const deleteNotification = async (notificationId) => {
     }
   );
 };
+
+export const deleteAllNotifications = async () => {
+  return await axios.delete(`${API_BASE_URL}/notification/my`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
+};

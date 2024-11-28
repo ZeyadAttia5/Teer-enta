@@ -79,34 +79,42 @@ function AppContent() {
   const [visible, setVisible] = useState(false);
   const [isNavigate, setIsNavigate] = useState(false);
   const location = useLocation();
-
+  const user = localStorage.getItem("user");
   const showBackButton = location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/signup";
   const [notification, setNotification] = useState({ title: "", body: "" });
 
   useEffect(() => {
-    const setupForegroundListener = () => {
+    let unsubscribe = null;
+
+    const setupForegroundListener = async () => {
       try {
         const messaging = getMessaging();
-        onMessage(messaging, (payload) => {
+
+        // Store the unsubscribe function
+        unsubscribe = onMessage(messaging, (payload) => {
           console.log("Received foreground message:", payload);
 
-          setNotification({
-            title: payload.notification.title,
-            body: payload.notification.body,
-          });
+          if (payload?.notification) {
+            // Update notification state
+            setNotification({
+              title: payload.notification.title,
+              body: payload.notification.body,
+            });
 
-          toast.info(
-            `${payload.notification.title}: ${payload.notification.body}`,
-            {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            }
-          );
+            // Show toast notification
+            toast.info(
+                `${payload.notification.title}: ${payload.notification.body}`,
+                {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                }
+            );
+          }
         });
       } catch (error) {
         console.error("Error setting up notification listener:", error);
@@ -114,11 +122,18 @@ function AppContent() {
     };
 
     // Only setup listener if user is logged in
-    const user = localStorage.getItem("user");
     if (user) {
       setupForegroundListener();
     }
-  }, []);
+
+    // Cleanup function to remove the listener when component unmounts
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user]); // Add user to dependency array
+
 
   const showDrawer = () => {
     setVisible(true);
@@ -138,6 +153,17 @@ function AppContent() {
   
   return (
     <div className="App relative mb-8">
+      <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+      />
       {!flag && (
         <DrawerBar
           onClose={onClose}

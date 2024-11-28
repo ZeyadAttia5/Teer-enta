@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
-import {getAllMyNotifications, markAllAsReadd, markAsReadd} from "../../api/notifications.ts"; // Adjust the import path as needed
+import { getAllMyNotifications, markAllAsReadd, markAsReadd } from "../../api/notifications.ts";
+import { getMessaging, onMessage } from "firebase/messaging";
+import { toast } from "react-toastify";
 
 export const NotificationContext = createContext();
 
@@ -16,12 +18,9 @@ export const NotificationProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       const response = await getAllMyNotifications();
-      // console.log(response.data.notifications); // Make sure the response is as expected
       setNotifications(response.data.notifications);
-
-      // Calculate unread count from fetched notifications
       const unseenCount = response.data.notifications.filter(
-        (notif) => !notif.isSeen
+          (notif) => !notif.isSeen
       ).length;
       setUnreadCount(unseenCount);
     } catch (err) {
@@ -32,9 +31,69 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
+  // Set up Firebase messaging listener
+  useEffect(() => {
+    let unsubscribe = null;
+
+    const setupForegroundListener = async () => {
+      try {
+        const messaging = getMessaging();
+
+        unsubscribe = onMessage(messaging, (payload) => {
+          console.log("Received foreground message:", payload);
+
+          if (payload?.notification) {
+            // Add the new notification to the state immediately
+            const newNotification = {
+              _id: Date.now().toString(), // Temporary ID
+              title: payload.notification.title,
+              body: payload.notification.body,
+              isSeen: false,
+              sentAt: new Date().toISOString(),
+            };
+
+            setNotifications(prev => [newNotification, ...prev]);
+            setUnreadCount(prev => prev + 1);
+
+            // Show toast notification
+            toast.info(
+                `${payload.notification.title}: ${payload.notification.body}`,
+                {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                }
+            );
+
+            // Fetch updated notifications from server after a short delay
+            setTimeout(() => {
+              fetchNotifications();
+            }, 1000);
+          }
+        });
+      } catch (error) {
+        console.error("Error setting up notification listener:", error);
+      }
+    };
+
+    if (user) {
+      setupForegroundListener();
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user]);
+
   // Initial fetch on mount
   useEffect(() => {
-    if(user){
+    if (user) {
       fetchNotifications();
     }
   }, []);
@@ -46,7 +105,7 @@ export const NotificationProvider = ({ children }) => {
         title: notification.title,
         body: notification.body,
         isSeen: false,
-        timestamp: new Date().toISOString(),
+        sentAt: new Date().toISOString(),
       },
       ...prevNotifications,
     ]);
@@ -56,7 +115,7 @@ export const NotificationProvider = ({ children }) => {
   const markAllAsRead = async () => {
     try {
       setNotifications((prevNotifications) =>
-        prevNotifications.map((notif) => ({ ...notif, isSeen: true }))
+          prevNotifications.map((notif) => ({ ...notif, isSeen: true }))
       );
       setUnreadCount(0);
       await markAllAsReadd();
@@ -69,16 +128,15 @@ export const NotificationProvider = ({ children }) => {
   const markAsRead = async (notificationId) => {
     try {
       setNotifications((prevNotifications) =>
-        prevNotifications.map((notif) =>
-          notif._id === notificationId ? { ...notif, isSeen: true } : notif
-        )
+          prevNotifications.map((notif) =>
+              notif._id === notificationId ? { ...notif, isSeen: true } : notif
+          )
       );
       setUnreadCount((prevCount) => Math.max(0, prevCount - 1));
 
-        await markAsReadd(notificationId);
+      await markAsReadd(notificationId);
     } catch (err) {
       console.error("Error marking notification as read:", err);
-      // Revert local state if backend update fails
       await fetchNotifications();
     }
   };
@@ -89,20 +147,20 @@ export const NotificationProvider = ({ children }) => {
   };
 
   return (
-    <NotificationContext.Provider
-      value={{
-        notifications,
-        unreadCount,
-        loading,
-        error,
-        addNotification,
-        markAllAsRead,
-        markAsRead,
-        refreshNotifications,
-      }}
-    >
-      {children}
-    </NotificationContext.Provider>
+      <NotificationContext.Provider
+          value={{
+            notifications,
+            unreadCount,
+            loading,
+            error,
+            addNotification,
+            markAllAsRead,
+            markAsRead,
+            refreshNotifications,
+          }}
+      >
+        {children}
+      </NotificationContext.Provider>
   );
 };
 

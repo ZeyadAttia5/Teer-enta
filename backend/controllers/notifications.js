@@ -237,3 +237,12 @@ exports.deleteNotification = async (req, res) => {
         errorHandler.SendError(res, error);
     }
 }
+
+exports.deleteAllMyNotifications = async (req, res) => {
+    try {
+        await Notification.deleteMany({ sentTo: req.user._id });
+        res.status(200).json({ message: 'All notifications deleted successfully' });
+    } catch (error) {
+        errorHandler.SendError(res, error);
+    }
+}

@@ -16,6 +16,7 @@ router.post('/markAllAsRead',isAuth,notificationsController.markAllAsRead);
 router.post('/markAsRead/:id',isAuth,notificationsController.markAsRead);
 router.patch('/updateRequestStatus', isAuth, notificationsController.updatedNotificationRequestStatus);
 router.delete('/delete/:id', isAuth, notificationsController.deleteNotification);
+router.delete('/my',isAuth,notificationsController.deleteAllMyNotifications);
 
 
 
