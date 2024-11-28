@@ -62,7 +62,8 @@ const HotelOfferCard = ({ offer,setLoading,setOffer,setStep }) => {
       hotel: hotel,
       offer: mainOffer,
       guests: mainOffer.guests,
-      payments
+      payments,
+
     })
     setStep(2)
   };
@@ -348,13 +349,14 @@ const BookHotel = () => {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [offer, setOffer] = useState(null)
+  const [promoCode, setPromoCode] = useState(null)
   
   const book = async () => {
     setLoading(true);
     try {
       const user = localStorage.getItem("user");
       if(user){
-        let { data } = await bookHotel(offer);
+        let { data } = await bookHotel({...offer, promoCode});
         console.log("Hotel booked:", data);
         message.success("Hotel booked successfully!");
       }else{
@@ -389,6 +391,7 @@ const BookHotel = () => {
                 onBookingClick={book} 
                 isloading={loading} 
                 amount={offer && offer.offer.price.total}
+                setPromoCode={setPromoCode}
                 />
     }
   ];
