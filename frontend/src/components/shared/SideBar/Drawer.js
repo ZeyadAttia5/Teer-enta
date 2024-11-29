@@ -6,17 +6,17 @@ const DrawerBar = ({ showDrawer, drawerVisible, onClose }) => {
 
   
   return (
-    <div className="absolute top-8 left-4 z-20 ">
+    <div className="fixed top-8 left-4 z-20 ">
       {/* Floating Button */}
       <Button
         type="danger"
         icon={
           <MenuOutlined
-            className={`text-white`}
+            className={`text-black`}
           />
         }
         onClick={showDrawer}
-        className={`bg-first hover:bg-third`}
+        className={` hover:bg-gray-100`}
       ></Button>
 
       <Sidebar visible={drawerVisible} onClose={onClose} />

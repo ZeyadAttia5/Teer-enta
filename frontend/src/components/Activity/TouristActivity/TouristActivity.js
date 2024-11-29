@@ -18,11 +18,11 @@ const { Option } = Select;
 
 const Button1 = ({ children, onClick, variant = "default" }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-fourth";
   const variantClasses =
     variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+      ? "hover:bg-third hover:text-accent-foreground" // Light gray hover background for outline variant
+      : "text-gray-700 hover:bg-third"; // Light gray hover background for default variant
 
   return (
     <button
@@ -36,11 +36,11 @@ const Button1 = ({ children, onClick, variant = "default" }) => {
 
 const Button2 = ({ children, onClick, variant = "default" }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-fourth";
   const variantClasses =
     variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+      ? "hover:bg-third hover:text-accent-foreground" // Light gray hover background for outline variant
+      : "text-gray-700 hover:bg-third"; // Light gray hover background for default variant
 
   return (
     <Button
@@ -322,7 +322,7 @@ const TouristActivity = ({ setFlag }) => {
     return acc;
   }, []);
   return (
-    <div className="p-0 bg-fourth">
+    <div className="p-0">
       {/* <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p> */}
 
       <div className="flex flex-col items-center space-y-4">
@@ -330,7 +330,7 @@ const TouristActivity = ({ setFlag }) => {
         <Search
           placeholder="Search by name, category, or tag"
           onSearch={handleSearch}
-          // enterButton={<SearchOutlined />}
+          enterButton={<SearchOutlined />}
           className="p-2 rounded-md w-[400px]"
           allowClear
         />

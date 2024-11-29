@@ -244,9 +244,9 @@ const AdminProductGrid = ({ setFlag }) => {
                     <Link to="/products/cart">
                       <Badge count={cartCount} className="cursor-pointer">
                         <Button
-                            type="primary"
+                            type="danger"
                             icon={<ShoppingCartOutlined />}
-                            className="bg-first hover:bg-customGreen flex items-center"
+                            className="bg-fourth text-black hover:bg-third flex items-center"
                         >
                           Cart
                         </Button>
@@ -256,9 +256,9 @@ const AdminProductGrid = ({ setFlag }) => {
                     <Link to="/wishlisted_products">
                       <Badge count={wishlistCount} className="cursor-pointer">
                         <Button
-                            type="primary"
+                            type="danger"
                             icon={<HeartOutlined />}
-                            className="bg-first hover:bg-customGreen flex items-center"
+                            className="bg-fourth text-black hover:bg-third flex items-center"
                         >
                           Wishlist
                         </Button>
@@ -401,13 +401,13 @@ const AdminProductGrid = ({ setFlag }) => {
                                 {
                                     user && user.userRole === "Tourist" && (
                                 <Button
-                                    type="primary"
+                                    type="danger"
                                     icon={<ShoppingCartOutlined />}
                                     onClick={(e) => {
                                       e.preventDefault();
                                       handleAddToCartRequest(product._id);
                                     }}
-                                    className="flex-1 bg-first hover:bg-customGreen"
+                                    className="flex-1 bg-first text-white hover:bg-black"
                                 >
                                   Add to Cart
                                 </Button>
