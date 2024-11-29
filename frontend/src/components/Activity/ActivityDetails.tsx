@@ -260,18 +260,7 @@ const ActivityDetails: React.FC = () => {
                         </Space>
                         {/* Buttons */}
                         <Space direction="vertical" size={4} style={{ width: '100%' }}>
-                          <Button
-                            onClick={() => handleActivityBooking(ActivityId)}
-                            className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
-                            style={{
-                              fontSize: '34px', // Bigger font
-                              padding: '26px 42px', // Bigger button
-                              width: '100%', // Full width
-                              backgroundColor: "#1a2b49",
-                            }}
-                          >
-                            Book Now
-                          </Button>
+                          
                           <Space size={4}>
                             <Button
                               icon={<CopyOutlined style={{ fontSize: '14px' }} />}
@@ -545,72 +534,97 @@ const ActivityDetails: React.FC = () => {
                     </Card>
                 )}
                 
-                <Card
-  size="small"
-  style={{
-    borderColor: 'black',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    borderRadius: '15px',
-    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-    backgroundColor: "#94A3B8",
-    width: '600px', // Set a specific width for the card
-    height: 'auto', // Allows the card to shrink
-    maxHeight: '150px', // Optional: Limit the maximum height of the card
-  }}
-  onMouseEnter={() => setHoveredCard("footer")}
-  onMouseLeave={() => setHoveredCard(null)}
-  className="text-center mx-auto" // Center the card horizontally
->
-  <div className="space-y-4">
-    {/* Footer Title and Icon */}
-    <div className="text-xl font-bold text-white mb-4">
-      <EnvironmentOutlined size={20} className="text-fourth" />
-      <span className="ml-2">Activity Information</span>
-    </div>
-
-    {/* Info Section with Flexbox for larger screens */}
-    <Space
-      direction="vertical"
+                <Row justify="center" align="middle" gutter={[16, 16]}>
+  {/* Activity Information Card */}
+  <Col xs={25} sm={22} md={16} style={{ padding: '0' }}>
+    <Card
       size="small"
-      style={{ textAlign: 'center' }}
-      className=" mt-6 flex justify-center sm:flex sm:flex-row sm:space-x-6 sm:text-left sm:items-center sm:space-y-0"
+      style={{
+        borderColor: 'black',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '15px',
+        transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+        backgroundColor: "#94A3B8",
+        height: 'auto',
+        maxHeight: '250px',
+        width: '70%', // Reduced width for a less wide card
+        margin: '0 auto', // Centering the card horizontally
+        marginLeft: '-6%', // Shifting the card slightly to the left
+      }}
+      onMouseEnter={() => setHoveredCard("footer")}
+      onMouseLeave={() => setHoveredCard(null)}
+      className="text-center mx-auto"
     >
-      <Text type="secondary" style={{ color: "black" }} className="flex items-center">
-        <UserOutlined className="mr-2 text-fourth " />
-        <strong>Created by:</strong> {activity?.createdBy?.username}
-      </Text>
-      <Text type="secondary" style={{ color: "black" }} className="flex items-center">
-        <CalendarOutlined className="mr-2 text-fourth" />
-        <strong>Created at:</strong> {new Date(activity?.createdAt).toLocaleDateString()}
-      </Text>
-      <Text type="secondary" style={{ color: "black" }} className="flex items-center">
-        <ClockCircleOutlined className="mr-2 text-fourth" />
-        <strong>Last updated:</strong> {new Date(activity?.updatedAt).toLocaleDateString()}
-      </Text>
-    </Space>
-  </div>
+      <div className="space-y-4">
+        {/* Footer Title and Icon */}
+        <div className="text-xl font-bold text-white mb-4">
+          <EnvironmentOutlined size={20} className="text-fourth" />
+          <span className="ml-2">Activity Information</span>
+        </div>
 
-  {/* Footer Action Links */}
-  <div className="mt-2 flex justify-center space-x-6">
-    <a
-      href="#"
-      className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
-    >
-      Privacy Policy
-    </a>
-    <a
-      href="#"
-      className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
-    >
-      Terms of Service
-    </a>
-  </div>
+        {/* Info Section with Flexbox for larger screens */}
+        <Space
+          direction="vertical"
+          size="small"
+          style={{ textAlign: 'center' }}
+          className="mt-6 flex justify-center sm:flex sm:flex-row sm:space-x-6 sm:text-left sm:items-center sm:space-y-0"
+        >
+          <Text type="secondary" style={{ color: "black" }} className="flex items-center">
+            <UserOutlined className="mr-2 text-fourth " />
+            <strong>Created by:</strong> {activity?.createdBy?.username}
+          </Text>
+          <Text type="secondary" style={{ color: "black" }} className="flex items-center">
+            <CalendarOutlined className="mr-2 text-fourth" />
+            <strong>Created at:</strong> {new Date(activity?.createdAt).toLocaleDateString()}
+          </Text>
+          <Text type="secondary" style={{ color: "black" }} className="flex items-center">
+            <ClockCircleOutlined className="mr-2 text-fourth" />
+            <strong>Last updated:</strong> {new Date(activity?.updatedAt).toLocaleDateString()}
+          </Text>
+        </Space>
+      </div>
 
-  {/* Footer Footer */}
-  <div className="mt-0 text-sm text-gray-400">
-    <Text>© 2024 Teer Enta. All rights reserved.</Text>
-  </div>
-</Card>
+      {/* Footer Action Links */}
+      <div className="mt-2 flex justify-center space-x-6">
+        <a
+          href="#"
+          className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
+        >
+          Privacy Policy
+        </a>
+        <a
+          href="#"
+          className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
+        >
+          Terms of Service
+        </a>
+      </div>
+
+      {/* Footer Footer */}
+      <div className="mt-0 text-sm text-gray-400">
+        <Text>© 2024 Teer Enta. All rights reserved.</Text>
+      </div>
+    </Card>
+  </Col>
+
+  {/* Book Now Button */}
+  <Col xs={24} sm={24} md={8} style={{ padding: '0', marginLeft: '-10%' }}>
+  <Button
+    onClick={() => handleActivityBooking(ActivityId)}
+    className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
+    style={{
+      fontSize: '60px', // Bigger font for the button
+      padding: '50px 70px', // Larger button padding
+      width: '100%', // Full width of the container
+      backgroundColor: "#1a2b49",
+    }}
+  >
+    Book Now
+  </Button>
+</Col>
+
+</Row>
+
 
           </Space>
         </div>
