@@ -114,7 +114,7 @@ const Sidebar = ({ visible, onClose }) => {
             ),
             user && user.userRole === "TourGuide" && (
               <Menu.Item key="5" onClick={() => handleClick("/itinerary/my")}>
-                My Itinerary
+                My Itineraries
               </Menu.Item>
             ),
           ])}
