@@ -16,6 +16,7 @@ import { set } from "date-fns";
 import NotificationIcon from "./notificationIcon";
 import { getCart } from "../../../api/cart.ts";
 import SearchHome from "../HomePage/SearchHome.js";
+import { getCurrency } from "../../../api/account.ts";
 
 const SideBar = ({ children, classNames }) => {
   const size = useMediaQuery();
@@ -57,6 +58,21 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
     }
   };
 
+  const [currency, setCurrency] = useState(null);
+
+  useEffect(() => {
+    const fetchCurrency = async () => {
+      try {
+        const response = await getCurrency();
+        setCurrency(response.data);
+        console.log("Currency:", response.data);
+      } catch (error) {
+        console.error("Fetch currency error:", error);
+      }
+    };
+    fetchCurrency();
+  }, []);
+
   useEffect(() => {
     if (isNavigate) {
       navigate("/");
@@ -78,9 +94,9 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
 
   return (
     <div
-      className={`w-full fixed bg-white flex justify-around items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
+      className={`w-full fixed bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
     >
-      <div className="flex gap-8">
+      <div className="flex gap-8 ml-8">
         {/* Logo Section */}
         <span className="ml-16 text-lg leading-7">
           <div className="cursor-pointer w-fit border border-transparent  p-2 rounded-md transition-all duration-300 hover:scale-105">
@@ -97,7 +113,6 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
         </span>
 
         {/* Search Bar */}
-        <SearchHome />
       </div>
 
       {!["xs", "sm", "md"].includes(size) && (
@@ -106,8 +121,30 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
             <>
               {/* Bookings Icon */}
               <div
-                onClick={() => navigate("/Bookings")}
+                onClick={() => navigate("/newProfile")}
                 className=" text-first hover:border-b-2 px-2 pt-2 mt-2 hover:border-first transition-all duration-300 transform cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="gray"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"
+                  />
+                </svg>
+
+                <span className="text-fifth text-sm">{currency?.code}</span>
+              </div>
+
+              <div
+                onClick={() => navigate("/Bookings")}
+                className=" text-first hover:border-b-2 px-2 pt-2 hover:border-first transition-all duration-300 transform cursor-pointer"
               >
                 <CalendarOutlined
                   className={`text-fifth text-2xl transition-colors block`}
@@ -119,7 +156,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
               {user && user.userRole === "Tourist" && (
                 <div
                   onClick={() => navigate("/products/cart")}
-                  className=" text-first hover:border-b-2 px-2 pt-2 mt-2 hover:border-first transition-all duration-300 transform cursor-pointer"
+                  className=" text-first hover:border-b-2 px-2 pt-2 mt-1 hover:border-first transition-all duration-300 transform cursor-pointer"
                 >
                   <Badge
                     count={cartCount}
@@ -153,7 +190,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
             )}
 
           {/* Account and Logout Buttons */}
-          <div className="flex justify-end items-center lg:flex-1 mt-2">
+          <div className="flex justify-end items-center lg:flex-1 mt-2  mr-16">
             <AccountButton
               extra_tw={` transition duration-300 px-2 pt-2 transform`}
               onClick={onAccountClick}

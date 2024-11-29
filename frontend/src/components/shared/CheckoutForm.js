@@ -45,7 +45,7 @@ const CheckoutForm = ({
       const {
         data: { clientSecret },
       } = await axios.post(`${API_BASE_URL}/payment/create-payment-intent`, {
-        amount,
+        amount:discountedAmount || amount,
       });
 
       // Confirm payment

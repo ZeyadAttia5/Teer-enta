@@ -36,6 +36,7 @@ const BookFlight = () => {
   const [departure, setDeparture] = useState({});
   const [departureAirports, setDepartureAirports] = useState([]);
   const [destinationAirports, setDestinationAirports] = useState([]);
+  const [promoCode, setPromoCode] = useState(null)
 
   const fetchFlights = async () => {
     setLoading(true);
@@ -412,6 +413,7 @@ const BookFlight = () => {
           onBookingClick={form.submit}
           isloading={loading}
           amount={selectedFlight && selectedFlight.price.total}
+          setPromoCode={setPromoCode}
         />
       ),
     },
@@ -420,7 +422,6 @@ const BookFlight = () => {
   const handleNextStep = async () => {
     try {
       const values = await form.validateFields();
-
       if (currentStep === 0) await fetchAirports();
       if (currentStep === 1) await fetchFlights();
       setCurrentStep(currentStep + 1);
@@ -434,6 +435,7 @@ const BookFlight = () => {
   };
 
   const handleFinish = async (values) => {
+    console.log(values);
     setLoading(true);
     try {
       const user = localStorage.getItem("user");
@@ -453,7 +455,7 @@ const BookFlight = () => {
               ],
             },
           },
-        ]);
+        ],promoCode);
         console.log(data.data);
         message.success("Booking submitted successfully!");
         setCurrentStep(0);
@@ -462,7 +464,8 @@ const BookFlight = () => {
       }
     } catch (error) {
       console.log("Error submitting booking:");
-      message.error(error.response.data.message);
+      console.log(error);
+      message.error(error.data);
     } finally {
       setLoading(false);
     }
