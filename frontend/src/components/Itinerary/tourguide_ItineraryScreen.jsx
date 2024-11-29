@@ -314,7 +314,9 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       (selectedPreference
         ? itin.preferenceTags.some((tag) => tag._id === selectedPreference)
         : true) &&
-      (selectedActive ? itin.isActive === selectedActive : true) &&
+      (selectedActive !== ""
+        ? itin.isActive.toString() === selectedActive.toString()
+        : "true") &&
       ((itin.name &&
         itin.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         itin.preferenceTags.some((tag) =>
@@ -634,7 +636,9 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                       <select
                         id="activeFilter"
                         value={selectedActive}
-                        onChange={(e) => setSelectedActive(e.target.value)}
+                        onChange={(e) => {
+                          setSelectedActive(e.target.value);
+                        }}
                         className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                       >
                         <option value="">All</option>
