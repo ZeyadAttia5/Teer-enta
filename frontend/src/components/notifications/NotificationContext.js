@@ -10,9 +10,9 @@ export const NotificationProvider = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Fetch notifications from backend
   const fetchNotifications = async () => {
     try {
       setLoading(true);
@@ -31,7 +31,6 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
-  // Set up Firebase messaging listener
   useEffect(() => {
     let unsubscribe = null;
 
@@ -45,7 +44,7 @@ export const NotificationProvider = ({ children }) => {
           if (payload?.notification) {
             // Add the new notification to the state immediately
             const newNotification = {
-              _id: Date.now().toString(), // Temporary ID
+              _id: Date.now().toString(),
               title: payload.notification.title,
               body: payload.notification.body,
               isSeen: false,
@@ -54,8 +53,9 @@ export const NotificationProvider = ({ children }) => {
 
             setNotifications(prev => [newNotification, ...prev]);
             setUnreadCount(prev => prev + 1);
+            // Automatically open the dropdown when notification is received
+            setIsDropdownOpen(true);
 
-            // Show toast notification
             toast.info(
                 `${payload.notification.title}: ${payload.notification.body}`,
                 {
@@ -91,14 +91,12 @@ export const NotificationProvider = ({ children }) => {
     };
   }, [user]);
 
-  // Initial fetch on mount
   useEffect(() => {
     if (user) {
       fetchNotifications();
     }
   }, []);
 
-  // Add a new notification locally
   const addNotification = (notification) => {
     setNotifications((prevNotifications) => [
       {
@@ -110,6 +108,7 @@ export const NotificationProvider = ({ children }) => {
       ...prevNotifications,
     ]);
     setUnreadCount((prevCount) => prevCount + 1);
+    setIsDropdownOpen(true);
   };
 
   const markAllAsRead = async () => {
@@ -133,7 +132,6 @@ export const NotificationProvider = ({ children }) => {
           )
       );
       setUnreadCount((prevCount) => Math.max(0, prevCount - 1));
-
       await markAsReadd(notificationId);
     } catch (err) {
       console.error("Error marking notification as read:", err);
@@ -141,7 +139,6 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
-  // Refresh notifications
   const refreshNotifications = () => {
     fetchNotifications();
   };
@@ -153,6 +150,8 @@ export const NotificationProvider = ({ children }) => {
             unreadCount,
             loading,
             error,
+            isDropdownOpen,
+            setIsDropdownOpen,
             addNotification,
             markAllAsRead,
             markAsRead,

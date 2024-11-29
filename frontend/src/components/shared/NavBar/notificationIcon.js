@@ -6,13 +6,16 @@ import {message, Modal} from "antd";
 
 // NotificationIcon Component stays the same
 const NotificationIcon = ({ navbarcolor = "first" }) => {
-    const { unreadCount, refreshNotifications } = useContext(NotificationContext);
-    const [isOpen, setIsOpen] = useState(false);
-
+    const {
+        unreadCount,
+        refreshNotifications,
+        isDropdownOpen,
+        setIsDropdownOpen
+    } = useContext(NotificationContext);
 
     const handleClick = async () => {
         await refreshNotifications();
-        setIsOpen(!isOpen);
+        setIsDropdownOpen(!isDropdownOpen);
     };
 
     return (
@@ -74,9 +77,9 @@ const NotificationIcon = ({ navbarcolor = "first" }) => {
                 )}
             </div>
 
-            {isOpen && (
+            {isDropdownOpen && (
                 <NotificationDropdown
-                    onClose={() => setIsOpen(false)}
+                    onClose={() => setIsDropdownOpen(false)}
                     navbarcolor={navbarcolor}
                 />
             )}
@@ -85,7 +88,7 @@ const NotificationIcon = ({ navbarcolor = "first" }) => {
 };
 
 // NotificationDropdown Component with enhanced delete functionality
-const NotificationDropdown = ({ onClose }) => {
+const NotificationDropdown = ({onClose}) => {
     const {
         notifications: contextNotifications,
         loading,

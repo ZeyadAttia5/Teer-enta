@@ -63,15 +63,12 @@ import UserReport from "./components/reports/UserReport.jsx";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
-import TestNotification from "./components/notifications/TestNotification";
 import { toast, ToastContainer } from "react-toastify";
-import { checkPermission, requestForToken } from "./services/firebase";
 import { getMessaging, onMessage } from "firebase/messaging";
-import { saveFCMTokenToServer } from "./api/notifications.ts";
-import Notification from "./components/notifications/Notification";
 import CheckOutOrder from "./components/Store/checkOutOrder";
 import OrderHistory from "./components/Store/orderHistory";
 import OrderDetails from "./components/Store/orderDetails";
+import {NotificationContext, NotificationProvider} from "./components/notifications/NotificationContext";
 
 function AppContent() {
   const [flag, setFlag] = useState(false);
@@ -153,6 +150,7 @@ function AppContent() {
   
   return (
     <div className="App relative mb-8">
+      <NotificationProvider>
       <ToastContainer
           position="top-right"
           autoClose={5000}
@@ -195,7 +193,6 @@ function AppContent() {
           <BackButton />
         </div>
       )}
-
       <Routes>
         {/* General Routes */}
         <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
@@ -407,6 +404,7 @@ function AppContent() {
         <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
       </Routes>
       <Toaster />
+      </NotificationProvider>
     </div>
   );
 }
