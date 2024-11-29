@@ -10,7 +10,12 @@ import {
 } from "@ant-design/icons";
 import { applyPromoCode } from "../../api/promoCode.ts";
 
-const BookingPayment = ({ onBookingClick, isloading, amount: euroAmount }) => {
+const BookingPayment = ({
+  onBookingClick,
+  isloading,
+  amount: euroAmount,
+  setPromoCode: setOuterPromoCode,
+}) => {
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [paymentSucceed, setPaymentSucceed] = useState(false);
   const [amount, setAmount] = useState((euroAmount * 1.05).toFixed(1));
@@ -39,6 +44,7 @@ const BookingPayment = ({ onBookingClick, isloading, amount: euroAmount }) => {
     try {
       const response = await applyPromoCode(promoCode);
       setPromoDiscount(response.data.promoCode);
+      setOuterPromoCode(promoCode);
       message.success("Promo code applied successfully!");
     } catch (error) {
       message.error(
@@ -134,7 +140,7 @@ const BookingPayment = ({ onBookingClick, isloading, amount: euroAmount }) => {
             amount={parseFloat(amount) * 100}
             discountedAmount={calculateFinalPrice(parseFloat(amount) * 100)}
             onPaymentSuccess={() => setPaymentSucceed(true)}
-            withPayButton={false}
+            // withPayButton={false}
           />
         </Elements>
       )}

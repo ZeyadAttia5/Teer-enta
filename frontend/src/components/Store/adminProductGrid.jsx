@@ -319,29 +319,33 @@ const AdminProductGrid = ({ setFlag }) => {
                               {/* Overlay with Actions */}
                               <div className="absolute inset-0 bg-black bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-20">
                                 <div className="absolute top-4 right-4 flex flex-col gap-2">
-                                  <Tooltip title={wishlist.has(product._id) ? "Remove from Wishlist" : "Add to Wishlist"}>
-                                    <Button
-                                        shape="circle"
-                                        className={`transition-all duration-300 ${
-                                            wishlist.has(product._id)
-                                                ? "bg-red-500 border-red-500 hover:bg-red-600"
-                                                : "bg-white hover:bg-red-500 hover:border-red-500"
-                                        }`}
-                                        icon={
-                                          <FaHeart
-                                              className={`transition-colors duration-300 ${
-                                                  wishlist.has(product._id)
-                                                      ? "text-white"
-                                                      : "text-gray-400 group-hover:text-white"
-                                              }`}
-                                          />
-                                        }
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                          handleWishlistToggle(product._id);
-                                        }}
-                                    />
-                                  </Tooltip>
+                                  {user && user.userRole === 'Tourist' && (
+                                      <Tooltip
+                                          title={wishlist.has(product._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                                      >
+                                        <Button
+                                            shape="circle"
+                                            className={`transition-all duration-300 ${
+                                                wishlist.has(product._id)
+                                                    ? "bg-red-500 border-red-500 hover:bg-red-600"
+                                                    : "bg-white hover:bg-red-500 hover:border-red-500"
+                                            }`}
+                                            icon={
+                                              <FaHeart
+                                                  className={`transition-colors duration-300 ${
+                                                      wishlist.has(product._id)
+                                                          ? "text-white"
+                                                          : "text-gray-400 group-hover:text-white"
+                                                  }`}
+                                              />
+                                            }
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              handleWishlistToggle(product._id);
+                                            }}
+                                        />
+                                      </Tooltip>
+                                  )}
 
                                   <Link to={`/products/${product._id}`}>
                                     <Tooltip title="View Details">
