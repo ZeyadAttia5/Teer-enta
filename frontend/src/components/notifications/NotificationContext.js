@@ -5,13 +5,76 @@ import { toast } from "react-toastify";
 
 export const NotificationContext = createContext();
 
-export const NotificationProvider = ({ children }) => {
+export const NotificationProvider = ({ children ,incomingNotification }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    let unsubscribe = null;
+
+    const setupForegroundListener = async () => {
+      try {
+        // const messaging = getMessaging();
+
+        // unsubscribe = onMessage(messaging, (payload) => {
+        //   console.log("Received foreground message:", payload);
+
+          if (incomingNotification) {
+            // // Add the new notification to the state immediately
+            // const newNotification = {
+            //   _id: Date.now().toString(),
+            //   title: payload.notification.title,
+            //   body: payload.notification.body,
+            //   isSeen: false,
+            //   sentAt: new Date().toISOString(),
+            // };
+
+            setNotifications(prev => [incomingNotification, ...prev]);
+            setUnreadCount(prev => prev + 1);
+            // Automatically open the dropdown when notification is received
+            setIsDropdownOpen(true);
+
+            toast.info(
+                <div onClick={() => setIsDropdownOpen(true)}>
+                  <strong>{incomingNotification.title}</strong>
+                  <p>{incomingNotification.body}</p>
+                </div>,
+                {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                }
+            );
+
+            // Fetch updated notifications from server after a short delay
+            setTimeout(() => {
+              fetchNotifications();
+            }, 1000);
+          // }
+        }
+          // );
+      } catch (error) {
+        console.error("Error setting up notification listener:", error);
+      }
+    };
+
+    if (user) {
+      setupForegroundListener();
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user]);
 
   const fetchNotifications = async () => {
     try {
@@ -31,71 +94,7 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    let unsubscribe = null;
 
-    const setupForegroundListener = async () => {
-      try {
-        const messaging = getMessaging();
-
-        unsubscribe = onMessage(messaging, (payload) => {
-          console.log("Received foreground message:", payload);
-
-          if (payload?.notification) {
-            // Add the new notification to the state immediately
-            const newNotification = {
-              _id: Date.now().toString(),
-              title: payload.notification.title,
-              body: payload.notification.body,
-              isSeen: false,
-              sentAt: new Date().toISOString(),
-            };
-
-            setNotifications(prev => [newNotification, ...prev]);
-            setUnreadCount(prev => prev + 1);
-            // Automatically open the dropdown when notification is received
-            setIsDropdownOpen(true);
-
-            toast.info(
-                `${payload.notification.title}: ${payload.notification.body}`,
-                {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                }
-            );
-
-            // Fetch updated notifications from server after a short delay
-            setTimeout(() => {
-              fetchNotifications();
-            }, 1000);
-          }
-        });
-      } catch (error) {
-        console.error("Error setting up notification listener:", error);
-      }
-    };
-
-    if (user) {
-      setupForegroundListener();
-    }
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [user]);
-
-  useEffect(() => {
-    if (user) {
-      fetchNotifications();
-    }
-  }, []);
 
   const addNotification = (notification) => {
     setNotifications((prevNotifications) => [
