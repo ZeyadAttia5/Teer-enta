@@ -480,7 +480,7 @@ const ActivityDetails: React.FC = () => {
                         bodyStyle={{ height: '100%' }}
                     >
                         <div>
-                            <span className="text-white">Comments</span> {/* Title color changed to white */}
+                            <span className="text-first text-bold text-2xl">Comments</span> {/* Title color changed to white */}
                         </div>
 
                         {/* List of Comments */}
@@ -611,7 +611,7 @@ const ActivityDetails: React.FC = () => {
   <Col xs={24} sm={24} md={8} style={{ padding: '0', marginLeft: '-10%' }}>
   <Button
     onClick={() => handleActivityBooking(ActivityId)}
-    className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
+    className="text-white bg-second hover:bg-third transition-all duration-200"
     style={{
       fontSize: '60px', // Bigger font for the button
       padding: '50px 70px', // Larger button padding
