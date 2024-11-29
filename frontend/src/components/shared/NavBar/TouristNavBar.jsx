@@ -1,4 +1,8 @@
-import { CalendarOutlined, MenuOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import {
+  CalendarOutlined,
+  MenuOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import AccountButton from "./AccountButton";
 import useMediaQuery from "use-media-antd-query";
 import { Drawer, Badge } from "antd";
@@ -16,15 +20,11 @@ import SearchHome from "../HomePage/SearchHome.js";
 const SideBar = ({ children, classNames }) => {
   const size = useMediaQuery();
   const [open, setOpen] = useState(false);
-  
 
   if (["xs", "sm", "md"].includes(size)) {
     return (
       <div>
-        <MenuOutlined
-          onClick={() => setOpen(true)}
-          className={`text-first`}
-        />
+        <MenuOutlined onClick={() => setOpen(true)} className={`text-first`} />
         <Drawer
           open={open}
           onClose={() => setOpen(false)}
@@ -38,12 +38,7 @@ const SideBar = ({ children, classNames }) => {
   return children;
 };
 
-const TouristNavBar = ({
-  setModalOpen,
-  isNavigate,
-  setIsNavigate,
-  
-}) => {
+const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
   const navigate = useNavigate();
   const size = useMediaQuery();
   const storedUser = localStorage.getItem("user");
@@ -81,8 +76,6 @@ const TouristNavBar = ({
     }
   }, [isNavigate, user]);
 
-  
-  
   return (
     <div
       className={`w-full fixed bg-white flex justify-around items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
@@ -128,7 +121,12 @@ const TouristNavBar = ({
                   onClick={() => navigate("/products/cart")}
                   className=" text-first hover:border-b-2 px-2 pt-2 mt-2 hover:border-first transition-all duration-300 transform cursor-pointer"
                 >
-                  <Badge count={cartCount} offset={[9, -5]} color={"red"} className="block">
+                  <Badge
+                    count={cartCount}
+                    offset={[9, -5]}
+                    color={"red"}
+                    className="block"
+                  >
                     <ShoppingCartOutlined
                       className={`text-fifth text-2xl transition-colors`}
                     />
@@ -136,20 +134,23 @@ const TouristNavBar = ({
                   <span className="text-fifth text-sm">Cart</span>
                 </div>
               )}
-
-              {/* Notifications Icon */}
-              {(user && (user.userRole === "Tourist" || user.userRole === "Advertiser" || user.userRole === "TourGuide") )&& (
-                <div
-                  className=" text-first hover:border-b-2 px-2 pt-2 mt-2 hover:border-first transition-all duration-300 transform cursor-pointer"
-                >
-                  <div className="flex justify-center">
-                    <NotificationIcon  className={`text-fifth text-2xl transition-colors`} />
-                  </div>
-                  <span className="text-fifth text-sm">Notifications</span>
-                </div>
-              )}
             </>
           )}
+
+          {/* Notifications Icon */}
+          {user &&
+            (user.userRole === "Tourist" ||
+              user.userRole === "Advertiser" ||
+              user.userRole === "TourGuide") && (
+              <div className=" text-first hover:border-b-2 px-2 pt-2 mt-2 hover:border-first transition-all duration-300 transform cursor-pointer">
+                <div className="flex justify-center">
+                  <NotificationIcon
+                    className={`text-fifth text-2xl transition-colors`}
+                  />
+                </div>
+                <span className="text-fifth text-sm">Notifications</span>
+              </div>
+            )}
 
           {/* Account and Logout Buttons */}
           <div className="flex justify-end items-center lg:flex-1 mt-2">
@@ -189,9 +190,7 @@ const TouristNavBar = ({
                 </Badge>
               </div>
               {/* Mobile Notifications Icon */}
-              <div
-                className=" text-first hover:border-b-2 hover:border-first shadow-md transition-all duration-300 transform hover:scale-110 cursor-pointer w-12 h-12"
-              >
+              <div className=" text-first hover:border-b-2 hover:border-first shadow-md transition-all duration-300 transform hover:scale-110 cursor-pointer w-12 h-12">
                 <NotificationIcon />
                 <span className="text-black">Notifications</span>
               </div>
