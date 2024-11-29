@@ -45,6 +45,11 @@ const Sidebar = ({ visible, onClose }) => {
         onOpenChange={onOpenChange}
         className="bg-fourth"
       >
+        {user && user.userRole !== "Tourist"  && user.userRole !== "TourismGovernor" && (
+            <Menu.Item key="22" onClick={() => handleClick("/reports/")}>
+              Dashboard
+            </Menu.Item>
+        )}
         {user &&
           (user.userRole === "Admin" ||
             user.userRole === "TourismGovernor") && (
@@ -91,33 +96,36 @@ const Sidebar = ({ visible, onClose }) => {
             (user.userRole === "TourGuide" ||
               user.userRole === "Tourist" ||
               user.userRole === "Admin"))) &&
-          renderMenuItems([
-            <Menu.Item
-              key="4"
-              onClick={() =>
-                handleClick(
-                  user.userRole === "TourGuide"
-                    ? "/itinerary/tourguide_itineraries"
-                    : "/itinerary"
-                )
-              }
-            >
-              Itinerary
-            </Menu.Item>,
-            user && user.userRole === "Admin" && (
-              <Menu.Item
-                key="15"
-                onClick={() => handleClick("/itinerary/flaggedIternaries")}
-              >
-                Flagged Itinerary
-              </Menu.Item>
-            ),
-            user && user.userRole === "TourGuide" && (
-              <Menu.Item key="5" onClick={() => handleClick("/itinerary/my")}>
-                My Itineraries
-              </Menu.Item>
-            ),
-          ])}
+            <Menu.SubMenu key="sub1" title="Itinerary">
+              {renderMenuItems([
+                <Menu.Item
+                    key="4"
+                    onClick={() =>
+                        handleClick(
+                            user.userRole === "TourGuide"
+                                ? "/itinerary/tourguide_itineraries"
+                                : "/itinerary"
+                        )
+                    }
+                >
+                  Itinerary
+                </Menu.Item>,
+                user && user.userRole === "Admin" && (
+                    <Menu.Item
+                        key="15"
+                        onClick={() => handleClick("/itinerary/flaggedIternaries")}
+                    >
+                      Flagged Itinerary
+                    </Menu.Item>
+                ),
+                user && user.userRole === "TourGuide" && (
+                    <Menu.Item key="5" onClick={() => handleClick("/itinerary/my")}>
+                      My Itineraries
+                    </Menu.Item>
+                ),
+              ])}
+            </Menu.SubMenu>
+        }
         {user &&
           (user.userRole === "Advertiser" ||
             user.userRole === "Admin" ||
@@ -302,11 +310,6 @@ const Sidebar = ({ visible, onClose }) => {
               </Menu.Item>,
             ])}
           </Menu.SubMenu>
-        )}
-        {user && user.userRole !== "Tourist" && (
-          <Menu.Item key="22" onClick={() => handleClick("/reports/")}>
-            Reports
-          </Menu.Item>
         )}
       </Menu>
     </Drawer>
