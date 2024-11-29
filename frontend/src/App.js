@@ -93,7 +93,7 @@ function AppContent() {
   };
   
   return (
-    <div className="App relative mb-8">
+    <div className="App relative mb-8 bg-gray-50">
       {!flag && (
         <DrawerBar
           onClose={onClose}
@@ -121,7 +121,7 @@ function AppContent() {
       />
 
       {showBackButton && (
-        <div className="p-4 mt-16 bg-transparent">
+        <div className="p-4 mt-[80px] bg-transparent">
           <BackButton />
         </div>
       )}
