@@ -167,6 +167,8 @@ const ActivityDetails: React.FC = () => {
         boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         backgroundColor: "var(--fourth)",
         color: "#496989",
+        
+    
     };
 
     const hoverCardStyle = {
@@ -174,233 +176,313 @@ const ActivityDetails: React.FC = () => {
     };
 
     return (
-        <div style={{backgroundColor: "#f8fafc", minHeight: "100vh", padding: "24px"}}>
-            <Space direction="vertical" size="large" style={{width: "100%", margin: "0 auto"}}>
-
-                {/* Header Section */}
+        <div
+          style={{
+            alignItems: 'center',
+            minHeight: '100vh',
+            backgroundColor: "#DDE6ED",
+            padding: "24px"
+          }}
+        >
+          <Space direction="vertical" size="large" style={{ width: "100%", margin: "0 auto" }}>
+      
+            {/* Header and Basic Information in Same Row */}
+            <Row gutter={[16, 16]} justify="space-between" align="top">
+              
+              {/* Header Section */}
+              <Col xs={24} md={12}>
                 <Card
-                    style={{
-                        ...cardStyle,
-                        ...(hoveredCard === "header" ? hoverCardStyle : {}),
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                        borderRadius: '15px',
-                        transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-                    }}
-                    onMouseEnter={() => setHoveredCard("header")}
-                    onMouseLeave={() => setHoveredCard(null)}
-                    className="bg-white"
+                  style={{
+                    ...cardStyle,
+                    ...(hoveredCard === "header" ? hoverCardStyle : {}),
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    borderRadius: '10px',
+                    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+                    padding: '0px',
+                    backgroundColor: '#FFFFFF',
+                    width: '100%',
+                   // maxHeight:"100%",
+                   // height: "245px"
+                  }}
+                  onMouseEnter={() => setHoveredCard("header")}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  className="bg-white"
                 >
-                    <Row justify="space-between" align="middle">
-                        <Col>
-                            <Title level={2} style={{
-                                color: "#3A6DAF",
-                                fontWeight: 'bold',
-                                textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
-                            }}>
-                                {activity?.name}
-                            </Title>
-                            <Space size="small">
-                                <Badge
-                                    status={activity?.isActive ? "success" : "error"}
-                                    text={activity?.isActive ? "Active" : "Inactive"}
-                                />
-                                <Badge
-                                    status={activity?.isBookingOpen ? "processing" : "default"}
-                                    text={activity?.isBookingOpen ? "Booking Open" : "Booking Closed"}
-                                />
-                            </Space>
-                        </Col>
-                        <Col>
-                            <Space direction="vertical" align="end">
-                                <Rate disabled value={averageRating} allowHalf/>
-                                <Text type="secondary" style={{color: "#7D8798"}}>
-                                    {activity?.ratings?.length} ratings
-                                </Text>
-                                <Space>
-                                    <Button
-                                        icon={<CopyOutlined/>}
-                                        onClick={handleCopyLink}
-                                        style={{
-                                            backgroundColor: '#4A90E2',
-                                            color: 'white',
-                                            borderColor: 'transparent',
-                                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                                            transition: 'background-color 0.3s, transform 0.2s',
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#357ABD'} // Darker blue on hover
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#4A90E2'} // Original blue color
-                                    >
-                                        Copy Link
-                                    </Button>
-                                    <Button
-                                        icon={<MailOutlined/>}
-                                        onClick={handleShareEmail}
-                                        style={{
-                                            backgroundColor: '#4A90E2',
-                                            color: 'white',
-                                            borderColor: 'transparent',
-                                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                                            transition: 'background-color 0.3s, transform 0.2s',
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#357ABD'} // Darker blue on hover
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#4A90E2'} // Original blue color
-                                    >
-                                        Share via Email
-                                    </Button>
-                                    <Button
-              onClick={() => handleActivityBooking(ActivityId)}
-              className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
-            >
-              Book Now
-            </Button>
-                                </Space>
-                            </Space>
-                        </Col>
-                    </Row>
-                </Card>
-
-                {/* Location and Basic Info Section */}
-                <Row gutter={[24, 24]}>
-                    {/* Left Column - Basic Information */}
-                    <Col xs={24} lg={12}>
-                        <Space direction="vertical" style={{width: "100%"}} size="large">
-                            <Card
-                                title="Basic Information"
-                                style={{
-                                    ...cardStyle,
-                                    ...(hoveredCard === "basicInfo" ? hoverCardStyle : {}),
-                                }}
-                                onMouseEnter={() => setHoveredCard("basicInfo")}
-                                onMouseLeave={() => setHoveredCard(null)}
-                            >
-                                <Row gutter={[24, 24]}>
-                                    <Col span={12}>
-                                        <Statistic
-                                            title={<Text style={{color: "white"}}>Date</Text>}
-                                            value={new Date(activity?.date).toLocaleDateString()}
-                                            prefix={<CalendarOutlined/>}
-                                            valueStyle={{color: "black"}}
-                                        />
-                                    </Col>
-                                    <Col span={12}>
-                                        <Statistic
-                                            title={<Text style={{color: "white"}}>Time</Text>}
-                                            value={activity?.time}
-                                            prefix={<ClockCircleOutlined/>}
-                                            valueStyle={{color: "black"}}
-                                        />
-                                    </Col>
-                                    <Col span={24}>
-                                        <Statistic
-                                            title={<Text style={{color: "white"}}>Price Range</Text>}
-                                            value={
-                                                activity?.price?.min && activity?.price?.max
-                                                    ? `${currency?.code} ${(currency?.rate * activity?.price?.min).toFixed(2)} - ${(currency?.rate * activity?.price?.max).toFixed(2)}`
-                                                    : "Not specified"
-                                            }
-
-                                            prefix={<DollarOutlined/>}
-                                            valueStyle={{color: "#black "}}
-                                        />
-                                    </Col>
-                                </Row>
-                            </Card>
-
-                            <Card
-                                title={<Space><TagOutlined
-                                    style={{color: "#58A399"}}/><span>Category & Tags</span></Space>}
-                                style={{
-                                    ...cardStyle,
-                                    ...(hoveredCard === "categoryTags" ? hoverCardStyle : {}),
-                                }}
-                                onMouseEnter={() => setHoveredCard("categoryTags")}
-                                onMouseLeave={() => setHoveredCard(null)}
-                            >
-                                <Space direction="vertical">
-                                    <div>
-                                        <Text strong style={{color: "white"}}>Category: </Text>
-                                        <Tag color="blue">{activity?.category?.category}</Tag>
-                                    </div>
-                                    <div>
-                                        <Text strong style={{color: "white"}}>Preference Tags: </Text>
-                                        <Space wrap>
-                                            {activity?.preferenceTags?.map((tag) => (
-                                                <Tag key={tag._id} color="green">
-                                                    {tag.tag}
-                                                </Tag>
-                                            ))}
-                                        </Space>
-                                    </div>
-                                </Space>
-                            </Card>
-                        </Space>
-                    </Col>
-
-                    {/* Right Column - Map */}
-                    <Col xs={24} lg={12}>
-                        <Card
-                            title={<Space><EnvironmentOutlined
-                                style={{color: "#58A399"}}/><span>Location</span></Space>}
-                            bodyStyle={{padding: 0, height: "400px"}}
-                            style={{
-                                ...cardStyle,
-                                overflow: "hidden",
-                                ...(hoveredCard === "location" ? hoverCardStyle : {}),
-                            }}
-                            onMouseEnter={() => setHoveredCard("location")}
-                            onMouseLeave={() => setHoveredCard(null)}
-                        >
-                            <StaticMap longitude={activity?.location?.lng} latitude={activity?.location?.lat}/>
-                        </Card>
-                    </Col>
-                </Row>
-
-                {/* Special Discounts */}
-                {activity.specialDiscounts.length > 0 && (
-                    <Card
-                        title={
-                            <Space>
-                                <PercentageOutlined style={{color: "#58A399"}}/>
-                                <span>Special Discounts</span>
-                            </Space>
-                        }
+                  <Row justify="space-between" align="middle" gutter={[16, 16]}>
+                    {/* Left Column */}
+                    <Col xs={24} sm={24} md={15} style={{ padding: '0' }}>
+                      <Title
+                        level={1}
                         style={{
-                            ...cardStyle,
-                            ...(hoveredCard === "specialDiscounts" ? hoverCardStyle : {}),
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Same box shadow as header
-                            borderRadius: '15px', // Same rounded corners
-                            transition: 'background-color 0.3s ease, box-shadow 0.3s ease', // Smooth transition effect
-                            padding: '20px', // Padding for spacious layout
+                          color: "#1a2b49",
+                          fontWeight: 'bold',
+                          textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+                          fontSize: '100px',
+                          margin: '0',
                         }}
-                        onMouseEnter={() => setHoveredCard("specialDiscounts")}
-                        onMouseLeave={() => setHoveredCard(null)}
-                    >
-                        <List
-                            dataSource={activity.specialDiscounts}
-                            renderItem={(discount) => (
-                                <List.Item
-                                    extra={
-                                        discount.isAvailable ? (
-                                            <Tag color="success" icon={<CheckCircleOutlined/>}>
-                                                Available
-                                            </Tag>
-                                        ) : (
-                                            <Tag color="error" icon={<CloseCircleOutlined/>}>
-                                                Not Available
-                                            </Tag>
-                                        )
-                                    }
-                                >
-                                    <List.Item.Meta
-                                        title={<Text style={{color: "white"}}>{`${discount?.discount}% OFF`}</Text>}
-                                        description={<Text style={{color: "white"}}>{discount?.Description}</Text>}
-                                    />
-                                </List.Item>
-                            )}
-                        />
-                    </Card>
-                )}
+                      >
+                        {activity?.colorName} {activity?.name}
+                      </Title>
+                      <Rate
+                        disabled
+                        value={averageRating}
+                        allowHalf
+                        style={{ fontSize: '28px', marginTop: '4px' }}
+                      />
+                      <Text
+                        type="secondary"
+                        style={{
+                          color: "#DDE6ED",
+                          fontSize: '14px',
+                          display: 'block',
+                          marginTop: '2px',
+                        }}
+                      >
+                        {activity?.ratings?.length} ratings
+                      </Text>
+                    </Col>
+      
+                    {/* Right Column */}
+                    <Col xs={22} sm={20} md={9}>
+                      <Space direction="vertical" align="end" size={2}>
+                        {/* Badges */}
+                        <Space size="small">
+                          <Badge
+                            status={activity?.isActive ? "success" : "error"}
+                            text={activity?.isActive ? "Active" : "Inactive"}
+                            style={{ fontSize: '12px' }}
+                          />
+                          <Badge
+                            status={activity?.isBookingOpen ? "processing" : "default"}
+                            text={activity?.isBookingOpen ? "Booking Open" : "Booking Closed"}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </Space>
+                        {/* Buttons */}
+                        <Space direction="vertical" size={4} style={{ width: '100%' }}>
+                          <Button
+                            onClick={() => handleActivityBooking(ActivityId)}
+                            className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
+                            style={{
+                              fontSize: '34px', // Bigger font
+                              padding: '26px 42px', // Bigger button
+                              width: '100%', // Full width
+                              backgroundColor: "#1a2b49",
+                            }}
+                          >
+                            Book Now
+                          </Button>
+                          <Space size={4}>
+                            <Button
+                              icon={<CopyOutlined style={{ fontSize: '14px' }} />}
+                              onClick={handleCopyLink}
+                              className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
+                              style={{ fontSize: '14px', padding: '6px 12px' }}
+                            >
+                              Copy Link
+                            </Button>
+                            <Button
+                              icon={<MailOutlined style={{ fontSize: '14px' }} />}
+                              onClick={handleShareEmail}
+                              className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
+                              style={{ fontSize: '14px', padding: '6px 12px' }}
+                            >
+                              Share via Email
+                            </Button>
+                          </Space>
+                        </Space>
+                      </Space>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+      
+              {/* Basic Info Section */}
+              <Col xs={24} md={12}>
+                <Card
+                  title={<Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#1a2b49' }}>Basic Information</Text>}
+                  style={{
+                    ...cardStyle,
+                    ...(hoveredCard === "basicInfo" ? hoverCardStyle : {}),
+                    backgroundColor: 'white',
+                    height: "233px",
+                  }}
+                  onMouseEnter={() => setHoveredCard("basicInfo")}
+                  onMouseLeave={() => setHoveredCard(null)}
+                >
+                  <Row gutter={[16, 16]}>
+                    <Col span={12}>
+                      <Statistic
+                        title={<Text style={{ color: "#526D82" }}>Date</Text>}
+                        value={new Date(activity?.date).toLocaleDateString()}
+                        prefix={<CalendarOutlined style={{ fontSize: '15px', marginRight: '5px' }} />}
+                        valueStyle={{ color: "#1a2b49" }}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <Statistic
+                        title={<Text style={{ color: "#526D82" }}>Time</Text>}
+                        value={activity?.time}
+                        prefix={<ClockCircleOutlined style={{ fontSize: '15px', marginRight: '5px' }} />}
+                        valueStyle={{ color: "#1a2b49" }}
+                      />
+                    </Col>
+                    <Col span={24}>
+                      <Statistic
+                        title={<Text style={{ color: "#526D82" }}>Price Range</Text>}
+                        value={
+                          activity?.price?.min && activity?.price?.max
+                            ? `${currency?.code} ${(currency?.rate * activity?.price?.min).toFixed(2)} - ${(currency?.rate * activity?.price?.max).toFixed(2)}`
+                            : "Not specified"
+                        }
+                      />
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              
+            </Row>
+      
+            {/* Location, Category & Discount Section */}
+            <Row gutter={[16, 16]} justify="space-between" align="top">
+              
+              {/* Category & Tags Section */}
+              <Col xs={24} lg={12}>
+  <Row gutter={16}> {/* Row for controlling space between cards */}
+    <Col span={24}> {/* Each card will take full width of the column */}
+      <Card
+        title={
+          <Space>
+            <TagOutlined style={{ color: "#58A399" }} />
+            <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#1a2b49' }}>Category & Tags</span>
+          </Space>
+        }
+        style={{
+          ...cardStyle,
+          ...(hoveredCard === "categoryTags" ? hoverCardStyle : {}),
+          backgroundColor: 'white',
+          width: '100%',  // Ensures cards take up full column width
+          marginBottom: '16px', // Adds space between cards
+        }}
+        onMouseEnter={() => setHoveredCard("categoryTags")}
+        onMouseLeave={() => setHoveredCard(null)}
+      >
+        <Row gutter={16}>
+          <Col span={12}>
+            <div>
+              <Text strong style={{ fontSize: '16px', color: '#1a2b49' }}>Category: </Text>
+              <Tag color="blue" style={{ fontSize: '16px' }}>
+                {activity?.category?.category}
+              </Tag>
+            </div>
+          </Col>
+          <Col span={12}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Text strong style={{ fontSize: '16px', color: '#1a2b49', marginRight: '10px' }}>
+                Preference Tags:
+              </Text>
+              <Space wrap style={{ display: 'flex', gap: '10px' }}>
+                {activity?.tags?.map((tag, index) => (
+                  <Tag key={index} color="green">
+                    {tag.name}
+                  </Tag>
+                ))}
+              </Space>
+            </div>
+          </Col>
+        </Row>
+      </Card>
+    </Col>
 
+    {/* Special Discounts Section (conditionally render) */}
+    {activity.specialDiscounts.length > 0 && (
+      <Col span={24}>
+     <Card
+  title={
+    <Space>
+      <PercentageOutlined style={{ color: "#58A399" }} />
+      <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#1a2b49' }}>Special Discounts</span>
+    </Space>
+  }
+  style={{
+    ...cardStyle,
+    ...(hoveredCard === "specialDiscounts" ? hoverCardStyle : {}),
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '10px',
+    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+    padding: '0px', // Remove all padding inside the card
+    backgroundColor: '#ffffff',
+    width: '100%', // Ensures cards take up full column width
+    marginBottom: '5px', // Reduced bottom margin
+    height: 'auto', // Auto height to shrink the card
+  }}
+  onMouseEnter={() => setHoveredCard("specialDiscounts")}
+  onMouseLeave={() => setHoveredCard(null)}
+>
+  <List
+    dataSource={activity.specialDiscounts}
+    renderItem={(discount) => (
+      <List.Item
+        extra={
+          discount.isAvailable ? (
+            <Tag color="success" icon={<CheckCircleOutlined />}>
+              Available
+            </Tag>
+          ) : (
+            <Tag color="error" icon={<CloseCircleOutlined />}>
+              Not Available
+            </Tag>
+          )
+        }
+        style={{ padding: '0px' }} // Remove extra padding between list items
+      >
+        <List.Item.Meta
+          title={
+            <Text style={{ color: "red", fontSize: "44px", fontWeight: 'bold' }}>
+              {`${discount?.discount}% OFF`}
+            </Text>
+          }
+          description={<Text style={{ color: "#1a2b49", fontSize: '14px' }}>{discount?.Description}</Text>}
+        />
+      </List.Item>
+    )}
+  />
+</Card>
+
+
+
+      </Col>
+    )}
+  </Row>
+</Col>
+
+      
+              {/* Location Section */}
+              <Col xs={24} lg={12}>
+                <Card
+                  title={
+                    <Space>
+                      <EnvironmentOutlined style={{ color: "#58A399" }} />
+                      <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#1a2b49' }}>Location</span>
+                    </Space>
+                  }
+                  bodyStyle={{ padding: 0, height: "300px" }}
+                  style={{
+                    ...cardStyle,
+                    overflow: "hidden",
+                    backgroundColor: "white",
+                    ...(hoveredCard === "location" ? hoverCardStyle : {}),
+                  }}
+                  onMouseEnter={() => setHoveredCard("location")}
+                  onMouseLeave={() => setHoveredCard(null)}
+                >
+                  <StaticMap longitude={activity?.location?.lng} latitude={activity?.location?.lat} />
+                </Card>
+              </Col>
+              
+            </Row>
+
+           
                 {/* Comments */}
                 {activity?.comments.length > 0 && (
                     <Card
@@ -462,69 +544,78 @@ const ActivityDetails: React.FC = () => {
                         </div>
                     </Card>
                 )}
-
-
-                {/* Footer */}
+                
                 <Card
-                    size="small"
-                    style={{
-                        borderColor:'black',
-                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                        borderRadius: '15px',
-                        transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-                        backgroundColor: "#94A3B8",
-                    }}
-                    onMouseEnter={() => setHoveredCard("footer")}
-                    onMouseLeave={() => setHoveredCard(null)}
-                    className="text-center"
-                >
-                    <div className="space-y-4">
-                        {/* Footer Title and Icon */}
-                        <div className="text-xl font-bold text-white mb-4">
-                            <EnvironmentOutlined size={20} className=" text-blue-500"/>
-                            <span className="ml-2">Activity Information</span>
-                        </div>
+  size="small"
+  style={{
+    borderColor: 'black',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '15px',
+    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+    backgroundColor: "#94A3B8",
+    width: '600px', // Set a specific width for the card
+    height: 'auto', // Allows the card to shrink
+    maxHeight: '150px', // Optional: Limit the maximum height of the card
+  }}
+  onMouseEnter={() => setHoveredCard("footer")}
+  onMouseLeave={() => setHoveredCard(null)}
+  className="text-center mx-auto" // Center the card horizontally
+>
+  <div className="space-y-4">
+    {/* Footer Title and Icon */}
+    <div className="text-xl font-bold text-white mb-4">
+      <EnvironmentOutlined size={20} className="text-fourth" />
+      <span className="ml-2">Activity Information</span>
+    </div>
 
-                        <Space direction="vertical" size="small" style={{textAlign: 'center'}}>
-                            <Text type="secondary" style={{color: "black"}}>
-                                <UserOutlined className="mr-2 text-blue-500"/>
-                                <strong>Created by:</strong> {activity?.createdBy?.username}
-                            </Text>
-                            <Text type="secondary" style={{color: "black"}}>
-                                <CalendarOutlined className="mr-2 text-blue-500"/>
-                                <strong>Created:</strong> {new Date(activity?.createdAt).toLocaleDateString()}
-                            </Text>
-                            <Text type="secondary" style={{color: "black"}}>
-                                <ClockCircleOutlined className="mr-2 text-blue-500"/>
-                                <strong>Last updated:</strong> {new Date(activity?.updatedAt).toLocaleDateString()}
-                            </Text>
-                        </Space>
-                    </div>
-                    {/* Footer Action Links */}
-                    <div className="mt-6 flex justify-center space-x-6">
-                        <a
-                            href="#"
-                            className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
-                        >
-                            Privacy Policy
-                        </a>
-                        <a
-                            href="#"
-                            className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
-                        >
-                            Terms of Service
-                        </a>
-                    </div>
+    {/* Info Section with Flexbox for larger screens */}
+    <Space
+      direction="vertical"
+      size="small"
+      style={{ textAlign: 'center' }}
+      className=" mt-6 flex justify-center sm:flex sm:flex-row sm:space-x-6 sm:text-left sm:items-center sm:space-y-0"
+    >
+      <Text type="secondary" style={{ color: "black" }} className="flex items-center">
+        <UserOutlined className="mr-2 text-fourth " />
+        <strong>Created by:</strong> {activity?.createdBy?.username}
+      </Text>
+      <Text type="secondary" style={{ color: "black" }} className="flex items-center">
+        <CalendarOutlined className="mr-2 text-fourth" />
+        <strong>Created at:</strong> {new Date(activity?.createdAt).toLocaleDateString()}
+      </Text>
+      <Text type="secondary" style={{ color: "black" }} className="flex items-center">
+        <ClockCircleOutlined className="mr-2 text-fourth" />
+        <strong>Last updated:</strong> {new Date(activity?.updatedAt).toLocaleDateString()}
+      </Text>
+    </Space>
+  </div>
 
-                    {/* Footer Footer */}
-                    <div className="mt-8 text-sm text-gray-400">
-                        <Text>© 2024 Teer Enta. All rights reserved.</Text>
-                    </div>
-                </Card>
+  {/* Footer Action Links */}
+  <div className="mt-2 flex justify-center space-x-6">
+    <a
+      href="#"
+      className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
+    >
+      Privacy Policy
+    </a>
+    <a
+      href="#"
+      className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
+    >
+      Terms of Service
+    </a>
+  </div>
 
-            </Space>
+  {/* Footer Footer */}
+  <div className="mt-0 text-sm text-gray-400">
+    <Text>© 2024 Teer Enta. All rights reserved.</Text>
+  </div>
+</Card>
+
+          </Space>
         </div>
-    );
+      );
+      
 };
 
 export default ActivityDetails;
