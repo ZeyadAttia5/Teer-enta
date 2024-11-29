@@ -36,29 +36,47 @@ const { Text, Title } = Typography;
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 
-const CustomProgressBar = ({ step }) => {
+const CustomProgressBar = ({ step, setStep }) => {
   const steps = [
-    { label: "Choose City and Dates  ", icon: <SolutionOutlined /> },
-    { label: "Hotel Offers  ", icon: <HomeOutlined /> },
-    { label: "Payment  ", icon: <CreditCardOutlined /> },
+    { label: "Choose City and Dates ", icon: <SolutionOutlined /> },
+    { label: "Hotel Offers ", icon: <HomeOutlined /> },
+    { label: "Payment ", icon: <CreditCardOutlined /> },
   ];
-  const colors = ["#1a2b49", "#526D82", "#9DB2BF"];
+  const colors = ["#1a2b49", "#526D82", "#9DB2BF", "#DDE6ED"];
+  const textColors = ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#686d7e"];
 
   return (
     <div className="flex justify-between items-center mb-8">
       {steps.map((item, index) => (
-        <div key={index} className="flex-1 text-center">
+        <div
+          key={index}
+          className={`flex-1 text-center ${
+            index <= step ? "cursor-pointer" : "cursor-default"
+          }`}
+          onClick={() => {
+            if (index <= step) setStep(index);
+          }}
+        >
           <div
-            className={`py-2 px-4 rounded-full transition-all duration-300 ${
-              step === index ? "text-white" : "text-[#686d7e]"
-            }`}
+            className={`py-2 px-4 rounded-full transition-all duration-300`}
             style={{
-              backgroundColor: step === index ? colors[index] : "#DDE6ED",
+              backgroundColor:
+                index < step
+                  ? colors[0]
+                  : index === step
+                  ? colors[1]
+                  : colors[3],
+              color:
+                index < step
+                  ? textColors[0]
+                  : index === step
+                  ? textColors[1]
+                  : textColors[3],
               transform: step === index ? "scale(1)" : "scale(1)",
             }}
           >
             {item.label}
-            <Space>{(" ", item.icon)}</Space>
+            <Space>{item.icon}</Space>
           </div>
         </div>
       ))}
@@ -345,7 +363,6 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
           name="dates"
           label="Check-in and Check-out Dates"
           rules={[
-            { required: true, message: "Please select your dates" },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || value.length !== 2) {
@@ -355,6 +372,11 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
                 if (start.isBefore(new Date().setHours(0, 0, 0, 0))) {
                   return Promise.reject(
                     new Error("Start date cannot be in the past")
+                  );
+                }
+                if (end.isSame(start)) {
+                  return Promise.reject(
+                    new Error("End date cannot be the same as start date")
                   );
                 }
                 if (end.isBefore(start)) {
@@ -483,7 +505,7 @@ const BookHotel = () => {
       <Title level={4} className="mb-6 text-[#1a2b49]">
         Book Your Hotel
       </Title>
-      <CustomProgressBar step={step} />
+      <CustomProgressBar step={step} setStep={setStep} />
       {loading ? (
         <div className="flex justify-center p-8">
           <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
