@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Table,
   Button,
   Modal,
   Form,
@@ -13,11 +12,8 @@ import {
   message,
   Card,
   notification,
-  Badge,
   Tooltip,
   Switch,
-  Tag,
-  Popconfirm,
 } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 import {
@@ -36,17 +32,19 @@ import {
   FlagFilled,
 } from "@ant-design/icons";
 import {
+  getItineraries,
   createItinerary,
   updateItinerary,
   deleteItinerary,
   getMyItineraries,
-  getItineraries,
+  getUnActiveItineraries,
+  activateItinerary,
   flagIternaary,
 } from "../../api/itinerary.ts";
 import { SearchOutlined } from "@ant-design/icons";
 import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
-import { Filter, SortAsc, ChevronRight, CheckSquareIcon } from "lucide-react";
+import { Filter, SortAsc, ChevronRight } from "lucide-react";
 
 import moment from "moment";
 import "antd";
@@ -203,11 +201,14 @@ const DropdownMenuSubContent = ({ children, isOpen }) => {
   );
 };
 
-const MyItineraryScreen = ({ setFlag }) => {
+const TourguideItineraryScreen = ({ setFlag }) => {
   setFlag(false);
+  // Add these states at the top of your component
+  const [isEditFormVisible, setIsEditFormVisible] = useState(false);
+  const [selectedItinerary, setSelectedItinerary] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
-  const accessToken = localStorage.getItem("accessToken");
   const [itineraries, setItineraries] = useState([]);
+  const [myItineraries, setMyItineraries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingItinerary, setEditingItinerary] = useState(null);
@@ -221,6 +222,8 @@ const MyItineraryScreen = ({ setFlag }) => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedPreference, setSelectedPreference] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const [selectedActive, setSelectedActive] = useState("");
+  const [refreshItineraries, setRefreshItineraries] = useState(false);
 
   // New state variables for ActivityList and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
@@ -235,15 +238,33 @@ const MyItineraryScreen = ({ setFlag }) => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === "/itinerary/my") {
-      fetchMyIternaries();
-    } else {
-      fetchItineraries();
-    }
+    const fetchData = async () => {
+      try {
+        const [itinerariesData, myItinerariesData] = await Promise.all([
+          getItineraries(),
+          getMyItineraries(),
+        ]);
+
+        setItineraries(itinerariesData);
+        setMyItineraries(myItinerariesData);
+
+        // Combine after fetching
+        const combinedItineraries = [
+          ...new Set([...itinerariesData, ...myItinerariesData]),
+        ];
+        console.log("Combined Itineraries:", combinedItineraries);
+
+        setItineraries(combinedItineraries);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
     fetchCurrency();
     fetchActivities();
     fetchPreferenceTags();
-  }, [location.pathname]);
+  }, [location.pathname, refreshItineraries]);
 
   const resetFilters = () => {
     setSelectedBudget("");
@@ -252,10 +273,13 @@ const MyItineraryScreen = ({ setFlag }) => {
     setSelectedPreference("");
     setSortBy("");
     setSearchTerm("");
+    setSelectedActive("");
   };
 
-  const budgets = [...new Set(itineraries.map((itin) => itin.price))];
-  const languages = [...new Set(itineraries.map((itin) => itin.language))];
+  const budgets = [...new Set((itineraries || []).map((itin) => itin.price))];
+  const languages = [
+    ...new Set((itineraries || []).map((itin) => itin.language)),
+  ];
 
   const filterByDate = (itin) => {
     return itin.availableDates.some((availableDate) => {
@@ -290,6 +314,9 @@ const MyItineraryScreen = ({ setFlag }) => {
       (selectedPreference
         ? itin.preferenceTags.some((tag) => tag._id === selectedPreference)
         : true) &&
+      (selectedActive !== ""
+        ? itin.isActive.toString() === selectedActive.toString()
+        : "true") &&
       ((itin.name &&
         itin.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         itin.preferenceTags.some((tag) =>
@@ -322,7 +349,7 @@ const MyItineraryScreen = ({ setFlag }) => {
     setLoading(true);
     try {
       const data = await getItineraries();
-      setItineraries(data);
+      setItineraries(data); // No need to await this
     } catch (error) {
       message.error("Failed to fetch itineraries");
     }
@@ -333,7 +360,7 @@ const MyItineraryScreen = ({ setFlag }) => {
     setLoading(true);
     try {
       const data = await getMyItineraries();
-      setItineraries(data);
+      setMyItineraries(data);
     } catch (error) {
       if (error.response.status === 404) {
         notification.info({ message: "You didn't create any itineraries yet" });
@@ -419,6 +446,10 @@ const MyItineraryScreen = ({ setFlag }) => {
     form.resetFields();
   };
 
+  const handleEditButtonClick = (itinerary) => {
+    showModal(itinerary);
+  };
+
   const handleDelete = async (id) => {
     try {
       await deleteItinerary(id);
@@ -432,9 +463,7 @@ const MyItineraryScreen = ({ setFlag }) => {
       );
     }
   };
-  const handleBookItinerary = (id) => {
-    navigate(`/itinerary/book/${id}`);
-  };
+
   const onFinish = async (values) => {
     try {
       const formattedAvailableDates = values.availableDates.map(
@@ -488,161 +517,17 @@ const MyItineraryScreen = ({ setFlag }) => {
         message.success("Itinerary created successfully");
       }
       handleCancel();
-      location.pathname === "/itinerary/my"
-        ? fetchMyIternaries()
-        : fetchItineraries();
+      setRefreshItineraries((prev) => !prev);
     } catch (error) {
       message.error("Failed to save itinerary");
       console.error(error);
     }
   };
 
-  const showViewModal = (itinerary) => {
-    console.log("Viewing itinerary", itinerary);
-    setViewingItinerary(itinerary);
-    setIsViewModalVisible(true);
-  };
-
   const handleViewCancel = () => {
     setIsViewModalVisible(false);
     setViewingItinerary(null);
   };
-
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Language",
-      dataIndex: "language",
-      key: "language",
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      render: (price) =>
-        `${(price * currency?.rate).toFixed(2)} ${currency?.code}`,
-    },
-    {
-      title: "Booking Open",
-      dataIndex: "isBookingOpen",
-      key: "isBookingOpen",
-      render: (isBookingOpen) =>
-        isBookingOpen ? (
-          <Tag color="green">Open</Tag>
-        ) : (
-          <Tag color="red">Closed</Tag>
-        ),
-    },
-    {
-      title: "Is Active",
-      dataIndex: "isActive",
-      key: "isActive",
-      render: (isActive) =>
-        isActive ? (
-          <Tag color="green">Active</Tag>
-        ) : (
-          <Tag color="red">Inactive</Tag>
-        ),
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (text, record) => (
-        <>
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() => showViewModal(record)}
-            className="mr-2"
-            style={{
-              backgroundColor: "#02735F",
-              color: "#fff",
-              border: "none",
-            }}
-          >
-            View
-          </Button>
-
-          {user && user._id === record.createdBy && (
-            <>
-              <Button
-                icon={<EditOutlined />}
-                onClick={() => showModal(record)}
-                className="mr-2"
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
-              >
-                Edit
-              </Button>
-
-              <Popconfirm
-                title="Are you sure you want to delete this item?"
-                onConfirm={() => handleDelete(record._id)}
-                onCancel={() => message.info("Delete action cancelled")}
-                okText="Yes"
-                cancelText="No"
-                okButtonProps={{
-                  style: {
-                    backgroundColor: "#f00",
-                    borderColor: "#f00",
-                    color: "#fff",
-                  },
-                }}
-              >
-                <Button
-                  icon={<DeleteOutlined />}
-                  style={{
-                    backgroundColor: "#f00",
-                    color: "#fff",
-                    border: "none",
-                  }}
-                  danger
-                >
-                  Delete
-                </Button>
-              </Popconfirm>
-            </>
-          )}
-          {user && user.userRole === "Admin" && (
-            <Badge count={0} offset={[-5, 5]}>
-              <Tooltip title={"Flag this item as Inappropriate"}>
-                <Button
-                  danger
-                  icon={<FlagFilled />}
-                  onClick={async () => {
-                    try {
-                      setLoading(true);
-                      await flagIternaary(record._id);
-                      message.success("Item flagged as inappropriate");
-                      await fetchItineraries();
-                    } catch (error) {
-                      message.error("Failed to flag item as inappropriate");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  shape="circle"
-                  style={{
-                    button: {
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    },
-                  }}
-                />
-              </Tooltip>
-            </Badge>
-          )}
-        </>
-      ),
-    },
-  ];
 
   return (
     <div className="p-6 min-h-screen">
@@ -746,6 +631,22 @@ const MyItineraryScreen = ({ setFlag }) => {
                       </select>
                     </div>
                   </DropdownMenuSub>
+                  <DropdownMenuSub trigger="Active">
+                    <div>
+                      <select
+                        id="activeFilter"
+                        value={selectedActive}
+                        onChange={(e) => {
+                          setSelectedActive(e.target.value);
+                        }}
+                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                      >
+                        <option value="">All</option>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                      </select>
+                    </div>
+                  </DropdownMenuSub>
 
                   <DropdownMenuSub trigger="Date">
                     <div>
@@ -817,36 +718,52 @@ const MyItineraryScreen = ({ setFlag }) => {
           </div>
         </div>
       </div>
-      {user === null || user?.userRole === "Tourist" ? (
+      {user === null || user?.userRole === "TourGuide" ? (
         <main className="flex flex-wrap justify-center items-center min-h-screen py-10">
           {sortedItineraries?.map((itinerary, index) => (
             <div
               key={index}
-              className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
+              className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third"
             >
-              {/* Book Now Circle */}
-              <div className="absolute top-4 left-4 bg-second text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
-                <span>Book Now</span>
-              </div>
-
               <Card
-                className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
-                style={{ backgroundColor: "#ffffff" }} // Default background color
+                className="relative rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
+                style={{ backgroundColor: "#ffffff" }}
               >
+                {/* Edit button as a circular icon in the top-right corner */}
+                {myItineraries?.some(
+                  (myItinerary) => myItinerary._id === itinerary._id
+                ) ? (
+                  <div
+                    className="absolute top-3 right-3 bg-white rounded-full p-3 shadow-lg hover:bg-blue-500 hover:text-white cursor-pointer transition-all duration-300"
+                    onClick={() => showModal(itinerary)}
+                  >
+                    <EditOutlined className="text-xl text-gray-600 hover:text-white" />
+                  </div>
+                ) : null}
+
+                {/* Card content */}
                 <Card.Meta
+                  onClick={() =>
+                    navigate(`/itinerary/iternaryDetails/${itinerary?._id}`, {
+                      replace: true,
+                    })
+                  }
                   title={
                     <>
-                      <span
-                        className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out"
-                        style={{ color: "#333333" }}
-                      >
-                        <Tooltip title={itinerary?.name}>
+                      <Tooltip title={itinerary?.name}>
+                        <span
+                          className="font-bold text-2xl mb-2 transition-transform duration-500 ease-out overflow-hidden text-ellipsis whitespace-nowrap"
+                          style={{
+                            color: "#333333",
+                            maxWidth: "100%",
+                            display: "block",
+                          }}
+                        >
                           {itinerary?.name}
-                        </Tooltip>
-                        <hr className="my-4 border-t-2 border-second" />
-                      </span>
+                        </span>
+                      </Tooltip>
+                      <hr className="my-4 border-t-2 border-second" />
                       {/* Travel Route */}
-
                       <Tooltip title="Travel Route">
                         <span className="font-semibold text-xl hover:text-third flex items-center mt-2">
                           <EnvironmentTwoTone
@@ -865,8 +782,7 @@ const MyItineraryScreen = ({ setFlag }) => {
                       className="flex flex-col space-y-1"
                       style={{ color: "#333333" }}
                     >
-                      {/* Horizontal Line to Split the Card */}
-
+                      {/* Language and Accessibility */}
                       <Tooltip title="Language">
                         <span className="font-semibold text-lg hover:text-third">
                           <GlobalOutlined style={{ marginRight: 8 }} />
@@ -879,12 +795,15 @@ const MyItineraryScreen = ({ setFlag }) => {
                           {itinerary?.accessibility || "N/A"}
                         </span>
                       </Tooltip>
-                      {/* Price Tooltip at the End */}
+
+                      {/* Price Tooltip */}
                       <div className="flex justify-center items-center mt-4">
                         <Tooltip title="Price">
-                          <span className="font-semibold text-4xl hover:text-third flex items-center">
-                            {currency?.code}{" "}
-                            {(itinerary?.price * currency?.rate).toFixed(2)}
+                          <span className="font-semibold flex items-center">
+                            <span className="text-1xl">{currency?.code}</span>
+                            <span className="text-3xl hover:text-third ml-1">
+                              {(itinerary?.price * currency?.rate).toFixed(2)}
+                            </span>
                           </span>
                         </Tooltip>
                       </div>
@@ -892,37 +811,13 @@ const MyItineraryScreen = ({ setFlag }) => {
                   }
                 />
               </Card>
-
-              <div className="flex justify-center items-center gap-4 p-4">
-                <Button
-                  onClick={() => navigate(`iternaryDetails/${itinerary?._id}`)}
-                  className="text-white bg-second hover:bg-[#4a8f7a] transition-all duration-300"
-                >
-                  Show Details
-                </Button>
-                {user && user?.userRole === "Tourist" && (
-                  <Button
-                    onClick={() => handleBookItinerary(itinerary?._id)}
-                    className="text-white bg-[#496989] hover:bg-[#3b5b68] transition-all duration-300"
-                  >
-                    Book
-                  </Button>
-                )}
-              </div>
             </div>
           ))}
         </main>
       ) : (
-        <Table
-          dataSource={sortedItineraries}
-          columns={columns}
-          rowKey="_id"
-          loading={loading}
-          pagination={{ pageSize: 10 }}
-          className="border border-gray-200 rounded-lg"
-          rowClassName="hover:bg-[#1C325B]/5"
-        />
+        <></>
       )}
+
       <Modal
         title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
         visible={isModalVisible}
@@ -1392,4 +1287,4 @@ const MyItineraryScreen = ({ setFlag }) => {
   );
 };
 
-export default MyItineraryScreen;
+export default TourguideItineraryScreen;
