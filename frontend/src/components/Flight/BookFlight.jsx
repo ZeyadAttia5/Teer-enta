@@ -24,7 +24,7 @@ import {
 import AutoComplete from "react-google-autocomplete";
 import { bookFlight, getAirports, getFlightOffers } from "../../api/flights.ts";
 import BookingPayment from "../shared/BookingPayment.jsx";
-import { PlaneTakeoff, PlaneLanding } from "lucide-react";
+import { PlaneTakeoff, PlaneLanding, Calendar } from "lucide-react";
 
 
 const { Title, Text } = Typography;
@@ -567,16 +567,20 @@ const { Option } = Select;
 
 const BookFlight = () => {
   const [form] = Form.useForm();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [departureAirports, setDepartureAirports] = useState([])
-  const [destinationAirports, setDestinationAirports] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [currentStep, setCurrentStep] = useState(0);
+  const [departureAirports, setDepartureAirports] = useState([]);
+  const [destinationAirports, setDestinationAirports] = useState([]);
+  const [loading, setLoading] = useState(false);
   const description = "This is a description.";
 
   const fetchAirports = async () => {
     setLoading(true);
-    let [departureCity, departureCountry] = form.getFieldValue("departure").split(",");
-    let [destinationCity, destinationCountry] = form.getFieldValue("arrival").split(",");
+    let [departureCity, departureCountry] = form
+      .getFieldValue("departure")
+      .split(",");
+    let [destinationCity, destinationCountry] = form
+      .getFieldValue("arrival")
+      .split(",");
     try {
       const { data: depAirports } = await getAirports(
         departureCity,
@@ -599,23 +603,20 @@ const BookFlight = () => {
           iataCode: airport.iataCode,
         }))
       );
-      console.log(departureAirports, destinationAirports);
     } catch (error) {
       console.log("Error fetching airports:", error);
     }
     setLoading(false);
   };
 
-  const handleStepChange = async (step) => {
-    await form.validateFields();
-    if (step === 2) 
-      await fetchAirports();
-    
+  const handleStepChange = (step) => {
+    // form.validateFields();
     setCurrentStep(step);
+    if (step === 1) fetchAirports();
   };
 
   const fields = {
-    1: [
+    0: [
       {
         name: "departure",
         label: (
@@ -673,66 +674,151 @@ const BookFlight = () => {
         ),
       },
     ],
-    2:[
-
-    ]
+    1: [
+      {
+        name: "departureAirport",
+        label: (
+          <span className="flex items-center">
+            Departure Airport <PlaneTakeoff className="ml-2" size={15} />
+          </span>
+        ),
+        rules: [{ required: true, message: "Please input departure airport!" }],
+        component: (
+          <Select
+            name="departureAirport"
+            placeholder="Select departure airport"
+            onChange={(value) => {
+              form.setFieldValue("departureAirport", value);
+            }}
+            className="transition-all duration-300"
+          >
+            {departureAirports?.map((airport, index) => (
+              <Option key={index} value={airport.iataCode}>
+                {airport.name} ({airport.iataCode})
+              </Option>
+            ))}
+          </Select>
+        ),
+      },
+      {
+        name: "destinationAirport",
+        label: (
+          <span className="flex items-center">
+            Destination Airport <PlaneLanding className="ml-2" size={15} />
+          </span>
+        ),
+        rules: [
+          { required: true, message: "Please input destination airport!" },
+        ],
+        component: (
+          <Select
+            name="destinationAirport"
+            placeholder="Select destination airport"
+            onChange={(value) => {
+              form.setFieldValue("destinationAirport", value);
+            }}
+            className="transition-all duration-300"
+          >
+            {destinationAirports?.map((airport, index) => (
+              <Option key={index} value={airport.iataCode}>
+                {airport.name} ({airport.iataCode})
+              </Option>
+            ))}
+          </Select>
+        ),
+      },
+      {
+        name: "departureDate",
+        label: (
+          <span className="flex items-center">
+            Departure Date <Calendar className="ml-2" size={15} />
+          </span>
+        ),
+        rules: [{ required: true, message: "Please select departure date!" }],
+        component: (
+          <DatePicker
+            name="departureDate"
+            className="w-full transition-all duration-300"
+            disabledDate={(current) => {
+              return current && current < new Date();
+            }}
+            onChange={(date) => {
+              form.setFieldValue("departureDate", date.format("YYYY-MM-DD"));
+            }}
+          />
+        ),
+      },
+    ],
   };
   const stepContent = {
-    1: (
-      <div >
-        <Form.Item {...fields[1][0]} className="mt-8">
-          {fields[1][0].component}
+    0: (
+      <div>
+        <Form.Item {...fields[0][0]} className="mt-8">
+          {fields[0][0].component}
         </Form.Item>
-        <ArrowDownOutlined  style={{fontSize:'25px',justifyContent:'center',width:'100%',marginTop:'5px'}} />
-        <Form.Item {...fields[1][1]} className="mt-8">
-          {fields[1][1].component}
+        <ArrowDownOutlined
+          style={{
+            fontSize: "25px",
+            justifyContent: "center",
+            width: "100%",
+            marginTop: "5px",
+          }}
+        />
+        <Form.Item {...fields[0][1]} className="mt-8">
+          {fields[0][1].component}
         </Form.Item>
       </div>
     ),
+    1: fields[1].map((field, index) => (
+      <Form.Item key={index} {...field} className="mt-8">
+        {field.component}
+      </Form.Item>
+    )),
   };
 
   return (
-    <ConfigProvider theme={{
-      components:{
-        Button:{
-          defaultBg:'rgb(26,43,73)',
-          defaultHoverBg:'rgb(82,109,130)',
-          defaultColor:'white',
-          defaultHoverColor:'white',
-          defaultHoverBorderColor:'rgb(82,109,130)',
-        }
-      }
-    }}>
-
-    <Card
-      className="w-11/12 min-h-[600px] flex my-20 mx-auto shadow"
-      classNames={{
-        body: "flex flex-1 flex-col justify-center",
-        cover: "flex-1",
+    <ConfigProvider
+      theme={{
+        components: {
+          Button: {
+            defaultBg: "rgb(26,43,73)",
+            defaultHoverBg: "rgb(82,109,130)",
+            defaultColor: "white",
+            defaultHoverColor: "white",
+            defaultHoverBorderColor: "rgb(82,109,130)",
+          },
+        },
       }}
-      cover={
-        <img
-          alt=""
-          className="size-full"
-          src="https://watermark.lovepik.com/photo/50099/3731.jpg_wh1200.jpg"
-        />
-      }
     >
-      <header>
-        <Typography.Title level={4} className="mb-6">
-          Book Your Flight
-        </Typography.Title>
-      </header>
-      <main className="h-full flex mt-6 ">
-        <section className="flex-1 flex flex-col justify-center items-center">
-          <Form
-            className="w-full flex flex-col justify-center px-6 flex-1"
-            form={form}
-            layout="vertical"
-          >
-            {stepContent[currentStep]}
-            <footer className="flex justify-between mt-8">
-              {/* {currentStep > 1 && (
+      <Card
+        className="w-11/12 min-h-[600px] flex my-20 mx-auto shadow"
+        classNames={{
+          body: "flex flex-1 flex-col justify-center",
+          cover: "flex-1",
+        }}
+        cover={
+          <img
+            alt=""
+            className="size-full"
+            src="https://watermark.lovepik.com/photo/50099/3731.jpg_wh1200.jpg"
+          />
+        }
+      >
+        <header>
+          <Typography.Title level={4} className="mb-6">
+            Book Your Flight
+          </Typography.Title>
+        </header>
+        <main className="h-full flex mt-6 ">
+          <section className="flex-1 flex flex-col justify-center items-center">
+            <Form
+              className="w-full flex flex-col justify-center px-6 flex-1"
+              form={form}
+              layout="vertical"
+            >
+              {loading ? <Spin /> : stepContent[currentStep]}
+              <footer className="flex justify-between mt-8">
+                {/* {currentStep > 1 && (
                 <Button
                   onClick={() => setCurrentStep(currentStep - 1)}
                   className="w-1/2"
@@ -751,50 +837,49 @@ const BookFlight = () => {
                   Next
                 </Button>
               )} */}
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    console.log(form.getFieldsValue());
+                  }}
+                >
+                  log
+                </Button>
+              </footer>
+            </Form>
+            <footer className="">
               <Button
-                type="primary"
-                onClick={() => {
-                  console.log(form.getFieldsValue());
-                }}
+                type="default"
+                onClick={() => handleStepChange(currentStep + 1)}
               >
-                log
+                Next
               </Button>
             </footer>
-          </Form>
-          <footer className="">
-            <Button
-              type='default'
-              onClick={() => handleStepChange(currentStep+1)}
-            >
-              Next
-            </Button>
-          </footer>
-        </section>
-        <section className="h-full flex-[0.4]">
-          <Steps
-            direction="vertical"
-            current={currentStep}
-            className="h-full"
-            items={[
-              {
-                title: "Select cities ",
-                description,
-                
-              },
-              {
-                title: "Select Airports and Departure Date",
-                status: "process",
-                description,
-              },
-              {
-                title: "Waiting",
-                description,
-              },
-            ]}
-          />
-        </section>
-      </main>
-    </Card>
+          </section>
+          <section className="h-full flex-[0.4]">
+            <Steps
+              direction="vertical"
+              current={currentStep}
+              className="h-full"
+              items={[
+                {
+                  title: "Select cities ",
+                  description,
+                },
+                {
+                  title: "Select Airports and Departure Date",
+                  icon: loading ? <LoadingOutlined /> : <PlaneTakeoff />,
+                  description,
+                },
+                {
+                  title: "Waiting",
+                  description,
+                },
+              ]}
+            />
+          </section>
+        </main>
+      </Card>
     </ConfigProvider>
   );
 };
