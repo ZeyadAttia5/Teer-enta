@@ -504,7 +504,7 @@ function Signup({ setFlag }) {
             <img src={HappyWoman} alt="Waving Hand" width={40} />
           </div>
           <div className="flex justify-center">
-            <div className="flex justify-center items-center w-1/4">
+            <div className="flex justify-center items-center w-1/3">
               <form
                 className="form w-full p-[10px] pt-[5px] flex flex-col gap-1.5 bg-white relative   outline-none border border-[rgba(105,105,105,0.397)] rounded-[10px]
         top-[15px] text-gray-500 text-[0.9em] transition ease-linear duration-300 shadow-lg"
@@ -777,7 +777,7 @@ function Signup({ setFlag }) {
                 {passwordMatch && <p className="my-1.5"></p>}
 
                 <button
-                  className="border-none mt-4 bg-first outline-none bg-royalblue p-2.5 rounded-[10px] text-white text-[16px] transition-transform ease duration-300"
+                  className="border-none mt-4 bg-first hover:bg-black outline-none bg-royalblue p-2.5 rounded-[10px] text-white text-[16px] transition-transform ease duration-300"
                   onClick={handleButtonClick}
                   type="submit"
                 >
