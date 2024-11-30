@@ -17,20 +17,20 @@ const {Search} = Input;
 
 
 const Button1 = ({children, onClick, variant = 'default'}) => {
-    const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+    const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-fourth ";
     const variantClasses = variant === 'outline'
-        ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-        : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+        ? "hover:bg-third hover:text-accent-foreground" // Light gray hover background for outline variant
+        : "text-gray-700 hover:bg-third"; // Light gray hover background for default variant
 
     return (
-        <button className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`} onClick={onClick}>
+        <button className={`${baseClasses} ${variantClasses} h-10 px-4`} onClick={onClick}>
             {children}
         </button>
     )
 }
 
 const Button2 = ({children, onClick, variant = 'default'}) => {
-    const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+    const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-fourth";
     const variantClasses = variant === 'outline'
         ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
         : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
@@ -236,7 +236,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
         <div className="py-6 px-16">
             <div className="mb-6 flex justify-center">
                 <Search
-                    // enterButton={<SearchOutlined className=""/>}
+                    enterButton={<SearchOutlined className=""/>}
                     placeholder="Search by name, location, or tag..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -284,7 +284,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
                     
                     icon={<ReloadOutlined/>}
                     onClick={resetFilters}
-                    className="ml-4 h-9 text-black bg-white hover:bg-gray-100"
+                    className="ml-4 h-10 text-black bg-fourth hover:bg-third"
                 >
                     Remove filters
                 </Button>

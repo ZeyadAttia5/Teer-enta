@@ -128,10 +128,10 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
       <div className="relative inline-block">
         <Badge dot={hasActiveFilters()} offset={[-2, 2]}>
           <Button
-              type="primary"
+              type="danger"
               icon={<FilterOutlined />}
               onClick={() => setIsOpen(true)}
-              className="flex-1 bg-first hover:bg-customGreen"
+              className="flex-1 bg-fourth hover:bg-third text-black"
           >
             Filters & Sort
           </Button>

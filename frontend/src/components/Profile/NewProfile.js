@@ -85,6 +85,7 @@ const TouristProfile = () => {
       setLoading(false); // Hide spinner
       setIsEditing(false);
     }
+    window.location.reload();
   };
 
   const handleInputChange = (field, value) => {
@@ -277,16 +278,16 @@ const TouristProfile = () => {
                 </div>
               </Form>
 
-              <div className="flex gap-3 justify-between mt-4">
                 {isEditing && (
-                  <div>
+              <div className="flex gap-3 justify-between mt-4">
+                  
                     <Button onClick={() => setIsEditing(false)}>Cancel</Button>
-                    <Button type="primary" onClick={onSaveClick}>
+                    <Button type="danger" onClick={onSaveClick} className="bg-fourth border-gray-500 text-black hover:bg-third">
                       Confirm
                     </Button>
                   </div>
                 )}
-              </div>
+              
             </div>
           </div>
         </div>
