@@ -149,7 +149,7 @@ const TouristWelcome = ({ setFlag }) => {
   }, [touristActivities]);
 
   return (
-    <div className="relative mt-16">
+    <div className="relative mt-16 ">
       {notAccepted &&
         user &&
         (user.userRole === "TourGuide" ||
@@ -198,7 +198,7 @@ const TouristWelcome = ({ setFlag }) => {
 
         <div className="absolute justify-around top-[72%] w-3/4 flex">
           <Button
-            className={`p-8 px-12 font-bold ring-0 text-2xl ${
+            className={`p-8 px-12 font-bold ring-0 text-2xl font-playfair-display ${
               selectedButton === 1
                 ? "bg-white text-first"
                 : "bg-transparent text-white"
@@ -223,7 +223,7 @@ const TouristWelcome = ({ setFlag }) => {
             For you
           </Button>
           <Button
-            className={`p-8 px-12 font-bold ring-0 text-2xl ${
+            className={`p-8 px-12 font-bold ring-0 text-2xl font-playfair-display ${
               selectedButton === 2
                 ? "bg-white text-first"
                 : "bg-transparent text-white"
@@ -235,7 +235,7 @@ const TouristWelcome = ({ setFlag }) => {
             Transportations
           </Button>
           <Button
-            className={`p-8 px-12 font-bold ring-0 text-2xl ${
+            className={`p-8 px-12 font-bold ring-0 font-playfair-display text-2xl ${
               selectedButton === 3
                 ? "bg-white text-first"
                 : "bg-transparent text-white"
@@ -247,7 +247,7 @@ const TouristWelcome = ({ setFlag }) => {
             Hotels
           </Button>
           <Button
-            className={`p-8 px-12 font-bold ring-0 text-2xl ${
+            className={`p-8 px-12 font-bold font-playfair-display ring-0 text-2xl ${
               selectedButton === 4
                 ? "bg-white text-first"
                 : "bg-transparent text-white"

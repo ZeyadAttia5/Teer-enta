@@ -193,20 +193,22 @@ function AppContent() {
     setIsNavigate(true);
     setModalOpen(false);
   };
-  
+
   return (
-    <div className="App relative mb-8">
-      <NotificationProvider
-          incomingNotification={incomingNotification}
-          isNotificationIncomming={isNotificationIncoming}
-        >
-        <ToastContainer />
+
+      <div className="App relative mb-8 bg-gray-50 font-playfair-display">
+          <NotificationProvider
+              incomingNotification={incomingNotification}
+              isNotificationIncomming={isNotificationIncoming}
+          >
+              <ToastContainer />
+
+
         {!flag && (
           <DrawerBar
             onClose={onClose}
             showDrawer={showDrawer}
             drawerVisible={visible}
-
           />
         )}
         {!flag && (
@@ -215,7 +217,6 @@ function AppContent() {
               setModalOpen={setModalOpen}
               isNavigate={isNavigate}
               setIsNavigate={setIsNavigate}
-
             />
           </div>
         )}
@@ -232,6 +233,7 @@ function AppContent() {
             <BackButton />
           </div>
         )}
+
         <Routes>
           {/* General Routes */}
           <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
@@ -273,7 +275,10 @@ function AppContent() {
             element={<ActivityCategories setFlag={setFlag} />}
           />
           <Route path="/tags" element={<Tags setFlag={setFlag} />} />
-          <Route path="/activity" element={<ActivityList setFlag={setFlag} />} />
+          <Route
+            path="/activity"
+            element={<ActivityList setFlag={setFlag} />}
+          />
           <Route
             path="/unActiveActivity"
             element={<UnActiveActivities setFlag={setFlag} />}
@@ -369,7 +374,10 @@ function AppContent() {
                   path="activityDetails/:id"
                   element={<ActivityDetails setFlag={setFlag} />}
                 />
-                <Route path="/" element={<IternaryScreen setFlag={setFlag} />} />
+                <Route
+                  path="/"
+                  element={<IternaryScreen setFlag={setFlag} />}
+                />
                 <Route
                   path="flaggedIternaries"
                   element={<FlaggedIternary setFlag={setFlag} />}
@@ -441,14 +449,18 @@ function AppContent() {
           <Route path="/myComplaints" element={<MyComplaints />} />
           <Route path="/aboutUs" element={<AboutUs />} />
           <Route path="/itinerary/book/:id" element={<BookItinerary />} />
-          <Route path="/touristActivities/book/:id" element={<BookActivity />} />
+          <Route
+            path="/touristActivities/book/:id"
+            element={<BookActivity />}
+          />
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/savedActivities" element={<MyActivities />} />
           <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
         </Routes>
-        {/*<Toaster />*/}
-      </NotificationProvider>
-    </div>
+        <Toaster />
+          </NotificationProvider>
+      </div>
+
   );
 }
 

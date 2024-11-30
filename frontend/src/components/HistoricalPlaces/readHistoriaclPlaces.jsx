@@ -284,7 +284,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
                     
                     icon={<ReloadOutlined/>}
                     onClick={resetFilters}
-                    className="ml-4 h-10 text-black bg-fourth hover:bg-third"
+                    className="ml-4 h-10 text-black font-playfair-display bg-fourth hover:bg-third"
                 >
                     Remove filters
                 </Button>

@@ -443,7 +443,7 @@ function Profile({ setFlag }) {
   return (
     <div className="flex justify-center">
       {isLoading && <LoadingCircle />}
-      <div className="flex m-16 gap-16">
+      <div className="flex mx-16 gap-16">
         {!userRole && (
           <div className="container mx-auto">
             {loading ? (
@@ -459,7 +459,7 @@ function Profile({ setFlag }) {
 
             <div className="flex flex-col space-y-4">
               <button
-                className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
+                className="flex gap-2 items-center justify-center px-4 py-2 bg-first text-white rounded-lg shadow-md hover:bg-black transition duration-300"
                 onClick={handleEdit}
               >
                 <svg
@@ -479,7 +479,7 @@ function Profile({ setFlag }) {
                 Edit Profile
               </button>
               <Link
-                className="flex gap-2 items-center justify-center px-4 py-2 bg-[#02735f] text-white rounded-lg shadow-md hover:bg-green-600 transition duration-300"
+                className="flex gap-2 items-center justify-center px-4 py-2 bg-first text-white rounded-lg shadow-md hover:bg-black transition duration-300"
                 to="/changePassword"
               >
                 <svg
@@ -508,7 +508,7 @@ function Profile({ setFlag }) {
                     <div className="text-gray-600 text-lg">
                       Available Credit
                     </div>
-                    <div className="text-4xl font-bold text-[#02735f] mt-2">
+                    <div className="text-4xl font-bold text-first mt-2">
                       {wallet}
                       <span> </span>
                       {currency.code}
@@ -516,7 +516,7 @@ function Profile({ setFlag }) {
                   </div>
                   <div className="bg-white shadow-lg rounded-lg p-6 border my-4 border-gray-200">
                     <div className="text-gray-600 text-lg">Total points</div>
-                    <div className="text-4xl font-bold text-[#02735f] mt-2">
+                    <div className="text-4xl font-bold text-first mt-2">
                       {user.loyalityPoints}
                     </div>
                   </div>
@@ -528,10 +528,10 @@ function Profile({ setFlag }) {
         <div className="flex-col flex gap-32">
           <div className="flex justify-between">
             <div>
-              <h6 className="text-5xl font-medium text-[#02735f]">
+              <h6 className="text-5xl font-medium text-first">
                 {username}
               </h6>
-              <p className="text-lg font-semibold text-[#02735f]">
+              <p className="text-lg font-semibold text-first">
                 {userRole === "TourGuide" ? "Tour Guide" : userRole}
               </p>
               
@@ -557,56 +557,56 @@ function Profile({ setFlag }) {
               <div className="flex gap-8">
                 <div className="flex flex-col gap-8">
                   {/* <div>
-                    <span className="text-2xl text-[#02735f]">Name</span>
+                    <span className="text-2xl text-first">Name</span>
                     <input
                       type="text"
                       value={username}
                       readOnly
                       placeholder={!isReadOnly ? "Enter your name" : ""}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 block border-first bg-gray-300 p-3"
                     />
                   </div> */}
                   <div>
-                    <span className="text-2xl text-[#02735f]">Phone</span>
+                    <span className="text-2xl text-first">Phone</span>
                     <input
                       type="text"
                       value={mobileNumberInput}
                       readOnly={isReadOnly}
                       placeholder={!isReadOnly ? "Enter your email" : ""}
                       onChange={handleMobileNumberChange}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 block border-first bg-gray-300 p-3"
                     />
                   </div>
                 </div>
                 <div className="flex flex-col gap-8">
                   <div>
-                    <span className="text-2xl text-[#02735f]">Job Title</span>
+                    <span className="text-2xl text-first">Job Title</span>
                     <input
                       type="text"
                       value={jobTitleInput}
                       readOnly={isReadOnly}
                       placeholder={!isReadOnly ? "Enter your email" : ""}
                       onChange={handleJobTitleChange}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 block border-first bg-gray-300 p-3"
                     />
                   </div>
                   <div>
-                    <span className="text-2xl text-[#02735f]">Nationality</span>
+                    <span className="text-2xl text-first">Nationality</span>
                     <input
                       type="text"
                       value={nationalityInput}
                       readOnly={isReadOnly}
                       placeholder={!isReadOnly ? "Enter your email" : ""}
                       onChange={handleNationalityChange}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 block border-first bg-gray-300 p-3"
                     />
                   </div>
                 </div>
                 <div className="flex flex-col gap-8">
                   <div className="relative">
-                    <span className="text-2xl text-[#02735f]">Email</span>
+                    <span className="text-2xl text-first">Email</span>
                     <input
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 focus:ring-0 block border-first bg-gray-300 p-3"
                       type="email"
                       placeholder={!isReadOnly ? "Enter your email" : ""}
                       required
@@ -634,20 +634,20 @@ function Profile({ setFlag }) {
                 <div className="flex gap-8">
                   <div className="flex flex-col gap-8">
                     <div>
-                      <span className="text-2xl text-[#02735f]">Hotline</span>
+                      <span className="text-2xl text-first">Hotline</span>
                       <input
                         type="text"
                         value={mobileNumberInput}
                         placeholder={!isReadOnly ? "Enter your hotline" : ""}
                         readOnly={isReadOnly}
                         onChange={handleMobileNumberChange}
-                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                        className="border-2 block border-first bg-gray-300 p-3"
                       />
                     </div>
                   </div>
                   <div className="flex flex-col gap-8">
                     <div>
-                      <span className="text-2xl text-[#02735f]">
+                      <span className="text-2xl text-first">
                         Website Link
                       </span>
                       <input
@@ -658,13 +658,13 @@ function Profile({ setFlag }) {
                         }
                         readOnly={isReadOnly}
                         onChange={(e) => setLinkInput(e.target.value)}
-                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                        className="border-2 block border-first bg-gray-300 p-3"
                       />
                     </div>
                     <div className="relative">
-                      <span className="text-2xl text-[#02735f]">Email</span>
+                      <span className="text-2xl text-first">Email</span>
                       <input
-                        className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                        className="border-2 focus:ring-0 block border-first bg-gray-300 p-3"
                         type="email"
                         placeholder={!isReadOnly ? "Enter your email" : ""}
                         required
@@ -687,7 +687,7 @@ function Profile({ setFlag }) {
                   </div>
                   <div className="flex flex-col gap-8">
                     <div>
-                      <span className="text-2xl text-[#02735f]">
+                      <span className="text-2xl text-first">
                         Company Profile
                       </span>
                       <input
@@ -698,11 +698,11 @@ function Profile({ setFlag }) {
                         }
                         readOnly={isReadOnly}
                         onChange={(e) => setCompanyProfileInput(e.target.value)}
-                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                        className="border-2 block border-first bg-gray-300 p-3"
                       />
                     </div>
                     <div>
-                      <span className="text-2xl text-[#02735f]">
+                      <span className="text-2xl text-first">
                         Location address
                       </span>
                       <input
@@ -715,36 +715,36 @@ function Profile({ setFlag }) {
                         onChange={(e) =>
                           setLocationAddressInput(e.target.value)
                         }
-                        className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                        className="border-2 block border-first bg-gray-300 p-3"
                       />
                     </div>
                   </div>
                 </div>
                 <div className="flex mt-6 gap-8">
                   <div>
-                    <span className="text-2xl text-[#02735f]">City</span>
+                    <span className="text-2xl text-first">City</span>
                     <input
                       type="text"
                       value={city}
                       placeholder={!isReadOnly ? "Enter your city name" : ""}
                       readOnly={isReadOnly}
                       onChange={(e) => setCity(e.target.value)}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 block border-first bg-gray-300 p-3"
                     />
                   </div>
                   <div>
-                    <span className="text-2xl text-[#02735f]">Country</span>
+                    <span className="text-2xl text-first">Country</span>
                     <input
                       type="text"
                       value={country}
                       placeholder={!isReadOnly ? "Enter your country name" : ""}
                       readOnly={isReadOnly}
                       onChange={(e) => setCountry(e.target.value)}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 block border-first bg-gray-300 p-3"
                     />
                   </div>
                   <div>
-                    <span className="text-2xl text-[#02735f]">
+                    <span className="text-2xl text-first">
                       Company Name
                     </span>
                     <input
@@ -753,17 +753,17 @@ function Profile({ setFlag }) {
                       placeholder={!isReadOnly ? "Enter your company name" : ""}
                       readOnly={isReadOnly}
                       onChange={(e) => setCompanyName(e.target.value)}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 block border-first bg-gray-300 p-3"
                     />
                   </div>
                 </div>
                 <div className="mt-4">
-                  <span className="text-2xl text-[#02735f]">Company Size</span>
+                  <span className="text-2xl text-first">Company Size</span>
                   <select
                     value={companySize}
                     onChange={(e) => setCompanySize(e.target.value)}
                     disabled={isReadOnly}
-                    className="border-2 block border-[#02735f] bg-gray-300 p-3 w-fit" // Add w-full or a fixed width
+                    className="border-2 block border-first bg-gray-300 p-3 w-fit" // Add w-full or a fixed width
                     style={{ minWidth: "200px" }} // Optionally, set a minimum width with inline style
                   >
                     <option value="" disabled>
@@ -784,16 +784,16 @@ function Profile({ setFlag }) {
                 <div className="flex gap-8">
                   <div className="flex flex-col gap-8">
                     <div>
-                      <span className="text-2xl text-[#02735f]">Name</span>
+                      <span className="text-2xl text-first">Name</span>
                       <input
                         type="text"
                         value={username}
                         readOnly
-                        className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                        className="border-2 focus:ring-0 block border-first bg-gray-300 p-3"
                       />
                     </div>
                     <div>
-                      <span className="text-2xl text-[#02735f]">Phone</span>
+                      <span className="text-2xl text-first">Phone</span>
                       <input
                         type="text"
                         value={mobileNumberInput}
@@ -802,13 +802,13 @@ function Profile({ setFlag }) {
                           !isReadOnly ? "Enter your phone number" : ""
                         }
                         onChange={handleMobileNumberChange}
-                        className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                        className="border-2 focus:ring-0 block border-first bg-gray-300 p-3"
                       />
                     </div>
                   </div>
                   <div className="flex flex-col gap-8">
                     <div>
-                      <span className="text-2xl text-[#02735f]">
+                      <span className="text-2xl text-first">
                         Years of Experience
                       </span>
                       <input
@@ -821,15 +821,15 @@ function Profile({ setFlag }) {
                         onChange={(e) =>
                           setYearsOfExperienceInput(e.target.value)
                         }
-                        className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                        className="border-2 focus:ring-0 block border-first bg-gray-300 p-3"
                       />
                     </div>
 
                     <div className="flex flex-col gap-8">
                       <div className="relative">
-                        <span className="text-2xl text-[#02735f]">Email</span>
+                        <span className="text-2xl text-first">Email</span>
                         <input
-                          className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                          className="border-2 focus:ring-0 block border-first bg-gray-300 p-3"
                           type="email"
                           placeholder={!isReadOnly ? "Enter your email" : ""}
                           required
@@ -867,7 +867,7 @@ function Profile({ setFlag }) {
                 )}
                 <div className="mt-8">
                   <button
-                    className="flex gap-2 items-center justify-center px-4 py-2 text-[#02735f] rounded-lg shadow-md hover:bg-[#02735f] focus:ring-0 hover:text-white transition duration-300"
+                    className="flex gap-2 items-center justify-center px-4 py-2 text-first rounded-lg shadow-md hover:bg-gray-100 focus:ring-0 transition duration-300"
                     onClick={handleAddWork}
                   >
                     <span className="font-bold">+</span> Add Work
@@ -879,23 +879,23 @@ function Profile({ setFlag }) {
               <div className="flex gap-8">
                 <div className="flex flex-col gap-8">
                   <div>
-                    <span className="text-2xl text-[#02735f]">Name</span>
+                    <span className="text-2xl text-first">Name</span>
                     <input
                       type="text"
                       value={nameInput}
                       readOnly={isReadOnly}
                       onChange={handleNameChange}
                       placeholder={!isReadOnly ? "Enter your name" : ""}
-                      className="border-2 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 block border-first bg-gray-300 p-3"
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-8">
                   <div className="relative">
-                    <span className="text-2xl text-[#02735f]">Email</span>
+                    <span className="text-2xl text-first">Email</span>
                     <input
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 focus:ring-0 block border-first bg-gray-300 p-3"
                       type="email"
                       placeholder={!isReadOnly ? "Enter your email" : ""}
                       required
@@ -916,14 +916,14 @@ function Profile({ setFlag }) {
                     )}
                   </div>
                   <div>
-                    <span className="text-2xl text-[#02735f]">Description</span>
+                    <span className="text-2xl text-first">Description</span>
                     <input
                       type="text"
                       value={descriptionInput}
                       readOnly={isReadOnly}
                       placeholder={!isReadOnly ? "Enter your description" : ""}
                       onChange={(e) => setDescriptionInput(e.target.value)}
-                      className="border-2 focus:ring-0 block border-[#02735f] bg-gray-300 p-3"
+                      className="border-2 focus:ring-0 block border-first bg-gray-300 p-3"
                     />
                   </div>
                 </div>
@@ -932,7 +932,7 @@ function Profile({ setFlag }) {
             {!isReadOnly && (
               <div className="mt-8">
                 <button
-                  className="flex gap-2 items-center justify-center px-4 py-2 text-[#02735f] rounded-lg shadow-md hover:bg-[#02735f] focus:ring-0 hover:text-white transition duration-300"
+                  className="flex gap-2 items-center justify-center px-4 py-2 text-first rounded-lg shadow-md hover:bg-first focus:ring-0 hover:text-white transition duration-300"
                   onClick={() => handleUpdate(previousWorks)}
                 >
                   Confirm

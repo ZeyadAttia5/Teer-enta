@@ -3,6 +3,17 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        'dm-serif': ['DM Serif Display', 'serif'],
+        'faculty-glyphic': ['Faculty Glyphic', 'sans-serif'],
+        'noto-serif': ['Noto Serif', 'serif'],
+        'playfair-display': ['Playfair Display', 'serif'],
+      },
+      fontWeight: {
+        100: '100',
+        400: '400',
+        900: '900',
+      },
       colors: {
         customGreen: '#02735F', // Your custom green color
         darkerGreen: '#075B4C', 

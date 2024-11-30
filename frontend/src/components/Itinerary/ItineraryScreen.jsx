@@ -82,7 +82,7 @@ const Button1 = ({ children, onClick, variant = "default" }) => {
 
 const Button2 = ({ children, onClick, variant = "default" }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-fourth text-black";
+    "inline-flex font-playfair-display items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-fourth text-black";
   const variantClasses =
     variant === "outline"
       ? "hover:bg-third hover:text-accent-foreground" // Light gray hover background for outline variant
@@ -801,7 +801,7 @@ const ItineraryScreen = ({ setFlag }) => {
                        </div>
            
                        <Card
-                           className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
+                           className="rounded-lg shadow-lg  p-4 transition-all duration-300 ease-in-out hover:text-white"
                            style={{ backgroundColor: "#ffffff" }} // Default background color
                        >
                            <Card.Meta

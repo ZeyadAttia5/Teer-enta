@@ -92,7 +92,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
     <div
       className={`w-full fixed bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 z-10 h-20 text-white font-bold space-x-8`}
     >
-      <div className="flex gap-8 ml-8">
+      <div className="flex gap-4 ml-8">
         {/* Logo Section */}
         <span className="ml-16 text-lg leading-7">
           <div className="cursor-pointer w-fit border border-transparent  p-2 rounded-md transition-all duration-300 hover:scale-105">
@@ -107,7 +107,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
             </Link>
           </div>
         </span>
-
+        <span className="text-first flex text-4xl justify-center items-center italic">TEER ENTA</span>
         {/* Search Bar */}
       </div>
 
