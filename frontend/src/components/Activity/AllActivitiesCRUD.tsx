@@ -65,7 +65,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   // Fetch activities, categories, and tags on component load
   useEffect(() => {
     if (locationn?.pathname === "/activities/my") {
-      console.log("My Activities");
+      // console.log("My Activities");
       getMActivities();
     } else {
       console.log("All Activities");
@@ -191,7 +191,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
 
     try {
       if (isEditing && currentActivity) {
-        console.log("Updating activity", activityData);
+        // console.log("Updating activity", activityData);
         await updateActivity(activityData, currentActivity?._id);
         notification.success({ message: "Activity updated successfully" });
       } else {
@@ -298,7 +298,6 @@ const AllActivitiesCRUD = ({ setFlag }) => {
           {user &&
             user.userRole === "Advertiser" &&
             user._id === record.createdBy &&
-            (console.log(record.createdBy),
             (
               <div>
                 <Button
@@ -312,7 +311,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                   <Button icon={<DeleteOutlined />} danger />
                 </Popconfirm>
               </div>
-            ))}
+            )}
           {user && user?.userRole === "Admin"&& (
           <Badge count={0} offset={[-5, 5]}>
               <Tooltip title={"Flag this item as Inappropriate"}>

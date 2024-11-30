@@ -1,5 +1,5 @@
 import "./index.css";
-import React, { useState ,useEffect } from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {
     BrowserRouter as Router,
     Routes,
@@ -72,7 +72,9 @@ import CheckOutOrder from "./components/Store/checkOutOrder";
 import OrderHistory from "./components/Store/orderHistory";
 import OrderDetails from "./components/Store/orderDetails";
 import {NotificationContext, NotificationProvider} from "./components/notifications/NotificationContext";
-import './firebase-messaging-sw.js';
+import './services/firebase.js';
+import {saveFCMTokenToServer} from "./api/notifications.ts";
+import {initializeFirebaseMessaging, setupMessageListener} from "./services/firebase";
 
 function AppContent() {
   const [flag, setFlag] = useState(false);
@@ -82,62 +84,98 @@ function AppContent() {
   const location = useLocation();
   const user = localStorage.getItem("user");
   const showBackButton = location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/signup";
+  const [isNotificationIncoming, setIsNotificationIncoming] = useState(false);
   const [incomingNotification, setIncomingNotification] = useState(null);
-  const [isNotificationIncomming, setIsNotificationIncomming] = useState(false);
 
-  useEffect(() => {
+  const handleNotification = useCallback((payload) => {
+    console.log("Received foreground message:", payload);
 
-    // const setupForegroundListener =  () => {
-    //   try {
-        const messaging = getMessaging();
-        console.log("Setting up foreground message listener in App..." ,messaging);
+    if (payload?.notification) {
+      const newNotification = {
+        _id: Date.now().toString(),
+        title: payload.notification.title,
+        body: payload.notification.body,
+        isSeen: false,
+        sentAt: new Date().toISOString(),
+        data: payload.data // Include any additional data from payload
+      };
 
-        onMessage(messaging, (payload) => {
-          console.log("Received foreground message in App:", payload);
+      setIsNotificationIncoming(prev => !prev);
+      setIncomingNotification(newNotification);
 
-          if (payload?.notification) {
-            // Create the notification object
-            const newNotification = {
-              _id: Date.now().toString(),
-              title: payload.notification.title,
-              body: payload.notification.body,
-              isSeen: false,
-              sentAt: new Date().toISOString(),
-            };
-
-            // Set the state
-            setIsNotificationIncomming(!isNotificationIncomming);
-            setIncomingNotification(newNotification);
-
-            // Show toast with payload data directly
-            toast(
-                <div className="cursor-pointer">
-                  <div className="font-bold">{payload.notification.title}</div>
-                  <div className="text-sm">{payload.notification.body}</div>
-                </div>,
-                {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  className: "notification-toast"
-                }
-            );
+      // Show toast notification
+      toast(
+          <div className="cursor-pointer">
+            <div className="font-bold">{payload.notification.title}</div>
+            <div className="text-sm">{payload.notification.body}</div>
+          </div>,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            className: "notification-toast"
           }
-        });
-      // } catch (error) {
-      //   console.error("Error setting up notification listener:", error);
-      // }
-    // };
-    //
-    // if (user) {
-    //   window.addEventListener("focus", setupForegroundListener);
-    //   // setupForegroundListener();
-    // }
+      );
+    }
+  }, []);
 
-  }, [user]);
+  // Initialize Firebase notifications
+  useEffect(() => {
+    const initializeNotifications = async () => {
+      try {
+        // Only initialize if user is logged in
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+          console.log("User not logged in, skipping notification setup");
+          return;
+        }
+
+        const result = await initializeFirebaseMessaging();
+        if (result.success) {
+          // Setup message listener for foreground messages
+          const unsubscribe = setupMessageListener(handleNotification);
+
+          // Save token to your server
+          await saveFCMTokenToServer(result.token);
+
+          // Cleanup function
+          return () => {
+            if (unsubscribe) {
+              unsubscribe();
+            }
+          };
+        } else {
+          console.log("Failed to initialize Firebase messaging:", result.error);
+        }
+      } catch (error) {
+        console.error("Error setting up notifications:", error);
+      }
+    };
+
+    initializeNotifications();
+  }, [handleNotification]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   const showDrawer = () => {
@@ -160,7 +198,7 @@ function AppContent() {
     <div className="App relative mb-8">
       <NotificationProvider
           incomingNotification={incomingNotification}
-          isNotificationIncomming={isNotificationIncomming}
+          isNotificationIncomming={isNotificationIncoming}
         >
         <ToastContainer />
         {!flag && (

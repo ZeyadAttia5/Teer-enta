@@ -333,7 +333,7 @@ function Signup({ setFlag }) {
       if (selectedRole !== "Tourist") {
         try {
           response1 = await uploadFile(ID);
-          console.log("image url is: " + response1.data.imageUrl);
+          // console.log("image url is: " + response1.data.imageUrl);
           setIdUrl(response1.data.imageUrl);
         } catch (error) {
           setIsLoading(false);

@@ -85,7 +85,7 @@ const ActivityCard = ({
         try {
             if (!isNotified) {
                 const response = await getMyRequest(id);
-                console.log(response);
+                // console.log(response);
                 if (response.data.notificationsRequests.length > 0) {
                     await updateNotificationRequestStatus(id, "Pending");
                 }else{

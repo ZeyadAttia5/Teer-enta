@@ -10,12 +10,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
 import logo from "../../../assets/logo/logo2.jpg";
-import ConfirmationModal from "../ConfirmationModal";
-import { on } from "events";
-import { set } from "date-fns";
 import NotificationIcon from "./notificationIcon";
 import { getCart } from "../../../api/cart.ts";
-import SearchHome from "../HomePage/SearchHome.js";
 import { getCurrency } from "../../../api/account.ts";
 
 const SideBar = ({ children, classNames }) => {
@@ -65,7 +61,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
       try {
         const response = await getCurrency();
         setCurrency(response.data);
-        console.log("Currency:", response.data);
+        // console.log("Currency:", response.data);
       } catch (error) {
         console.error("Fetch currency error:", error);
       }

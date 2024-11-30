@@ -38,7 +38,7 @@ function Card() {
 
   const handleChangePhoto = () => {
     fileInputRef.current.click();
-    console.log("Change photo");
+    // console.log("Change photo");
   };
 
   const handleUpload = async (file) => {

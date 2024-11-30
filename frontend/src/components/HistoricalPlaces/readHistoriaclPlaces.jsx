@@ -163,7 +163,7 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
         try {
             const response = await getCurrency();
             setCurrency(response.data);
-            console.log("Currency:", response.data);
+            // console.log("Currency:", response.data);
         } catch (error) {
             console.error("Fetch currency error:", error);
         }
