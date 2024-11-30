@@ -64,7 +64,7 @@ import UserReport from "./components/reports/UserReport.jsx";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import CheckOutOrder from "./components/Store/checkOutOrder";
 import OrderHistory from "./components/Store/orderHistory";
 import OrderDetails from "./components/Store/orderDetails";
@@ -176,8 +176,6 @@ function AppContent() {
               incomingNotification={incomingNotification}
               isNotificationIncomming={isNotificationIncoming}
           >
-              <ToastContainer />
-
 
         {!flag && (
           <DrawerBar
