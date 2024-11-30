@@ -1,11 +1,13 @@
 import "./index.css";
-import { useState ,useEffect } from "react";
+import React, { useState ,useEffect } from "react";
 import {
     BrowserRouter as Router,
     Routes,
     Route,
     useLocation,
 } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css"; // Make sure this is imported
+
 import { Toaster } from "react-hot-toast";
 import Signup from "./components/Auth/Signup/Signup.js";
 import Login from "./components/Auth/Login/login.js";
@@ -70,6 +72,7 @@ import CheckOutOrder from "./components/Store/checkOutOrder";
 import OrderHistory from "./components/Store/orderHistory";
 import OrderDetails from "./components/Store/orderDetails";
 import {NotificationContext, NotificationProvider} from "./components/notifications/NotificationContext";
+import './firebase-messaging-sw.js';
 
 function AppContent() {
   const [flag, setFlag] = useState(false);
@@ -80,22 +83,20 @@ function AppContent() {
   const user = localStorage.getItem("user");
   const showBackButton = location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/signup";
   const [incomingNotification, setIncomingNotification] = useState(null);
-  const [messaging, setMessaging] = useState(null);
+  const [isNotificationIncomming, setIsNotificationIncomming] = useState(false);
 
   useEffect(() => {
-    console.log("Setting up foreground listener NOOOOWOOWOOW");
 
-    const setupForegroundListener = async () => {
-      console.log("Setting up foreground listener INNER");
-      try {
-         setMessaging(getMessaging());
-        console.log("Messaging:", messaging);
+    // const setupForegroundListener =  () => {
+    //   try {
+        const messaging = getMessaging();
+        console.log("Setting up foreground message listener in App..." ,messaging);
+
         onMessage(messaging, (payload) => {
-          console.log("Received foreground message:", payload);
+          console.log("Received foreground message in App:", payload);
 
           if (payload?.notification) {
-            console.log("Received notification:", payload.notification);
-            // Add the new notification to the state immediately
+            // Create the notification object
             const newNotification = {
               _id: Date.now().toString(),
               title: payload.notification.title,
@@ -103,18 +104,40 @@ function AppContent() {
               isSeen: false,
               sentAt: new Date().toISOString(),
             };
+
+            // Set the state
+            setIsNotificationIncomming(!isNotificationIncomming);
             setIncomingNotification(newNotification);
+
+            // Show toast with payload data directly
+            toast(
+                <div className="cursor-pointer">
+                  <div className="font-bold">{payload.notification.title}</div>
+                  <div className="text-sm">{payload.notification.body}</div>
+                </div>,
+                {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  className: "notification-toast"
+                }
+            );
           }
         });
-      } catch (error) {
-        console.error("Error setting up notification listener:", error);
-      }
-    };
+      // } catch (error) {
+      //   console.error("Error setting up notification listener:", error);
+      // }
+    // };
+    //
+    // if (user) {
+    //   window.addEventListener("focus", setupForegroundListener);
+    //   // setupForegroundListener();
+    // }
 
-    if (user) {
-      setupForegroundListener();
-    }
-  }, [messaging]);
+  }, [user]);
 
 
   const showDrawer = () => {
@@ -135,18 +158,11 @@ function AppContent() {
   
   return (
     <div className="App relative mb-8">
-      <NotificationProvider incomingNotification={incomingNotification} >
-        <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-        />
+      <NotificationProvider
+          incomingNotification={incomingNotification}
+          isNotificationIncomming={isNotificationIncomming}
+        >
+        <ToastContainer />
         {!flag && (
           <DrawerBar
             onClose={onClose}
@@ -392,7 +408,7 @@ function AppContent() {
           <Route path="/savedActivities" element={<MyActivities />} />
           <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
         </Routes>
-        <Toaster />
+        {/*<Toaster />*/}
       </NotificationProvider>
     </div>
   );

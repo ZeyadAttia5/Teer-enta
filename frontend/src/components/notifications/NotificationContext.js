@@ -1,164 +1,108 @@
 import React, { createContext, useState, useEffect } from "react";
 import { getAllMyNotifications, markAllAsReadd, markAsReadd } from "../../api/notifications.ts";
-import { getMessaging, onMessage } from "firebase/messaging";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const NotificationContext = createContext();
 
-export const NotificationProvider = ({ children ,incomingNotification }) => {
+export const NotificationProvider = ({ children, incomingNotification ,isNotificationIncomming }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const user = JSON.parse(localStorage.getItem("user"));
 
+  // Fetch initial notifications
+  // useEffect(() => {
+  //   if (user) {
+  //     fetchNotifications();
+  //   }
+  // }, [user]);
+
+  // Handle incoming notifications
   useEffect(() => {
-    let unsubscribe = null;
-
-    const setupForegroundListener = async () => {
-      try {
-        // const messaging = getMessaging();
-
-        // unsubscribe = onMessage(messaging, (payload) => {
-        //   console.log("Received foreground message:", payload);
-
-          if (incomingNotification) {
-            // // Add the new notification to the state immediately
-            // const newNotification = {
-            //   _id: Date.now().toString(),
-            //   title: payload.notification.title,
-            //   body: payload.notification.body,
-            //   isSeen: false,
-            //   sentAt: new Date().toISOString(),
-            // };
-
-            setNotifications(prev => [incomingNotification, ...prev]);
-            setUnreadCount(prev => prev + 1);
-            // Automatically open the dropdown when notification is received
-            setIsDropdownOpen(true);
-
-            toast.info(
-                <div onClick={() => setIsDropdownOpen(true)}>
-                  <strong>{incomingNotification.title}</strong>
-                  <p>{incomingNotification.body}</p>
-                </div>,
-                {
-                  position: "top-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                }
-            );
-
-            // Fetch updated notifications from server after a short delay
-            setTimeout(() => {
-              fetchNotifications();
-            }, 1000);
-          // }
-        }
-          // );
-      } catch (error) {
-        console.error("Error setting up notification listener:", error);
-      }
-    };
-
-    if (user) {
-      setupForegroundListener();
+    console.log("isNotificationIncomming", isNotificationIncomming);
+    if (incomingNotification) {
+      setNotifications(prev => [incomingNotification, ...prev]);
+      setUnreadCount(prev => prev + 1);
     }
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [user]);
+  }, [isNotificationIncomming]);
 
   const fetchNotifications = async () => {
     try {
       setLoading(true);
       setError(null);
       const response = await getAllMyNotifications();
+
       setNotifications(response.data.notifications);
       const unseenCount = response.data.notifications.filter(
-          (notif) => !notif.isSeen
+          notif => !notif.isSeen
       ).length;
       setUnreadCount(unseenCount);
     } catch (err) {
       setError(err.message || "Failed to fetch notifications");
       console.error("Error fetching notifications:", err);
+
+      // Show error toast
+      toast.error("Failed to load notifications. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
-
-
-  const addNotification = (notification) => {
-    setNotifications((prevNotifications) => [
-      {
-        title: notification.title,
-        body: notification.body,
-        isSeen: false,
-        sentAt: new Date().toISOString(),
-      },
-      ...prevNotifications,
-    ]);
-    setUnreadCount((prevCount) => prevCount + 1);
-    setIsDropdownOpen(true);
-  };
-
-  const markAllAsRead = async () => {
+  const handleMarkAllAsRead = async () => {
     try {
-      setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) => ({ ...notif, isSeen: true }))
+      await markAllAsReadd();
+      setNotifications(prev =>
+          prev.map(notif => ({ ...notif, isSeen: true }))
       );
       setUnreadCount(0);
-      await markAllAsReadd();
+
+      toast.success("All notifications marked as read");
     } catch (err) {
-      console.error("Error marking notifications as read:", err);
-      await fetchNotifications();
+      console.error("Error marking all as read:", err);
+      toast.error("Failed to mark all as read. Please try again.");
+      await fetchNotifications(); // Refresh to ensure consistency
     }
   };
 
-  const markAsRead = async (notificationId) => {
+  const handleMarkAsRead = async (notificationId) => {
     try {
-      setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) =>
+      await markAsReadd(notificationId);
+      setNotifications(prev =>
+          prev.map(notif =>
               notif._id === notificationId ? { ...notif, isSeen: true } : notif
           )
       );
-      setUnreadCount((prevCount) => Math.max(0, prevCount - 1));
-      await markAsReadd(notificationId);
+      setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (err) {
-      console.error("Error marking notification as read:", err);
-      await fetchNotifications();
+      console.error("Error marking as read:", err);
+      toast.error("Failed to mark notification as read");
+      await fetchNotifications(); // Refresh to ensure consistency
     }
   };
 
-  const refreshNotifications = () => {
-    fetchNotifications();
+  const value = {
+    notifications,
+    unreadCount,
+    loading,
+    error,
+    isDropdownOpen,
+    setIsDropdownOpen,
+    markAllAsRead: handleMarkAllAsRead,
+    markAsRead: handleMarkAsRead,
+    refreshNotifications: fetchNotifications
   };
 
   return (
-      <NotificationContext.Provider
-          value={{
-            notifications,
-            unreadCount,
-            loading,
-            error,
-            isDropdownOpen,
-            setIsDropdownOpen,
-            addNotification,
-            markAllAsRead,
-            markAsRead,
-            refreshNotifications,
-          }}
-      >
-        {children}
-      </NotificationContext.Provider>
+      <>
+        <ToastContainer />
+        <NotificationContext.Provider value={value}>
+          {children}
+        </NotificationContext.Provider>
+      </>
   );
 };
 

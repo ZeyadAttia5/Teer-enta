@@ -1,8 +1,8 @@
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
+import { initializeApp } from "firebase/app";
+import { getMessaging ,onBackgroundMessage } from "firebase/messaging/sw";
+import {onMessage} from "firebase/messaging";
 
-
-firebase.initializeApp({
+export const firebaseAppConfig  = initializeApp({
     apiKey: "AIzaSyDwqs4ZU0GdiMDFeO4mQFePzcf_FXkpcBs",
     authDomain: "teer-enta-notifications.firebaseapp.com",
     projectId: "teer-enta-notifications",
@@ -12,9 +12,10 @@ firebase.initializeApp({
     measurementId: "G-VD566R2Q90"
 });
 
-const messaging = firebase.messaging();
+const messaging = getMessaging(firebaseAppConfig);
 
-messaging.onBackgroundMessage((payload) => {
+
+onBackgroundMessage(messaging ,(payload) => {
     console.log('Received background message:', payload);
 
     const notificationTitle = payload.notification.title;
@@ -29,5 +30,9 @@ messaging.onBackgroundMessage((payload) => {
         ]
     };
 
-    return self.registration.showNotification(notificationTitle, notificationOptions);
+    // return self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+onMessage(messaging, (payload) => {
+    console.log("called");
 });
