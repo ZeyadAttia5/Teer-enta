@@ -113,7 +113,8 @@ function AppContent() {
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
-            className: "notification-toast"
+            className: "notification-toast",
+            toggle: true,
           }
       );
     }
