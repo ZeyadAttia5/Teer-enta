@@ -7,7 +7,6 @@ import {
     useLocation,
 } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css"; // Make sure this is imported
-
 import { Toaster } from "react-hot-toast";
 import Signup from "./components/Auth/Signup/Signup.js";
 import Login from "./components/Auth/Login/login.js";
@@ -22,7 +21,6 @@ import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 import AddUser from "./components/Users/addUser/addUser";
 import BackButton from "./components/shared/BackButton.js";
-import HomePage from "./components/shared/HomePage/HomePage.js";
 import ProductDetails from "./components/Store/productDetails";
 import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
@@ -67,11 +65,10 @@ import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
 import { toast, ToastContainer } from "react-toastify";
-import { getMessaging, onMessage } from "firebase/messaging";
 import CheckOutOrder from "./components/Store/checkOutOrder";
 import OrderHistory from "./components/Store/orderHistory";
 import OrderDetails from "./components/Store/orderDetails";
-import {NotificationContext, NotificationProvider} from "./components/notifications/NotificationContext";
+import {NotificationProvider} from "./components/notifications/NotificationContext";
 import './services/firebase.js';
 import {saveFCMTokenToServer} from "./api/notifications.ts";
 import {initializeFirebaseMessaging, setupMessageListener} from "./services/firebase";
@@ -126,19 +123,11 @@ function AppContent() {
   useEffect(() => {
     const initializeNotifications = async () => {
       try {
-        // Only initialize if user is logged in
-        const accessToken = localStorage.getItem("accessToken");
-        if (!accessToken) {
-          console.log("User not logged in, skipping notification setup");
-          return;
-        }
-
         const result = await initializeFirebaseMessaging();
         if (result.success) {
           // Setup message listener for foreground messages
           const unsubscribe = setupMessageListener(handleNotification);
 
-          // Save token to your server
           await saveFCMTokenToServer(result.token);
 
           // Cleanup function
