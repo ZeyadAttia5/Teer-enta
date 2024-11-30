@@ -22,7 +22,7 @@ function Toggle(props){
                         checked={selectedOption === 'Tourist'}
                         onChange={handleOptionChange}
                     />
-                    <span className='spansignup text-sm block cursor-pointer bg-white px-3 py-1.5 relative ml-0.5 shadow-[0_0_0_1px] shadow-[#b5bfd9] tracking-wide text-[#3e4963] text-center transition-colors duration-500 ease' style={{ fontSize: 13 }}>Tourist</span>
+                    <span className='spansignup text-sm block cursor-pointer bg-white px-4 py-1.5 relative ml-0.5 shadow-[0_0_0_1px] shadow-[#b5bfd9] tracking-wide text-[#3e4963] text-center transition-colors duration-500 ease' style={{ fontSize: 13 }}>Tourist</span>
                 </label>
 
                 <label className='alllabels'>
@@ -33,7 +33,7 @@ function Toggle(props){
                         checked={selectedOption === 'TourGuide'}
                         onChange={handleOptionChange}
                     />
-                    <span className='spansignup text-sm block cursor-pointer bg-white px-3 py-1.5 relative ml-0.5 shadow-[0_0_0_1px] shadow-[#b5bfd9] tracking-wide text-[#3e4963] text-center transition-colors duration-500 ease' style={{ fontSize: 13 }}>Tour Guide</span>
+                    <span className='spansignup text-[13px] block cursor-pointer bg-white px-4 py-[5px] relative ml-0.5 shadow-[0_0_0_1px] shadow-[#b5bfd9] tracking-wide text-[#3e4963] text-center transition-colors duration-500 ease'>Tour Guide</span>
                 </label>
 
                 <label className='alllabels'>
@@ -44,7 +44,7 @@ function Toggle(props){
                         checked={selectedOption === 'Advertiser'}
                         onChange={handleOptionChange}
                     />
-                    <span className='spansignup text-sm block cursor-pointer bg-white px-3 py-1.5 relative ml-0.5 shadow-[0_0_0_1px] shadow-[#b5bfd9] tracking-wide text-[#3e4963] text-center transition-colors duration-500 ease' style={{ fontSize: 13 }}>Advertiser</span>
+                    <span className='spansignup text-sm block cursor-pointer bg-white px-4 py-1.5 relative ml-0.5 shadow-[0_0_0_1px] shadow-[#b5bfd9] tracking-wide text-[#3e4963] text-center transition-colors duration-500 ease' style={{ fontSize: 13 }}>Advertiser</span>
                 </label>
 
                 <label className='alllabels'>
@@ -54,7 +54,7 @@ function Toggle(props){
                         checked={selectedOption === 'Seller'}
                         onChange={handleOptionChange}
                         />
-                        <span className='spansignup text-sm block cursor-pointer bg-white px-3 py-1.5 relative ml-0.5 shadow-[0_0_0_1px] shadow-[#b5bfd9] tracking-wide text-[#3e4963] text-center transition-colors duration-500 ease' style={{ fontSize: 13 }}>Seller</span>
+                        <span className='spansignup text-sm block cursor-pointer bg-white px-4 py-1.5 relative ml-0.5 shadow-[0_0_0_1px] shadow-[#b5bfd9] tracking-wide text-[#3e4963] text-center transition-colors duration-500 ease' style={{ fontSize: 13 }}>Seller</span>
                 </label>
             </div>
         </div>

@@ -48,7 +48,7 @@ const AccountButton = ({ extra_tw, onClick, setModalOpen }) => {
           className="absolute left-0 top-[60px] w-40 mt-0 bg-white border border-gray-300 rounded shadow-lg z-50"
           onMouseEnter={() => setIsOpen(true)}
         >
-          {user.userRole === "Tourist" && (
+          {(user.userRole === "Tourist" || user.userRole === "Advertiser" || user.userRole === "Seller" || user.userRole === "TourGuide") && (
           <button
             className="w-full font-normal px-4 py-2 text-sm text-left text-black hover:bg-gray-100"
             onClick={onClick}
