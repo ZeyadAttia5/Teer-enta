@@ -15,12 +15,14 @@ export const createPreferenceTag = async (preferenceTag: TPreferenceTag) =>
         },
     });
 
-export const updatePreferenceTag = async (preferenceTag: TPreferenceTag) =>
-    await axios.put<TPreferenceTag>(`${BASE_URL}/preferenceTag/update/`+preferenceTag._id, preferenceTag,{
+export const updatePreferenceTag = async (preferenceTag: TPreferenceTag) => {
+
+   return  await axios.put<TPreferenceTag>(`${BASE_URL}/preferenceTag/update/` + preferenceTag._id, preferenceTag, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
+}
 
 export const deletePreferenceTag = async (id: number) =>
     await axios.delete<TPreferenceTag>(`${BASE_URL}/preferenceTag/delete/${id}`,{

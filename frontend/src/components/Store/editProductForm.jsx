@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Form, Input, Button, ConfigProvider, notification, InputNumber } from 'antd';
+import {
+  PackageIcon,
+  DollarSign,
+  ImageIcon,
+  ClipboardList,
+  ArchiveIcon,
+  Edit3Icon,
+  Loader2
+} from 'lucide-react';
 import { getProduct, updateProduct, addProduct, archiveProduct, unArchiveProduct } from "../../api/products.ts";
-import { Input, Button, Alert, message } from 'antd'; // Import message from Ant Design
 import ImageUpload from './ImageUpload';
 
 const EditProductForm = ({ setFlag }) => {
   setFlag(false);
   const { productId } = useParams();
   const navigate = useNavigate();
+  const [form] = Form.useForm();
 
   const [product, setProduct] = useState({
     name: '',
@@ -15,182 +25,253 @@ const EditProductForm = ({ setFlag }) => {
     price: '',
     imageUrl: '',
     quantity: '',
-    isActive: true, // Default to true if it's a new product
+    isActive: true,
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [fetching, setFetching] = useState(true);
 
-  // Fetch product data for editing
   useEffect(() => {
-    if (productId) {
-      const fetchProductData = async () => {
-        try {
-          const response = await getProduct(productId);
-          setProduct(response.data);
-        } catch (err) {
-          setError('Failed to fetch product data');
-        }
-      };
+    const fetchProductData = async () => {
+      if (!productId) {
+        setFetching(false);
+        return;
+      }
+      try {
+        const response = await getProduct(productId);
+        setProduct(response.data);
+        form.setFieldsValue(response.data);
+      } catch (err) {
+        notification.error({
+          message: 'Error',
+          description: 'Failed to fetch product data',
+          className: 'bg-white shadow-lg',
+        });
+      } finally {
+        setFetching(false);
+      }
+    };
 
-      fetchProductData();
+    fetchProductData();
+  }, [productId, form]);
+
+  const handleSubmit = async (values) => {
+    setLoading(true);
+    try {
+      if (productId) {
+        await updateProduct({ ...values, imageUrl: product.imageUrl }, productId);
+        notification.success({
+          message: 'Success',
+          description: 'Product updated successfully',
+          className: 'bg-white shadow-lg',
+        });
+      } else {
+        await addProduct({ ...values, imageUrl: product.imageUrl });
+        notification.success({
+          message: 'Success',
+          description: 'Product created successfully',
+          className: 'bg-white shadow-lg',
+        });
+      }
+      navigate('/products');
+    } catch (err) {
+      notification.error({
+        message: 'Error',
+        description: 'Failed to save product',
+        className: 'bg-white shadow-lg',
+      });
+    } finally {
+      setLoading(false);
     }
-  }, [productId]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
-  };
-
-  const setImageUrl = (url) => {
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      imageUrl: url,
-    }));
   };
 
   const handleArchiveToggle = async () => {
     try {
       if (product.isActive) {
         await archiveProduct(productId);
-        message.success('Product archived successfully!');
+        notification.success({
+          message: 'Success',
+          description: 'Product archived successfully',
+        });
       } else {
         await unArchiveProduct(productId);
-        message.success( 'Product unarchived successfully!');
+        notification.success({
+          message: 'Success',
+          description: 'Product unarchived successfully',
+        });
       }
-      setProduct((prevProduct) => ({
-        ...prevProduct,
-        isActive: !prevProduct.isActive,
+      setProduct(prev => ({
+        ...prev,
+        isActive: !prev.isActive,
       }));
     } catch (err) {
-      message.error( 'Failed to update archive status');
+      notification.error({
+        message: 'Error',
+        description: 'Failed to update archive status',
+      });
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      let response;
-      if (productId) {
-        // Update product
-        response = await updateProduct(product, productId);
-        message.success('Product successfully updated!');
-      } else {
-        // Create new product
-        response = await addProduct(product);
-        message.success('Product successfully created!');
-      }
-
-      setTimeout(() => navigate('/products'), 1000); // Redirect to products page after success
-    } catch (err) {
-      message.error('Failed to update product');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) return <div className="text-center mt-24">Loading product data...</div>;
-  if (error) return <div className="text-center mt-24">Error: {error}</div>;
+  if (fetching) {
+    return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="flex items-center gap-3">
+            <Loader2 className="w-6 h-6 animate-spin text-[#1C325B]" />
+            <span className="text-gray-600">Loading product data...</span>
+          </div>
+        </div>
+    );
+  }
 
   return (
-      <div className="flex flex-col items-center py-16 px-5 mt-20">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">{productId ? "Edit Product" : "Add New Product"}</h2>
-        <form className="bg-white border-2 border-gray-300 p-8 rounded-lg shadow-md w-full max-w-md" onSubmit={handleSubmit}>
+      <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#1C325B",
+            },
+          }}
+      >
+        <div className="min-h-screen bg-gray-50 p-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white mb-8">
+                <div className="flex items-center gap-3 mb-2">
+                  {productId ? (
+                      <Edit3Icon className="w-6 h-6" />
+                  ) : (
+                      <PackageIcon className="w-6 h-6" />
+                  )}
+                  <h3 className="text-lg font-semibold m-0">
+                    {productId ? 'Edit Product' : 'Add New Product'}
+                  </h3>
+                </div>
+                <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                  {productId ? 'Update product information' : 'Create a new product listing'}
+                </p>
+              </div>
 
-          {error && <Alert message={error} type="error" showIcon className="mb-4" />}
-          {success && <Alert message={success} type="success" showIcon className="mb-4" />}
-
-          <div className="mb-4">
-            <label className="block text-lg text-gray-700 mb-2">Product Name:</label>
-            <Input
-                name="name"
-                value={product.name}
-                onChange={handleChange}
-                required
-                className="w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-lg text-gray-700 mb-2">Description:</label>
-            <Input.TextArea
-                name="description"
-                value={product.description}
-                onChange={handleChange}
-                rows={4}
-                required
-                className="w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-lg text-gray-700 mb-2">Price:</label>
-            <Input
-                type="number"
-                name="price"
-                value={product.price}
-                onChange={handleChange}
-                required
-                className="w-full"
-            />
-          </div>
-
-          {/* Display existing image */}
-          <div className="mb-4">
-            <label className="block text-lg text-gray-700 mb-2">Current Image:</label>
-            {product.imageUrl ? (
-                <img src={product.imageUrl} alt="Current product" className="w-full h-auto max-h-40 object-cover rounded mb-2" />
-            ) : (
-                <p>No image available</p>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-lg text-gray-700 mb-2">Upload New Product Image:</label>
-            <ImageUpload setImageUrl={setImageUrl} />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-lg text-gray-700 mb-2">Available Quantity:</label>
-            <Input
-                type="number"
-                name="quantity"
-                value={product.quantity}
-                onChange={handleChange}
-                required
-                className="w-full"
-            />
-          </div>
-
-          <Button
-              type="primary"
-              htmlType="submit"
-              className="w-full bg-blue-500 text-white mt-4 hover:bg-blue-600"
-              loading={loading}
-              disabled={loading}
-          >
-            {loading ? (productId ? "Updating..." : "Creating...") : (productId ? "Update Product" : "Add Product")}
-          </Button>
-
-          {productId && (
-              <Button
-                  type="default"
-                  onClick={handleArchiveToggle}
-                  className="w-full mt-4 bg-gray-400 text-white hover:bg-gray-500"
+              {/* Form */}
+              <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={handleSubmit}
+                  initialValues={product}
+                  className="mt-6"
               >
-                {product.isActive ? 'Archive' : 'Unarchive'}
-              </Button>
-          )}
-        </form>
-      </div>
+                <Form.Item
+                    label={<span className="text-gray-700 font-medium">Product Name</span>}
+                    name="name"
+                    rules={[{ required: true, message: "Please enter product name" }]}
+                >
+                  <Input
+                      prefix={<PackageIcon className="w-4 h-4 text-gray-400" />}
+                      placeholder="Enter product name"
+                      size="large"
+                      className="rounded-lg"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                    label={<span className="text-gray-700 font-medium">Description</span>}
+                    name="description"
+                    rules={[{ required: true, message: "Please enter product description" }]}
+                >
+                  <Input.TextArea
+                      placeholder="Enter product description"
+                      size="large"
+                      className="rounded-lg"
+                      rows={4}
+                  />
+                </Form.Item>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Form.Item
+                      label={<span className="text-gray-700 font-medium">Price</span>}
+                      name="price"
+                      rules={[{ required: true, message: "Please enter price" }]}
+                  >
+                    <InputNumber
+                        prefix={<DollarSign className="w-4 h-4 text-gray-400" />}
+                        placeholder="Enter price"
+                        size="large"
+                        className="w-full rounded-lg"
+                        min={0}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                      label={<span className="text-gray-700 font-medium">Quantity</span>}
+                      name="quantity"
+                      rules={[{ required: true, message: "Please enter quantity" }]}
+                  >
+                    <InputNumber
+                        prefix={<ArchiveIcon className="w-4 h-4 text-gray-400" />}
+                        placeholder="Enter quantity"
+                        size="large"
+                        className="w-full rounded-lg"
+                        min={0}
+                    />
+                  </Form.Item>
+                </div>
+
+                {/* Current Image */}
+                {product.imageUrl && (
+                    <div className="mb-6">
+                      <label className="text-gray-700 font-medium mb-2 block">
+                        Current Image
+                      </label>
+                      <div className="border rounded-lg p-2">
+                        <img
+                            src={product.imageUrl}
+                            alt="Current product"
+                            className="w-full h-48 object-cover rounded-lg"
+                        />
+                      </div>
+                    </div>
+                )}
+
+                {/* Image Upload */}
+                <Form.Item
+                    label={<span className="text-gray-700 font-medium">Product Image</span>}
+                    className="mb-8"
+                >
+                  <div className="border-2 border-dashed border-gray-200 rounded-lg p-4">
+                    <ImageUpload setImageUrl={url => setProduct(prev => ({ ...prev, imageUrl: url }))} />
+                  </div>
+                </Form.Item>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-3">
+                  <Button
+                      type="primary"
+                      htmlType="submit"
+                      loading={loading}
+                      size="large"
+                      className="bg-[#1C325B] hover:bg-[#1C325B]/90"
+                  >
+                    {productId ? 'Update Product' : 'Create Product'}
+                  </Button>
+
+                  {productId && (
+                      <Button
+                          onClick={handleArchiveToggle}
+                          size="large"
+                          className={`border border-gray-200 ${
+                              product.isActive
+                                  ? 'hover:bg-red-50 hover:text-red-600 hover:border-red-200'
+                                  : 'hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200'
+                          }`}
+                      >
+                        {product.isActive ? 'Archive Product' : 'Unarchive Product'}
+                      </Button>
+                  )}
+                </div>
+              </Form>
+            </div>
+          </div>
+        </div>
+      </ConfigProvider>
   );
 };
 
