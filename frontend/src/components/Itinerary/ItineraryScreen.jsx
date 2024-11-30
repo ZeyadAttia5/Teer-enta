@@ -20,10 +20,8 @@ import {
 import { ReloadOutlined } from "@ant-design/icons";
 import {
   GlobalOutlined,
-  DollarCircleOutlined,
   TeamOutlined,
   EnvironmentTwoTone,
-  SwapRightOutlined,
 } from "@ant-design/icons";
 import {
   MinusCircleOutlined,

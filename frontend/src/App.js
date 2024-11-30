@@ -160,24 +160,6 @@ function AppContent() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const showDrawer = () => {
     setVisible(true);
   };
