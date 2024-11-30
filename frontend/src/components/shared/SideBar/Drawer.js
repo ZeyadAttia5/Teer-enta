@@ -16,7 +16,7 @@ const DrawerBar = ({ showDrawer, drawerVisible, onClose }) => {
           />
         }
         onClick={showDrawer}
-        className={` hover:bg-gray-100`}
+        className={` hover:bg-gray-100 rounded-full`}
       ></Button>
 
       <Sidebar visible={drawerVisible} onClose={onClose} />

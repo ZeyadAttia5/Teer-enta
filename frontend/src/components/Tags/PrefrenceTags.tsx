@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Switch, notification, Popconfirm, ConfigProvider } from 'antd';
-import {PlusOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined, UserOutlined} from '@ant-design/icons';
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  UserOutlined,
+  EyeOutlined
+} from '@ant-design/icons';
 import { getPreferenceTags, createPreferenceTag, updatePreferenceTag, deletePreferenceTag } from '../../api/preferenceTags.ts';
 import {TagIcon} from "lucide-react";
 
@@ -74,7 +81,8 @@ const PreferenceTags = ({ setFlag }) => {
     setLoading(true);
     try {
       if (isEditing) {
-        await updatePreferenceTag({ ...currentTag, ...values });
+        console.log(values);
+        await updatePreferenceTag({ ...currentTag,...values });
         notification.success({
           message: 'Success',
           description: 'Tag updated successfully',
@@ -141,11 +149,18 @@ const PreferenceTags = ({ setFlag }) => {
       render: (_, record) => (
           <div className="flex space-x-2">
             <Button
-                type="text"
-                icon={<EditOutlined className="text-[#1C325B]" />}
-                onClick={() => handleEditTag(record)}
-                className="hover:bg-[#1C325B]/10"
-            />
+                type="primary"
+                icon={<EyeOutlined />}
+                onClick={() => {
+                  setIsEditing(true);
+                  setCurrentTag(record);
+                  form.setFieldsValue(record);
+                  setIsModalVisible(true);
+                }}
+                className="bg-[#1C325B] hover:bg-[#1C325B]/90"
+            >
+              View
+            </Button>
             <Popconfirm
                 title="Delete Tag"
                 description="Are you sure you want to delete this tag?"
@@ -159,9 +174,13 @@ const PreferenceTags = ({ setFlag }) => {
             >
               <Button
                   type="text"
-                  icon={<DeleteOutlined className="text-red-500" />}
-                  className="hover:bg-red-50"
-              />
+                  danger
+                  icon={<DeleteOutlined className="text-lg" />}
+                  className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
+               transition-all duration-200 hover:border-red-500"
+              >
+                <span className="text-red-500 font-medium">Delete</span>
+              </Button>
             </Popconfirm>
           </div>
       )
