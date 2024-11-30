@@ -100,11 +100,15 @@ function AppContent() {
       setIsNotificationIncoming(prev => !prev);
       setIncomingNotification(newNotification);
 
-      // Show toast notification
       toast(
-          <div className="cursor-pointer">
-            <div className="font-bold">{payload.notification.title}</div>
-            <div className="text-sm">{payload.notification.body}</div>
+          <div
+              className="cursor-pointer hover:bg-gray-50 rounded p-2 transition-colors"
+              onClick={()=> toast.dismiss()}
+              onMouseEnter={() => toast.pause()}
+              onMouseLeave={() => toast.play()}
+          >
+            <div className="font-bold">{newNotification.title}</div>
+            <div className="text-sm">{newNotification.body}</div>
           </div>,
           {
             position: "top-right",
@@ -114,7 +118,6 @@ function AppContent() {
             pauseOnHover: true,
             draggable: true,
             className: "notification-toast",
-            toggle: true,
           }
       );
     }
