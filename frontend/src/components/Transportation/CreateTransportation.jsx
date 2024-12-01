@@ -12,7 +12,11 @@ import {
     Row,
     Col,
     message,
+    ConfigProvider,
 } from "antd";
+import {
+    ClipboardList
+  } from 'lucide-react';
 import {DollarOutlined} from "@ant-design/icons";
 import {createTransportation} from "../../api/transportation.ts";
 import MapContainer from "../shared/GoogleMaps/GoogleMaps";
@@ -56,183 +60,165 @@ const CreateTransportation = () => {
     };
 
     return (
-        <Card
-            title="Transportation Form"
-            style={{width: '95%', margin: "20px auto"}}
-        >
-            <Form
-                form={form}
-                layout="vertical"
-                onFinish={handleSubmit}
-                // initialValues={{}}
-            >
-                <Row gutter={16}>
-                    {/* Pickup Location */}
-                    <Col span={12}>
-                        <Card
-                            type="inner"
-                            title="Pickup Location"
-                            style={{marginBottom: 16}}
+        <ConfigProvider
+    theme={{
+        token: {
+            colorPrimary: "#1C325B",
+        },
+    }}
+>
+    <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-6xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                {/* Header Section */}
+                <div className="px-6 py-4 border-b border-gray-200">
+                    <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
+                        <div>
+                            <div className="flex items-center gap-1 mb-2">
+                                <ClipboardList className="w-6 h-6 text-white" />
+                                <h3 className="m-0 text-lg font-semibold" style={{ color: "white" }}>
+                                    Transportation Form
+                                </h3>
+                            </div>
+                            <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                                Fill out the transportation details efficiently.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Form Section */}
+                <div className="p-6">
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onFinish={handleSubmit}
+                        className="bg-white rounded-lg"
+                    >
+                        <Row gutter={16}>
+                            {/* Pickup Location */}
+                            <Col span={12}>
+                                <Card
+                                    type="inner"
+                                    title="Pickup Location"
+                                    className="mb-4"
+                                >
+                                    <MapContainer
+                                        longitude={pickupLocation.lng}
+                                        latitude={pickupLocation.lat}
+                                        outputLocation={(lat, lng) =>
+                                            setPickupLocation({ lat, lng })
+                                        }
+                                    />
+                                </Card>
+                            </Col>
+
+                            {/* Drop-off Location */}
+                            <Col span={12}>
+                                <Card
+                                    type="inner"
+                                    title="Drop-off Location"
+                                    className="mb-4"
+                                >
+                                    <MapContainer
+                                        longitude={dropOffLocation.lng}
+                                        latitude={dropOffLocation.lat}
+                                        outputLocation={(lat, lng) =>
+                                            setDropOffLocation({ lat, lng })
+                                        }
+                                    />
+                                </Card>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                {/* Price */}
+                                <Form.Item
+                                    label="Price"
+                                    name="price"
+                                    rules={[{ required: true, message: "Please enter the price" }]}
+                                >
+                                    <InputNumber
+                                        style={{ width: "100%" }}
+                                        placeholder="Enter price"
+                                        min={0}
+                                        precision={2}
+                                        prefix={<DollarOutlined />}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                {/* Date */}
+                                <Form.Item
+                                    label="Date"
+                                    name="date"
+                                    rules={[{ required: true, message: "Please select a date" }]}
+                                >
+                                    <DatePicker
+                                        style={{ width: "100%" }}
+                                        showTime
+                                        format="YYYY-MM-DD HH:mm:ss"
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                {/* Vehicle Type */}
+                                <Form.Item
+                                    label="Vehicle Type"
+                                    name="vehicleType"
+                                    rules={[{ required: true, message: "Please select a vehicle type" }]}
+                                >
+                                    <Select placeholder="Select vehicle type">
+                                        <Option value="Car">Car</Option>
+                                        <Option value="Scooter">Scooter</Option>
+                                        <Option value="Bus">Bus</Option>
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                {/* Active Status */}
+                                <Form.Item
+                                    label="Active Status"
+                                    name="isActive"
+                                    valuePropName="checked"
+                                >
+                                    <Switch
+                                        checkedChildren="Active"
+                                        unCheckedChildren="Inactive"
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        {/* Notes */}
+                        <Form.Item
+                            label="Notes"
+                            name="notes"
+                            rules={[{ required: true, message: "Please enter notes" }]}
                         >
-                            {/*<Form.Item*/}
-                            {/*    label="Latitude"*/}
-                            {/*    name="pickupLat"*/}
-                            {/*    rules={[*/}
-                            {/*        {required: true, message: "Please enter pickup latitude"},*/}
-                            {/*    ]}*/}
-                            {/*>*/}
-                            {/*    <InputNumber*/}
-                            {/*        style={{width: "100%"}}*/}
-                            {/*        placeholder="Enter latitude"*/}
-                            {/*        step={0.000001}*/}
-                            {/*        precision={6}*/}
-                            {/*    />*/}
-                            {/*</Form.Item>*/}
+                            <TextArea rows={4} placeholder="Enter any additional notes" />
+                        </Form.Item>
 
-                            <MapContainer
-                                longitude={pickupLocation.lng}
-                                latitude={pickupLocation.lat}
-                                outputLocation={(lat, lng) => setPickupLocation({lat, lng})}
-                            />
+                        {/* Form Actions */}
+                        <Form.Item>
+                            <div className="flex justify-end gap-4">
+                                <Button onClick={() => form.resetFields()}>Reset</Button>
+                                <Button type="primary" htmlType="submit">
+                                    Submit
+                                </Button>
+                            </div>
+                        </Form.Item>
+                    </Form>
+                </div>
+            </div>
+        </div>
+    </div>
+</ConfigProvider>
 
-                            {/*<Form.Item*/}
-                            {/*    label="Longitude"*/}
-                            {/*    name="pickupLng"*/}
-                            {/*    rules={[*/}
-                            {/*        {required: true, message: "Please enter pickup longitude"},*/}
-                            {/*    ]}*/}
-                            {/*>*/}
-                            {/*    <InputNumber*/}
-                            {/*        style={{width: "100%"}}*/}
-                            {/*        placeholder="Enter longitude"*/}
-                            {/*        step={0.000001}*/}
-                            {/*        precision={6}*/}
-                            {/*    />*/}
-                            {/*</Form.Item>*/}
-                        </Card>
-                    </Col>
-
-                    {/* Drop-off Location */}
-                    <Col span={12}>
-                        <Card
-                            type="inner"
-                            title="Drop-off Location"
-                            style={{marginBottom: 16}}
-                        >
-                            {/*<Form.Item*/}
-                            {/*    label="Latitude"*/}
-                            {/*    name="dropOffLat"*/}
-                            {/*    rules={[*/}
-                            {/*        {required: true, message: "Please enter drop-off latitude"},*/}
-                            {/*    ]}*/}
-                            {/*>*/}
-                            {/*    <InputNumber*/}
-                            {/*        style={{width: "100%"}}*/}
-                            {/*        placeholder="Enter latitude"*/}
-                            {/*        step={0.000001}*/}
-                            {/*        precision={6}*/}
-                            {/*    />*/}
-                            {/*</Form.Item>*/}
-
-
-                            <MapContainer
-                                longitude={dropOffLocation.lng}
-                                latitude={dropOffLocation.lat}
-                                outputLocation={(lat, lng) => setDropOffLocation({lat, lng})}
-                            />
-
-                            {/*<Form.Item*/}
-                            {/*    label="Longitude"*/}
-                            {/*    name="dropOffLng"*/}
-                            {/*    rules={[*/}
-                            {/*        {*/}
-                            {/*            required: true,*/}
-                            {/*            message: "Please enter drop-off longitude",*/}
-                            {/*        },*/}
-                            {/*    ]}*/}
-                            {/*>*/}
-                            {/*    <InputNumber*/}
-                            {/*        style={{width: "100%"}}*/}
-                            {/*        placeholder="Enter longitude"*/}
-                            {/*        step={0.000001}*/}
-                            {/*        precision={6}*/}
-                            {/*    />*/}
-                            {/*</Form.Item>*/}
-                        </Card>
-                    </Col>
-                </Row>
-
-                {/* Price */}
-                <Form.Item
-                    label="Price"
-                    name="price"
-                    rules={[{required: true, message: "Please enter the price"}]}
-                >
-                    <InputNumber
-                        style={{width: "100%"}}
-                        placeholder="Enter price"
-                        min={0}
-                        precision={2}
-                        prefix={<DollarOutlined/>}
-                    />
-                </Form.Item>
-
-                {/* Date */}
-                <Form.Item
-                    label="Date"
-                    name="date"
-                    rules={[{required: true, message: "Please select a date"}]}
-                >
-                    <DatePicker
-                        style={{width: "100%"}}
-                        showTime
-                        format="YYYY-MM-DD HH:mm:ss"
-                    />
-                </Form.Item>
-
-                {/* Vehicle Type */}
-                <Form.Item
-                    label="Vehicle Type"
-                    name="vehicleType"
-                    rules={[{required: true, message: "Please select a vehicle type"}]}
-                >
-                    <Select placeholder="Select vehicle type">
-                        <Option value="Car">Car</Option>
-                        <Option value="Scooter">Scooter</Option>
-                        <Option value="Bus">Bus</Option>
-                    </Select>
-                </Form.Item>
-
-                {/* Notes */}
-                <Form.Item
-                    label="Notes"
-                    name="notes"
-                    rules={[{required: true, message: "Please enter notes"}]}
-                >
-                    <TextArea rows={4} placeholder="Enter any additional notes"/>
-                </Form.Item>
-
-                {/* Is Active */}
-                <Form.Item
-                    label="Active Status"
-                    name="isActive"
-                    valuePropName="checked"
-                >
-                    <Switch checkedChildren="Active" unCheckedChildren="Inactive"/>
-                </Form.Item>
-
-
-                {/* Form Actions */}
-                <Form.Item>
-                    <Space style={{width: "100%", justifyContent: "flex-end"}}>
-                        <Button onClick={() => form.resetFields()}>Reset</Button>
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
-                    </Space>
-                </Form.Item>
-            </Form>
-        </Card>
     );
 };
 
