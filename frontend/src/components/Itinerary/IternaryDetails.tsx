@@ -576,8 +576,9 @@ const ItineraryDetails: React.FC = () => {
           </Card>
           {user && user?.userRole === "Tourist" && (
             <Button
+            type="danger"
               onClick={() => handleBookItinerary(itinerary?._id)}
-              className="text-white bg-[#496989] hover:bg-[#3b5b68] transition-all duration-300"
+              className="text-white bg-first hover:bg-black transition-all duration-300"
             >
               Book
             </Button>
