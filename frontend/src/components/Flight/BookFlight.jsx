@@ -2,30 +2,38 @@ import React, { useState } from "react";
 import {
   Card,
   Form,
-  Input,
   Select,
   DatePicker,
   Button,
   Steps,
   Spin,
   Typography,
+  ConfigProvider,
+  Input,
   Space,
   Row,
   Col,
   message,
-  ConfigProvider,
 } from "antd";
 import {
   LoadingOutlined,
+  ArrowDownOutlined,
   ArrowRightOutlined,
   CloseOutlined,
-  ArrowDownOutlined,
 } from "@ant-design/icons";
 import AutoComplete from "react-google-autocomplete";
 import { bookFlight, getAirports, getFlightOffers } from "../../api/flights.ts";
 import BookingPayment from "../shared/BookingPayment.jsx";
-import { PlaneTakeoff, PlaneLanding, Calendar } from "lucide-react";
-
+import {
+  PlaneTakeoff,
+  PlaneLanding,
+  Calendar,
+  Flag,
+  Ticket,
+  UserRound,
+  CreditCard,
+} from "lucide-react";
+import { Fade } from "react-awesome-reveal";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -562,19 +570,109 @@ const { Option } = Select;
 //   );
 // };
 
+const FlightTicket = ({
+  departureCity = "New York",
+  destinationCity = "San Fransisco",
+  selectionKey,
+  isSelected,
+  onClick,
+  offer,
+}) => {
+  let departureDate = new Date(offer.itineraries[0].segments[0].departure.at);
+  let month = departureDate.toLocaleString("default", { month: "short" });
+  let day = departureDate.toLocaleString("default", { day: "2-digit" });
+  let year = departureDate.toLocaleString("default", { year: "numeric" });
+  let dateString = `${day} ${month} ${year}`;
+  let time = departureDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
+  const data = [
+    {
+      title: "Date",
+      value: dateString,
+    },
+    {
+      title: "Time",
+      value: time,
+    },
+    {
+      title: "Bag",
+      value: "40kg",
+    },
+  ];
 
+  return (
+    <article
+      onClick={() => onClick(selectionKey)}
+      className={`w-full bg-slate-50 ${
+        isSelected && "border-blue-500 border-4"
+      } cursor-pointer p-10 h-[300px] justify-between flex flex-col  shadow rounded-xl my-2`}
+    >
+      <header className="flex items-baseline flex-1 w-full justify-between">
+        <div>
+          <h1 className="text-xl font-bold">
+            {offer.itineraries[0].segments[0].departure.iataCode}
+          </h1>
+          <span className="self-start text-gray-500	text-[12px] font-extralight	">
+            {departureCity}
+          </span>
+        </div>
+        <div className="flex  text-2xl relative h-full px-4	flex-1 ">
+          <hr className="w-full border" />
+          <PlaneTakeoff
+            className="self-end top-[-20px] bg-slate-50 left-[35%] absolute"
+            size={34}
+            strokeWidth={0.5}
+          />
+        </div>
+        <div>
+          <h1 className="text-xl font-bold">
+            {offer.itineraries[0].segments[0].arrival.iataCode}
+          </h1>
+          <span className="self-start text-gray-500	text-[12px] font-extralight	">
+            {destinationCity}
+          </span>
+        </div>
+      </header>
+      <main className="flex justify-between flex-1">
+        {data.map(({ title, value }, i) => (
+          <div key={i} className="flex flex-col  items-center">
+            <span className="self-start text-gray-400	text-xs font-extralight	">
+              {title}
+            </span>
+            <span className="">{value}</span>
+          </div>
+        ))}
+      </main>
+      <footer className="flex justify-between">
+        <section className=" text-lg">
+          {offer.carrier}{" "}
+          <div className="text-xs font-light">
+            ⭐️ 4.9 <span className="text-gray-500">(78.4K)</span>
+          </div>
+        </section>
+        <section className="font-bold text-2xl ">
+          {offer.price.grandTotal} €
+        </section>
+      </footer>
+    </article>
+  );
+};
 
 const BookFlight = () => {
   const [form] = Form.useForm();
+  const [flights, setFlights] = useState([]);
+  const [promoCode, setPromoCode] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const [departureAirports, setDepartureAirports] = useState([]);
   const [destinationAirports, setDestinationAirports] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const description = "This is a description.";
+  const [loading, setLoading] = useState(-1);
 
   const fetchAirports = async () => {
-    setLoading(true);
+    setLoading(1);
     let [departureCity, departureCountry] = form
       .getFieldValue("departure")
       .split(",");
@@ -606,13 +704,42 @@ const BookFlight = () => {
     } catch (error) {
       console.log("Error fetching airports:", error);
     }
-    setLoading(false);
+    setLoading(-1);
   };
 
-  const handleStepChange = (step) => {
-    // form.validateFields();
-    setCurrentStep(step);
-    if (step === 1) fetchAirports();
+  const fetchFlights = async () => {
+    setLoading(2);
+
+    try {
+      let formattedForm = form
+        .getFieldValue("departureDate")
+        .format("YYYY-MM-DD");
+      const { data } = await getFlightOffers(
+        form.getFieldValue("departureAirport"),
+        form.getFieldValue("destinationAirport"),
+        formattedForm,
+        1
+      );
+      setFlights(data);
+
+      console.log(data);
+    } catch (error) {
+      console.log("Error fetching flights:", error);
+    }
+    setLoading(-1);
+  };
+
+  const handleStepChange = async (step) => {
+    try {
+      console.log(form.getFieldsValue());
+      if (step > currentStep) await form.validateFields();
+      setCurrentStep(step);
+      if (step === 1) fetchAirports();
+      if (step === 2) fetchFlights();
+      // if (step === 3)
+    } catch (error) {
+      message.error("Please fill in all required fields");
+    }
   };
 
   const fields = {
@@ -635,14 +762,10 @@ const BookFlight = () => {
               let departureCountry =
                 place?.address_components[place.address_components.length - 1]
                   .short_name;
-              // setDeparture({ city: departureCity, country: departureCountry });
-              // form.setFieldsValue({ departureCity, departureCountry });
               form.setFieldValue(
                 "departure",
                 `${departureCity},${departureCountry}`
               );
-              // form.setFieldValue("departure.city", departureCity);
-              // form.setFieldValue("departure.country", departureCountry);
             }}
           />
         ),
@@ -687,9 +810,6 @@ const BookFlight = () => {
           <Select
             name="departureAirport"
             placeholder="Select departure airport"
-            onChange={(value) => {
-              form.setFieldValue("departureAirport", value);
-            }}
             className="transition-all duration-300"
           >
             {departureAirports?.map((airport, index) => (
@@ -714,9 +834,6 @@ const BookFlight = () => {
           <Select
             name="destinationAirport"
             placeholder="Select destination airport"
-            onChange={(value) => {
-              form.setFieldValue("destinationAirport", value);
-            }}
             className="transition-all duration-300"
           >
             {destinationAirports?.map((airport, index) => (
@@ -742,38 +859,110 @@ const BookFlight = () => {
             disabledDate={(current) => {
               return current && current < new Date();
             }}
-            onChange={(date) => {
-              form.setFieldValue("departureDate", date.format("YYYY-MM-DD"));
-            }}
           />
         ),
       },
     ],
+    3: [
+      {
+        name: "firstName",
+        label: "First Name",
+        rules: [{ required: true, message: "Please input first name!" }],
+        component: <Input placeholder="Enter first name" />,
+      },
+      {
+        name: "lastName",
+        label: "Last Name",
+        rules: [{ required: true, message: "Please input last name!" }],
+        component: <Input placeholder="Enter last name" />,
+      },
+      {
+        name: "gender",
+        label: "Gender",
+        rules: [{ required: true, message: "Please select your gender" }],
+        component: (
+          <Select
+            placeholder="Select Gender"
+            className="w-full transition-all duration-300"
+          >
+            {["Male", "Female", "Other"].map((e) => (
+              <Option key={e} value={e}>
+                {e}
+              </Option>
+            ))}
+          </Select>
+        ),
+      },
+      {
+        name: "email",
+        label: "Email",
+        rules: [
+          { required: true, message: "Please input email!" },
+          { type: "email", message: "Please enter a valid email!" },
+        ],
+        component: <Input placeholder="Enter email address" />,
+      },
+      {
+        name: "phoneNumber",
+        label: "Phone Number",
+        rules: [{ required: true, message: "Please input phone number!" }],
+        component: <Input placeholder="Enter phone number" />,
+      },
+    ],
   };
   const stepContent = {
-    0: (
-      <div>
-        <Form.Item {...fields[0][0]} className="mt-8">
-          {fields[0][0].component}
-        </Form.Item>
-        <ArrowDownOutlined
-          style={{
-            fontSize: "25px",
-            justifyContent: "center",
-            width: "100%",
-            marginTop: "5px",
-          }}
-        />
-        <Form.Item {...fields[0][1]} className="mt-8">
-          {fields[0][1].component}
-        </Form.Item>
-      </div>
-    ),
+    0: fields[0].map((field, index) => (
+      <Form.Item key={index} {...field} className="mt-8">
+        {field.component}
+      </Form.Item>
+    )),
     1: fields[1].map((field, index) => (
       <Form.Item key={index} {...field} className="mt-8">
         {field.component}
       </Form.Item>
     )),
+    2: (
+      <Form.Item
+        className="mt-8 "
+        name={"selectedFlight"}
+        label="Select Flight Offer"
+        rootClassName="h-[400px] overflow-scroll"
+        rules={[{ required: true, message: "Please Select An offer" }]}
+      >
+        <div className="h-[400px] overflow-scroll">
+          <Fade direction="up" triggerOnce>
+            {flights.map((flight, index) => (
+              <FlightTicket
+                key={index}
+                isSelected={index === selectedOffer}
+                offer={flight}
+                departureCity={form.getFieldValue("departure").split(",")[0]}
+                destinationCity={form.getFieldValue("arrival").split(",")[0]}
+                selectionKey={index}
+                onClick={(key) => {
+                  form.setFieldValue("selectedFlight", flights[key]);
+                  setSelectedOffer(key);
+                }}
+              />
+            ))}
+          </Fade>
+        </div>
+      </Form.Item>
+    ),
+    3:
+      fields[3].map((field, index) => (
+        <Form.Item key={index} {...field}>
+          {field.component}
+        </Form.Item>
+      )),
+    4: (
+      <BookingPayment
+        onBookingClick={form.submit}
+        isloading={loading}
+        amount={selectedOffer && selectedOffer.price.total}
+        setPromoCode={setPromoCode}
+      />
+    ),
   };
 
   return (
@@ -812,11 +1001,18 @@ const BookFlight = () => {
         <main className="h-full flex mt-6 ">
           <section className="flex-1 flex flex-col justify-center items-center">
             <Form
-              className="w-full flex flex-col justify-center px-6 flex-1"
+              scrollToFirstError
+              className="w-full flex flex-col justify-center px-4 flex-1"
               form={form}
               layout="vertical"
             >
-              {loading ? <Spin /> : stepContent[currentStep]}
+              <Fade direction="up" cascade>
+                {loading !== -1 ? (
+                  <Spin className="flex-1 justify-center flex" />
+                ) : (
+                  stepContent[currentStep]
+                )}
+              </Fade>
               <footer className="flex justify-between mt-8">
                 {/* {currentStep > 1 && (
                 <Button
@@ -837,14 +1033,14 @@ const BookFlight = () => {
                   Next
                 </Button>
               )} */}
-                <Button
+                {/* <Button
                   type="primary"
                   onClick={() => {
                     console.log(form.getFieldsValue());
                   }}
                 >
                   log
-                </Button>
+                </Button> */}
               </footer>
             </Form>
             <footer className="">
@@ -860,20 +1056,33 @@ const BookFlight = () => {
             <Steps
               direction="vertical"
               current={currentStep}
+              onChange={handleStepChange}
               className="h-full"
               items={[
                 {
                   title: "Select cities ",
-                  description,
+                  icon: <Flag strokeWidth={1.5} />,
                 },
                 {
                   title: "Select Airports and Departure Date",
-                  icon: loading ? <LoadingOutlined /> : <PlaneTakeoff />,
-                  description,
+                  icon: loading === 1 ? <LoadingOutlined /> : <PlaneTakeoff />,
                 },
                 {
-                  title: "Waiting",
-                  description,
+                  title: "Select Offer",
+                  icon: loading === 2 ? <LoadingOutlined /> : <Ticket />,
+                },
+                {
+                  title: "Passenger Details",
+                  icon: loading === 3 ? <LoadingOutlined /> : <UserRound />,
+                },
+                {
+                  title: "Payment",
+                  icon:
+                    loading === 4 ? (
+                      <LoadingOutlined />
+                    ) : (
+                      <CreditCard strokeWidth={1.5} />
+                    ),
                 },
               ]}
             />

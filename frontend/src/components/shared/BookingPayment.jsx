@@ -112,8 +112,8 @@ const BookingPayment = ({ onBookingClick, isloading, amount:euroAmount,setPromoC
 
       <Form.Item className="mt-6">
         <Button
-          type="primary"
-          className="w-full h-12 text-lg bg-indigo-600 hover:bg-indigo-700 disabled:hover:bg-gray-400"
+          type="default"
+          className="w-full h-12 text-lg  hover:bg-indigo-700 disabled:hover:bg-gray-400"
           onClick={onBookingClick}
           loading={isloading}
           disabled={paymentMethod === "Card" && !paymentSucceed}
