@@ -15,6 +15,7 @@ import { getHistoricalPlaces } from "../../api/historicalPlaces.ts";
 import { getTouristActivities } from "../../api/activity.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { getCurrency } from "../../api/account.ts";
+import VacationGuide from "../../components/VacationGuide.jsx";
 import {
   DollarCircleOutlined,
   EnvironmentTwoTone,
@@ -199,6 +200,14 @@ const TouristWelcome = ({ setFlag }) => {
         >
           <span>See the Vatican Museums like never before</span>
         </Fade>
+
+        {user &&(user.userRole === "Tourist"&& (
+          <div className="absolute left-[100px] bottom-[30%] w-1/3 ">
+          <VacationGuide />
+        </div>
+        )
+        
+      )}
 
         <div className="absolute justify-around top-[72%] w-3/4 flex">
           <Button
