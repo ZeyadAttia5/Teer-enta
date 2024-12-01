@@ -38,9 +38,9 @@ const { RangePicker } = DatePicker;
 
 const CustomProgressBar = ({ step, setStep }) => {
   const steps = [
-    { label: "Choose City and Dates ", icon: <SolutionOutlined /> },
-    { label: "Hotel Offers ", icon: <HomeOutlined /> },
-    { label: "Payment ", icon: <CreditCardOutlined /> },
+    { label: "Choose City and Dates" + " ", icon: <SolutionOutlined /> },
+    { label: "Hotel Offers" + " ", icon: <HomeOutlined /> },
+    { label: "Payment" + " ", icon: <CreditCardOutlined /> },
   ];
   const colors = ["#1a2b49", "#526D82", "#9DB2BF", "#DDE6ED"];
   const textColors = ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#686d7e"];
@@ -120,14 +120,14 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   return (
     <Card
       hoverable
-      className="w-3/4 mb-4 p-4 bg-white shadow-lg h-[500px] relative"
+      className="w-3/4 mb-4 p-4 bg-white shadow-lg h-[500px] relative border border-gray-300"
       classNames={{ body: "h-full relative" }}
       onClick={() => console.log("Selected offer:", mainOffer?.id)}
     >
       <Space
         direction="vertical"
         size="middle"
-        className="w-full h-full  "
+        className="w-full h-full"
         classNames={{ item: "h-full" }}
       >
         <Row justify="space-between" align="top">
@@ -327,7 +327,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
   };
 
   return (
-    <Card className="max-w-xl mx-auto my-6 p-6 bg-[#DDE6ED]">
+    <Card className="max-w-xl mx-auto my-6 p-6 bg-[#DDE6ED] border border-gray-300">
       <Form
         form={form}
         layout="vertical"
@@ -503,7 +503,7 @@ const BookHotel = () => {
     },
   ];
   return (
-    <Card className="w-4/5 my-5 mx-auto p-6 bg-[#f9f9f9] shadow-lg">
+    <Card className="w-4/5 my-5 mx-auto p-6 bg-[#f9f9f9] shadow-lg border border-gray-300">
       <Title level={4} className="mb-6 text-[#1a2b49]">
         Book Your Hotel
       </Title>
