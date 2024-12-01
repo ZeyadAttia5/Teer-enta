@@ -212,7 +212,7 @@ exports.SaveFCMToken = async (req, res) => {
     try {
         const { token } = req.body;
         await FCMTokens.findOneAndUpdate(
-            { token },
+            { token,createdBy: req.user._id },
             { token ,createdBy: req.user._id},
             { upsert: true }
         );

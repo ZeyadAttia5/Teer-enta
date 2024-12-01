@@ -14,21 +14,23 @@ export const NotificationProvider = ({ children, incomingNotification ,isNotific
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Fetch initial notifications
-  // useEffect(() => {
-  //   if (user) {
-  //     fetchNotifications();
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, []);
 
   // Handle incoming notifications
-  useEffect(() => {
-    console.log("isNotificationIncomming", isNotificationIncomming);
+  useEffect( () => {
+    console.log("incomingNotification", isNotificationIncomming);
     if (incomingNotification) {
+      console.log("incomingNotification", isNotificationIncomming);
       setNotifications(prev => [incomingNotification, ...prev]);
+      console.log("unreadCount", unreadCount);
       setUnreadCount(prev => prev + 1);
+      console.log("unreadCount", unreadCount);
     }
-  }, [isNotificationIncomming]);
+  }, [incomingNotification]);
 
   const fetchNotifications = async () => {
     try {
@@ -40,13 +42,14 @@ export const NotificationProvider = ({ children, incomingNotification ,isNotific
       const unseenCount = response.data.notifications.filter(
           notif => !notif.isSeen
       ).length;
+      // console.log("unseenCount", unseenCount);
       setUnreadCount(unseenCount);
     } catch (err) {
       setError(err.message || "Failed to fetch notifications");
       console.error("Error fetching notifications:", err);
 
       // Show error toast
-      toast.error("Failed to load notifications. Please try again later.");
+      // toast.error("Failed to load notifications. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -60,10 +63,10 @@ export const NotificationProvider = ({ children, incomingNotification ,isNotific
       );
       setUnreadCount(0);
 
-      toast.success("All notifications marked as read");
+      // toast.success("All notifications marked as read");
     } catch (err) {
       console.error("Error marking all as read:", err);
-      toast.error("Failed to mark all as read. Please try again.");
+      // toast.error("Failed to mark all as read. Please try again.");
       await fetchNotifications(); // Refresh to ensure consistency
     }
   };
@@ -79,7 +82,7 @@ export const NotificationProvider = ({ children, incomingNotification ,isNotific
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (err) {
       console.error("Error marking as read:", err);
-      toast.error("Failed to mark notification as read");
+      // toast.error("Failed to mark notification as read");
       await fetchNotifications(); // Refresh to ensure consistency
     }
   };

@@ -70,7 +70,6 @@ import OrderHistory from "./components/Store/orderHistory";
 import OrderDetails from "./components/Store/orderDetails";
 import {NotificationProvider} from "./components/notifications/NotificationContext";
 import './services/firebase.js';
-import {saveFCMTokenToServer} from "./api/notifications.ts";
 import {initializeFirebaseMessaging, setupMessageListener} from "./services/firebase";
 
 function AppContent() {
@@ -81,11 +80,11 @@ function AppContent() {
   const location = useLocation();
   const user = localStorage.getItem("user");
   const showBackButton = location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/signup";
-  const [isNotificationIncoming, setIsNotificationIncoming] = useState(false);
+  const [isNotificationIncoming, setIsNotificationIncoming] = useState(true);
   const [incomingNotification, setIncomingNotification] = useState(null);
 
   const handleNotification = useCallback((payload) => {
-    console.log("Received foreground message:", payload);
+    // console.log("Received foreground message:", payload);
 
     if (payload?.notification) {
       const newNotification = {
@@ -97,7 +96,6 @@ function AppContent() {
         data: payload.data // Include any additional data from payload
       };
 
-      setIsNotificationIncoming(prev => !prev);
       setIncomingNotification(newNotification);
 
       toast(
@@ -125,15 +123,14 @@ function AppContent() {
 
   // Initialize Firebase notifications
   useEffect(() => {
+
     const initializeNotifications = async () => {
       try {
         const result = await initializeFirebaseMessaging();
         if (result.success) {
           // Setup message listener for foreground messages
           const unsubscribe = setupMessageListener(handleNotification);
-
-          await saveFCMTokenToServer(result.token);
-
+          // console.log("Successfully initialized Firebase messaging:", result.token);
           // Cleanup function
           return () => {
             if (unsubscribe) {
@@ -147,9 +144,11 @@ function AppContent() {
         console.error("Error setting up notifications:", error);
       }
     };
-
-    initializeNotifications();
-  }, [handleNotification]);
+    if(user){
+      console.log("User is logged in, initializing notifications...");
+      initializeNotifications();
+    }
+  }, [handleNotification ,user]);
 
 
 

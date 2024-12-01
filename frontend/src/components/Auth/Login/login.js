@@ -71,28 +71,6 @@ function Login({ setFlag, flag }) {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images?.length);
   };
 
-  const initializeNotifications = async (accessToken) => {
-    try {
-      if ('serviceWorker' in navigator) {
-        await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-      }
-
-      const permission = await checkPermission();
-      if (permission === 'granted') {
-        const token = await requestForToken();
-        if (token) {
-          await saveFCMTokenToServer(token, accessToken);
-          return true;
-        }
-      }
-      return false;
-    } catch (error) {
-      console.error('Error initializing notifications:', error);
-      return false;
-    }
-  };
-
-  const URL = `${process.env.REACT_APP_BACKEND_URL}`;
   const handleLoginSubmission = async (e) => {
     e.preventDefault();
     if (!isValid()) return false;
@@ -114,7 +92,6 @@ function Login({ setFlag, flag }) {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
       // Initialize notifications after storing credentials
-      await initializeNotifications(accessToken);
       setMessage(response.data.message);
       navigate("/");
       setFlag(false);

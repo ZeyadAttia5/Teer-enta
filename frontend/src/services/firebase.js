@@ -1,6 +1,7 @@
 // firebase.js
 import { initializeApp } from 'firebase/app';
 import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging';
+import {saveFCMTokenToServer} from "../api/notifications.ts";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -20,8 +21,10 @@ let messagingInstance = null;
 
 export const initializeMessaging = async () => {
     try {
+        // console.log('Initializing Firebase messaging...');
         const isSupportedBrowser = await isSupported();
         if (isSupportedBrowser) {
+            // console.log('Firebase messaging is supported');
             messagingInstance = getMessaging(app);
             return messagingInstance;
         }
@@ -101,7 +104,7 @@ export const setupMessageListener = (callback) => {
         }
 
         return onMessage(messagingInstance, (payload) => {
-            console.log('Received foreground message:', payload);
+            // console.log('Received foreground message:', payload);
             if (callback && typeof callback === 'function') {
                 callback(payload);
             }
@@ -120,14 +123,18 @@ export const initializeFirebaseMessaging = async () => {
 
         // Register service worker
         if ('serviceWorker' in navigator) {
+            // console.log('Registering service worker...');
             const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-            console.log('Service Worker registered with scope:', registration.scope);
+            // console.log('Service Worker registered with scope:', registration.scope);
         }
-
+        // console.log('Firebase messaging initialized');
         // Check permission and request token
         const permission = await checkPermission();
+        // console.log('Notification permission:', permission);
         if (permission === 'granted') {
             const token = await requestForToken();
+            // console.log('FCM token:', token);
+            await saveFCMTokenToServer(token);
             return { success: true, token };
         }
 
