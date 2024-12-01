@@ -19,7 +19,7 @@ export const getPendingAccounts = async () => {
     });
 }
 export const addUser = async (user) => {
-    console.log(localStorage.getItem("accessToken"));
+    // console.log(localStorage.getItem("accessToken"));
     return await axios.post(`${API_BASE_URL}/account/create`, user, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

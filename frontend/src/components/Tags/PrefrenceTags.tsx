@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Switch, notification, Popconfirm, ConfigProvider } from 'antd';
 import {
   PlusOutlined,
-  EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
-  UserOutlined,
   EyeOutlined
 } from '@ant-design/icons';
 import { getPreferenceTags, createPreferenceTag, updatePreferenceTag, deletePreferenceTag } from '../../api/preferenceTags.ts';
@@ -49,12 +47,6 @@ const PreferenceTags = ({ setFlag }) => {
     setIsModalVisible(true);
   };
 
-  const handleEditTag = (tag) => {
-    setIsEditing(true);
-    setCurrentTag(tag);
-    form.setFieldsValue(tag);
-    setIsModalVisible(true);
-  };
 
   const handleDeleteTag = async (id) => {
     setLoading(true);

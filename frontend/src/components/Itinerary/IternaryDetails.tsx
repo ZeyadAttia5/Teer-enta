@@ -62,7 +62,7 @@ const ItineraryDetails: React.FC = () => {
 
   const fetchTourGuideComments = async (tourGuideId) => {
     try {
-      console.log(tourGuideId);
+      // console.log(tourGuideId);
       const response = await getCommentsForTourGuide(tourGuideId);
       setTourGuideComments(response.data.comments);
     } catch (error) {
