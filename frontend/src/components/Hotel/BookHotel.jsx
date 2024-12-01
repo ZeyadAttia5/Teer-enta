@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  Card,
   Form,
   Input,
   Button,
@@ -8,7 +9,6 @@ import {
   message,
   Steps,
   List,
-  Card,
   Typography,
   Tag,
   Space,
@@ -16,6 +16,7 @@ import {
   Col,
   Divider,
   Spin,
+  ConfigProvider,
 } from "antd";
 import {
   EnvironmentOutlined,
@@ -31,56 +32,28 @@ import {
 import { bookHotel, getHotels } from "../../api/hotels.ts";
 import AutoComplete from "react-google-autocomplete";
 import BookingPayment from "../shared/BookingPayment.jsx";
+import { Fade } from "react-awesome-reveal";
 
 const { Text, Title } = Typography;
-const { Search } = Input;
 const { RangePicker } = DatePicker;
 
 const CustomProgressBar = ({ step, setStep }) => {
   const steps = [
-    { label: "Choose City and Dates" + " ", icon: <SolutionOutlined /> },
-    { label: "Hotel Offers" + " ", icon: <HomeOutlined /> },
-    { label: "Payment" + " ", icon: <CreditCardOutlined /> },
+    { label: "Choose City and Dates", icon: <SolutionOutlined /> },
+    { label: "Hotel Offers", icon: <HomeOutlined /> },
+    { label: "Payment", icon: <CreditCardOutlined /> },
   ];
-  const colors = ["#1a2b49", "#526D82", "#9DB2BF", "#DDE6ED"];
-  const textColors = ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#686d7e"];
 
   return (
-    <div className="flex justify-between items-center mb-8">
-      {steps.map((item, index) => (
-        <div
-          key={index}
-          className={`flex-1 text-center ${
-            index <= step ? "cursor-pointer" : "cursor-default"
-          }`}
-          onClick={() => {
-            if (index <= step) setStep(index);
-          }}
-        >
-          <div
-            className={`py-2 px-4 rounded-full transition-all duration-300`}
-            style={{
-              backgroundColor:
-                index < step
-                  ? colors[0]
-                  : index === step
-                  ? colors[1]
-                  : colors[3],
-              color:
-                index < step
-                  ? textColors[0]
-                  : index === step
-                  ? textColors[1]
-                  : textColors[3],
-              transform: step === index ? "scale(1)" : "scale(1)",
-            }}
-          >
-            {item.label}
-            <Space>{item.icon}</Space>
-          </div>
-        </div>
-      ))}
-    </div>
+    <Steps
+      direction="vertical"
+      current={step}
+      onChange={setStep}
+      items={steps.map((item, index) => ({
+        title: item.label,
+        icon: item.icon,
+      }))}
+    />
   );
 };
 
@@ -120,16 +93,10 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   return (
     <Card
       hoverable
-      className="w-3/4 mb-4 p-4 bg-white shadow-lg h-[500px] relative border border-gray-300"
-      classNames={{ body: "h-full relative" }}
+      className="w-full mb-4 p-4 bg-white shadow-lg h-[300px] relative border border-gray-300"
       onClick={() => console.log("Selected offer:", mainOffer?.id)}
     >
-      <Space
-        direction="vertical"
-        size="middle"
-        className="w-full h-full"
-        classNames={{ item: "h-full" }}
-      >
+      <Space direction="vertical" size="middle" className="w-full h-full">
         <Row justify="space-between" align="top">
           <Col>
             <Title level={4} className="mb-2 text-[#1a2b49]">
@@ -468,6 +435,7 @@ const BookHotel = () => {
       setLoading(false);
     }
   };
+
   const steps = [
     {
       title: "Choose City and Dates",
@@ -502,30 +470,72 @@ const BookHotel = () => {
       ),
     },
   ];
+
   return (
-    <Card className="w-4/5 my-5 mx-auto p-6 bg-[#f9f9f9] shadow-lg border border-gray-300">
-      <Title level={4} className="mb-6 text-[#1a2b49]">
-        Book Your Hotel
-      </Title>
-      <CustomProgressBar step={step} setStep={setStep} />
-      {loading ? (
-        <div className="flex justify-center p-8">
-          <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-        </div>
-      ) : (
-        steps[step]?.content
-      )}
-      <div className="flex justify-between mt-8">
-        {step > 0 && (
-          <Button
-            onClick={() => setStep(step - 1)}
-            className="bg-[#9DB2BF] border-[#9DB2BF] hover:bg-[#686d7e] hover:border-[#686d7e] text-white"
-          >
-            Previous
-          </Button>
-        )}
-      </div>
-    </Card>
+    <ConfigProvider
+      theme={{
+        components: {
+          Button: {
+            defaultBg: "rgb(26,43,73)",
+            defaultHoverBg: "rgb(82,109,130)",
+            defaultColor: "white",
+            defaultHoverColor: "white",
+            defaultHoverBorderColor: "rgb(82,109,130)",
+          },
+        },
+      }}
+    >
+      <Card
+        className="w-11/12 min-h-[600px] flex my-20 mx-auto shadow"
+        classNames={{
+          body: "flex flex-1 flex-col justify-center",
+          cover: "flex-1",
+        }}
+        cover={
+          <img
+            alt=""
+            className="size-full"
+            src="https://watermark.lovepik.com/photo/50099/3731.jpg_wh1200.jpg"
+          />
+        }
+      >
+        <header>
+          <Typography.Title level={4} className="mb-6">
+            Book Your Hotel
+          </Typography.Title>
+        </header>
+        <main className="h-full flex mt-6">
+          <section className="flex-1 flex flex-col justify-center items-center">
+            <Form
+              scrollToFirstError
+              className="w-full flex flex-col justify-center px-4 flex-1"
+              layout="vertical"
+            >
+              <Fade direction="up" cascade>
+                {loading ? (
+                  <Spin className="flex-1 justify-center flex" />
+                ) : (
+                  steps[step]?.content
+                )}
+              </Fade>
+              <footer className="flex justify-between mt-8">
+                {step > 0 && (
+                  <Button
+                    onClick={() => setStep(step - 1)}
+                    className="bg-[#9DB2BF] border-[#9DB2BF] hover:bg-[#686d7e] hover:border-[#686d7e] text-white"
+                  >
+                    Previous
+                  </Button>
+                )}
+              </footer>
+            </Form>
+          </section>
+          <section className="h-full flex-[0.4]">
+            <CustomProgressBar step={step} setStep={setStep} />
+          </section>
+        </main>
+      </Card>
+    </ConfigProvider>
   );
 };
 
