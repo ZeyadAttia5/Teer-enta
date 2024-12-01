@@ -18,6 +18,8 @@ import {
   Badge,
   Tooltip,
   Tag,
+  Spin,
+  ConfigProvider,
   message
 } from "antd";
 import {
@@ -389,38 +391,80 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   ];
 
   return (
-   
-      <div className="container mx-auto p-4">
-        {/* Big Header */}
-        <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 mb-8 text-white">
-          <div className="flex items-center gap-3 mb-2">
-            <ClipboardList className="w-6 h-6 text-white" />
-            <h1 className="text-2xl font-bold text-white">Activities Management</h1>
+
+    <ConfigProvider
+    theme={{
+        token: {
+            colorPrimary: "#1C325B",
+        },
+    }}
+>
+<div className="min-h-screen bg-gray-50 p-6">
+    <div className="max-w-6xl mx-auto">
+      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        {/* Header Section */}
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-1 mb-2">
+                <ClipboardList className="w-6 h-6 text-white" />
+                <h3 className="m-0 text-lg font-semibold" style={{ color: "white" }}>
+                  Activity Management
+                </h3>
+              </div>
+              <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                Create, view, and manage activities efficiently
+              </p>
+            </div>
+
+            {/* Action Button */}
+            {user && user.userRole === "Advertiser" && (
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={handleCreateActivity}
+                className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
+                size="large"
+              >
+                Create Activity
+              </Button>
+            )}
           </div>
-          <p className="text-gray-400">
-            Create, view, and manage activities efficiently
-          </p>
         </div>
-    
-        {user && user.userRole === "Advertiser" && (
-          <Button
-            icon={<PlusOutlined />}
-            type="primary"
-            onClick={handleCreateActivity}
-            className="mb-4 bg-green-600"
-          >
-            Create Activity
-          </Button>
-        )}
-    
-        {/* Table for Activities */}
-        <Table
-          columns={columns}
-          dataSource={activities}
-          scroll={{ x: "80%" }}
-          rowKey="_id"
-          loading={loading}
-        />
+
+        {/* Table Section */}
+        <div className="p-6">
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Spin size="large" />
+            </div>
+          ) : (
+            <Table
+              columns={columns}
+              dataSource={activities}
+              rowKey="_id"
+              pagination={{
+                pageSize: 10,
+                showTotal: (total) => `Total ${total} activities`,
+              }}
+              className="border border-gray-200 rounded-lg"
+              rowClassName="hover:bg-[#1C325B]/5"
+              locale={{
+                emptyText: (
+                  <div className="py-8 text-center text-gray-500">
+                    No activities found
+                  </div>
+                ),
+              }}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  
+
+
+
     
         {/* Modal for Creating or Editing Activities */}
         <Modal
@@ -562,7 +606,10 @@ const AllActivitiesCRUD = ({ setFlag }) => {
             )}
           </Form>
         </Modal>
+        
       </div>
+      </ConfigProvider>
+
     );
     
 };
