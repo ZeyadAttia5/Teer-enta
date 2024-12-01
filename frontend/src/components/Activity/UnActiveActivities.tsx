@@ -13,6 +13,36 @@ import { TTag } from "../../types/Tag.ts";
 import Filter from "../shared/Filter.jsx";
 import { TPreferenceTag } from "../../types/Itinerary/PreferenceTag";
 import {
+  Button,
+  Modal,
+  DatePicker,
+  TimePicker,
+  Select,
+  notification,
+  Popconfirm,
+  InputNumber,
+  Row,
+  Col,
+  Card,
+  Badge,
+  Tooltip,
+  Spin,
+  ConfigProvider,
+  message
+} from "antd";
+import {
+  Flag,
+  AlertTriangle,
+  Calendar,
+  Clock,
+  MapPin,
+  Tag as TagIcon,
+  Percent,
+  AlertCircle,
+  PackageIcon,
+  ClipboardList
+} from 'lucide-react';
+import {
   CalendarOutlined,
   ClockCircleOutlined,
   EnvironmentOutlined,
@@ -22,11 +52,19 @@ import {
   StarOutlined,
   GiftOutlined,
 } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  FlagFilled,
+} from "@ant-design/icons";
 
 // Tactivity keys are the dataIndex of each object in the data array
 
 const UnActiveActivities = ({ setFlag }) => {
   setFlag(false);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [activities, setActivities] = useState<TActivity[]>([]);
   const [loading, setLoading] = useState(false)
   const fetchActivities = async () => {
@@ -37,7 +75,7 @@ const UnActiveActivities = ({ setFlag }) => {
   };
   const columns = [
     {
-      title: "name",
+      title: "Name",
       dataIndex: "name",
       key: "name",
       ...Filter({
@@ -48,7 +86,7 @@ const UnActiveActivities = ({ setFlag }) => {
       }),
     },
     {
-      title: "date",
+      title: "Date",
       dataIndex: "date",
       key: "date",
       ...Filter({
@@ -60,7 +98,7 @@ const UnActiveActivities = ({ setFlag }) => {
       render: (value) => new Date(value).toLocaleDateString(),
     },
     {
-      title: "time",
+      title: "Time",
       dataIndex: "time",
       key: "time",
     },
@@ -71,18 +109,12 @@ const UnActiveActivities = ({ setFlag }) => {
       render: (value: boolean) => (value ? "Yes" : "No"),
     },
     {
-      title: "location",
+      title: "Location",
       dataIndex: "location",
       key: "location",
     },
     {
-      title: "isActive",
-      dataIndex: "isActive",
-      key: "isActive",
-      render: (value: boolean) => (value ? "Yes" : "No"),
-    },
-    {
-      title: "price",
+      title: "Price",
       dataIndex: "price",
       key: "price",
       render: (value: { min: Number; max: Number }) =>
@@ -100,7 +132,7 @@ const UnActiveActivities = ({ setFlag }) => {
       }),
     },
     {
-      title: "category",
+      title: "Category",
       dataIndex: "category",
       key: "category",
       ...Filter({
@@ -114,7 +146,7 @@ const UnActiveActivities = ({ setFlag }) => {
       render: (value: TActivityCategory) => value?.category,
     },
     {
-      title: "preferenceTags",
+      title: "Tags",
       dataIndex: "preferenceTags",
       key: "preferenceTags",
       filters: [],
@@ -134,7 +166,7 @@ const UnActiveActivities = ({ setFlag }) => {
       ),
     },
     {
-      title: "specialDiscounts",
+      title: "Discounts",
       dataIndex: "specialDiscounts",
       key: "specialDiscounts",
       render: (
@@ -156,7 +188,7 @@ const UnActiveActivities = ({ setFlag }) => {
       ),
     },
     {
-      title: "ratings",
+      title: "Ratings",
       dataIndex: "ratings",
       key: "ratings",
       ...Filter({
@@ -187,24 +219,9 @@ const UnActiveActivities = ({ setFlag }) => {
         b.ratings.reduce((acc, cur) => acc + cur.rating, 0) /
           (b.ratings.length || 1),
     },
+    
     {
-      title: "comments",
-      dataIndex: "comments",
-      key: "comments",
-      render: (comments: { createdBy: string; comment: string }[]) => (
-        <>
-          {comments?.map((comment) => {
-            return (
-              <Tag color="cyan" key={comment.createdBy}>
-                {comment.comment}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
-      title: "actions",
+      title: "Actions",
       dataIndex: "actions",
       key: "actions",
       render: (value, record) => {
@@ -239,34 +256,59 @@ const UnActiveActivities = ({ setFlag }) => {
   }, [activities]);
 
   return (
-    <main className="p-8 bg-gray-50 min-h-screen flex flex-col items-center">
-      <div className="flex items-center justify-between w-full max-w-7xl mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Unactive Activity List
-        </h1>
+    <div className="min-h-screen bg-gray-50 p-6 overflow-x: auto;" >
+    <div className="max-w-6xl mx-auto">
+      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 overflow-x: auto;">
+        {/* Header Section */}
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-1 mb-2">
+                <ClipboardList className="w-6 h-6 text-white" />
+                <h3 className="m-0 text-lg font-semibold" style={{ color: "white" }}>
+                  Unactive Activity Management
+                </h3>
+              </div>
+              <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                View and manage unactive activities efficiently
+              </p>
+            </div>
+
+           
+            
+          </div>
+        </div>
+
+        {/* Table Section */}
+        <div className="p-6">
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Spin size="large" />
+            </div>
+          ) : (
+            <Table
+              columns={columns}
+              dataSource={activities}
+              rowKey="_id"
+              pagination={{
+                pageSize: 10,
+                showTotal: (total) => `Total ${total} activities`,
+              }}
+              className="border border-gray-200 rounded-lg"
+              rowClassName="hover:bg-[#1C325B]/5"
+              locale={{
+                emptyText: (
+                  <div className="py-8 text-center text-gray-500">
+                    No activities found
+                  </div>
+                ),
+              }}
+            />
+          )}
+        </div>
       </div>
-      <div className="w-full  bg-white rounded-lg shadow-xl overflow-hidden">
-        <Table
-          scroll={{ x: "max-content" }}
-          bordered
-          loading={loading}
-          className="table-auto w-full"
-          dataSource={activities}
-          columns={columns?.map((col) => ({
-            ...col,
-            className: "p-4 text-gray-700 text-sm font-medium text-center",
-            title: (
-              <span className="font-semibold text-gray-600">{col.title}</span>
-            ),
-          }))}
-          pagination={{
-            pageSize: 10,
-            showTotal: (total) => `Total ${total} items`,
-            showSizeChanger: true,
-          }}
-        />
-      </div>
-    </main>
+    </div>
+    </div>
   );
 };
 

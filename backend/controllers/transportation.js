@@ -137,9 +137,6 @@ exports.getBookedTransportations = async (req, res) => {
         const bookedTransportations = await BookedTransportation
             .find({ createdBy: userId, isActive: true })
             .populate('transportation');
-        if (bookedTransportations.length === 0) {
-            return res.status(404).json({ message: 'No Transportation booked yet' });
-        }
         res.status(200).json(bookedTransportations);
     } catch (err) {
         errorHandler.SendError(res, err);

@@ -26,7 +26,7 @@ const { Title, Text } = Typography;
 const FilterDropdown = ({ filters, onFilterChange }) => {
   const defaultFilters = {
     minPrice: 0,
-    maxPrice: 1000,
+    maxPrice: 1000000,  // Updated from 1000 to 10000
     sortBy: 'rating',
     sortOrder: 'desc'
   };
@@ -128,10 +128,10 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
       <div className="relative inline-block">
         <Badge dot={hasActiveFilters()} offset={[-2, 2]}>
           <Button
-              type="primary"
+              type="danger"
               icon={<FilterOutlined />}
               onClick={() => setIsOpen(true)}
-              className="flex-1 bg-first hover:bg-customGreen"
+              className="flex-1 bg-fourth hover:bg-third text-black"
           >
             Filters & Sort
           </Button>
@@ -209,14 +209,14 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
             {/* Price Range Section */}
             <div>
               <Title level={5} className="mb-4 flex items-center gap-2">
-                <DollarOutlined />
+                <DollarOutlined/>
                 Price Range
               </Title>
               <div className="px-2">
                 <Slider
                     range
                     min={0}
-                    max={1000}
+                    max={1000000}  // Updated from 1000 to 10000
                     value={[minPrice, maxPrice]}
                     onChange={handlePriceChange}
                     className="mb-4"
@@ -236,7 +236,7 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
                   <Text type="secondary">to</Text>
                   <InputNumber
                       min={minPrice}
-                      max={1000}
+                      max={1000000}  // Updated from 1000 to 10000
                       value={maxPrice}
                       onChange={(value) => setMaxPrice(value)}
                       prefix="$"
@@ -245,13 +245,12 @@ const FilterDropdown = ({ filters, onFilterChange }) => {
                 </div>
               </div>
             </div>
-
-            <Divider />
+            <Divider/>
 
             {/* Sort Options Section */}
             <div>
               <Title level={5} className="mb-4 flex items-center gap-2">
-                <SortAscendingOutlined />
+                <SortAscendingOutlined/>
                 Sort By
               </Title>
               <Radio.Group

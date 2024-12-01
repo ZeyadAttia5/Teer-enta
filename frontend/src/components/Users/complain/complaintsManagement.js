@@ -180,7 +180,7 @@ const ComplaintsManagement = () => {
               onClick={() => showComplaintDetails(record._id)}
               className="bg-[#1C325B] hover:bg-[#1C325B]/90"
           >
-            View Details
+            View
           </Button>
       ),
     },

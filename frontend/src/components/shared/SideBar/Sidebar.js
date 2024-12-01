@@ -41,7 +41,6 @@ const Sidebar = ({ visible, onClose }) => {
     }
     return filteredItems;
   };
-
   return (
     <Drawer
       title="Menu"
@@ -61,6 +60,11 @@ const Sidebar = ({ visible, onClose }) => {
         onOpenChange={onOpenChange}
         className="bg-fourth"
       >
+        {user && user.userRole !== "Tourist"  && user.userRole !== "TourismGovernor" && (
+            <Menu.Item key="22" onClick={() => handleClick("/reports/")}>
+              Dashboard
+            </Menu.Item>
+        )}
         {user &&
           (user.userRole === "Admin" ||
             user.userRole === "TourismGovernor") && (
@@ -114,7 +118,16 @@ const Sidebar = ({ visible, onClose }) => {
               user.userRole === "Tourist" ||
               user.userRole === "Admin"))) &&
           renderMenuItems([
-            <Menu.Item key="4" onClick={() => handleClick("/itinerary")} icon={<CarryOutOutlined />}>
+            <Menu.Item
+                    key="4"
+                    onClick={() =>
+                        handleClick(
+                            user.userRole === "TourGuide"
+                                ? "/itinerary/tourguide_itineraries"
+                                : "/itinerary"
+                        )
+                    }
+                icon={<CarryOutOutlined />}>
               Itinerary
             </Menu.Item>,
             user && user.userRole === "Admin" && (
@@ -127,20 +140,12 @@ const Sidebar = ({ visible, onClose }) => {
               </Menu.Item>
             ),
             user && user.userRole === "TourGuide" && (
-              <Menu.Item
-                key="2000"
-                onClick={() => handleClick("/itinerary/unActiveIternaries")}
-                icon={<CarryOutOutlined />}
-              >
-                UnActive Itinerary
-              </Menu.Item>
-            ),
-            user && user.userRole === "TourGuide" && (
               <Menu.Item key="5" onClick={() => handleClick("/itinerary/my")} icon={<CarryOutOutlined />}>
                 My Itinerary
               </Menu.Item>
             ),
           ])}
+
         {user &&
           (user.userRole === "Advertiser" ||
             user.userRole === "Admin" ||
