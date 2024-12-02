@@ -503,15 +503,17 @@ const TouristActivity = ({ setFlag }) => {
 
       <div className="mt-8">
         {/* Activity Cards */}
-        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"> */}
-        <div className="flex justify-center">
-          <div className="flex flex-wrap justify-between w-[80%]">
+            <div className="ml-16">
             <Checkbox
               checked={showUpcoming}
               onChange={(e) => setShowUpcoming(e.target.checked)}
-            >
+              >
               Show Upcoming Activities
             </Checkbox>
+            </div>
+        <div className="flex justify-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-[90%]">
+          {/* <div className="flex flex-wrap justify-between w-[80%]"> */}
             {filteredActivities?.length > 0 ? (
               filteredActivities?.map((place) => (
                 
