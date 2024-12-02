@@ -1,487 +1,103 @@
 return (
-  <div className="min-h-screen p-8 items-center bg-fourth">
-    
-    <Space
-      direction="vertical"
-      size="large"
-      className="relative w-full p-10"
-    >
-      <div className="absolute top-1 left-1/2 animate-bounce">
-        <RocketOutlined className="text-6xl text-first" />
-      </div>
+    <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+        <BackButton />
+        <Title level={2} className="text-center text-indigo-600">
+            {itinerary?.name} Booking
+        </Title>
 
-      {/* Header and Basic Information in Same Row */}
-      <Row gutter={[0, 16]} justify="space-between" align="top">
-        
-        {/* Header Section */}
-        <Col xs={24} sm={12} md={10} className="flex justify-center gap-2">
-        <Card
-bordered={true} // Add border to the card
-className={`${cardStyle} border-third  mx-0 ml-0`}
-bodyStyle={{ height: "100%" }}
->
+        {/* Description and Language */}
+        <div className="bg-white shadow p-6 rounded-lg">
+            <Text className="text-lg font-semibold block mb-2">Description</Text>
+            <Text className="block text-gray-600">{itinerary?.description}</Text>
+            <Text className="text-lg font-semibold block mt-4">Language</Text>
+            <Text className="block text-gray-600">{itinerary?.language}</Text>
+        </div>
 
-<div className="space-y-1">
-  {/* activity Name */}
-  <Row justify="center" className="text-center mb-0">
-<Title
-level={2}
-className="font-extrabold text-first mb-0"
-style={{ fontSize: "7rem", marginBottom: "0.15rem", color: "#1a2b49" }}
->
-{activity?.colorName} {activity?.name}
-</Title>
+        {/* Promo Code */}
+        <div className="bg-white shadow p-6 rounded-lg">
+            <Text className="text-lg font-semibold block mb-3">Promo Code</Text>
+            <div className="flex gap-2">
+                <Input
+                    prefix={<TagOutlined />}
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    placeholder="Enter promo code"
+                    className="flex-1"
+                />
+                <Button
+                    onClick={handleApplyPromo}
+                    loading={applyingPromo}
+                    type="primary"
+                    className="bg-indigo-600"
+                >
+                    Apply
+                </Button>
+            </div>
+        </div>
 
+        {/* Price Details */}
+        <div className="bg-white shadow p-6 rounded-lg">
+            <Text className="text-lg font-semibold block mb-3">Price Details</Text>
+            <div className="space-y-2">
+                <Text className="block text-gray-600">
+                    Original Price: {currency?.code} {(currency?.rate * itinerary?.price).toFixed(2)}
+                </Text>
+                {promoDiscount > 0 && (
+                    <>
+                        <Text className="block text-green-600">
+                            Promo Discount: {promoDiscount}%
+                        </Text>
+                        <Text className="block text-lg font-semibold text-indigo-600">
+                            Final Price: {currency?.code} {calculateFinalPrice(currency?.rate * itinerary?.price)}
+                        </Text>
+                    </>
+                )}
+            </div>
+        </div>
 
+        {/* Date Picker and Payment Method */}
+        <div className="bg-white shadow p-6 rounded-lg">
+            <Form layout="vertical">
+                <Form.Item label="Select Date" required>
+                    <Select
+                        className="w-full"
+                        placeholder="Select a date"
+                        onChange={handleDateChange}
+                        value={selectedDate}
+                    >
+                        {itinerary?.availableDates?.map((date) => (
+                            <Select.Option key={date.Date} value={date.Date}>
+                                {dayjs(date.Date).format("MMMM D, YYYY")} - {date.Times}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                </Form.Item>
 
-</Row>
+                <Form.Item label="Payment Method" required>
+                    <Radio.Group onChange={handlePaymentMethodChange} value={paymentMethod}>
+                        <Radio value="wallet">Wallet</Radio>
+                        <Radio value="Card">Credit Card</Radio>
+                    </Radio.Group>
+                </Form.Item>
 
+                {paymentMethod === "Card" && (
+                    <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
+                        <CheckoutForm amount={calculateFinalPrice(currency?.rate * itinerary?.price)} />
+                    </Elements>
+                )}
 
-  {/* Description */}
-  <Row justify="center" className="text-center">
-    <p
-      className="text-first text-lg font-medium mb-4"
-      style={{ fontSize: "2rem" }}
-    >
-      {"Explore amazing Activity experiences!"}
-    </p>
-  </Row>
-  <Row
-    justify="center"
-    align="middle"
-    className="text-center space-x-2"
-  >
-   <div className="flex flex-col items-center space-y-1">
-   <div className="flex items-center justify-center gap-1 my-2">
-                      <Tooltip title="" overlayClassName="bg-fourth">
-                          <p className="text-xs font-bold mr-1">{currency?.code}</p>
-                      </Tooltip>
-                      <Tooltip title="Price" overlayClassName="bg-fourth">
-                          <p className="text-2xl sm:text-3xl font-bold">
-                              { activity?.price?.min ? (currency?.rate *  activity?.price?.min).toFixed(1) : "N/A"},
-                          </p>
-                      </Tooltip>
-
-                      <Tooltip title="" overlayClassName="bg-fourth">
-                          <p className="text-xs font-bold mr-1"></p>
-                      </Tooltip>
-                      <Tooltip title="Price" overlayClassName="bg-fourth">
-                          <p className="text-2xl sm:text-3xl font-bold">
-                              { activity?.price?.max ? (currency?.rate *  activity?.price?.max).toFixed(1) : "N/A"}
-                          </p>
-                      </Tooltip>
-                  </div>
-<Statistic 
-value={new Date(activity?.date).toLocaleDateString()}
-prefix={<CalendarOutlined style={{ fontSize: '12px', marginRight: '5px' }} />}
-valueStyle={{ color: "#1a2b49" }}
-//title="Date"
-/>
-
-<Statistic
-value={activity?.time}
-prefix={<ClockCircleOutlined style={{ fontSize: '12px', marginRight: '5px' }} />}
-valueStyle={{ color: "#1a2b49" }}
-//title="Time"
-/>
-</div>
-
-
-  </Row>
-
-  {/* Tags */}
-  <Row justify="space-between" align="middle" gutter={[16, 16]}>
-  <Col>
-<Space size="small">
-<Tag
-color={activity?.isActive ? "success" : "error"}
-className="text-white"
-style={{ fontSize: '12px' }}
->
-{activity?.isActive ? (
-  <>
-    <CheckCircleOutlined style={{ fontSize: '10px', marginRight: '5px' }} />
-    Active
-  </>
-) : (
-  <>
-    <CloseCircleOutlined style={{ fontSize: '16px', marginRight: '5px' }} />
-    Inactive
-  </>
-)}
-</Tag>
-<Tag
-color={activity?.isBookingOpen ? "processing" : "default"}
-className="text-white"
-style={{ fontSize: '12px' }}
->
-{activity?.isBookingOpen ? (
-  <>
-    <ClockCircleOutlined style={{ fontSize: '10px', marginRight: '5px' }} />
-    Booking Open
-  </>
-) : (
-  <>
-    <StopOutlined style={{ fontSize: '16px', marginRight: '5px' }} />
-    Booking Closed
-  </>
-)}
-</Tag>
-</Space>
-</Col>
-
-
-    {/* Rating and Actions */}
-    <Col>
-      <Space direction="vertical" align="center">
-        <Rate disabled value={averageRating} allowHalf />
-        <Text type="secondary" className="text-white">
-          {activity?.ratings.length} ratings
-        </Text>
-        <Space>
-          {/* Copy Link Button with Icon and Text on Hover */}
-          <div className="flex items-center gap-4">
-{/* Copy Link Button */}
-<div className="relative group">
-{/* Invisible text, visible on hover */}
-<span className="absolute left-1/2 transform -translate-x-1/2 -top-8 opacity-0 group-hover:opacity-100 bg-fourth text-first text-sm px-2 py-1 rounded shadow whitespace-nowrap">
-Copy Link
-</span>
-<Button
-icon={<CopyOutlined />}
-onClick={handleCopyLink}
-className="text-first bg-white hover:bg-gray-200"
-/>
-</div>
-
-{/* Send Mail Button */}
-<div className="relative group">
-{/* Invisible text, visible on hover */}
-<span className="absolute left-1/2 transform -translate-x-1/2 -top-8 opacity-0 group-hover:opacity-100 bg-fourth text-first text-sm px-2 py-1 rounded shadow whitespace-nowrap">
-Send Mail
-</span>
-<Button
-icon={<MailOutlined />}
-onClick={handleShareEmail}
-className="text-first bg-white hover:bg-gray-200"
-/>
-</div>
-</div>
-
-        </Space>
-      </Space>
-    </Col>
-  </Row>
-</div>
-
-<Button
-onClick={() => handleActivityBooking(ActivityId)}
-className="w-full text-white text-4xl py-6 px-8 bg-first hover:bg-first transition-all duration-300 mt-4 border-2 border-[#496989] shadow-lg"
-style={{
-fontSize: '40px', // Bigger font for the button
-padding: '30px 50px', // Larger button padding
-width: '100%', // Full width of the container
-backgroundColor: "#1a2b49",
-}}
->
-Book Now
-</Button>
-
-
-</Card>
-        </Col>
-
-        <Col xs={24} md={12}>
-
-
-        <Row gutter={[-1, 20]} justify="space-between" align="top" style={{ marginLeft: '-80px' }}>
-{/* Category & Tags Card */}
-<Col xs={24} sm={12} md={15}>
-<Card
-title={
-  <Space>
-    <TagOutlined style={{ color: "#58A399" }} />
-    <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#1a2b49' }}>Category & Tags</span>
-  </Space>
-}
-style={{
-  ...cardStyle,
-  ...(hoveredCard === "categoryTags" ? hoverCardStyle : {}),
-  backgroundColor: 'white',
-  width: '100%',  // Ensures cards take up full column width
-  marginBottom: '16px',
-  height: '100%', // Ensures both cards have the same height
-  display: 'flex',
-  flexDirection: 'column', // Makes the card stretch its height
-}}
-onMouseEnter={() => setHoveredCard("categoryTags")}
-onMouseLeave={() => setHoveredCard(null)}
->
-<Row gutter={16}>
-  <Col span={12}>
-    <div>
-      <Text strong style={{ fontSize: '16px', color: '#1a2b49' }}>Category: </Text>
-      <Tag color="blue" style={{ fontSize: '16px' }}>
-        {activity?.category?.category}
-      </Tag>
+                <Form.Item className="mt-6">
+                    <Button
+                        type="primary"
+                        className="w-full h-12 text-lg bg-indigo-600 hover:bg-indigo-700"
+                        onClick={handleSubmit}
+                        loading={loading}
+                        disabled={!selectedDate}
+                    >
+                        Confirm Booking
+                    </Button>
+                </Form.Item>
+            </Form>
+        </div>
     </div>
-  </Col>
-  <Col span={12}>
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <Text strong style={{ fontSize: '16px', color: '#1a2b49', marginRight: '10px' }}>
-        Preference Tags:
-      </Text>
-      <Space wrap style={{ display: 'flex', gap: '10px' }}>
-        {activity?.tags?.map((tag, index) => (
-          <Tag key={index} color="green">
-            {tag.name}
-          </Tag>
-        ))}
-      </Space>
-    </div>
-  </Col>
-</Row>
-</Card>
-</Col>
-
-{/* Special Discounts Card */}
-<Col xs={24} sm={12} md={8}>
-<Card
-title={
-<Space>
-<PercentageOutlined style={{ color: "#58A399" }} />
-<span style={{ fontSize: '20px', fontWeight: 'bold', color: '#1a2b49' }}>Special Discounts</span>
-</Space>
-}
-style={{
-...cardStyle,
-...(hoveredCard === "specialDiscounts" ? hoverCardStyle : {}),
-boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-borderRadius: '10px',
-transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-padding: '0px', // Remove all padding inside the card
-backgroundColor: '#ffffff',
-width: '120%', // Ensures cards take up full column width
-marginBottom: '0px', // Reduced bottom margin
-height: '140px', // Ensures both cards have the same height
-display: 'flex',
-flexDirection: 'column', // Makes the card stretch its height
-}}
-onMouseEnter={() => setHoveredCard("specialDiscounts")}
-onMouseLeave={() => setHoveredCard(null)}
->
-<List
-dataSource={activity.specialDiscounts}
-renderItem={(discount) => (
-<List.Item
-  extra={
-    discount.isAvailable ? (
-      <Tag color="success" icon={<CheckCircleOutlined />}>
-        Available
-      </Tag>
-    ) : (
-      <Tag color="error" icon={<CloseCircleOutlined />}>
-        Not Available
-      </Tag>
-    )
-  }
-  style={{ padding: '0px' }} // Remove extra padding between list items
->
-  <List.Item.Meta
-    title={
-      <Text
-        style={{
-          color: "red",
-          fontSize: "20px",
-          fontWeight: 'bold',
-          marginBottom: '0px', // Remove space below the discount value
-          lineHeight: '0', // Adjust line-height for tighter spacing between discount and description
-        }}
-      >
-        {`${discount?.discount}% OFF`}
-      </Text>
-    }
-    description={<Text style={{ color: "#1a2b49", fontSize: '14px', marginTop: '0px' }}>{discount?.Description}</Text>}
-  />
-</List.Item>
-)}
-/>
-</Card>
-
-
-</Col>
-</Row>
-
-
-
-
-
-     
-<Card
-bordered={true}
-className={`${cardStyle}  w-full border-third mt-4`}  // Card styling with background and border
-bodyStyle={{ padding: "8px 16px", height: "auto" }}  // Adjusted padding and height
-style={{ marginLeft: '-80px' }}
->
-<div >
-  <UserOutlined className="text-third" />
-  <span className="text-first text-bold text-lg">Comments</span>  
-</div>
-
-<div className="space-y-2">
-  <div
-      style={{
-          display: "flex",                // Horizontal alignment of comments
-          flexWrap: "nowrap",             // Prevent items from wrapping
-          overflowX: "auto",             // Enable horizontal scrolling
-          whiteSpace: "nowrap",          // Prevent line breaks inside the items
-          paddingBottom: "8px",          // Padding for scroll visibility
-          height: "50px",                // Fixed height for scrolling area
-      }}
-  >
-      {activity?.comments?.length > 0 ? (   // Check if comments exist
-          <List
-              itemLayout="horizontal"
-              dataSource={activity.comments}
-              renderItem={(comment) => (
-                  <List.Item
-                      className="transition-all duration-300 text-first rounded-xl"  // Styling for hover effect and rounded corners
-                      style={{
-                          marginRight: "10px",  // Spacing between comments
-                          display: "inline-flex",  // Ensures inline display
-                          flexShrink: 0,        // Prevents shrinking
-                          minWidth: "150px",    // Minimum width of each comment
-                      }}
-                  >
-                      <List.Item.Meta
-                          className="pl-3"
-                          avatar={<Avatar icon={<UserOutlined />} />}  // Avatar with user icon
-                          title={
-                              <span className="text-third text-xs">  
-                                  {comment?.createdBy?.username}
-                              </span>
-                          }
-                          description={
-                              <Space>
-                                  <Text className="text-first text-xs">
-                                      {comment?.comment}
-                                  </Text>
-                              </Space>
-                          }
-                      />
-                  </List.Item>
-              )}
-              style={{ padding: 0 }}  // Remove extra padding from the list itself
-          />
-      ) : (
-          <div className="text-first text-xs pl-3">No comments yet</div>  // Message when no comments are available
-      )}
-  </div>
-</div>
-</Card>
-
-<Card
-title={
-  <Space>
-      <EnvironmentOutlined style={{ color: "#58A399"  }} />
-      <span>Location</span>
-  </Space>
-}
-bodyStyle={{ padding: 0, height: "250px" }}  // Reduced height to 250px
-style={{
-  ...cardStyle,
-  overflow: "hidden",  // Ensures content is clipped if it overflows
-  ...(hoveredCard === "location" ? hoverCardStyle : {}),
-  backgroundColor: "#ffffff",
-  marginLeft: '-80px' 
-}}
-onMouseEnter={() => setHoveredCard("location")}
-onMouseLeave={() => setHoveredCard(null)}
->
-<StaticMap longitude={activity?.location?.lng} latitude={activity?.location?.lat} />
-</Card>
-
-        </Col>
-        
-      </Row>                
-          <Row justify="center" align="middle" gutter={[16, 16]}>
-{/* Activity Information Card */}
-<Col xs={25} sm={22} md={16} style={{ padding: '0' }}>
-<Card
-size="small"
-style={{
-  borderColor: 'black',
-  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  borderRadius: '15px',
-  transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-  backgroundColor: "#94A3B8",
-  height: 'auto',
-  maxHeight: '250px',
-  width: '70%', // Reduced width for a less wide card
-  margin: '0 auto', // Centering the card horizontally
-  marginLeft: '-6%', // Shifting the card slightly to the left
-}}
-onMouseEnter={() => setHoveredCard("footer")}
-onMouseLeave={() => setHoveredCard(null)}
-className="text-center mx-0"
->
-<div className="space-y-4">
-  {/* Footer Title and Icon */}
-  <div className="text-xl font-bold text-white mb-4">
-    <EnvironmentOutlined size={20} className="text-fourth" />
-    <span className="ml-2">Activity Information</span>
-  </div>
-
-  {/* Info Section with Flexbox for larger screens */}
-  <Space
-    direction="vertical"
-    size="small"
-    style={{ textAlign: 'center' }}
-    className="mt-6 flex justify-center sm:flex sm:flex-row sm:space-x-6 sm:text-left sm:items-center sm:space-y-0"
-  >
-    <Text type="secondary" style={{ color: "black" }} className="flex items-center">
-      <UserOutlined className="mr-2 text-fourth " />
-      <strong>Created by:</strong> {activity?.createdBy?.username}
-    </Text>
-    <Text type="secondary" style={{ color: "black" }} className="flex items-center">
-      <CalendarOutlined className="mr-2 text-fourth" />
-      <strong>Created at:</strong> {new Date(activity?.createdAt).toLocaleDateString()}
-    </Text>
-    <Text type="secondary" style={{ color: "black" }} className="flex items-center">
-      <ClockCircleOutlined className="mr-2 text-fourth" />
-      <strong>Last updated:</strong> {new Date(activity?.updatedAt).toLocaleDateString()}
-    </Text>
-  </Space>
-</div>
-
-{/* Footer Action Links */}
-<div className="mt-2 flex justify-center space-x-6">
-  <a
-    href="#"
-    className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
-  >
-    Privacy Policy
-  </a>
-  <a
-    href="#"
-    className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
-  >
-    Terms of Service
-  </a>
-</div>
-
-{/* Footer Footer */}
-<div className="mt-0 text-sm text-gray-400">
-  <Text>© 2024 Teer Enta. All rights reserved.</Text>
-</div>
-</Card>
-</Col>
-
-{/* Book Now Button */}
-
-</Row>
-
-
-    </Space>
-  </div>
 );

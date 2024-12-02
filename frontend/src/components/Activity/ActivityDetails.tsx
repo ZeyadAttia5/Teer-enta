@@ -188,7 +188,8 @@ const ActivityDetails: React.FC = () => {
               <Card
 bordered={true} // Add border to the card
 className={`${cardStyle} border-third  mx-0 ml-0`}
-bodyStyle={{ height: "100%" }}
+bodyStyle={{ height: "100%" , boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'}}
+
 >
 
 <div className="space-y-1">
@@ -368,10 +369,10 @@ Book Now
                   <Col xs={24} sm={12}>
   <Card
     title={
-        <div className="flex items-center justify-center text-first mb-4">
-        <TagOutlined size={20} className="mr-2 text-third text-bold text-2xl" />
-        <span className="font-bold text-xl">Categories & Tags</span>
-      </div>
+        <div className={titleStyle}>
+      <TagOutlined className="text-third text-bold mt-2" />
+      <span className="text-first text-bold text-lg mt-2">Categories & Tags</span>
+    </div>
     }
     bodyStyle={{ padding: '0', margin: '0' }} // Remove internal padding
     style={{
@@ -379,6 +380,7 @@ Book Now
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Add shadow here
     }}
   >
     <div style={{ padding: '10px' }}> {/* Optional padding for inner spacing */}
@@ -401,10 +403,10 @@ Book Now
 <Col xs={24} sm={12}>
 <Card
   title={
-<div className="flex items-center justify-center text-first mb-4">
-        <PercentageOutlined size={20} className="mr-2 text-third text-bold text-2xl" />
-        <span className="font-bold text-xl">Discount</span>
-      </div>
+<div className={titleStyle}>
+      <PercentageOutlined className=" text-bold text-third mt-2" />
+      <span className="text-first text-lg text-bold mt-2 ">Discounts</span>
+    </div>
   }
   bodyStyle={{ padding: '0', margin: '0' }} // Remove internal padding
   style={{
@@ -413,6 +415,7 @@ Book Now
     flexDirection: 'column',
     justifyContent: 'space-between', // Space out elements within the card
     overflow: 'hidden', // Prevent overflow if content exceeds height
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Add shadow here
   }}
 >
   {activity?.specialDiscounts && activity?.specialDiscounts.length > 0 ? (
@@ -468,8 +471,8 @@ Book Now
                 {/* Comments */}
                 <Card
     bordered={true}
-    className={`${cardStyle}  w-full border-third mt-4`}
-    bodyStyle={{ padding: "8px 16px", height: "auto" }}
+    className={`${cardStyle}  w-full mt-4`}
+    bodyStyle={{ padding: "8px 16px", height: "auto", boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
   >
 <div className={titleStyle}>
       <UserOutlined className="text-third ml-1" />
@@ -485,6 +488,7 @@ Book Now
           whiteSpace: "nowrap",
           paddingBottom: "8px",
           height: "50px",
+          
         }}
       >
         {activity?.comments.length > 0 ? (
@@ -545,7 +549,8 @@ style={{
   overflow: "hidden",  // Ensures content is clipped if it overflows
   ...(hoveredCard === "location" ? hoverCardStyle : {}),
   backgroundColor: "#ffffff",
-   marginTop: "20px"
+   marginTop: "20px",
+   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Add shadow here
 }}
 onMouseEnter={() => setHoveredCard("location")}
 onMouseLeave={() => setHoveredCard(null)}
