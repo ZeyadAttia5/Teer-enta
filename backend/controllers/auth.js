@@ -13,6 +13,7 @@ const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
 const brevoService = new BrevoService(brevoConfig);
 const ResetPasswordTemplate = require("../Util/mailsHandler/mailTemplets/4ResetPasswordTemplate");
 const AccountDeletionRequest = require('../models/AccountDeletionRequest');
+const FCMTokens = require('../models/Notifications/FCMToken');
 
 
 exports.signup = async (req, res) => {
@@ -244,3 +245,4 @@ exports.resetPassword = async (req, res) => {
         errorHandler.SendError(res, error);
     }
 };
+

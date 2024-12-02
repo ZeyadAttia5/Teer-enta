@@ -1,6 +1,6 @@
 import React from "react";
 import "./TermsAndConditions.css";
-import { getProfile, updateProfilee } from "../../../api/profile.ts";
+import { updateProfilee } from "../../../api/profile.ts";
 export default function TermsAndConditions({ setNotAccepted }) {
   const handleAccept = async () => {
     setNotAccepted(false);
@@ -11,8 +11,8 @@ export default function TermsAndConditions({ setNotAccepted }) {
       var data = {
         isTermsAndConditionsAccepted: true,
       }
-      const response = await updateProfilee(data, user._id);
-      console.log("Profile updated successfully:", response);
+      await updateProfilee(data, user._id);
+      // console.log("Profile updated successfully:", response);
     } catch (error) {
       console.error("Error updating profile:", error);
     }

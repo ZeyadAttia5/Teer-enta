@@ -36,6 +36,7 @@ require('./scheduler/upcomingEventsBookedReminder');
 require('./scheduler/DeadLineSchaduler');
 const {initSocket} = require("./Util/socket");
 const http = require('http');
+require('./config/firebase-config');
 
 const server = http.createServer(app);
 initSocket(server);
@@ -91,7 +92,7 @@ app.use("/upload" , fileRoutes ) ;
 app.use("/currency" , currencyRoutes) ;
 app.use("/promoCode", promoCodeRoutes);
 app.use("/statistics", statisticRoutes);
-app.use("/notifications", notificationRoutes);
+app.use("/notification", notificationRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });

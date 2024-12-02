@@ -103,7 +103,7 @@ const CreateComplaint = (isOpen) => {
 
     try {
       const response = await addComplaint(data);
-      console.log("Response: ", response);
+      // console.log("Response: ", response);
       form.resetFields(); // Reset form fields
     } catch (error) {
       console.error("There was an error submitting the complaint: ", error);

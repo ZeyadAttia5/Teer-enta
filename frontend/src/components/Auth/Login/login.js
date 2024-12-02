@@ -15,6 +15,10 @@ import logo from "../../../assets/logo/logo.jpeg";
 import SelectPrefrences from "../../shared/SelectPrefrences.jsx";
 import { Button } from "antd";
 import WavingHand from "../../../assets/svgs/hand-shake-svgrepo-com.svg";
+import { checkPermission, requestForToken } from "../../../services/firebase";
+import { saveFCMTokenToServer } from "../../../api/notifications.ts";
+import { getMessaging, onMessage } from 'firebase/messaging';
+import { toast } from 'react-toastify';
 
 function Login({ setFlag, flag }) {
   if (!flag) {
@@ -67,7 +71,6 @@ function Login({ setFlag, flag }) {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images?.length);
   };
 
-  const URL = `${process.env.REACT_APP_BACKEND_URL}`;
   const handleLoginSubmission = async (e) => {
     e.preventDefault();
     if (!isValid()) return false;
@@ -88,6 +91,7 @@ function Login({ setFlag, flag }) {
       }
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
+      // Initialize notifications after storing credentials
       setMessage(response.data.message);
       navigate("/");
       setFlag(false);
@@ -97,6 +101,7 @@ function Login({ setFlag, flag }) {
       return false;
     }
   };
+
 
   function isValid() {
     if (username === "" || password === "") {

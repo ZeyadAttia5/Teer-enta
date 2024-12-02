@@ -11,6 +11,7 @@ import { ReloadOutlined } from "@ant-design/icons";
 import { FaLayerGroup } from "react-icons/fa";
 import { getCurrency } from "../../../api/account.ts";
 import { getSavedActivities } from "../../../api/profile.ts";
+import {getAllMyRequests} from "../../../api/notifications.ts";
 
 const PORT = process.env.REACT_APP_BACKEND_URL;
 const { Search } = Input;
@@ -18,11 +19,11 @@ const { Option } = Select;
 
 const Button1 = ({ children, onClick, variant = "default" }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-fourth";
   const variantClasses =
     variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+      ? "hover:bg-third hover:text-accent-foreground" // Light gray hover background for outline variant
+      : "text-gray-700 hover:bg-third"; // Light gray hover background for default variant
 
   return (
     <button
@@ -36,11 +37,11 @@ const Button1 = ({ children, onClick, variant = "default" }) => {
 
 const Button2 = ({ children, onClick, variant = "default" }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-fourth";
   const variantClasses =
     variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+      ? "hover:bg-third hover:text-accent-foreground" // Light gray hover background for outline variant
+      : "text-gray-700 hover:bg-third"; // Light gray hover background for default variant
 
   return (
     <Button
@@ -182,70 +183,95 @@ const TouristActivity = ({ setFlag }) => {
     setSearchQuery("");
   };
 
-  const fetchCurrency = async () => {
-    try {
-      const response = await getCurrency();
-      setCurrency(response.data);
-      console.log("Currency:", response.data);
-    } catch (error) {
-      console.error("Fetch currency error:", error);
-    }
-  };
+  // const fetchCurrency = async () => {
+  //   try {
+  //     const response = await getCurrency();
+  //     setCurrency(response.data);
+  //     console.log("Currency:", response.data);
+  //   } catch (error) {
+  //     console.error("Fetch currency error:", error);
+  //   }
+  // };
 
   useEffect(() => {
-    const fetchActivities = async () => {
+    let mounted = true; // For cleanup
+
+    const fetchInitialData = async () => {
       try {
-        const response = await getTouristActivities();
-        console.log("Fetched Activities:", response.data); // Inspect the data structure
+        // Fetch both currency and activities in parallel
+        const [currencyResponse, activitiesResponse] = await Promise.all([
+          getCurrency(),
+          getTouristActivities()
+        ]);
+
+        if (!mounted) return;
+
+        // Set currency
+        setCurrency(currencyResponse.data);
 
         // Calculate average rating for each activity
-        const activitiesWithAvgRating = response.data.map((activity) => {
+        const activitiesWithAvgRating = activitiesResponse.data.map((activity) => {
           const totalRating = activity.ratings.reduce(
-            (acc, curr) => acc + curr.rating,
-            0
+              (acc, curr) => acc + curr.rating,
+              0
           );
-          const avgRating =
-            activity.ratings.length > 0
+          const avgRating = activity.ratings.length > 0
               ? (totalRating / activity.ratings.length).toFixed(1)
               : 0;
-          console.log({ ...activity, averageRating: parseFloat(avgRating) });
-          return { ...activity, averageRating: parseFloat(avgRating) }; // Ensure averageRating is a number
+          return { ...activity, averageRating: parseFloat(avgRating) };
         });
-        if(user){
-          const savedActivitiesResponse = await getSavedActivities();
-          const savedActivitiesId =
-              savedActivitiesResponse.data.savedActivities.map(
-                  (activity) => activity._id
-              );
-          // Check if the activity is saved by the user
+
+        // If user is logged in, fetch additional data
+        if (user) {
+          const [savedResponse, notificationResponse] = await Promise.all([
+            getSavedActivities(),
+            getAllMyRequests()
+          ]);
+
+          if (!mounted) return;
+
+          const savedActivitiesId = savedResponse.data.savedActivities.map(
+              (activity) => activity._id
+          );
+
+          const notificationRequests = notificationResponse.data.notificationsRequests || [];
+          const notificationLookup = notificationRequests.reduce((acc, req) => {
+            acc[req.activity] = req.status === 'Pending';
+            return acc;
+          }, {});
+
+          // Add saved and notification status
           activitiesWithAvgRating.forEach((activity) => {
-            if (savedActivitiesId.includes(activity._id)) {
-              activity.isSaved = true;
-            } else {
-              activity.isSaved = false;
-            }
+            activity.isSaved = savedActivitiesId.includes(activity._id);
+            activity.hasNotification = notificationLookup[activity._id] || false;
           });
         }
 
+        if (!mounted) return;
+
+        // Set activities and budget range
         setActivities(activitiesWithAvgRating);
         setFilteredActivities(activitiesWithAvgRating);
-        console.log("Activities with avg rating:", activitiesWithAvgRating);
 
-        // Set dynamic budget range
         if (activitiesWithAvgRating.length > 0) {
           const highestPrice = Math.max(
-            ...activitiesWithAvgRating.map((act) => act.price.max)
+              ...activitiesWithAvgRating.map((act) => act.price.max)
           );
           setMaxBudget(highestPrice);
           setBudget([0, highestPrice]);
         }
       } catch (error) {
-        console.error("Error fetching activities:", error);
+        console.log("Error fetching initial data:", error);
       }
     };
-    fetchCurrency();
-    fetchActivities();
-  }, [location?.pathname]);
+
+    fetchInitialData();
+
+    // Cleanup function
+    return () => {
+      mounted = false;
+    };
+  }, []); // Empty dependency array as we only want this to run once on mount
 
   // Search Function
   const handleSearch = (value) => {
@@ -322,7 +348,7 @@ const TouristActivity = ({ setFlag }) => {
     return acc;
   }, []);
   return (
-    <div className="p-0 bg-fourth">
+    <div className="p-0">
       {/* <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p> */}
 
       <div className="flex flex-col items-center space-y-4">
@@ -330,7 +356,7 @@ const TouristActivity = ({ setFlag }) => {
         <Search
           placeholder="Search by name, category, or tag"
           onSearch={handleSearch}
-          // enterButton={<SearchOutlined />}
+          enterButton={<SearchOutlined />}
           className="p-2 rounded-md w-[400px]"
           allowClear
         />
@@ -510,6 +536,7 @@ const TouristActivity = ({ setFlag }) => {
                   
                   averageRating={place.averageRating} // Pass average rating to ActivityCard
                   isSaved={place.isSaved} // Pass isSaved to ActivityCard
+                  hasNotification={place.hasNotification}
                   currencyCode={currency?.code}
                   currencyRate={currency?.rate}
                 />

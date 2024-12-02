@@ -1,47 +1,112 @@
-// NotificationContext.js
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
+import { getAllMyNotifications, markAllAsReadd, markAsReadd } from "../../api/notifications.ts";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// Create the context
 export const NotificationContext = createContext();
 
-export const NotificationProvider = ({ children }) => {
-  // State to hold the list of notifications
+export const NotificationProvider = ({ children, incomingNotification ,isNotificationIncomming }) => {
   const [notifications, setNotifications] = useState([]);
-  // State to hold the count of unread notifications
-  const [unreadCount, setUnreadCount] = useState(3);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Function to add a new notification
-  const addNotification = (message) => {
-    const newNotification = {
-      id: Date.now(), // unique id for each notification
-      message,
-      read: false,
-    };
-    setNotifications((prevNotifications) => [
-      newNotification,
-      ...prevNotifications,
-    ]);
-    setUnreadCount((prevCount) => prevCount + 1);
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, []);
+
+  // Handle incoming notifications
+  useEffect( () => {
+    console.log("incomingNotification", isNotificationIncomming);
+    if (incomingNotification) {
+      console.log("incomingNotification", isNotificationIncomming);
+      setNotifications(prev => [incomingNotification, ...prev]);
+      console.log("unreadCount", unreadCount);
+      setUnreadCount(prev => prev + 1);
+      console.log("unreadCount", unreadCount);
+    }
+  }, [incomingNotification]);
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await getAllMyNotifications();
+
+      setNotifications(response.data.notifications);
+      const unseenCount = response.data.notifications.filter(
+          notif => !notif.isSeen
+      ).length;
+      // console.log("unseenCount", unseenCount);
+      setUnreadCount(unseenCount);
+    } catch (err) {
+      setError(err.message || "Failed to fetch notifications");
+      console.error("Error fetching notifications:", err);
+
+      // Show error toast
+      // toast.error("Failed to load notifications. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Function to mark all notifications as read
-  const markAsRead = () => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.map((notif) => ({ ...notif, read: true }))
-    );
-    setUnreadCount(0);
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAsReadd();
+      setNotifications(prev =>
+          prev.map(notif => ({ ...notif, isSeen: true }))
+      );
+      setUnreadCount(0);
+
+      // toast.success("All notifications marked as read");
+    } catch (err) {
+      console.error("Error marking all as read:", err);
+      // toast.error("Failed to mark all as read. Please try again.");
+      await fetchNotifications(); // Refresh to ensure consistency
+    }
+  };
+
+  const handleMarkAsRead = async (notificationId) => {
+    try {
+      await markAsReadd(notificationId);
+      setNotifications(prev =>
+          prev.map(notif =>
+              notif._id === notificationId ? { ...notif, isSeen: true } : notif
+          )
+      );
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error("Error marking as read:", err);
+      // toast.error("Failed to mark notification as read");
+      await fetchNotifications(); // Refresh to ensure consistency
+    }
+  };
+
+  const value = {
+    notifications,
+    unreadCount,
+    loading,
+    error,
+    isDropdownOpen,
+    setIsDropdownOpen,
+    markAllAsRead: handleMarkAllAsRead,
+    markAsRead: handleMarkAsRead,
+    refreshNotifications: fetchNotifications
   };
 
   return (
-    <NotificationContext.Provider
-      value={{
-        notifications,
-        unreadCount,
-        addNotification,
-        markAsRead,
-      }}
-    >
-      {children}
-    </NotificationContext.Provider>
+      <>
+        <ToastContainer />
+        <NotificationContext.Provider value={value}>
+          {children}
+        </NotificationContext.Provider>
+      </>
   );
 };
+
+export default NotificationProvider;

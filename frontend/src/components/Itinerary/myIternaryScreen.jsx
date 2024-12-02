@@ -17,7 +17,7 @@ import {
   Tooltip,
   Switch,
   Tag,
-  Popconfirm
+  Popconfirm,
 } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 import {
@@ -488,7 +488,9 @@ const MyItineraryScreen = ({ setFlag }) => {
         message.success("Itinerary created successfully");
       }
       handleCancel();
-      location.pathname === "/itinerary/my" ? fetchMyIternaries() : fetchItineraries();
+      location.pathname === "/itinerary/my"
+        ? fetchMyIternaries()
+        : fetchItineraries();
     } catch (error) {
       message.error("Failed to save itinerary");
       console.error(error);
@@ -580,31 +582,31 @@ const MyItineraryScreen = ({ setFlag }) => {
               </Button>
 
               <Popconfirm
-              title="Are you sure you want to delete this item?"
-              onConfirm={() => handleDelete(record._id)}
-              onCancel={() => message.info("Delete action cancelled")}
-              okText="Yes"
-              cancelText="No"
-              okButtonProps={{
-                style: {
-                  backgroundColor: "#f00",
-                  borderColor: "#f00",
-                  color: "#fff",
-                },
-              }}
-            >
-              <Button
-                icon={<DeleteOutlined />}
-                style={{
-                  backgroundColor: "#f00",
-                  color: "#fff",
-                  border: "none",
+                title="Are you sure you want to delete this item?"
+                onConfirm={() => handleDelete(record._id)}
+                onCancel={() => message.info("Delete action cancelled")}
+                okText="Yes"
+                cancelText="No"
+                okButtonProps={{
+                  style: {
+                    backgroundColor: "#f00",
+                    borderColor: "#f00",
+                    color: "#fff",
+                  },
                 }}
-                danger
               >
-                Delete
-              </Button>
-            </Popconfirm>
+                <Button
+                  icon={<DeleteOutlined />}
+                  style={{
+                    backgroundColor: "#f00",
+                    color: "#fff",
+                    border: "none",
+                  }}
+                  danger
+                >
+                  Delete
+                </Button>
+              </Popconfirm>
             </>
           )}
           {user && user.userRole === "Admin" && (
@@ -917,6 +919,8 @@ const MyItineraryScreen = ({ setFlag }) => {
           rowKey="_id"
           loading={loading}
           pagination={{ pageSize: 10 }}
+          className="border border-gray-200 rounded-lg"
+          rowClassName="hover:bg-[#1C325B]/5"
         />
       )}
       <Modal
