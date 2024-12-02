@@ -501,7 +501,7 @@ const BookHotel = () => {
           <img
             alt=""
             className="size-full"
-            src="https://watermark.lovepik.com/photo/50099/3731.jpg_wh1200.jpg"
+            src="https://img.freepik.com/premium-vector/hotel-building-near-sea-seafront-resort-view-vector-illustration-flat-cartoon_101884-681.jpg?w=740"
           />
         }
       >
