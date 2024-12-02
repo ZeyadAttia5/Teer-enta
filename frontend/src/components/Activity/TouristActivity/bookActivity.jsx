@@ -175,14 +175,14 @@ const BookActivity = () => {
       
             {/* Price Details Section (Conditional) */}
             {showReceipt && (
-              <div className="bg-white rounded-lg shadow-md  p-4">
+              <div className="bg-white rounded-lg shadow-md  p-4 w-[110%] mx-auto">
                 <div className="text-center mb-6 max-w-4xl">
                   <Text className="text-4xl font-bold text-first">E-Receipt</Text>
                 </div>
 
              {/* Payment Time */}
                <div className="flex justify-between items-center mb-4">
-                  <Text className="text-lg font-semibold text-second">Time:</Text>
+                  <Text className="text-lg font-semibold text-second">Time Paid:</Text>
                   <Text className="text-xs">{new Date().toLocaleString()}</Text>
                 </div> 
                 
