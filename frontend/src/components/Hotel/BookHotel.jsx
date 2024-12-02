@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   Form,
@@ -28,6 +28,7 @@ import {
   HomeOutlined,
   SolutionOutlined,
   CreditCardOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
 import { bookHotel, getHotels } from "../../api/hotels.ts";
 import AutoComplete from "react-google-autocomplete";
@@ -37,16 +38,20 @@ import { Fade } from "react-awesome-reveal";
 const { Text, Title } = Typography;
 const { RangePicker } = DatePicker;
 
-const CustomProgressBar = ({ step, setStep }) => {
+const CustomProgressBar = ({ step, setStep, loading }) => {
   const steps = [
     { label: "Choose City and Dates", icon: <SolutionOutlined /> },
-    { label: "Hotel Offers", icon: <HomeOutlined /> },
+    {
+      label: "Hotel Offers",
+      icon: loading ? <LoadingOutlined /> : <HomeOutlined />,
+    },
     { label: "Payment", icon: <CreditCardOutlined /> },
   ];
 
   return (
     <Steps
       direction="vertical"
+      className="h-full"
       current={step}
       onChange={setStep}
       items={steps.map((item, index) => ({
@@ -93,26 +98,35 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   return (
     <article
       onClick={() => console.log("Selected offer:", mainOffer?.id)}
-      className={`w-full bg-slate-50 cursor-pointer p-10 h-[300px] justify-between flex flex-col shadow rounded-xl my-2`}
+      className={`w-full bg-slate-50 cursor-pointer p-10 h-auto justify-between flex flex-col shadow rounded-xl my-2`}
     >
       <header className="flex items-baseline flex-1 w-full justify-between">
-        <div>
-          <h1 className="text-xl font-bold">{hotel?.name}</h1>
-          <span className="self-start text-gray-500 text-[12px] font-extralight">
-            {hotel?.cityCode}
-          </span>
-        </div>
-        <div>
-          <Tag
-            color={
-              mainOffer?.policies?.paymentType === "deposit" ? "blue" : "green"
-            }
-          >
-            {mainOffer?.policies?.paymentType}
-          </Tag>
+        <div className="flex justify-between gap-2">
+          <div className="mb-6">
+            <h1 className="text-xl font-bold">
+              {hotel?.name?.charAt(0).toUpperCase() + hotel?.name?.slice(1)}
+            </h1>
+            <span className="self-start text-gray-500 text-[12px] font-extralight">
+              {hotel?.cityCode?.charAt(0).toUpperCase() +
+                hotel?.cityCode?.slice(1)}
+            </span>
+          </div>
+          <div>
+            <Tag
+              className="rounded-lg"
+              color={
+                mainOffer?.policies?.paymentType === "deposit"
+                  ? "blue"
+                  : "green"
+              }
+            >
+              {mainOffer?.policies?.paymentType?.charAt(0).toUpperCase() +
+                mainOffer?.policies?.paymentType?.slice(1)}
+            </Tag>
+          </div>
         </div>
       </header>
-      <main className="flex justify-between flex-1">
+      <main className="flex gap-10 flex-1">
         <div className="flex flex-col items-center">
           <span className="self-start text-gray-400 text-xs font-extralight">
             Check-in
@@ -125,24 +139,30 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
           </span>
           <span>{formatDate(mainOffer?.checkOutDate)}</span>
         </div>
-        <div className="flex flex-col items-center">
-          <span className="self-start text-gray-400 text-xs font-extralight">
-            Adults
-          </span>
-          <span>{mainOffer?.guests?.adults}</span>
-        </div>
       </main>
-      <footer className="flex justify-between">
-        <section className="text-lg">
-          {mainOffer?.room?.typeEstimated?.bedType} Bed
-        </section>
-        <section className="font-bold text-2xl">
+      <footer className="flex mt-2">
+        <div className="flex gap-14 w-full border-b-2 border-b-black pb-3">
+          <section className="text-lg flex items-end">
+            {mainOffer?.room?.typeEstimated?.bedType?.charAt(0).toUpperCase() +
+              mainOffer?.room?.typeEstimated?.bedType?.slice(1)}{" "}
+            Bed
+          </section>
+          <div className="flex flex-col items-center">
+            <span className="self-start text-gray-400 text-xs font-extralight">
+              Adults
+            </span>
+            <span>{mainOffer?.guests?.adults}</span>
+          </div>
+        </div>
+      </footer>
+      <div className="flex justify-end">
+        <section className="font-bold text-2xl flex items-end mb-5">
           {parseFloat(mainOffer?.price?.total).toLocaleString()} €
         </section>
-      </footer>
+      </div>
       {mainOffer?.policies?.cancellations &&
         mainOffer?.policies?.cancellations[0]?.description && (
-          <Text type="danger" className="text-xs">
+          <Text type="danger" className="text-sm mt-5 mb-3">
             {mainOffer?.policies?.cancellations[0]?.description?.text}
           </Text>
         )}
@@ -163,6 +183,7 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
 const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
   const [searchText, setSearchText] = React.useState("");
   const [filteredOffers, setFilteredOffers] = useState(hotelOffers);
+  const listRef = useRef(null);
 
   const handleSearch = (value) => {
     setSearchText(value);
@@ -174,15 +195,27 @@ const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
     setFilteredOffers(filtered);
   };
 
+  const handlePageChange = (page) => {
+    console.log(page);
+
+    // Scroll to the top of the list when page changes
+    if (listRef.current) {
+      listRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-[#1a2b49]">Hotel Offers</h2>
-        <div className="w-1/3">
+        <div className="w-1/2">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search hotels by name or city"
+              placeholder="Search hotels"
               className="w-full py-2 px-4 border border-[#9DB2BF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#526D82]"
               value={searchText}
               onChange={(e) => handleSearch(e.target.value)}
@@ -193,18 +226,24 @@ const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
       </div>
 
       <List
+        ref={listRef}
+        className={` overflow-y-scroll overflow-hidden h-96 x-10`}
+        style={{
+          scrollbarWidth: "none", // Firefox
+          msOverflowStyle: "none", // Internet Explorer and Edge
+        }}
         grid={{
           gutter: 16,
           xs: 1,
           sm: 1,
           md: 1,
-          lg: 2,
-          xl: 2,
-          xxl: 3,
+          lg: 1,
+          xl: 1,
+          xxl: 1,
         }}
         dataSource={filteredOffers}
         renderItem={(offer) => (
-          <List.Item>
+          <List.Item className="w-full ">
             <HotelOfferCard
               offer={offer}
               setLoading={setLoading}
@@ -215,18 +254,19 @@ const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
         )}
         pagination={{
           onChange: (page) => {
-            console.log(page);
+            handlePageChange(page);
           },
-          pageSize: 6,
+          pageSize: 2,
           position: "bottom",
           align: "center",
+          className: "pb-6",
         }}
       />
     </div>
   );
 };
 
-const HotelSearchForm = ({ setOffers, setLoading, onSearch }) => {
+const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
   const [form] = Form.useForm();
 
   const handleSearch = async () => {
@@ -241,13 +281,16 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch }) => {
 
     console.log("Search criteria:", formattedValues);
     try {
+      setLoading(true);
+      setStep((prevStep) => prevStep + 1);
       let { data } = await getHotels(formattedValues);
       setOffers(data);
     } catch (error) {
       message.error("Error searching for hotels. Please try again later.");
     } finally {
       setLoading(false);
-      onSearch();
+
+      // onSearch();
     }
   };
 
@@ -377,6 +420,7 @@ const BookHotel = () => {
   const [offer, setOffer] = useState(null);
   const [promoCode, setPromoCode] = useState(null);
 
+  console.log("Step", step);
   const book = async () => {
     setLoading(true);
     try {
@@ -404,7 +448,8 @@ const BookHotel = () => {
         <HotelSearchForm
           setOffers={setOffers}
           setLoading={setLoading}
-          onSearch={() => setStep(step + 1)}
+          setStep={setStep}
+          // onSearch={() => setStep(step + 1)}
         />
       ),
     },
@@ -460,7 +505,13 @@ const BookHotel = () => {
           />
         }
       >
-        <header>
+        <header className="flex flex-col gap-5">
+          {step > 0 && !loading && (
+            <ArrowLeftOutlined
+              onClick={() => setStep(step - 1)}
+              className="stroke-black text-lg cursor-pointer"
+            />
+          )}
           <Typography.Title level={4} className="mb-6">
             Book Your Hotel
           </Typography.Title>
@@ -472,27 +523,21 @@ const BookHotel = () => {
               className="w-full flex flex-col justify-center px-4 flex-1"
               layout="vertical"
             >
-              <Fade direction="up" cascade>
+              <Fade direction="up" triggerOnce>
                 {loading ? (
                   <Spin className="flex-1 justify-center flex" />
                 ) : (
                   steps[step]?.content
                 )}
               </Fade>
-              <footer className="flex justify-between mt-8">
-                {step > 0 && (
-                  <Button
-                    onClick={() => setStep(step - 1)}
-                    className="bg-[#9DB2BF] border-[#9DB2BF] hover:bg-[#686d7e] hover:border-[#686d7e] text-white"
-                  >
-                    Previous
-                  </Button>
-                )}
-              </footer>
             </Form>
           </section>
           <section className="h-full flex-[0.4]">
-            <CustomProgressBar step={step} setStep={setStep} />
+            <CustomProgressBar
+              step={step}
+              setStep={setStep}
+              loading={loading}
+            />
           </section>
         </main>
       </Card>
