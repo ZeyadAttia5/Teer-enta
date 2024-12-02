@@ -194,7 +194,7 @@ const ComplaintsManagement = () => {
             },
           }}
       >
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className=" p-6">
           <div className="max-w-7xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
               <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 mb-8 text-white">

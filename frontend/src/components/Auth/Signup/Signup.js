@@ -13,7 +13,7 @@ import IDUpload from "./FilesUpload/IDUpload.js";
 import { uploadFile, uploadFiles } from "../../../api/account.ts";
 import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
 import { Link } from "react-router-dom";
-import logo from "../../../assets/logo/logo.jpeg";
+import logo from "../../../assets/logo/logo2.jpg";
 import HappyWoman from "../../../assets/svgs/happy-woman-svgrepo-com.svg";
 
 function Signup({ setFlag }) {

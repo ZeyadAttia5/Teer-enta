@@ -11,7 +11,7 @@ import {
 } from "../../../api/auth.ts";
 import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
 import { Link } from "react-router-dom";
-import logo from "../../../assets/logo/logo.jpeg";
+import logo from "../../../assets/logo/logo2.jpg";
 import SelectPrefrences from "../../shared/SelectPrefrences.jsx";
 import { Button } from "antd";
 import WavingHand from "../../../assets/svgs/hand-shake-svgrepo-com.svg";

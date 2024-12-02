@@ -198,7 +198,7 @@ const AdminProductGrid = ({ setFlag }) => {
     }
   };
   return (
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="py-8">
         <div className="container mx-auto px-4">
           {/* Top Action Bar */}
           <div className="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -211,9 +211,9 @@ const AdminProductGrid = ({ setFlag }) => {
                   <>
                     <Link to="/products/create">
                       <Button
-                          type="primary"
+                          type="danger"
                           icon={<PlusOutlined />}
-                          className="bg-first hover:bg-customGreen flex items-center"
+                          className="hover:bg-gray-200 flex items-center"
                       >
                         Add Product
                       </Button>

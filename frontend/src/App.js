@@ -170,7 +170,7 @@ function AppContent() {
 
   return (
 
-      <div className="App relative mb-8 bg-gray-50 font-playfair-display">
+      <div className="App relative pb-4 bg-[#f0f2f5]   min-h-screen font-playfair-display">
           <NotificationProvider
               incomingNotification={incomingNotification}
               isNotificationIncomming={isNotificationIncoming}
