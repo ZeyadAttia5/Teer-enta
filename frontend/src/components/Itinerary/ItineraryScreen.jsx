@@ -20,10 +20,8 @@ import {
 import { ReloadOutlined } from "@ant-design/icons";
 import {
   GlobalOutlined,
-  DollarCircleOutlined,
   TeamOutlined,
   EnvironmentTwoTone,
-  SwapRightOutlined,
 } from "@ant-design/icons";
 import {
   MinusCircleOutlined,
@@ -64,11 +62,11 @@ const { RangePicker } = DatePicker;
 
 const Button1 = ({ children, onClick, variant = "default" }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none  bg-fourth text-black";
   const variantClasses =
     variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+      ? "hover:bg-third hover:text-accent-foreground" // Light gray hover background for outline variant
+      : "text-gray-700 hover:bg-third"; // Light gray hover background for default variant
 
   return (
     <button
@@ -82,11 +80,11 @@ const Button1 = ({ children, onClick, variant = "default" }) => {
 
 const Button2 = ({ children, onClick, variant = "default" }) => {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
+    "inline-flex font-playfair-display items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-fourth text-black";
   const variantClasses =
     variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
+      ? "hover:bg-third hover:text-accent-foreground" // Light gray hover background for outline variant
+      : "text-gray-700 hover:bg-third"; // Light gray hover background for default variant
 
   return (
     <Button
@@ -363,7 +361,7 @@ const ItineraryScreen = ({ setFlag }) => {
     try {
       const response = await getCurrency();
       setCurrency(response.data);
-      console.log("Currency:", response.data);
+      // console.log("Currency:", response.data);
     } catch (error) {
       console.error("Fetch currency error:", error);
     }
@@ -632,7 +630,7 @@ const ItineraryScreen = ({ setFlag }) => {
           Add Itinerary
         </Button>
       )}
-      <div className="p-8 bg-fourth">
+      <div className="p-8">
         <div className="mb-6 flex flex-col items-center space-y-4">
           {/* Centered, smaller search bar */}
           <Search
@@ -780,7 +778,7 @@ const ItineraryScreen = ({ setFlag }) => {
                             onClick={resetFilters}
                             className="ml-4 h-9"
                         >
-                            Reset Filters
+                            Reset filters
                         </Button2>
                     </div>
 
@@ -801,7 +799,7 @@ const ItineraryScreen = ({ setFlag }) => {
                        </div>
            
                        <Card
-                           className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
+                           className="rounded-lg shadow-lg  p-4 transition-all duration-300 ease-in-out hover:text-white"
                            style={{ backgroundColor: "#ffffff" }} // Default background color
                        >
                            <Card.Meta
@@ -866,11 +864,12 @@ const ItineraryScreen = ({ setFlag }) => {
                        {user && user?.userRole === "Tourist" && (
                            <div className="flex justify-center items-center gap-4 p-4">
                                <Button
+                               type="danger"
                                    onClick={(e) => {
                                        e.stopPropagation(); // Prevent navigation from the card click
                                        handleBookItinerary(itinerary?._id);
                                    }}
-                                   className="text-white bg-[#496989] hover:bg-[#3b5b68] transition-all duration-300"
+                                   className="text-white bg-first py-4 px-8 text-xl hover:bg-black transition-all duration-300"
                                >
                                    Book
                                </Button>

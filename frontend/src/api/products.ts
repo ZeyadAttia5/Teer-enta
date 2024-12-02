@@ -83,8 +83,8 @@ export const getProductReviews = async (productId) => {
 };
 
 export const addReviewToProduct = async (productId, review) => {
-    console.log(`Review: ${review}`)
-    console.log(`Product Id: ${productId}`)
+    // console.log(`Review: ${review}`)
+    // console.log(`Product Id: ${productId}`)
     const response = await axios.post(`${API_BASE_URL}/product/${productId}/review`, 
         { "review":review }, 
         {

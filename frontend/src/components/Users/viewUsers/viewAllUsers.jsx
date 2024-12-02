@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Spin, message, Button, Popconfirm, ConfigProvider, Badge, Typography } from 'antd';
-import { UserOutlined, DeleteOutlined, ExclamationCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { getUsers, deleteUser } from "../../../api/account.ts";
+import React, {useEffect, useState} from 'react';
+import {Table, Spin, message, Button, Popconfirm, ConfigProvider, Badge, Typography} from 'antd';
+import {UserOutlined, DeleteOutlined, ExclamationCircleOutlined, CheckCircleOutlined} from '@ant-design/icons';
+import {getUsers, deleteUser} from "../../../api/account.ts";
 
-const { Title } = Typography;
+const {Title} = Typography;
 
 const AllUsers = ({setFlag}) => {
     setFlag(false);
@@ -51,7 +51,7 @@ const AllUsers = ({setFlag}) => {
             key: 'username',
             render: (text) => (
                 <div className="flex items-center gap-2">
-                    <UserOutlined className="text-[#1C325B]" />
+                    <UserOutlined className="text-[#1C325B]"/>
                     <span className="font-medium">{text}</span>
                 </div>
             ),
@@ -87,12 +87,12 @@ const AllUsers = ({setFlag}) => {
                 <div className="flex items-center gap-2">
                     {hasProfile ? (
                         <>
-                            <CheckCircleOutlined className="text-emerald-500" />
+                            <CheckCircleOutlined className="text-emerald-500"/>
                             <span className="text-emerald-600 font-medium">Complete</span>
                         </>
                     ) : (
                         <>
-                            <ExclamationCircleOutlined className="text-amber-500" />
+                            <ExclamationCircleOutlined className="text-amber-500"/>
                             <span className="text-amber-600 font-medium">Incomplete</span>
                         </>
                     )}
@@ -105,22 +105,23 @@ const AllUsers = ({setFlag}) => {
             render: (_, record) => (
                 <Popconfirm
                     title="Delete User"
-                    description="Are you sure you want to delete this user? This action cannot be undone."
-                    onConfirm={() => deleteUserr(record._id)}
+                    description="Are you sure you want to delete this User?"
+                    icon={<ExclamationCircleOutlined className="text-red-500"/>}
                     okText="Delete"
                     cancelText="Cancel"
                     okButtonProps={{
-                        className: 'bg-red-500 hover:bg-red-600',
-                        danger: true
+                        className: 'bg-red-500 hover:bg-red-600 border-red-500'
                     }}
+                    onConfirm={() => deleteUserr(record._id)}
                 >
                     <Button
                         type="text"
                         danger
-                        icon={<DeleteOutlined />}
-                        className="hover:bg-red-50"
+                        icon={<DeleteOutlined className="text-lg"/>}
+                        className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
+               transition-all duration-200 hover:border-red-500"
                     >
-                        Delete
+                        <span className="text-red-500 font-medium">Delete</span>
                     </Button>
                 </Popconfirm>
             ),
@@ -130,7 +131,7 @@ const AllUsers = ({setFlag}) => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen bg-gray-50">
-                <Spin size="large" />
+                <Spin size="large"/>
             </div>
         );
     }

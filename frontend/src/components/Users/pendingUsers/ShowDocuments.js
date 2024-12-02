@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { Button, Spin, message } from "antd";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button, Spin, ConfigProvider, notification } from "antd";
+import {
+  IdcardOutlined,
+  FileDoneOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  FileTextOutlined,
+  DownloadOutlined
+} from '@ant-design/icons';
 import { getProfile } from "../../../api/profile.ts";
 import { acceptUser, rejectUser } from "../../../api/account.ts";
 
-function ShowDocuments() {
+const ShowDocuments = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [documents, setDocuments] = useState({
@@ -34,13 +42,21 @@ function ShowDocuments() {
           setDocuments({
             idCardUrl: response.data.idCardUrl,
             taxationCardUrl: null,
-            certificates: response.data.certificates,
+            certificates: response.data.certificates || [],
           });
         } else {
-          message.error("User role not supported");
+          notification.error({
+            message: 'Error',
+            description: 'User role not supported',
+            className: 'bg-white shadow-lg',
+          });
         }
       } catch (error) {
-        message.error("Failed to load documents");
+        notification.error({
+          message: 'Error',
+          description: 'Failed to load documents',
+          className: 'bg-white shadow-lg',
+        });
       } finally {
         setLoading(false);
       }
@@ -52,157 +68,170 @@ function ShowDocuments() {
   const handleAccept = async () => {
     try {
       await acceptUser(id);
+      notification.success({
+        message: 'Success',
+        description: 'User accepted successfully',
+        className: 'bg-white shadow-lg',
+      });
       navigate("/pendingUsers");
-      message.success("User accepted successfully");
     } catch (error) {
-      message.error(error.response?.data?.message || "Failed to accept user");
+      notification.error({
+        message: 'Error',
+        description: error.response?.data?.message || 'Failed to accept user',
+        className: 'bg-white shadow-lg',
+      });
     }
   };
 
   const handleReject = async () => {
     try {
       await rejectUser(id);
+      notification.success({
+        message: 'Success',
+        description: 'User rejected successfully',
+        className: 'bg-white shadow-lg',
+      });
       navigate("/pendingUsers");
-      message.success("User rejected successfully");
     } catch (error) {
-      message.error(error.response?.data?.message || "Failed to reject user");
+      notification.error({
+        message: 'Error',
+        description: 'Failed to reject user',
+        className: 'bg-white shadow-lg',
+      });
     }
-  };
-
-  const downloadFile = (url) => {
-    window.open(url, "_blank");
   };
 
   if (loading) {
     return (
-        <div className="flex justify-center items-center h-screen bg-gradient-to-r from-[#1C325B] to-[#2A4575]">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <Spin size="large" />
         </div>
     );
   }
 
   return (
-      <div className="min-h-screen flex items-center justify-center p-8 ">
-        <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full p-8">
-          {/* Heading */}
-          <h2 className="text-3xl font-semibold text-center text-[#1C325B] mb-8">
-            {user.username}'s Documents
-          </h2>
-
-          <div className="space-y-8">
-            {/* ID Document Section */}
-            <div>
-              <div className="flex items-center gap-2 font-semibold text-[#1C325B]">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                >
-                  <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                  />
-                </svg>
-                ID Document:
+      <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#1C325B",
+            },
+          }}
+      >
+        <div className="min-h-screen bg-gray-50 p-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white mb-8">
+                <div className="flex items-center gap-3 mb-2">
+                  <IdcardOutlined className="text-xl" />
+                  <h3 className="text-lg font-semibold m-0">
+                    {user.username}'s Documents
+                  </h3>
+                </div>
+                <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                  Review verification documents
+                </p>
               </div>
-              {documents.idCardUrl ? (
-                  <Button
-                      type="link"
-                      className="text-[#1C325B] font-medium underline hover:text-[#0E1D38] transition-colors duration-200"
-                      onClick={() => downloadFile(documents.idCardUrl)}
-                  >
-                    Download ID Card
-                  </Button>
-              ) : (
-                  <p className="text-sm text-gray-600">No ID Document available</p>
-              )}
-            </div>
 
-            {/* Taxation Card Section */}
-            {["Advertiser", "Seller"].includes(userRole) && (
-                <div>
-                  <div className="font-semibold text-[#1C325B]">Taxation Card:</div>
-                  {documents.taxationCardUrl ? (
+              {/* Documents Section */}
+              <div className="space-y-8">
+                {/* ID Document */}
+                <div className="p-6 bg-gray-50 rounded-xl border border-gray-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <IdcardOutlined className="text-[#1C325B] text-xl" />
+                    <h4 className="font-semibold text-[#1C325B] m-0">ID Document</h4>
+                  </div>
+                  {documents.idCardUrl ? (
                       <Button
-                          type="link"
-                          className="text-[#1C325B] font-medium underline hover:text-[#0E1D38] transition-colors duration-200"
-                          onClick={() => downloadFile(documents.taxationCardUrl)}
+                          type="default"
+                          icon={<DownloadOutlined />}
+                          onClick={() => window.open(documents.idCardUrl, "_blank")}
+                          className="border-[#1C325B] text-[#1C325B] hover:bg-[#1C325B]/5"
                       >
-                        Download Taxation Card
+                        Download ID Card
                       </Button>
                   ) : (
-                      <p className="text-sm text-gray-600">No Taxation Card available</p>
+                      <p className="text-gray-500">No ID Document available</p>
                   )}
                 </div>
-            )}
 
-            {/* Certificates Section */}
-            {userRole === "TourGuide" && (
-                <div>
-                  <div className="flex items-center gap-2 font-semibold text-[#1C325B]">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        className="w-6 h-6"
-                    >
-                      <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"
-                      />
-                    </svg>
-                    Certificates:
-                  </div>
-                  {documents.certificates.length > 0 ? (
-                      documents.certificates.map((certificate, index) => (
-                          <div key={index}>
-                            <Button
-                                type="link"
-                                className="text-[#1C325B] font-medium underline hover:text-[#0E1D38] transition-colors duration-200"
-                                onClick={() => downloadFile(certificate)}
-                            >
-                              Download Certificate {index + 1}
-                            </Button>
+                {/* Taxation Card */}
+                {["Advertiser", "Seller"].includes(userRole) && (
+                    <div className="p-6 bg-gray-50 rounded-xl border border-gray-100">
+                      <div className="flex items-center gap-3 mb-4">
+                        <FileTextOutlined className="text-[#1C325B] text-xl" />
+                        <h4 className="font-semibold text-[#1C325B] m-0">Taxation Card</h4>
+                      </div>
+                      {documents.taxationCardUrl ? (
+                          <Button
+                              type="default"
+                              icon={<DownloadOutlined />}
+                              onClick={() => window.open(documents.taxationCardUrl, "_blank")}
+                              className="border-[#1C325B] text-[#1C325B] hover:bg-[#1C325B]/5"
+                          >
+                            Download Taxation Card
+                          </Button>
+                      ) : (
+                          <p className="text-gray-500">No Taxation Card available</p>
+                      )}
+                    </div>
+                )}
+
+                {/* Certificates */}
+                {userRole === "TourGuide" && (
+                    <div className="p-6 bg-gray-50 rounded-xl border border-gray-100">
+                      <div className="flex items-center gap-3 mb-4">
+                        <FileDoneOutlined className="text-[#1C325B] text-xl" />
+                        <h4 className="font-semibold text-[#1C325B] m-0">Certificates</h4>
+                      </div>
+                      {documents.certificates.length > 0 ? (
+                          <div className="space-y-3">
+                            {documents.certificates.map((certificate, index) => (
+                                <Button
+                                    key={index}
+                                    type="default"
+                                    icon={<DownloadOutlined />}
+                                    onClick={() => window.open(certificate, "_blank")}
+                                    className="border-[#1C325B] text-[#1C325B] hover:bg-[#1C325B]/5 block"
+                                >
+                                  Download Certificate {index + 1}
+                                </Button>
+                            ))}
                           </div>
-                      ))
-                  ) : (
-                      <p className="text-sm text-gray-600">No Certificates found</p>
-                  )}
-                </div>
-            )}
-          </div>
+                      ) : (
+                          <p className="text-gray-500">No Certificates available</p>
+                      )}
+                    </div>
+                )}
+              </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-8 mt-8">
-            <Button
-                type="primary"
-                className="bg-[#1C325B] hover:bg-[#1C325B]/90 px-8 py-3 text-white rounded-full shadow-md transition duration-300 transform hover:scale-105"
-                onClick={handleAccept}
-            >
-              Accept
-            </Button>
-            <Button
-                type="primary"
-                color={"red"}
-                className="bg-red-600 hover:bg-red-500 px-8 py-3 text-white rounded-full shadow-md transition duration-300 transform hover:scale-105"
-                onClick={handleReject}
-            >
-              Reject
-            </Button>
+              {/* Action Buttons */}
+              <div className="flex justify-center gap-4 mt-8">
+                <Button
+                    type="primary"
+                    icon={<CheckCircleOutlined />}
+                    onClick={handleAccept}
+                    size="large"
+                    className="bg-[#1C325B] hover:bg-[#1C325B]/90 px-8"
+                >
+                  Accept User
+                </Button>
+                <Button
+                    danger
+                    type="primary"
+                    icon={<CloseCircleOutlined />}
+                    onClick={handleReject}
+                    size="large"
+                    className="px-8"
+                >
+                  Reject User
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </ConfigProvider>
   );
-
-
-
-}
+};
 
 export default ShowDocuments;

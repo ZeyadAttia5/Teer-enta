@@ -30,7 +30,7 @@ const MapContainer = ({latitude = 1, longitude = 1, outputLocation,containerStyl
         const newLat = event.latLng.lat();
         const newLng = event.latLng.lng();
 
-        console.log("New Latitude and Longitude: " + newLat + ", " + newLng);
+        // console.log("New Latitude and Longitude: " + newLat + ", " + newLng);
         outputLocation(newLat, newLng);
         // Update the marker position based on user click location
         setMarkerPosition({

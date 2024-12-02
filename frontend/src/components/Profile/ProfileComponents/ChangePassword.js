@@ -55,12 +55,7 @@ const ChangePassword = () => {
     
       <div class=" relative flex justify-center items-center mt-4 w-full ">
         <div class={`w-[460px] p-3`}>
-          <button
-            className="mb-4 text-second hover:underline"
-            onClick={() => window.history.back()}
-          >
-            <span className=" text-2xl">←</span>Go back
-          </button>
+          
           <div class="flex flex-col">
             <div>
               <h2 class="text-4xl text-black">Reset password</h2>
@@ -128,7 +123,7 @@ const ChangePassword = () => {
             <div class="col-span-full">
               <button
                 type="submit"
-                className="items-center mt-4 justify-center w-full px-6 py-2.5 text-center text-white duration-200 bg-second border-2 rounded-full nline-flex hover:bg-third  hover:text-white focus:outline-none focus-visible:outline-black text-sm focus-visible:ring-black"
+                className="items-center mt-4 justify-center w-full px-6 py-2.5 text-center text-white duration-200 bg-first border-2 rounded-full nline-flex hover:bg-black  hover:text-white focus:outline-none focus-visible:outline-black text-sm focus-visible:ring-black"
                 onClick={handleSubmit}
               >
                 {" "}

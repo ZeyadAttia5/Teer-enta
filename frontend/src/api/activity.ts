@@ -145,11 +145,12 @@ export const flagActivity = async (activityId) => {
 
 // getFlaggedActivities
 export const getFlaggedActivities = async () => {
-    const response = await axios.get(`${API_BASE_URL}/activity/flagged`,{
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-    });
+    const response = await axios.get(`${API_BASE_URL}/activity/flagged` ,
+        {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+        });
     return response.data;
 };
 
