@@ -91,111 +91,72 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   };
 
   return (
-    <Card
-      hoverable
-      className="w-full mb-4 p-4 bg-white shadow-lg h-[300px] relative border border-gray-300"
+    <article
       onClick={() => console.log("Selected offer:", mainOffer?.id)}
+      className={`w-full bg-slate-50 cursor-pointer p-10 h-[300px] justify-between flex flex-col shadow rounded-xl my-2`}
     >
-      <Space direction="vertical" size="middle" className="w-full h-full">
-        <Row justify="space-between" align="top">
-          <Col>
-            <Title level={4} className="mb-2 text-[#1a2b49]">
-              {hotel?.name}
-            </Title>
-            <Space>
-              <EnvironmentOutlined className="text-[#666]" />
-              <Text type="secondary">{hotel?.cityCode}</Text>
-            </Space>
-          </Col>
-          <Col>
-            <Tag
-              color={
-                mainOffer?.policies?.paymentType === "deposit"
-                  ? "blue"
-                  : "green"
-              }
-            >
-              {mainOffer?.policies?.paymentType}
-            </Tag>
-          </Col>
-        </Row>
-
-        <Row gutter={24}>
-          <Col span={12}>
-            <Space direction="vertical" size="small">
-              <Space>
-                <CalendarOutlined className="text-[#666]" />
-                <Text type="secondary">Check-in</Text>
-              </Space>
-              <Text strong>{formatDate(mainOffer?.checkInDate)}</Text>
-            </Space>
-          </Col>
-          <Col span={12}>
-            <Space direction="vertical" size="small">
-              <Space>
-                <CalendarOutlined className="text-[#666]" />
-                <Text type="secondary">Check-out</Text>
-              </Space>
-              <Text strong>{formatDate(mainOffer?.checkOutDate)}</Text>
-            </Space>
-          </Col>
-        </Row>
-
-        <Space>
-          <UserOutlined className="text-[#666]" />
-          <Text type="secondary">{mainOffer?.guests?.adults} Adults</Text>
-        </Space>
-
-        <Divider className="my-3" />
-
-        <Row justify="space-between" align="bottom">
-          {mainOffer?.room?.typeEstimated && (
-            <Col>
-              <Text type="secondary">Room Type</Text>
-              <br />
-              <Text strong>{mainOffer?.room?.typeEstimated?.bedType} Bed</Text>
-            </Col>
-          )}
-          <Col>
-            <Text type="secondary">Total Price</Text>
-            <br />
-            <Space>
-              <EuroOutlined />
-              <Text strong className="text-2xl">
-                {parseFloat(mainOffer?.price?.total).toLocaleString()}
-              </Text>
-            </Space>
-          </Col>
-        </Row>
-        <Col
-          style={{
-            padding: 0,
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-            left: 0,
-          }}
-        >
-          {mainOffer?.policies?.cancellations &&
-            mainOffer?.policies?.cancellations[0]?.description && (
-              <Text type="danger" className="text-xs">
-                {mainOffer?.policies?.cancellations[0]?.description?.text}
-              </Text>
-            )}
-
-          <Button
-            type="danger"
-            block
-            className="bg-[#1a2b49] border-[#1a2b49] text-white hover:bg-[#526D82] hover:border-[#526D82]"
-            onClick={() => {
-              bookOffer();
-            }}
+      <header className="flex items-baseline flex-1 w-full justify-between">
+        <div>
+          <h1 className="text-xl font-bold">{hotel?.name}</h1>
+          <span className="self-start text-gray-500 text-[12px] font-extralight">
+            {hotel?.cityCode}
+          </span>
+        </div>
+        <div>
+          <Tag
+            color={
+              mainOffer?.policies?.paymentType === "deposit" ? "blue" : "green"
+            }
           >
-            Book
-          </Button>
-        </Col>
-      </Space>
-    </Card>
+            {mainOffer?.policies?.paymentType}
+          </Tag>
+        </div>
+      </header>
+      <main className="flex justify-between flex-1">
+        <div className="flex flex-col items-center">
+          <span className="self-start text-gray-400 text-xs font-extralight">
+            Check-in
+          </span>
+          <span>{formatDate(mainOffer?.checkInDate)}</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="self-start text-gray-400 text-xs font-extralight">
+            Check-out
+          </span>
+          <span>{formatDate(mainOffer?.checkOutDate)}</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="self-start text-gray-400 text-xs font-extralight">
+            Adults
+          </span>
+          <span>{mainOffer?.guests?.adults}</span>
+        </div>
+      </main>
+      <footer className="flex justify-between">
+        <section className="text-lg">
+          {mainOffer?.room?.typeEstimated?.bedType} Bed
+        </section>
+        <section className="font-bold text-2xl">
+          {parseFloat(mainOffer?.price?.total).toLocaleString()} €
+        </section>
+      </footer>
+      {mainOffer?.policies?.cancellations &&
+        mainOffer?.policies?.cancellations[0]?.description && (
+          <Text type="danger" className="text-xs">
+            {mainOffer?.policies?.cancellations[0]?.description?.text}
+          </Text>
+        )}
+      <Button
+        type="danger"
+        block
+        className="bg-[#1a2b49] border-[#1a2b49] text-white hover:bg-[#526D82] hover:border-[#526D82]"
+        onClick={() => {
+          bookOffer();
+        }}
+      >
+        Book
+      </Button>
+    </article>
   );
 };
 
@@ -265,11 +226,12 @@ const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
   );
 };
 
-const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
+const HotelSearchForm = ({ setOffers, setLoading, onSearch }) => {
   const [form] = Form.useForm();
 
-  const onFinish = async (values) => {
+  const handleSearch = async () => {
     setLoading(true);
+    const values = form.getFieldsValue();
     const formattedValues = {
       ...values,
       checkInDate: values.dates[0].format("YYYY-MM-DD"),
@@ -285,7 +247,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
       message.error("Error searching for hotels. Please try again later.");
     } finally {
       setLoading(false);
-      finishProp();
+      onSearch();
     }
   };
 
@@ -298,7 +260,6 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
       <Form
         form={form}
         layout="vertical"
-        onFinish={onFinish}
         initialValues={{
           adults: 2,
           city: "New York",
@@ -385,11 +346,11 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
         <Form.Item>
           <Button
             type="danger"
-            htmlType="submit"
             block
             size="large"
             className="bg-[#1a2b49] border-[#1a2b49] hover:bg-[#526D82] hover:border-[#526D82] text-white"
             icon={<SearchOutlined />}
+            onClick={handleSearch}
           >
             Search Hotels
           </Button>
@@ -443,7 +404,7 @@ const BookHotel = () => {
         <HotelSearchForm
           setOffers={setOffers}
           setLoading={setLoading}
-          onFinish={() => setStep(step + 1)}
+          onSearch={() => setStep(step + 1)}
         />
       ),
     },
