@@ -32,6 +32,8 @@ import {
   Ticket,
   UserRound,
   CreditCard,
+  SquareChevronLeft,
+  SquareChevronRight,
 } from "lucide-react";
 import { Fade } from "react-awesome-reveal";
 
@@ -664,12 +666,12 @@ const FlightTicket = ({
 const BookFlight = () => {
   const [form] = Form.useForm();
   const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(-1);
   const [promoCode, setPromoCode] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [departureAirports, setDepartureAirports] = useState([]);
   const [destinationAirports, setDestinationAirports] = useState([]);
-  const [loading, setLoading] = useState(-1);
 
   const fetchAirports = async () => {
     setLoading(1);
@@ -957,8 +959,8 @@ const BookFlight = () => {
     4: (
       <BookingPayment
         onBookingClick={form.submit}
-        isloading={loading}
-        amount={selectedOffer && flights[selectedOffer]?.price?.grandTotal }
+        isloading={loading === 3}
+        amount={selectedOffer && selectedOffer.price.total}
         setPromoCode={setPromoCode}
       />
     ),
@@ -1012,44 +1014,32 @@ const BookFlight = () => {
                   stepContent[currentStep]
                 )}
               </Fade>
-              <footer className="flex justify-between mt-8">
-                {/* {currentStep > 1 && (
-                <Button
-                  onClick={() => setCurrentStep(currentStep - 1)}
-                  className="w-1/2"
-                >
-                  Previous
-                </Button>
-              )}
-              {currentStep < 1 && (
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    console.log(form.getFieldsValue());
-                    setCurrentStep(currentStep + 1)}}
-                  className="w-1/2"
-                >
-                  Next
-                </Button>
-              )} */}
-                {/* <Button
-                  type="primary"
-                  onClick={() => {
-                    console.log(form.getFieldsValue());
-                  }}
-                >
-                  log
-                </Button> */}
-              </footer>
             </Form>
-            <footer className="">
-              <Button
-                type="default"
-                onClick={() => handleStepChange(currentStep + 1)}
-              >
-                Next
-              </Button>
-            </footer>
+
+            {loading === -1 && (
+              <Fade direction="up">
+                <footer className="flex gap-2">
+                  {currentStep > 0 && (
+                    <Button
+                      type="default"
+                      onClick={() => setCurrentStep(currentStep - 1)}
+                    >
+                      <SquareChevronLeft strokeWidth={3} />
+                      Previous
+                    </Button>
+                  )}
+                  {currentStep != 4 && (
+                    <Button
+                      type="default"
+                      onClick={() => handleStepChange(currentStep + 1)}
+                    >
+                      Next
+                      <SquareChevronRight strokeWidth={3} />
+                    </Button>
+                  )}
+                </footer>
+              </Fade>
+            )}
           </section>
           <section className="h-full flex-[0.4]">
             <Steps
