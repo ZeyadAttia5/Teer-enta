@@ -949,17 +949,16 @@ const BookFlight = () => {
         </div>
       </Form.Item>
     ),
-    3:
-      fields[3].map((field, index) => (
-        <Form.Item key={index} {...field}>
-          {field.component}
-        </Form.Item>
-      )),
+    3: fields[3].map((field, index) => (
+      <Form.Item key={index} {...field}>
+        {field.component}
+      </Form.Item>
+    )),
     4: (
       <BookingPayment
         onBookingClick={form.submit}
         isloading={loading}
-        amount={selectedOffer && selectedOffer.price.total}
+        amount={selectedOffer && flights[selectedOffer]?.price?.grandTotal }
         setPromoCode={setPromoCode}
       />
     ),
