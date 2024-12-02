@@ -48,12 +48,19 @@ exports.getFlightOffers = async (req, res) => {
         req.query;
 
     try {
+        
         const offers = await amadeus.shopping.flightOffersSearch.get({
             originLocationCode: departureAirport,
             destinationLocationCode: destinationAirport,
             departureDate: departureDate,
             adults: adults,
         });
+        let carriers=offers.data.flatMap(({itineraries})=>itineraries.flatMap(({segments})=>segments[0]?.carrierCode))
+        let carrierNames=await amadeus.referenceData.airlines.get({ airlineCodes : carriers.join(',')})
+        carrierNames=carrierNames.data
+        carrierNames=carriers.map(carrier=>carrierNames.find(n=>n.iataCode===carrier)?.businessName)
+        
+        offers.data.forEach((offer,index)=>offer['carrier']=carrierNames[index])
         if (!offers.data || offers.data.length === 0) {
             return res.status(200).json([]);
         }
