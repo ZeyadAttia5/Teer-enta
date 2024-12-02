@@ -1,15 +1,17 @@
-import { useState } from "react";
+import "./index.css";
+import React, {useState, useEffect, useCallback} from "react";
 import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    useLocation,
 } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css"; // Make sure this is imported
 import { Toaster } from "react-hot-toast";
 import Signup from "./components/Auth/Signup/Signup.js";
 import Login from "./components/Auth/Login/login.js";
 import Profile from "./components/Profile/profile.js";
-import ActivityList from "./components/Activity/ActivityList.tsx";
+import ActivityList from "./components/Activity/ActivityList.tsx"; // From feat/activities
 import TouristWelcome from "./components/WelcomePage/TouristWelcome.jsx";
 import ReadHistoriaclPlaces from "./components/HistoricalPlaces/readHistoriaclPlaces.jsx";
 import CreateHistoricalPlaces from "./components/HistoricalPlaces/createHistoricalPlaces.jsx";
@@ -19,7 +21,6 @@ import AllUsers from "./components/Users/viewUsers/viewAllUsers";
 import PendingUsers from "./components/Users/pendingUsers/pendingUsers";
 import AddUser from "./components/Users/addUser/addUser";
 import BackButton from "./components/shared/BackButton.js";
-import HomePage from "./components/shared/HomePage/HomePage.js";
 import ProductDetails from "./components/Store/productDetails";
 import AdminProductForm from "./components/Store/adminProductForm";
 import AdminProductGrid from "./components/Store/adminProductGrid";
@@ -63,9 +64,13 @@ import UserReport from "./components/reports/UserReport.jsx";
 import WishlistedProductGrid from "./components/Store/wishlistedProductGrid";
 import MyActivities from "./components/Activity/TouristActivity/myActivities.js";
 import PromoCodesAdmin from "./components/PromoCodeAdmin/PromoCodesAdmin.js";
+import { toast } from "react-toastify";
 import CheckOutOrder from "./components/Store/checkOutOrder";
 import OrderHistory from "./components/Store/orderHistory";
 import OrderDetails from "./components/Store/orderDetails";
+import {NotificationProvider} from "./components/notifications/NotificationContext";
+import './services/firebase.js';
+import {initializeFirebaseMessaging, setupMessageListener} from "./services/firebase";
 
 function AppContent() {
   const [flag, setFlag] = useState(false);
@@ -73,11 +78,79 @@ function AppContent() {
   const [visible, setVisible] = useState(false);
   const [isNavigate, setIsNavigate] = useState(false);
   const location = useLocation();
+  const user = localStorage.getItem("user");
+  const showBackButton = location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/signup";
+  const [isNotificationIncoming, setIsNotificationIncoming] = useState(true);
+  const [incomingNotification, setIncomingNotification] = useState(null);
 
-  const showBackButton =
-    location.pathname !== "/" &&
-    location.pathname !== "/login" &&
-    location.pathname !== "/signup";
+  const handleNotification = useCallback((payload) => {
+    // console.log("Received foreground message:", payload);
+
+    if (payload?.notification) {
+      const newNotification = {
+        _id: Date.now().toString(),
+        title: payload.notification.title,
+        body: payload.notification.body,
+        isSeen: false,
+        sentAt: new Date().toISOString(),
+        data: payload.data // Include any additional data from payload
+      };
+
+      setIncomingNotification(newNotification);
+
+      toast(
+          <div
+              className="cursor-pointer hover:bg-gray-50 rounded p-2 transition-colors"
+              onClick={()=> toast.dismiss()}
+              onMouseEnter={() => toast.pause()}
+              onMouseLeave={() => toast.play()}
+          >
+            <div className="font-bold">{newNotification.title}</div>
+            <div className="text-sm">{newNotification.body}</div>
+          </div>,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            className: "notification-toast",
+          }
+      );
+    }
+  }, []);
+
+  // Initialize Firebase notifications
+  useEffect(() => {
+
+    const initializeNotifications = async () => {
+      try {
+        const result = await initializeFirebaseMessaging();
+        if (result.success) {
+          // Setup message listener for foreground messages
+          const unsubscribe = setupMessageListener(handleNotification);
+          // console.log("Successfully initialized Firebase messaging:", result.token);
+          // Cleanup function
+          return () => {
+            if (unsubscribe) {
+              unsubscribe();
+            }
+          };
+        } else {
+          console.log("Failed to initialize Firebase messaging:", result.error);
+        }
+      } catch (error) {
+        console.error("Error setting up notifications:", error);
+      }
+    };
+    if(user){
+      console.log("User is logged in, initializing notifications...");
+      initializeNotifications();
+    }
+  }, [handleNotification ,user]);
+
+
 
   const showDrawer = () => {
     setVisible(true);
@@ -96,8 +169,13 @@ function AppContent() {
   };
 
   return (
-   
+
       <div className="App relative mb-8 bg-gray-50 font-playfair-display">
+          <NotificationProvider
+              incomingNotification={incomingNotification}
+              isNotificationIncomming={isNotificationIncoming}
+          >
+
         {!flag && (
           <DrawerBar
             onClose={onClose}
@@ -352,8 +430,9 @@ function AppContent() {
           <Route path="/promoCodesAdmin" element={<PromoCodesAdmin />} />
         </Routes>
         <Toaster />
+          </NotificationProvider>
       </div>
-    
+
   );
 }
 

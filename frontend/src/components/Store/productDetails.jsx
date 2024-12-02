@@ -9,7 +9,7 @@ import {
   message,
   Divider,
   Alert,
-  Image, Spin
+  Spin
 } from "antd";
 import {
   ShoppingCartOutlined,
@@ -36,7 +36,6 @@ const { Title, Text } = Typography;
 const ProductDetails = ({ setFlag }) => {
   setFlag(false);
   const { id } = useParams(); // Get the product ID from the URL parameters
-  const backURL = process.env.REACT_APP_BACKEND_URL;
   const [hasReviewedOrRated, setHasReviewedOrRated] = useState(false);
   const [product, setProduct] = useState(null); // State for the product
   const [loading, setLoading] = useState(true); // Loading state
@@ -56,7 +55,7 @@ const ProductDetails = ({ setFlag }) => {
       }
       await addReviewToProduct(product._id, values.comment);
       await addRatingToProduct(product._id, values.rating);
-      console.log("Comment added successfully");
+      // console.log("Comment added successfully");
 
       // Hide FeedbackForm after submitting
       setHasReviewedOrRated(true);

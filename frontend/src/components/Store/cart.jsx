@@ -257,7 +257,7 @@ const CartComponent = () => {
                       </Button>
                     </Link>
                     <Link to="/checkOutOrder">
-                      <Button type="primary" size="large" className="bg-blue-600 hover:bg-blue-700">
+                      <Button type="primary" size="large" className="bg-blue-950 hover:bg-blue-700">
                         Proceed to Checkout
                       </Button>
                     </Link>

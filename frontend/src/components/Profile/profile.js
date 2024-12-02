@@ -51,14 +51,13 @@ async function updateProfile(
       throw new Error("User not found in local storage");
     }
     const user = JSON.parse(ded);
-    const accessToken = localStorage.getItem("accessToken");
-    console.log("user id is: " + user._id);
+    // console.log("user id is: " + user._id);
     const response = await getProfile(user._id);
     const { data } = response;
-    console.log("Profile Data:", data);
+    // console.log("Profile Data:", data);
     for (const key in data) {
       if (data.hasOwnProperty(key)) {
-        console.log(`${key}: ${data[key]}`);
+        // console.log(`${key}: ${data[key]}`);
       }
     }
 
@@ -152,11 +151,7 @@ function Profile({ setFlag }) {
 
   // Parse the user object
   const user = storedUser ? JSON.parse(storedUser) : null;
-  const accessToken = storedAccessToken || null;
-
   const [isLoading, setIsLoading] = useState(false);
-
-  const [profileImage, setProfileImage] = useState(null);
 
   const [currency, setCurrency] = useState(null);
 
@@ -191,7 +186,6 @@ function Profile({ setFlag }) {
   const [twitter, setTwitter] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [previousWorks, setPreviousWorks] = useState([]);
-  const [updatedData, setUpdatedData] = useState({});
   const [locationAddressInput, setLocationAddressInput] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
@@ -241,20 +235,13 @@ function Profile({ setFlag }) {
   const getMyCurrencyFunction = async () => {
     const response = await getMyCurrency();
     setCurrency(response.data);
-    console.log(response.data);
+    // console.log(response.data);
   };
   useEffect(() => {
     getMyCurrencyFunction();
     
   }, []);
 
-  const handleWallet = () => {
-    // getWalletData();
-  };
-
-  const handleComplaint = () => {
-    // getComplaintData();
-  };
 
   const handleMobileNumberChange = (event) => {
     const value = event.target.value;
@@ -432,7 +419,7 @@ function Profile({ setFlag }) {
   };
 
   const onDelete = (index) => {
-    console.log("index is: " + index);
+    // console.log("index is: " + index);
     setPreviousWorks((prevWorks) => {
       const updatedWorks = prevWorks.filter((work, i) => i !== index);
 

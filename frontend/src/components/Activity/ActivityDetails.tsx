@@ -51,7 +51,7 @@ const ActivityDetails: React.FC = () => {
         try {
             const response = await getMyCurrency();
             setCurrency(response.data);
-            console.log("Currency:", response.data);
+            // console.log("Currency:", response.data);
         } catch (error) {
             console.error("Fetch currency error:", error);
         }

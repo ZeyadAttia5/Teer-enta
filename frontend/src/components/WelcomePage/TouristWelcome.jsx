@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import TouristInstructionCard from "./TouristInstructionCard";
-import airplaneImage from "../../assets/airplane.png";
-import bedroom from "../../assets/bedroom.png";
-import banat from "../../assets/banat.png";
+// import airplaneImage from "../../assets/airplane.png";
+// import bedroom from "../../assets/bedroom.png";
+// import banat from "../../assets/banat.png";
 import { Fade } from "react-awesome-reveal";
 import TermsAndConditions from "./TermsAndConditions/TermsAndConditions";
 import logo from "../../assets/logo/logo2.jpg";
 import { Button, Card, Tooltip } from "antd";
-import SVG from "../../assets/svgs/pyramids.svg";
 import hotelSVG from "../../assets/svgs/hotel.svg";
 import taxi from "../../assets/svgs/taxi.svg";
 import planeSVG from "../../assets/svgs/plane.svg";
@@ -15,6 +13,7 @@ import { getHistoricalPlaces } from "../../api/historicalPlaces.ts";
 import { getTouristActivities } from "../../api/activity.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { getCurrency } from "../../api/account.ts";
+import VacationGuide from "../../components/VacationGuide.jsx";
 import {
   DollarCircleOutlined,
   EnvironmentTwoTone,
@@ -26,35 +25,35 @@ import BookHotel from "../Hotel/BookHotel.jsx";
 import BookFlight from "../Flight/BookFlight.jsx";
 import BookTransportation from "../Transportation/BookTransportation.jsx";
 
-const cards = [
-  {
-    superTitle: "GET Started",
-    title: "Book your Flight!",
-    desc: "The best part about booking a flight is that you don’t need to stress over the details – just pick your destination, and you’re halfway there. Whether it’s a quick getaway or an adventure abroad, booking is simple and hassle-free. No complicated steps, just click and get ready to take off!",
-    img: airplaneImage,
-    waterMark: "01",
-    btnText: "Book Your Flight Now",
-    btnLink: "/flight/bookFlight",
-  },
-  {
-    superTitle: "Next Step",
-    title: "Book your Hotel!",
-    desc: "The great thing about finding a place to stay is that you don’t need anything fancy – just a cozy bed and a warm welcome. Booking a hotel is as easy as picking your favorite spot, and we’ll take care of the rest. No need to overthink it – comfort is waiting for you at the tap of a button!",
-    img: bedroom,
-    waterMark: "02",
-    btnText: "Book Your Hotel Now",
-    btnLink: "/hotel/book",
-  },
-  {
-    superTitle: "where you go is the key",
-    title: "Plan your Trip!",
-    desc: "Planning your trip is easier than you think – just choose where you want to go, and we’ll help with the rest. From flights and hotels to local tour guides, must-see landmarks, and transportation options, we’ve got everything covered. Customize your adventure, explore at your own pace, and let us handle the details so you can enjoy the journey.",
-    img: banat,
-    waterMark: "03",
-    btnText: "Plan Your Trip Now",
-    btnLink: "/",
-  },
-];
+// const cards = [
+//   {
+//     superTitle: "GET Started",
+//     title: "Book your Flight!",
+//     desc: "The best part about booking a flight is that you don’t need to stress over the details – just pick your destination, and you’re halfway there. Whether it’s a quick getaway or an adventure abroad, booking is simple and hassle-free. No complicated steps, just click and get ready to take off!",
+//     img: airplaneImage,
+//     waterMark: "01",
+//     btnText: "Book Your Flight Now",
+//     btnLink: "/flight/bookFlight",
+//   },
+//   {
+//     superTitle: "Next Step",
+//     title: "Book your Hotel!",
+//     desc: "The great thing about finding a place to stay is that you don’t need anything fancy – just a cozy bed and a warm welcome. Booking a hotel is as easy as picking your favorite spot, and we’ll take care of the rest. No need to overthink it – comfort is waiting for you at the tap of a button!",
+//     img: bedroom,
+//     waterMark: "02",
+//     btnText: "Book Your Hotel Now",
+//     btnLink: "/hotel/book",
+//   },
+//   {
+//     superTitle: "where you go is the key",
+//     title: "Plan your Trip!",
+//     desc: "Planning your trip is easier than you think – just choose where you want to go, and we’ll help with the rest. From flights and hotels to local tour guides, must-see landmarks, and transportation options, we’ve got everything covered. Customize your adventure, explore at your own pace, and let us handle the details so you can enjoy the journey.",
+//     img: banat,
+//     waterMark: "03",
+//     btnText: "Plan Your Trip Now",
+//     btnLink: "/",
+//   },
+// ];
 
 const TouristWelcome = ({ setFlag }) => {
   const navigate = useNavigate();
@@ -83,7 +82,7 @@ const TouristWelcome = ({ setFlag }) => {
       try {
         const response = await getTouristActivities();
         setTouristActivities(response.data);
-        touristActivities.forEach((place) => console.log(place));
+        // touristActivities.forEach((place) => console.log(place));
       } catch (error) {
         console.error("Error fetching historical places:", error);
       }
@@ -98,7 +97,7 @@ const TouristWelcome = ({ setFlag }) => {
       try {
         const response = await getCurrency();
         setCurrency(response.data);
-        console.log("Currency:", response.data);
+        // console.log("Currency:", response.data);
       } catch (error) {
         console.error("Fetch currency error:", error);
       }
@@ -106,8 +105,6 @@ const TouristWelcome = ({ setFlag }) => {
     fetchCurrency();
   }, []);
 
-  const [address, setAddress] = useState("");
-  const [location, setLocation] = useState();
   var loc;
   useEffect(() => {
     const fetchAddress = async () => {};
@@ -125,7 +122,7 @@ const TouristWelcome = ({ setFlag }) => {
     } catch (error) {
       console.error("Error fetching address:", error);
     }
-    console.log("y is", y);
+    // console.log("y is", y);
 
     return y.slice(0, 10);
   };
@@ -199,6 +196,14 @@ const TouristWelcome = ({ setFlag }) => {
         >
           <span>See the Vatican Museums like never before</span>
         </Fade>
+
+        {user &&(user.userRole === "Tourist"&& (
+          <div className="absolute left-[100px] bottom-[30%] w-1/3 ">
+          <VacationGuide />
+        </div>
+        )
+        
+      )}
 
         <div className="absolute justify-around top-[72%] w-3/4 flex">
           <Button
