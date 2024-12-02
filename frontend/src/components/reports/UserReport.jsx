@@ -92,7 +92,7 @@ const UserReport = () => {
   };
 
   return (
-      <div className="min-h-screen bg-[#f0f2f5] p-6">
+      <div className=" p-6">
         {/* Header Card */}
         <div className="max-w-[1400px] mx-auto mb-6">
           <Card

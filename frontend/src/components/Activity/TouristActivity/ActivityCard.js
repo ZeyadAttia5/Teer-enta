@@ -104,7 +104,7 @@ const ActivityCard = ({
         }
     };
 
-    return (<main className="flex flex-wrap justify-center items-center py-6">
+    return (<main className="flex flex-wrap justify-center items-center pt-6">
         <div
             className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-2 cursor-pointer hover:border-2 hover:border-third">
             {user && (<div className="absolute top-4 right-4 z-10 flex gap-2">
@@ -127,7 +127,7 @@ const ActivityCard = ({
             </div>)}
 
             <Card
-                className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
+                className="rounded-lg shadow-lg px-2 pt-2 transition-all duration-300 ease-in-out hover:text-white"
                 style={{backgroundColor: "#ffffff"}}
             >
                 <Card.Meta
@@ -183,17 +183,19 @@ const ActivityCard = ({
                         </div>
                     </div>}
                 />
-                <div className="flex justify-center items-center gap-4 p-0">
+                <div className="flex justify-center items-center gap-4 p-0 mt-6">
                     <Button
+                        type="danger"
                         onClick={handleActivityDetails}
-                        className="text-white bg-second hover:bg-[#4a8f7a] transition-all duration-300"
+                        className="text-white bg-second hover:bg-gray-700 transition-all duration-300"
                     >
                         Show Details
                     </Button>
 
                     <Button
+                        type="danger"
                         onClick={handleLocationClick}
-                        className="text-white bg-third hover:bg-blue-600 transition-all duration-300"
+                        className="text-white bg-third hover:bg-gray-500 transition-all duration-300"
                     >
                         <EnvironmentOutlined className="mr-2"/>
                         Location
