@@ -147,8 +147,8 @@ const BookingPayment = ({
 
       <Form.Item className="mt-6">
         <Button
-          type="primary"
-          className="w-full h-12 text-lg bg-[#526D82] hover:bg-[#1a2b49] text-white disabled:hover:bg-gray-400"
+          type="default"
+          className="w-full h-12 text-lg  hover:bg-indigo-700 disabled:hover:bg-gray-400"
           onClick={onBookingClick}
           loading={isloading}
           disabled={paymentMethod === "Card" && !paymentSucceed}
