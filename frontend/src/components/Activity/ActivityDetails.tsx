@@ -15,7 +15,7 @@ import {
     Alert,
     Badge,
     Button,
-    message,
+    message, Tooltip,
 } from "antd";
 import {
     EnvironmentOutlined,
@@ -28,7 +28,8 @@ import {
     CheckCircleOutlined,
     CloseCircleOutlined,
     ShareAltOutlined,
-    CopyOutlined, MailOutlined,
+    CopyOutlined, MailOutlined,StopOutlined,
+    RocketOutlined
 } from "@ant-design/icons";
 import MapContainer from "../shared/GoogleMaps/GoogleMaps";
 import {TActivity} from "../../types/Activity/Activity";
@@ -163,472 +164,491 @@ const ActivityDetails: React.FC = () => {
 
     const cardStyle = {
         borderRadius: "10px",
-        transition: "transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        backgroundColor: "var(--fourth)",
-        color: "#496989",
-        
-    
-    };
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+      };
+  const gradientBg = "bg-slate-400";
+  const titleStyle = "text-lg font-semibold mb-4 flex items-center gap-2 text-first";
 
     const hoverCardStyle = {
         boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
     };
 
     return (
-        <div
+        <div className="min-h-screen p-8 bg-fourth">
+          <Space direction="vertical" size="large" className="relative w-full p-10">
+            {/* Animated Icon */}
+            <div className="absolute top-1 left-1/2 animate-bounce">
+              <RocketOutlined className="text-6xl text-first" />
+            </div>
+      
+            {/* Header and Main Layout */}
+            <Row gutter={[16, 16]} justify="space-between" align="top">
+              {/* Left Section */}
+              <Col xs={34} sm={120} md={10}>
+              <Card
+bordered={true} // Add border to the card
+className={`${cardStyle} border-third  mx-0 ml-0`}
+bodyStyle={{ height: "100%" }}
+>
+
+<div className="space-y-1">
+  {/* activity Name */}
+  <Row justify="center" className="text-center mb-0">
+<Title
+level={2}
+className="font-extrabold text-first mb-0"
+style={{ fontSize: "7rem", marginBottom: "0.15rem", color: "#1a2b49" }}
+>
+{activity?.colorName} {activity?.name}
+</Title>
+
+
+
+</Row>
+
+
+  {/* Description */}
+  <Row justify="center" className="text-center">
+    <p
+      className="text-first text-lg font-medium mb-4"
+      style={{ fontSize: "2rem" }}
+    >
+      {"Explore amazing Activity experiences!"}
+    </p>
+  </Row>
+  <Row
+    justify="center"
+    align="middle"
+    className="text-center space-x-2"
+  >
+   <div className="flex flex-col items-center space-y-1">
+   <div className="flex items-center justify-center gap-1 my-2">
+                      <Tooltip title="" overlayClassName="bg-fourth">
+                          <p className="text-xs font-bold mr-1">{currency?.code}</p>
+                      </Tooltip>
+                      <Tooltip title="Price" overlayClassName="bg-fourth">
+                          <p className="text-2xl sm:text-3xl font-bold">
+                              { activity?.price?.min ? (currency?.rate *  activity?.price?.min).toFixed(1) : "N/A"},
+                          </p>
+                      </Tooltip>
+
+                      <Tooltip title="" overlayClassName="bg-fourth">
+                          <p className="text-xs font-bold mr-1"></p>
+                      </Tooltip>
+                      <Tooltip title="Price" overlayClassName="bg-fourth">
+                          <p className="text-2xl sm:text-3xl font-bold">
+                              { activity?.price?.max ? (currency?.rate *  activity?.price?.max).toFixed(1) : "N/A"}
+                          </p>
+                      </Tooltip>
+                  </div>
+<Statistic 
+value={new Date(activity?.date).toLocaleDateString()}
+prefix={<CalendarOutlined style={{ fontSize: '12px', marginRight: '5px' }} />}
+valueStyle={{ color: "#1a2b49" }}
+//title="Date"
+/>
+
+<Statistic
+value={activity?.time}
+prefix={<ClockCircleOutlined style={{ fontSize: '12px', marginRight: '5px' }} />}
+valueStyle={{ color: "#1a2b49" }}
+//title="Time"
+/>
+</div>
+
+
+  </Row>
+
+  {/* Tags */}
+  <Row justify="space-between" align="middle" gutter={[16, 16]}>
+  <Col>
+<Space size="small">
+<Tag
+color={activity?.isActive ? "success" : "error"}
+className="text-white"
+style={{ fontSize: '12px' }}
+>
+{activity?.isActive ? (
+  <>
+    <CheckCircleOutlined style={{ fontSize: '10px', marginRight: '5px' }} />
+    Active
+  </>
+) : (
+  <>
+    <CloseCircleOutlined style={{ fontSize: '16px', marginRight: '5px' }} />
+    Inactive
+  </>
+)}
+</Tag>
+<Tag
+color={activity?.isBookingOpen ? "processing" : "default"}
+className="text-white"
+style={{ fontSize: '12px' }}
+>
+{activity?.isBookingOpen ? (
+  <>
+    <ClockCircleOutlined style={{ fontSize: '10px', marginRight: '5px' }} />
+    Booking Open
+  </>
+) : (
+  <>
+    <StopOutlined style={{ fontSize: '16px', marginRight: '5px' }} />
+    Booking Closed
+  </>
+)}
+</Tag>
+</Space>
+</Col>
+
+
+    {/* Rating and Actions */}
+    <Col>
+      <Space direction="vertical" align="center">
+        <Rate disabled value={averageRating} allowHalf />
+        <Text type="secondary" className="text-white">
+          {activity?.ratings.length} ratings
+        </Text>
+        <Space>
+          {/* Copy Link Button with Icon and Text on Hover */}
+          <div className="flex items-center gap-4">
+{/* Copy Link Button */}
+<div className="relative group">
+{/* Invisible text, visible on hover */}
+<span className="absolute left-1/2 transform -translate-x-1/2 -top-8 opacity-0 group-hover:opacity-100 bg-fourth text-first text-sm px-2 py-1 rounded shadow whitespace-nowrap">
+Copy Link
+</span>
+<Button
+icon={<CopyOutlined />}
+onClick={handleCopyLink}
+className="text-first bg-white hover:bg-gray-200"
+/>
+</div>
+
+{/* Send Mail Button */}
+<div className="relative group">
+{/* Invisible text, visible on hover */}
+<span className="absolute left-1/2 transform -translate-x-1/2 -top-8 opacity-0 group-hover:opacity-100 bg-fourth text-first text-sm px-2 py-1 rounded shadow whitespace-nowrap">
+Send Mail
+</span>
+<Button
+icon={<MailOutlined />}
+onClick={handleShareEmail}
+className="text-first bg-white hover:bg-gray-200"
+/>
+</div>
+</div>
+
+        </Space>
+      </Space>
+    </Col>
+  </Row>
+</div>
+
+<Button
+onClick={() => handleActivityBooking(ActivityId)}
+className="w-full text-white text-4xl py-6 px-8 bg-first hover:bg-third transition-all duration-300 mt-4 border-2 border-[#496989] shadow-lg"
+style={{
+fontSize: '40px', // Bigger font for the button
+padding: '30px 50px', // Larger button padding
+width: '100%', // Full width of the container
+backgroundColor: "#1a2b49",
+}}
+>
+Book Now
+</Button>
+
+
+</Card>
+              </Col>
+      
+              {/* Right Section */}
+              <Col xs={24} md={14}>
+                <Row gutter={[16, 16]}>
+                  
+                  <Col xs={24} sm={12}>
+  <Card
+    title={
+        <div className="flex items-center justify-center text-first mb-4">
+        <TagOutlined size={20} className="mr-2 text-third text-bold text-2xl" />
+        <span className="font-bold text-xl">Categories & Tags</span>
+      </div>
+    }
+    bodyStyle={{ padding: '0', margin: '0' }} // Remove internal padding
+    style={{
+      height: '130px', // Fixed height
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    }}
+  >
+    <div style={{ padding: '10px' }}> {/* Optional padding for inner spacing */}
+      <p>
+        <strong>Category:</strong>{" "}
+        <Tag color="blue">{activity?.category?.category}</Tag>
+      </p>
+      <p>
+        <strong>Tags:</strong>
+        {activity?.tags?.map((tag, index) => (
+          <Tag key={index} color="green">
+            {tag.name}
+          </Tag>
+        ))}
+      </p>
+    </div>
+  </Card>
+</Col>
+
+<Col xs={24} sm={12}>
+<Card
+  title={
+<div className="flex items-center justify-center text-first mb-4">
+        <PercentageOutlined size={20} className="mr-2 text-third text-bold text-2xl" />
+        <span className="font-bold text-xl">Discount</span>
+      </div>
+  }
+  bodyStyle={{ padding: '0', margin: '0' }} // Remove internal padding
+  style={{
+    height: '130px', // Fixed height to ensure consistency
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between', // Space out elements within the card
+    overflow: 'hidden', // Prevent overflow if content exceeds height
+  }}
+>
+  {activity?.specialDiscounts && activity?.specialDiscounts.length > 0 ? (
+    <List
+      dataSource={activity?.specialDiscounts}
+      renderItem={(discount) => (
+        <List.Item
           style={{
-            alignItems: 'center',
-            minHeight: '100vh',
-            backgroundColor: "#DDE6ED",
-            padding: "24px"
+            padding: '10px', // Adequate padding for List items
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center', // Vertically center align items
           }}
         >
-          <Space direction="vertical" size="large" style={{ width: "100%", margin: "0 auto" }}>
-      
-            {/* Header and Basic Information in Same Row */}
-            <Row gutter={[16, 16]} justify="space-between" align="top">
-              
-              {/* Header Section */}
-              <Col xs={24} md={12}>
-                <Card
-                  style={{
-                    ...cardStyle,
-                    ...(hoveredCard === "header" ? hoverCardStyle : {}),
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    borderRadius: '10px',
-                    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-                    padding: '0px',
-                    backgroundColor: '#FFFFFF',
-                    width: '100%',
-                   // maxHeight:"100%",
-                   // height: "245px"
-                  }}
-                  onMouseEnter={() => setHoveredCard("header")}
-                  onMouseLeave={() => setHoveredCard(null)}
-                  className="bg-white"
-                >
-                  <Row justify="space-between" align="middle" gutter={[16, 16]}>
-                    {/* Left Column */}
-                    <Col xs={24} sm={24} md={15} style={{ padding: '0' }}>
-                      <Title
-                        level={1}
-                        style={{
-                          color: "#1a2b49",
-                          fontWeight: 'bold',
-                          textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
-                          fontSize: '100px',
-                          margin: '0',
-                        }}
-                      >
-                        {activity?.colorName} {activity?.name}
-                      </Title>
-                      <Rate
-                        disabled
-                        value={averageRating}
-                        allowHalf
-                        style={{ fontSize: '28px', marginTop: '4px' }}
-                      />
-                      <Text
-                        type="secondary"
-                        style={{
-                          color: "#DDE6ED",
-                          fontSize: '14px',
-                          display: 'block',
-                          marginTop: '2px',
-                        }}
-                      >
-                        {activity?.ratings?.length} ratings
-                      </Text>
-                    </Col>
-      
-                    {/* Right Column */}
-                    <Col xs={22} sm={20} md={9}>
-                      <Space direction="vertical" align="end" size={2}>
-                        {/* Badges */}
-                        <Space size="small">
-                          <Badge
-                            status={activity?.isActive ? "success" : "error"}
-                            text={activity?.isActive ? "Active" : "Inactive"}
-                            style={{ fontSize: '12px' }}
-                          />
-                          <Badge
-                            status={activity?.isBookingOpen ? "processing" : "default"}
-                            text={activity?.isBookingOpen ? "Booking Open" : "Booking Closed"}
-                            style={{ fontSize: '12px' }}
-                          />
-                        </Space>
-                        {/* Buttons */}
-                        <Space direction="vertical" size={4} style={{ width: '100%' }}>
-                          
-                          <Space size={4}>
-                            <Button
-                              icon={<CopyOutlined style={{ fontSize: '14px' }} />}
-                              onClick={handleCopyLink}
-                              className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
-                              style={{ fontSize: '14px', padding: '6px 12px' }}
-                            >
-                              Copy Link
-                            </Button>
-                            <Button
-                              icon={<MailOutlined style={{ fontSize: '14px' }} />}
-                              onClick={handleShareEmail}
-                              className="text-white bg-second hover:bg-[#3b5b68] transition-all duration-200"
-                              style={{ fontSize: '14px', padding: '6px 12px' }}
-                            >
-                              Share via Email
-                            </Button>
-                          </Space>
-                        </Space>
-                      </Space>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
-      
-              {/* Basic Info Section */}
-              <Col xs={24} md={12}>
-                <Card
-                  title={<Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#1a2b49' }}>Basic Information</Text>}
-                  style={{
-                    ...cardStyle,
-                    ...(hoveredCard === "basicInfo" ? hoverCardStyle : {}),
-                    backgroundColor: 'white',
-                    height: "233px",
-                  }}
-                  onMouseEnter={() => setHoveredCard("basicInfo")}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <Row gutter={[16, 16]}>
-                    <Col span={12}>
-                      <Statistic
-                        title={<Text style={{ color: "#526D82" }}>Date</Text>}
-                        value={new Date(activity?.date).toLocaleDateString()}
-                        prefix={<CalendarOutlined style={{ fontSize: '15px', marginRight: '5px' }} />}
-                        valueStyle={{ color: "#1a2b49" }}
-                      />
-                    </Col>
-                    <Col span={12}>
-                      <Statistic
-                        title={<Text style={{ color: "#526D82" }}>Time</Text>}
-                        value={activity?.time}
-                        prefix={<ClockCircleOutlined style={{ fontSize: '15px', marginRight: '5px' }} />}
-                        valueStyle={{ color: "#1a2b49" }}
-                      />
-                    </Col>
-                    <Col span={24}>
-                      <Statistic
-                        title={<Text style={{ color: "#526D82" }}>Price Range</Text>}
-                        value={
-                          activity?.price?.min && activity?.price?.max
-                            ? `${currency?.code} ${(currency?.rate * activity?.price?.min).toFixed(2)} - ${(currency?.rate * activity?.price?.max).toFixed(2)}`
-                            : "Not specified"
-                        }
-                      />
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
-              
-            </Row>
-      
-            {/* Location, Category & Discount Section */}
-            <Row gutter={[16, 16]} justify="space-between" align="top">
-              
-              {/* Category & Tags Section */}
-              <Col xs={24} lg={12}>
-  <Row gutter={16}> {/* Row for controlling space between cards */}
-    <Col span={24}> {/* Each card will take full width of the column */}
-      <Card
-        title={
-          <Space>
-            <TagOutlined style={{ color: "#58A399" }} />
-            <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#1a2b49' }}>Category & Tags</span>
-          </Space>
-        }
-        style={{
-          ...cardStyle,
-          ...(hoveredCard === "categoryTags" ? hoverCardStyle : {}),
-          backgroundColor: 'white',
-          width: '100%',  // Ensures cards take up full column width
-          marginBottom: '16px', // Adds space between cards
-        }}
-        onMouseEnter={() => setHoveredCard("categoryTags")}
-        onMouseLeave={() => setHoveredCard(null)}
-      >
-        <Row gutter={16}>
-          <Col span={12}>
-            <div>
-              <Text strong style={{ fontSize: '16px', color: '#1a2b49' }}>Category: </Text>
-              <Tag color="blue" style={{ fontSize: '16px' }}>
-                {activity?.category?.category}
-              </Tag>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 'bold', fontSize: '16px', color: 'red' }}>
+              {discount?.discount}% OFF
             </div>
-          </Col>
-          <Col span={12}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Text strong style={{ fontSize: '16px', color: '#1a2b49', marginRight: '10px' }}>
-                Preference Tags:
-              </Text>
-              <Space wrap style={{ display: 'flex', gap: '10px' }}>
-                {activity?.tags?.map((tag, index) => (
-                  <Tag key={index} color="green">
-                    {tag.name}
-                  </Tag>
-                ))}
-              </Space>
+            <div style={{ fontSize: '14px', color: '#555' }}>
+              {discount?.Description}
             </div>
-          </Col>
-        </Row>
-      </Card>
-    </Col>
-
-    {/* Special Discounts Section (conditionally render) */}
-    {activity.specialDiscounts.length > 0 && (
-      <Col span={24}>
-     <Card
-  title={
-    <Space>
-      <PercentageOutlined style={{ color: "#58A399" }} />
-      <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#1a2b49' }}>Special Discounts</span>
-    </Space>
-  }
-  style={{
-    ...cardStyle,
-    ...(hoveredCard === "specialDiscounts" ? hoverCardStyle : {}),
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    borderRadius: '10px',
-    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-    padding: '0px', // Remove all padding inside the card
-    backgroundColor: '#ffffff',
-    width: '100%', // Ensures cards take up full column width
-    marginBottom: '5px', // Reduced bottom margin
-    height: 'auto', // Auto height to shrink the card
-  }}
-  onMouseEnter={() => setHoveredCard("specialDiscounts")}
-  onMouseLeave={() => setHoveredCard(null)}
->
-  <List
-    dataSource={activity.specialDiscounts}
-    renderItem={(discount) => (
-      <List.Item
-        extra={
-          discount.isAvailable ? (
-            <Tag color="success" icon={<CheckCircleOutlined />}>
-              Available
+          </div>
+          <div>
+            <Tag color={discount?.isAvailable ? "green" : "red"}>
+              {discount?.isAvailable ? "Available" : "Not Available"}
             </Tag>
-          ) : (
-            <Tag color="error" icon={<CloseCircleOutlined />}>
-              Not Available
-            </Tag>
-          )
-        }
-        style={{ padding: '0px' }} // Remove extra padding between list items
-      >
-        <List.Item.Meta
-          title={
-            <Text style={{ color: "red", fontSize: "44px", fontWeight: 'bold' }}>
-              {`${discount?.discount}% OFF`}
-            </Text>
-          }
-          description={<Text style={{ color: "#1a2b49", fontSize: '14px' }}>{discount?.Description}</Text>}
-        />
-      </List.Item>
-    )}
-  />
+          </div>
+        </List.Item>
+      )}
+    />
+  ) : (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%', // Ensure it takes up the full height of the card
+        textAlign: 'center',
+      }}
+    >
+      <span style={{ fontSize: '16px', color: '#888' }}>No discounts :(</span>
+    </div>
+  )}
 </Card>
 
 
 
-      </Col>
-    )}
-  </Row>
-</Col>
 
+
+</Col>
+                </Row>
       
-              {/* Location Section */}
-              <Col xs={24} lg={12}>
+                {/* Comments */}
                 <Card
+    bordered={true}
+    className={`${cardStyle}  w-full border-third mt-4`}
+    bodyStyle={{ padding: "8px 16px", height: "auto" }}
+  >
+<div className={titleStyle}>
+      <UserOutlined className="text-third ml-1" />
+      <span className="text-first text-bold text-lg">Comments</span>
+    </div>
+
+    <div className="space-y-2">
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "nowrap",
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          paddingBottom: "8px",
+          height: "50px",
+        }}
+      >
+        {activity?.comments.length > 0 ? (
+          <List
+            itemLayout="horizontal"
+            dataSource={activity.comments}
+            renderItem={(comment) => (
+              <List.Item
+                className="transition-all duration-300 text-first rounded-xl"
+                style={{
+                  marginRight: "10px",
+                  display: "inline-flex",
+                  flexShrink: 0,
+                  minWidth: "150px",
+                }}
+              >
+                <List.Item.Meta
+                  className="pl-3"
+                  avatar={<Avatar icon={<UserOutlined />} />}
                   title={
+                    <span className="text-third text-xs">
+                      {comment?.createdBy?.username}
+                    </span>
+                  }
+                  description={
                     <Space>
-                      <EnvironmentOutlined style={{ color: "#58A399" }} />
-                      <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#1a2b49' }}>Location</span>
+                      <Text className="text-first text-xs">
+                        {comment?.comment}
+                      </Text>
                     </Space>
                   }
-                  bodyStyle={{ padding: 0, height: "300px" }}
-                  style={{
-                    ...cardStyle,
-                    overflow: "hidden",
-                    backgroundColor: "white",
-                    ...(hoveredCard === "location" ? hoverCardStyle : {}),
-                  }}
-                  onMouseEnter={() => setHoveredCard("location")}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <StaticMap longitude={activity?.location?.lng} latitude={activity?.location?.lat} />
-                </Card>
+                />
+              </List.Item>
+            )}
+            style={{ padding: 0 }}
+          />
+        ) : (
+          <div className="text-first text-xs pl-3">No comments yet</div>
+        )}
+      </div>
+    </div>
+  </Card>
+  
+  <Card
+    bordered={true}
+    className={`${cardStyle}  w-full border-third mt-4`}
+    bodyStyle={{ padding: "8px 16px", height: "250px" }}
+  
+title={
+<div className={titleStyle}>
+<EnvironmentOutlined className="text-third mt-2 ml-0 " />
+      <span className="text-first text-bold text-lg mt-2 ">Location</span>
+    </div>
+}
+bodyStyle={{ padding: 0, height: "250px" }}  // Reduced height to 250px
+style={{
+  ...cardStyle,
+  overflow: "hidden",  // Ensures content is clipped if it overflows
+  ...(hoveredCard === "location" ? hoverCardStyle : {}),
+  backgroundColor: "#ffffff",
+   marginTop: "20px"
+}}
+onMouseEnter={() => setHoveredCard("location")}
+onMouseLeave={() => setHoveredCard(null)}
+>
+<StaticMap longitude={activity?.location?.lng} latitude={activity?.location?.lat} />
+</Card>
+ 
               </Col>
-              
             </Row>
+            <Row justify="center" align="middle" gutter={[16, 16]}>
+{/* Activity Information Card */}
 
-           
-                {/* Comments */}
-                {activity?.comments.length > 0 && (
-                    <Card
-                        bordered={true}  // Add border to the card
-                        className={`${cardStyle} w-full border-white`} // Gradient background and white border
-                        bodyStyle={{ height: '100%' }}
-                    >
-                        <div>
-                            <span className="text-first text-bold text-2xl">Comments</span> {/* Title color changed to white */}
-                        </div>
-
-                        {/* List of Comments */}
-                        <div className="space-y-4">
-                            <div
-                                style={{
-                                    display: 'flex',              // Align items horizontally
-                                    flexWrap: 'nowrap',           // Prevent wrapping of items
-                                    overflowX: 'auto',            // Enable horizontal scrolling
-                                    whiteSpace: 'nowrap',         // Prevent items from breaking into multiple lines
-                                    paddingBottom: '10px',        // Optional, for better scroll visibility
-                                }}
-                            >
-                                <List
-                                    itemLayout="horizontal"
-                                    dataSource={activity?.comments}
-                                    renderItem={(comment) => (
-                                        <List.Item
-                                            className="transition-all duration-300 hover:bg-[#4A90E2] hover:text-white rounded-xl"
-                                            style={{
-                                                marginRight: '16px',  // Space between items
-                                                display: 'inline-flex', // Ensure items are displayed inline with their natural width
-                                                flexShrink: 0,         // Prevent shrinking of list items
-                                                minWidth: '200px',      // Ensure the item takes only the space it needs
-                                            }}
-                                        >
-                                            <List.Item.Meta
-                                                className="pl-3"
-                                                avatar={<Avatar icon={<UserOutlined />} />}
-                                                title={
-                                                    <span className="text-black">
-                                        {/* {comment.createdBy.username} */}
-                                    </span>
-                                                }
-                                                description={
-                                                    <Space>
-                                                        <Text className="text-black">
-                                                            {comment?.comment}
-                                                        </Text>
-                                                    </Space>
-                                                }
-                                            />
-                                        </List.Item>
-                                    )}
-                                    style={{
-                                        padding: 0,  // Remove any extra padding applied to the List itself
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </Card>
-                )}
-                
-                <Row justify="center" align="middle" gutter={[16, 16]}>
-  {/* Activity Information Card */}
-  <Col xs={25} sm={22} md={16} style={{ padding: '0' }}>
-    <Card
-      size="small"
-      style={{
-        borderColor: 'black',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '15px',
-        transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-        backgroundColor: "#94A3B8",
-        height: 'auto',
-        maxHeight: '250px',
-        width: '70%', // Reduced width for a less wide card
-        margin: '0 auto', // Centering the card horizontally
-        marginLeft: '-6%', // Shifting the card slightly to the left
-      }}
-      onMouseEnter={() => setHoveredCard("footer")}
-      onMouseLeave={() => setHoveredCard(null)}
-      className="text-center mx-auto"
-    >
-      <div className="space-y-4">
-        {/* Footer Title and Icon */}
-        <div className="text-xl font-bold text-white mb-4">
-          <EnvironmentOutlined size={20} className="text-fourth" />
-          <span className="ml-2">Activity Information</span>
-        </div>
-
-        {/* Info Section with Flexbox for larger screens */}
-        <Space
-          direction="vertical"
-          size="small"
-          style={{ textAlign: 'center' }}
-          className="mt-6 flex justify-center sm:flex sm:flex-row sm:space-x-6 sm:text-left sm:items-center sm:space-y-0"
-        >
-          <Text type="secondary" style={{ color: "black" }} className="flex items-center">
-            <UserOutlined className="mr-2 text-fourth " />
-            <strong>Created by:</strong> {activity?.createdBy?.username}
-          </Text>
-          <Text type="secondary" style={{ color: "black" }} className="flex items-center">
-            <CalendarOutlined className="mr-2 text-fourth" />
-            <strong>Created at:</strong> {new Date(activity?.createdAt).toLocaleDateString()}
-          </Text>
-          <Text type="secondary" style={{ color: "black" }} className="flex items-center">
-            <ClockCircleOutlined className="mr-2 text-fourth" />
-            <strong>Last updated:</strong> {new Date(activity?.updatedAt).toLocaleDateString()}
-          </Text>
-        </Space>
+<Card
+  size="small"
+  style={{
+    borderColor: "black",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    borderRadius: "15px",
+    transition: "background-color 0.3s ease, box-shadow 0.3s ease",
+    backgroundColor: "#94A3B8",
+    height: "auto",
+    maxHeight: "250px",
+    width: "100%",  // Full width by default
+    maxWidth: "800px", // Maximum width to prevent the card from becoming too wide
+    margin: "0 auto",  // Centers the card
+  }}
+  onMouseEnter={() => setHoveredCard("footer")}
+  onMouseLeave={() => setHoveredCard(null)}
+  className="text-center"
+>
+  <Row xs={24} sm={12} md={8} className="flex justify-center gap-4">
+    <Col span={24}>
+      <div className="text-xl font-bold text-white mb-4">
+        <EnvironmentOutlined size={20} className="text-fourth" />
+        <span className="ml-2">Itinerary Information</span>
       </div>
 
-      {/* Footer Action Links */}
+      <Space
+        direction="vertical"
+        size="small"
+        style={{ textAlign: "center" }}
+        className="mt-6 flex justify-center sm:flex sm:flex-row sm:space-x-6 sm:text-left sm:items-center sm:space-y-0"
+      >
+        <Text
+          type="secondary"
+          style={{ color: "black" }}
+          className="flex items-center"
+        >
+          <UserOutlined className="mr-2 text-fourth" />
+          <strong>Created by:</strong> {activity?.createdBy?.username}
+        </Text>
+        <Text
+          type="secondary"
+          style={{ color: "black" }}
+          className="flex items-center "
+        >
+          <CalendarOutlined className="mr-2 text-fourth" />
+          <strong>Created on:</strong>{" "}
+          {new Date(activity?.createdAt ?? "").toLocaleDateString()}
+        </Text>
+        <Text
+          type="secondary"
+          style={{ color: "black" }}
+          className="flex items-center"
+        >
+          <ClockCircleOutlined className="mr-2 text-fourth" />
+          <strong>Last Updated:</strong>{" "}
+          {new Date(activity?.updatedAt ?? "").toLocaleDateString()}
+        </Text>
+      </Space>
+    </Col>
+
+    <Col span={24}>
       <div className="mt-2 flex justify-center space-x-6">
         <a
           href="#"
-          className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
+          className="text-white text-lg font-medium hover:text-fourth hover:underline transition-all duration-300"
         >
           Privacy Policy
         </a>
         <a
           href="#"
-          className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
+          className="text-white text-lg font-medium hover:text-fourth hover:underline transition-all duration-300"
         >
           Terms of Service
         </a>
       </div>
+    </Col>
 
-      {/* Footer Footer */}
+    <Col span={24}>
       <div className="mt-0 text-sm text-gray-400">
         <Text>© 2024 Teer Enta. All rights reserved.</Text>
       </div>
-    </Card>
-  </Col>
-
-  {/* Book Now Button */}
-  <Col xs={24} sm={24} md={8} style={{ padding: '0', marginLeft: '-10%' }}>
-  <Button
-    onClick={() => handleActivityBooking(ActivityId)}
-    className="text-white bg-second hover:bg-third transition-all duration-200"
-    style={{
-      fontSize: '60px', // Bigger font for the button
-      padding: '50px 70px', // Larger button padding
-      width: '100%', // Full width of the container
-      backgroundColor: "#1a2b49",
-    }}
-  >
-    Book Now
-  </Button>
-</Col>
+    </Col>
+  </Row>
+</Card>
 
 </Row>
-
 
           </Space>
         </div>
       );
+      
       
 };
 

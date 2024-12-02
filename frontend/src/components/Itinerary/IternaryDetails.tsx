@@ -26,6 +26,7 @@ import {
   CheckCircleOutlined,
   CopyOutlined,
   MailOutlined,
+  TrophyOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { getIternary } from "../../api/itinerary.ts";
@@ -164,7 +165,7 @@ const ItineraryDetails: React.FC = () => {
           {/* First Card for Itinerary Details */}
           <Row gutter={[16, 16]}>
   {/* First Column (Itinerary Details Card) */}
-  <Col xs={24} sm={12} md={8} className="flex justify-center gap-4">
+  <Col xs={150} sm={100} md={8} className="flex justify-center gap-4">
     <Card
       bordered={true} // Add border to the card
       className={`${cardStyle} ${gradientBg} w-1/3 border-third max-w-2xl mx-auto ml-0`}
@@ -258,28 +259,34 @@ const ItineraryDetails: React.FC = () => {
               </Text>
               <Space>
                 {/* Copy Link Button with Icon and Text on Hover */}
-                <Button
-                  icon={<CopyOutlined />}
-                  onClick={handleCopyLink}
-                  className="text-first bg-white hover:bg-gray-200 relative group"
-                >
-                  {/* Invisible text, visible on hover */}
-                  <span className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 text-sm bg-white text-first px-2 py--3 rounded">
-                    Copy Link
-                  </span>
-                </Button>
+                <div className="flex items-center gap-4">
+  {/* Copy Link Button */}
+  <div className="relative group">
+    {/* Invisible text, visible on hover */}
+    <span className="absolute left-1/2 transform -translate-x-1/2 -top-8 opacity-0 group-hover:opacity-100 bg-fourth text-first text-sm px-2 py-1 rounded shadow whitespace-nowrap">
+      Copy Link
+    </span>
+    <Button
+      icon={<CopyOutlined />}
+      onClick={handleCopyLink}
+      className="text-first bg-white hover:bg-gray-200"
+    />
+  </div>
 
-                {/* Send Mail Button with Icon and Text on Hover */}
-                <Button
-                  icon={<MailOutlined />}
-                  onClick={handleShareEmail}
-                  className="text-first bg-white hover:bg-gray-200 relative group"
-                >
-                  {/* Invisible text, visible on hover */}
-                  <span className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 opacity-0 group-hover:opacity-100 text-sm bg-white text-first px-2 py-0 rounded">
-                    Send Mail
-                  </span>
-                </Button>
+  {/* Send Mail Button */}
+  <div className="relative group">
+    {/* Invisible text, visible on hover */}
+    <span className="absolute left-1/2 transform -translate-x-1/2 -top-8 opacity-0 group-hover:opacity-100 bg-fourth text-first text-sm px-2 py-1 rounded shadow whitespace-nowrap">
+      Send Mail
+    </span>
+    <Button
+      icon={<MailOutlined />}
+      onClick={handleShareEmail}
+      className="text-first bg-white hover:bg-gray-200"
+    />
+  </div>
+</div>
+
                 
               </Space>
               
@@ -301,16 +308,16 @@ const ItineraryDetails: React.FC = () => {
   </Col>
 
   {/* Second Column (Activities, Timeline, Available Dates Cards) */}
-  <Col xs={24} sm={12} md={16} >
+  <Col xs={24} sm={120} md={16} >
   <Row gutter={[16, 16]}>
   {/* Activities Card */}
   <Col xs={24} sm={12} md={8} className="flex justify-center gap-4">
     <Card
-      className={`${cardStyle} ${gradientBg} hover:scale-105 bg-third transform transition-all duration-300 ease-in-out`}
+      className={`${cardStyle} ${gradientBg}  bg-third transform transition-all duration-300 ease-in-out`}
       bodyStyle={{ height: "220px", padding: "16px" }} // Same height and padding
     >
       <div className="flex items-center justify-center text-first mb-4">
-        <Clock size={20} className="mr-2" />
+        <TrophyOutlined size={20} className="mr-2 text-third text-bold text-2xl" />
         <span className="font-bold text-xl">Activities</span>
       </div>
       <List
@@ -335,16 +342,16 @@ const ItineraryDetails: React.FC = () => {
   {/* Timeline Card */}
   <Col xs={24} sm={12} md={8} className="flex justify-center gap-4">
     <Card
-      className={`${cardStyle} ${gradientBg} transform transition-all duration-300 ease-in-out hover:scale-105`}
+      className={`${cardStyle} ${gradientBg} transform transition-all duration-300 ease-in-out`}
       bodyStyle={{ height: "220px", padding: "16px" }} // Same height and padding
     >
       <div className="flex items-center justify-center text-first mb-4">
-        <Clock size={20} className="mr-2" />
+        <Clock size={20} className="mr-2 text-third text-bold text-2xl" />
         <span className="font-bold text-xl">Timeline</span>
       </div>
       <Timeline
         items={itinerary?.timeline.map((item, index) => ({
-          color: "blue",
+          color: "#526D82",
           children: (
             <>
               <Text strong className="text-first">
@@ -370,11 +377,11 @@ const ItineraryDetails: React.FC = () => {
   {/* Available Dates Card */}
   <Col xs={24} sm={12} md={8} className="flex justify-center gap-4">
     <Card
-      className={`${cardStyle} ${gradientBg} transform transition-all duration-300 ease-in-out hover:scale-105`}
+      className={`${cardStyle} ${gradientBg} transform transition-all duration-300 ease-in-out `}
       bodyStyle={{ height: "220px", padding: "16px" }} // Same height and padding
     >
       <div className="flex items-center justify-center text-first mb-4">
-        <Calendar size={20} className="mr-2" />
+        <Calendar size={20} className="mr-2 text-third text-bold text-2xl" />
         <span className="font-bold text-xl">Available Dates</span>
       </div>
       <List
@@ -402,143 +409,138 @@ const ItineraryDetails: React.FC = () => {
   </Col>
 </Row>
 
-    <Row xs={24} sm={12} md={8} className="flex justify-center gap-4">
-          {/* Last Full-Width Card for Comments */}
-          {(itinerary?.comments.length ?? 0) > 0 && (
-           <Card
-           bordered={true} // Add border to the card
-           className={`${cardStyle} ${gradientBg} w-full border-third mt-4`} // Gradient background and white border
-           bodyStyle={{ padding: "8px 16px", height: "auto" }} // Reduced padding and auto height
-         >
-           <div className={titleStyle}>
-             <UserOutlined className="text-third" />
-             <span className="text-first text-bold text-lg">Comments</span>
-             {/* Title size reduced */}
-           </div>
-         
-           {/* List of Comments */}
-           <div className="space-y-2"> {/* Reduced spacing between items */}
-             <div
-               style={{
-                 display: "flex", // Align items horizontally
-                 flexWrap: "nowrap", // Prevent wrapping of items
-                 overflowX: "auto", // Enable horizontal scrolling
-                 whiteSpace: "nowrap", // Prevent items from breaking into multiple lines
-                 paddingBottom: "8px", // Reduced padding for better compactness
-                 height: "80px"
-               }}
-             >
-               <List
-                 itemLayout="horizontal"
-                 dataSource={itinerary?.comments}
-                 renderItem={(comment) => (
-                   <List.Item
-                     className="transition-all duration-300 text-first rounded-xl"
-                     style={{
-                       marginRight: "10px", // Reduced space between items
-                       display: "inline-flex", // Ensure items are displayed inline with their natural width
-                       flexShrink: 0, // Prevent shrinking of list items
-                       minWidth: "150px", // Reduced the minimum width of the list items
-                     }}
-                   >
-                     <List.Item.Meta
-                       className="pl-3"
-                       avatar={<Avatar icon={<UserOutlined />} />}
-                       title={
-                         <span className="text-third  text-xs">
-                           {comment?.createdBy?.username}
-                         </span>
-                       }
-                       description={
-                         <Space>
-                           <Text className="text-first text-xs">
-                             {comment?.comment}
-                           </Text>
-                         </Space>
-                       }
-                     />
-                   </List.Item>
-                 )}
-                 style={{
-                   padding: 0, // Remove any extra padding applied to the List itself
-                 }}
-               />
-             </div>
-           </div>
-         </Card>
-         
-          )}
+<Row xs={24} sm={12} md={8} className="flex justify-center gap-4">
+  {/* Card for Comments */}
+  <Card
+    bordered={true}
+    className={`${cardStyle} ${gradientBg} w-full border-third mt-4`}
+    bodyStyle={{ padding: "8px 16px", height: "auto" }}
+  >
+    <div className={titleStyle}>
+      <UserOutlined className="text-third" />
+      <span className="text-first text-bold text-lg">Comments</span>
+    </div>
 
-          {(tourGuideComments?.length ?? 0) > 0 && (
-            <Card
-              bordered={true} // Add border to the card
-              className={`${cardStyle} ${gradientBg} w-full border-third mt-0`} // Gradient background and white border
-              bodyStyle={{ height: "100%", padding: 10 }}
-            >
-              <div className={titleStyle}>
-                <UserOutlined className="text-third" />{" "}
-                {/* Icon color adjusted */}
-                <span className="text-first ">Tour Guide Reviews</span>{" "}
-                {/* Title color changed to white */}
-              </div>
+    <div className="space-y-2">
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "nowrap",
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          paddingBottom: "8px",
+          height: "80px",
+        }}
+      >
+        {itinerary?.comments.length > 0 ? (
+          <List
+            itemLayout="horizontal"
+            dataSource={itinerary.comments}
+            renderItem={(comment) => (
+              <List.Item
+                className="transition-all duration-300 text-first rounded-xl"
+                style={{
+                  marginRight: "10px",
+                  display: "inline-flex",
+                  flexShrink: 0,
+                  minWidth: "150px",
+                }}
+              >
+                <List.Item.Meta
+                  className="pl-3"
+                  avatar={<Avatar icon={<UserOutlined />} />}
+                  title={
+                    <span className="text-third text-xs">
+                      {comment?.createdBy?.username}
+                    </span>
+                  }
+                  description={
+                    <Space>
+                      <Text className="text-first text-xs">
+                        {comment?.comment}
+                      </Text>
+                    </Space>
+                  }
+                />
+              </List.Item>
+            )}
+            style={{ padding: 0 }}
+          />
+        ) : (
+          <div className="text-first text-xs pl-3">No comments yet</div>
+        )}
+      </div>
+    </div>
+  </Card>
 
-              {/* List of Tour Guide Comments */}
-              <div className="space-y-2"> {/* Reduced spacing between items */}
-             <div
-               style={{
-                 display: "flex", // Align items horizontally
-                 flexWrap: "nowrap", // Prevent wrapping of items
-                 overflowX: "auto", // Enable horizontal scrolling
-                 whiteSpace: "nowrap", // Prevent items from breaking into multiple lines
-                 paddingBottom: "8px", // Reduced padding for better compactness
-                 height: "80px"
-               }}
-             >
-                  <List
-                    itemLayout="horizontal"
-                    dataSource={tourGuideComments}
-                    renderItem={(comment) => (
-                      <List.Item
-                        className="transition-all duration-300 rounded-xl text-xs"
-                        style={{
-                          marginRight: "0px", // Space between items
-                          display: "inline-flex", // Ensure items are displayed inline with their natural width
-                          flexShrink: 0, // Prevent shrinking of list items
-                          minWidth: "150px", // Ensure the item takes only the space it needs
-                        }}
-                      >
-                        <List.Item.Meta
-                          className="pl-3"
-                          avatar={<Avatar icon={<UserOutlined />} />}
-                          title={
-                            <span className="text-third  text-xs">
-                              {comment?.createdBy?.username}
-                            </span>
-                          }
-                          description={
-                            <Space>
-                              <Text className="text-first text-xs">
-                                {comment?.comment}
-                              </Text>
-                            </Space>
-                          }
-                        />
-                      </List.Item>
-                    )}
-                    style={{
-                      padding: 0, // Remove any extra padding applied to the List itself
-                    }}
-                  />
-                </div>
-              </div>
-            </Card>
-          )}
+  {/* Card for Tour Guide Reviews */}
+  <Card
+    bordered={true}
+    className={`${cardStyle} ${gradientBg} w-full border-third mt-0`}
+    bodyStyle={{ height: "100%", padding: 10 }}
+  >
+    <div className={titleStyle}>
+      <UserOutlined className="text-third" />
+      <span className="text-first">Tour Guide Reviews</span>
+    </div>
+
+    <div className="space-y-2">
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "nowrap",
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          paddingBottom: "8px",
+          height: "80px",
+        }}
+      >
+        {tourGuideComments?.length > 0 ? (
+          <List
+            itemLayout="horizontal"
+            dataSource={tourGuideComments}
+            renderItem={(comment) => (
+              <List.Item
+                className="transition-all duration-300 rounded-xl text-xs"
+                style={{
+                  marginRight: "0px",
+                  display: "inline-flex",
+                  flexShrink: 0,
+                  minWidth: "150px",
+                }}
+              >
+                <List.Item.Meta
+                  className="pl-3"
+                  avatar={<Avatar icon={<UserOutlined />} />}
+                  title={
+                    <span className="text-third text-xs">
+                      {comment?.createdBy?.username}
+                    </span>
+                  }
+                  description={
+                    <Space>
+                      <Text className="text-first text-xs">
+                        {comment?.comment}
+                      </Text>
+                    </Space>
+                  }
+                />
+              </List.Item>
+            )}
+            style={{ padding: 0 }}
+          />
+        ) : (
+          <div className="text-first text-xs pl-3">No reviews yet</div>
+        )}
+      </div>
+    </div>
+  </Card>
 </Row>
+
   </Col>
 </Row>
 
           
-
 <Card
   size="small"
   style={{
@@ -549,78 +551,81 @@ const ItineraryDetails: React.FC = () => {
     backgroundColor: "#94A3B8",
     height: "auto",
     maxHeight: "250px",
-    width: "70%", // Adjusted width for a less wide card
-    margin: "0 auto", // Centering the card horizontally
-    marginLeft: "17%", // Shifting the card slightly to the left
+    width: "100%",  // Full width by default
+    maxWidth: "800px", // Maximum width to prevent the card from becoming too wide
+    margin: "0 auto",  // Centers the card
   }}
   onMouseEnter={() => setHoveredCard("footer")}
   onMouseLeave={() => setHoveredCard(null)}
-  className="text-center mx-auto"
+  className="text-center"
 >
-  <div className="space-y-4">
-    {/* Title and Icon */}
-    <div className="text-xl font-bold text-white mb-4">
-      <EnvironmentOutlined size={20} className="text-fourth" />
-      <span className="ml-2">Itinerary Information</span>
-    </div>
+  <Row xs={24} sm={12} md={8} className="flex justify-center gap-4">
+    <Col span={24}>
+      <div className="text-xl font-bold text-white mb-4">
+        <EnvironmentOutlined size={20} className="text-fourth" />
+        <span className="ml-2">Itinerary Information</span>
+      </div>
 
-    {/* Info Section with Flexbox */}
-    <Space
-      direction="vertical"
-      size="small"
-      style={{ textAlign: "center" }}
-      className="mt-6 flex justify-center sm:flex sm:flex-row sm:space-x-6 sm:text-left sm:items-center sm:space-y-0"
-    >
-      <Text
-        type="secondary"
-        style={{ color: "black" }}
-        className="flex items-center"
+      <Space
+        direction="vertical"
+        size="small"
+        style={{ textAlign: "center" }}
+        className="mt-6 flex justify-center sm:flex sm:flex-row sm:space-x-6 sm:text-left sm:items-center sm:space-y-0"
       >
-        <UserOutlined className="mr-2 text-fourth" />
-        <strong>Created by: </strong> {tourGuide}
-      </Text>
-      <Text
-        type="secondary"
-        style={{ color: "black" }}
-        className="flex items-center "
-      >
-        <CalendarOutlined className="mr-2 text-fourth" />
-        <strong>Created on:</strong>{" "}
-        {new Date(itinerary?.createdAt ?? "").toLocaleDateString()}
-      </Text>
-      <Text
-        type="secondary"
-        style={{ color: "black" }}
-        className="flex items-center"
-      >
-        <ClockCircleOutlined className="mr-2 text-fourth" />
-        <strong>Last Updated:</strong>{" "}
-        {new Date(itinerary?.updatedAt ?? "").toLocaleDateString()}
-      </Text>
-    </Space>
-  </div>
+        <Text
+          type="secondary"
+          style={{ color: "black" }}
+          className="flex items-center"
+        >
+          <UserOutlined className="mr-2 text-fourth" />
+          <strong>Created by: </strong> {tourGuide}
+        </Text>
+        <Text
+          type="secondary"
+          style={{ color: "black" }}
+          className="flex items-center "
+        >
+          <CalendarOutlined className="mr-2 text-fourth" />
+          <strong>Created on:</strong>{" "}
+          {new Date(itinerary?.createdAt ?? "").toLocaleDateString()}
+        </Text>
+        <Text
+          type="secondary"
+          style={{ color: "black" }}
+          className="flex items-center"
+        >
+          <ClockCircleOutlined className="mr-2 text-fourth" />
+          <strong>Last Updated:</strong>{" "}
+          {new Date(itinerary?.updatedAt ?? "").toLocaleDateString()}
+        </Text>
+      </Space>
+    </Col>
 
-  {/* Action Links */}
-  <div className="mt-2 flex justify-center space-x-6">
-    <a
-      href="#"
-      className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
-    >
-      Privacy Policy
-    </a>
-    <a
-      href="#"
-      className="text-white text-lg font-medium hover:text-blue-500 hover:underline transition-all duration-300"
-    >
-      Terms of Service
-    </a>
-  </div>
+    <Col span={24}>
+      <div className="mt-2 flex justify-center space-x-6">
+        <a
+          href="#"
+          className="text-white text-lg font-medium hover:text-fourth hover:underline transition-all duration-300"
+        >
+          Privacy Policy
+        </a>
+        <a
+          href="#"
+          className="text-white text-lg font-medium hover:text-fourth hover:underline transition-all duration-300"
+        >
+          Terms of Service
+        </a>
+      </div>
+    </Col>
 
-  {/* Footer */}
-  <div className="mt-0 text-sm text-gray-400">
-    <Text>© 2024 Teer Enta. All rights reserved.</Text>
-  </div>
+    <Col span={24}>
+      <div className="mt-0 text-sm text-gray-400">
+        <Text>© 2024 Teer Enta. All rights reserved.</Text>
+      </div>
+    </Col>
+  </Row>
 </Card>
+
 
         </Space>
       </div>

@@ -119,7 +119,7 @@ const ActivityCard = ({
                 <Tooltip title={isNotified ? "Turn off notifications" : "Get notified"}>
                     <Button
                         type="text"
-                        icon={isNotified ? (<BellFilled style={{color: "#1C325B", fontSize: "24px"}}/>) : (
+                        icon={isNotified ? (<BellFilled style={{color: "#FFD700", fontSize: "24px"}}/>) : (
                             <BellOutlined style={{color: "gray", fontSize: "24px"}}/>)}
                         onClick={handleNotificationToggle}
                     />
