@@ -21,6 +21,7 @@
     "components": "^0.1.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "framer-motion": "^11.12.0",
     "firebase": "^11.0.2",
     "lucide-react": "^0.455.0",
     "moment": "^2.30.1",

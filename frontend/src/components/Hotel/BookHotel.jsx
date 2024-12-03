@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
+  Card,
   Form,
   Input,
   Button,
@@ -8,7 +9,6 @@ import {
   message,
   Steps,
   List,
-  Card,
   Typography,
   Tag,
   Space,
@@ -16,6 +16,7 @@ import {
   Col,
   Divider,
   Spin,
+  ConfigProvider,
 } from "antd";
 import {
   EnvironmentOutlined,
@@ -27,60 +28,37 @@ import {
   HomeOutlined,
   SolutionOutlined,
   CreditCardOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
 import { bookHotel, getHotels } from "../../api/hotels.ts";
 import AutoComplete from "react-google-autocomplete";
 import BookingPayment from "../shared/BookingPayment.jsx";
+import { Fade } from "react-awesome-reveal";
 
 const { Text, Title } = Typography;
-const { Search } = Input;
 const { RangePicker } = DatePicker;
 
-const CustomProgressBar = ({ step, setStep }) => {
+const CustomProgressBar = ({ step, setStep, loading }) => {
   const steps = [
-    { label: "Choose City and Dates ", icon: <SolutionOutlined /> },
-    { label: "Hotel Offers ", icon: <HomeOutlined /> },
-    { label: "Payment ", icon: <CreditCardOutlined /> },
+    { label: "Choose City and Dates", icon: <SolutionOutlined /> },
+    {
+      label: "Hotel Offers",
+      icon: loading ? <LoadingOutlined /> : <HomeOutlined />,
+    },
+    { label: "Payment", icon: <CreditCardOutlined /> },
   ];
-  const colors = ["#1a2b49", "#526D82", "#9DB2BF", "#DDE6ED"];
-  const textColors = ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#686d7e"];
 
   return (
-    <div className="flex justify-between items-center mb-8">
-      {steps.map((item, index) => (
-        <div
-          key={index}
-          className={`flex-1 text-center ${
-            index <= step ? "cursor-pointer" : "cursor-default"
-          }`}
-          onClick={() => {
-            if (index <= step) setStep(index);
-          }}
-        >
-          <div
-            className={`py-2 px-4 rounded-full transition-all duration-300`}
-            style={{
-              backgroundColor:
-                index < step
-                  ? colors[0]
-                  : index === step
-                  ? colors[1]
-                  : colors[3],
-              color:
-                index < step
-                  ? textColors[0]
-                  : index === step
-                  ? textColors[1]
-                  : textColors[3],
-              transform: step === index ? "scale(1)" : "scale(1)",
-            }}
-          >
-            {item.label}
-            <Space>{item.icon}</Space>
-          </div>
-        </div>
-      ))}
-    </div>
+    <Steps
+      direction="vertical"
+      className="h-full"
+      current={step}
+      onChange={setStep}
+      items={steps.map((item, index) => ({
+        title: item.label,
+        icon: item.icon,
+      }))}
+    />
   );
 };
 
@@ -118,123 +96,94 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   };
 
   return (
-    <Card
-      hoverable
-      className="w-3/4 mb-4 p-4 bg-white shadow-lg h-[500px] relative"
-      classNames={{ body: "h-full relative" }}
+    <article
       onClick={() => console.log("Selected offer:", mainOffer?.id)}
+      className={`w-full bg-slate-50 cursor-pointer p-10 h-auto justify-between flex flex-col shadow rounded-xl my-2`}
     >
-      <Space
-        direction="vertical"
-        size="middle"
-        className="w-full h-full  "
-        classNames={{ item: "h-full" }}
-      >
-        <Row justify="space-between" align="top">
-          <Col>
-            <Title level={4} className="mb-2 text-[#1a2b49]">
-              {hotel?.name}
-            </Title>
-            <Space>
-              <EnvironmentOutlined className="text-[#666]" />
-              <Text type="secondary">{hotel?.cityCode}</Text>
-            </Space>
-          </Col>
-          <Col>
+      <header className="flex items-baseline flex-1 w-full justify-between">
+        <div className="flex justify-between gap-2">
+          <div className="mb-6">
+            <h1 className="text-xl font-bold">
+              {hotel?.name?.charAt(0).toUpperCase() + hotel?.name?.slice(1)}
+            </h1>
+            <span className="self-start text-gray-500 text-[12px] font-extralight">
+              {hotel?.cityCode?.charAt(0).toUpperCase() +
+                hotel?.cityCode?.slice(1)}
+            </span>
+          </div>
+          <div>
             <Tag
+              className="rounded-lg"
               color={
                 mainOffer?.policies?.paymentType === "deposit"
                   ? "blue"
                   : "green"
               }
             >
-              {mainOffer?.policies?.paymentType}
+              {mainOffer?.policies?.paymentType?.charAt(0).toUpperCase() +
+                mainOffer?.policies?.paymentType?.slice(1)}
             </Tag>
-          </Col>
-        </Row>
-
-        <Row gutter={24}>
-          <Col span={12}>
-            <Space direction="vertical" size="small">
-              <Space>
-                <CalendarOutlined className="text-[#666]" />
-                <Text type="secondary">Check-in</Text>
-              </Space>
-              <Text strong>{formatDate(mainOffer?.checkInDate)}</Text>
-            </Space>
-          </Col>
-          <Col span={12}>
-            <Space direction="vertical" size="small">
-              <Space>
-                <CalendarOutlined className="text-[#666]" />
-                <Text type="secondary">Check-out</Text>
-              </Space>
-              <Text strong>{formatDate(mainOffer?.checkOutDate)}</Text>
-            </Space>
-          </Col>
-        </Row>
-
-        <Space>
-          <UserOutlined className="text-[#666]" />
-          <Text type="secondary">{mainOffer?.guests?.adults} Adults</Text>
-        </Space>
-
-        <Divider className="my-3" />
-
-        <Row justify="space-between" align="bottom">
-          {mainOffer?.room?.typeEstimated && (
-            <Col>
-              <Text type="secondary">Room Type</Text>
-              <br />
-              <Text strong>{mainOffer?.room?.typeEstimated?.bedType} Bed</Text>
-            </Col>
-          )}
-          <Col>
-            <Text type="secondary">Total Price</Text>
-            <br />
-            <Space>
-              <EuroOutlined />
-              <Text strong className="text-2xl">
-                {parseFloat(mainOffer?.price?.total).toLocaleString()}
-              </Text>
-            </Space>
-          </Col>
-        </Row>
-        <Col
-          style={{
-            padding: 0,
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-            left: 0,
-          }}
-        >
-          {mainOffer?.policies?.cancellations &&
-            mainOffer?.policies?.cancellations[0]?.description && (
-              <Text type="danger" className="text-xs">
-                {mainOffer?.policies?.cancellations[0]?.description?.text}
-              </Text>
-            )}
-
-          <Button
-            type="danger"
-            block
-            className="bg-[#1a2b49] border-[#1a2b49] text-white hover:bg-[#526D82] hover:border-[#526D82]"
-            onClick={() => {
-              bookOffer();
-            }}
-          >
-            Book
-          </Button>
-        </Col>
-      </Space>
-    </Card>
+          </div>
+        </div>
+      </header>
+      <main className="flex gap-10 flex-1">
+        <div className="flex flex-col items-center">
+          <span className="self-start text-gray-400 text-xs font-extralight">
+            Check-in
+          </span>
+          <span>{formatDate(mainOffer?.checkInDate)}</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="self-start text-gray-400 text-xs font-extralight">
+            Check-out
+          </span>
+          <span>{formatDate(mainOffer?.checkOutDate)}</span>
+        </div>
+      </main>
+      <footer className="flex mt-2">
+        <div className="flex gap-14 w-full border-b-2 border-b-black pb-3">
+          <section className="text-lg flex items-end">
+            {mainOffer?.room?.typeEstimated?.bedType?.charAt(0).toUpperCase() +
+              mainOffer?.room?.typeEstimated?.bedType?.slice(1)}{" "}
+            Bed
+          </section>
+          <div className="flex flex-col items-center">
+            <span className="self-start text-gray-400 text-xs font-extralight">
+              Adults
+            </span>
+            <span>{mainOffer?.guests?.adults}</span>
+          </div>
+        </div>
+      </footer>
+      <div className="flex justify-end">
+        <section className="font-bold text-2xl flex items-end mb-5">
+          {parseFloat(mainOffer?.price?.total).toLocaleString()} €
+        </section>
+      </div>
+      {mainOffer?.policies?.cancellations &&
+        mainOffer?.policies?.cancellations[0]?.description && (
+          <Text type="danger" className="text-sm mt-5 mb-3">
+            {mainOffer?.policies?.cancellations[0]?.description?.text}
+          </Text>
+        )}
+      <Button
+        type="danger"
+        block
+        className="bg-[#1a2b49] border-[#1a2b49] text-white hover:bg-[#526D82] hover:border-[#526D82]"
+        onClick={() => {
+          bookOffer();
+        }}
+      >
+        Book
+      </Button>
+    </article>
   );
 };
 
 const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
   const [searchText, setSearchText] = React.useState("");
   const [filteredOffers, setFilteredOffers] = useState(hotelOffers);
+  const listRef = useRef(null);
 
   const handleSearch = (value) => {
     setSearchText(value);
@@ -246,15 +195,27 @@ const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
     setFilteredOffers(filtered);
   };
 
+  const handlePageChange = (page) => {
+    console.log(page);
+
+    // Scroll to the top of the list when page changes
+    if (listRef.current) {
+      listRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-[#1a2b49]">Hotel Offers</h2>
-        <div className="w-1/3">
+        <div className="w-1/2">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search hotels by name or city"
+              placeholder="Search hotels"
               className="w-full py-2 px-4 border border-[#9DB2BF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#526D82]"
               value={searchText}
               onChange={(e) => handleSearch(e.target.value)}
@@ -265,18 +226,24 @@ const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
       </div>
 
       <List
+        ref={listRef}
+        className={` overflow-y-scroll overflow-hidden h-96 x-10`}
+        style={{
+          scrollbarWidth: "none", // Firefox
+          msOverflowStyle: "none", // Internet Explorer and Edge
+        }}
         grid={{
           gutter: 16,
           xs: 1,
           sm: 1,
           md: 1,
-          lg: 2,
-          xl: 2,
-          xxl: 3,
+          lg: 1,
+          xl: 1,
+          xxl: 1,
         }}
         dataSource={filteredOffers}
         renderItem={(offer) => (
-          <List.Item>
+          <List.Item className="w-full ">
             <HotelOfferCard
               offer={offer}
               setLoading={setLoading}
@@ -287,22 +254,24 @@ const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
         )}
         pagination={{
           onChange: (page) => {
-            console.log(page);
+            handlePageChange(page);
           },
-          pageSize: 6,
+          pageSize: 2,
           position: "bottom",
           align: "center",
+          className: "pb-6",
         }}
       />
     </div>
   );
 };
 
-const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
+const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
   const [form] = Form.useForm();
 
-  const onFinish = async (values) => {
+  const handleSearch = async () => {
     setLoading(true);
+    const values = form.getFieldsValue();
     const formattedValues = {
       ...values,
       checkInDate: values.dates[0].format("YYYY-MM-DD"),
@@ -312,13 +281,16 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
 
     console.log("Search criteria:", formattedValues);
     try {
+      setLoading(true);
+      setStep((prevStep) => prevStep + 1);
       let { data } = await getHotels(formattedValues);
       setOffers(data);
     } catch (error) {
       message.error("Error searching for hotels. Please try again later.");
     } finally {
       setLoading(false);
-      finishProp();
+
+      // onSearch();
     }
   };
 
@@ -327,11 +299,10 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
   };
 
   return (
-    <Card className="max-w-xl mx-auto my-6 p-6 bg-[#DDE6ED]">
+    <Card className="max-w-xl mx-auto my-6 p-6 bg-[#DDE6ED] border border-gray-300">
       <Form
         form={form}
         layout="vertical"
-        onFinish={onFinish}
         initialValues={{
           adults: 2,
           city: "New York",
@@ -418,11 +389,11 @@ const HotelSearchForm = ({ setOffers, setLoading, onFinish: finishProp }) => {
         <Form.Item>
           <Button
             type="danger"
-            htmlType="submit"
             block
             size="large"
             className="bg-[#1a2b49] border-[#1a2b49] hover:bg-[#526D82] hover:border-[#526D82] text-white"
             icon={<SearchOutlined />}
+            onClick={handleSearch}
           >
             Search Hotels
           </Button>
@@ -449,6 +420,7 @@ const BookHotel = () => {
   const [offer, setOffer] = useState(null);
   const [promoCode, setPromoCode] = useState(null);
 
+  console.log("Step", step);
   const book = async () => {
     setLoading(true);
     try {
@@ -468,6 +440,7 @@ const BookHotel = () => {
       setLoading(false);
     }
   };
+
   const steps = [
     {
       title: "Choose City and Dates",
@@ -475,7 +448,8 @@ const BookHotel = () => {
         <HotelSearchForm
           setOffers={setOffers}
           setLoading={setLoading}
-          onFinish={() => setStep(step + 1)}
+          setStep={setStep}
+          // onSearch={() => setStep(step + 1)}
         />
       ),
     },
@@ -502,30 +476,72 @@ const BookHotel = () => {
       ),
     },
   ];
+
   return (
-    <Card className="w-4/5 my-5 mx-auto p-6 bg-[#f9f9f9] shadow-lg">
-      <Title level={4} className="mb-6 text-[#1a2b49]">
-        Book Your Hotel
-      </Title>
-      <CustomProgressBar step={step} setStep={setStep} />
-      {loading ? (
-        <div className="flex justify-center p-8">
-          <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-        </div>
-      ) : (
-        steps[step]?.content
-      )}
-      <div className="flex justify-between mt-8">
-        {step > 0 && (
-          <Button
-            onClick={() => setStep(step - 1)}
-            className="bg-[#9DB2BF] border-[#9DB2BF] hover:bg-[#686d7e] hover:border-[#686d7e] text-white"
-          >
-            Previous
-          </Button>
-        )}
-      </div>
-    </Card>
+    <ConfigProvider
+      theme={{
+        components: {
+          Button: {
+            defaultBg: "rgb(26,43,73)",
+            defaultHoverBg: "rgb(82,109,130)",
+            defaultColor: "white",
+            defaultHoverColor: "white",
+            defaultHoverBorderColor: "rgb(82,109,130)",
+          },
+        },
+      }}
+    >
+      <Card
+        className="w-11/12 min-h-[600px] flex my-20 mx-auto shadow"
+        classNames={{
+          body: "flex flex-1 flex-col justify-center",
+          cover: "flex-1",
+        }}
+        cover={
+          <img
+            alt=""
+            className="size-full"
+            src="https://img.freepik.com/premium-vector/hotel-building-near-sea-seafront-resort-view-vector-illustration-flat-cartoon_101884-681.jpg?w=740"
+          />
+        }
+      >
+        <header className="flex flex-col gap-5">
+          {step > 0 && !loading && (
+            <ArrowLeftOutlined
+              onClick={() => setStep(step - 1)}
+              className="stroke-black text-lg cursor-pointer"
+            />
+          )}
+          <Typography.Title level={4} className="mb-6">
+            Book Your Hotel
+          </Typography.Title>
+        </header>
+        <main className="h-full flex mt-6">
+          <section className="flex-1 flex flex-col justify-center items-center">
+            <Form
+              scrollToFirstError
+              className="w-full flex flex-col justify-center px-4 flex-1"
+              layout="vertical"
+            >
+              <Fade direction="up" triggerOnce>
+                {loading ? (
+                  <Spin className="flex-1 justify-center flex" />
+                ) : (
+                  steps[step]?.content
+                )}
+              </Fade>
+            </Form>
+          </section>
+          <section className="h-full flex-[0.4]">
+            <CustomProgressBar
+              step={step}
+              setStep={setStep}
+              loading={loading}
+            />
+          </section>
+        </main>
+      </Card>
+    </ConfigProvider>
   );
 };
 
