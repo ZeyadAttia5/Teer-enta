@@ -202,14 +202,14 @@ const BookItinerary = () => {
     
           {/* Price Details Section (Conditional) */}
           {showReceipt && (
-            <div className="bg-white rounded-lg shadow-md p-4">
-              <div className="text-center mb-6 max-w-4xl">
+            <div className="bg-white rounded-lg shadow-md p-4 w-[110%] mx-auto">
+              <div className="text-center mb-6 max-w-6xl">
                 <Text className="text-4xl font-bold text-first">E-Receipt</Text>
               </div>
     
               {/* Payment Time */}
               <div className="flex justify-between items-center mb-4">
-                <Text className="text-lg font-semibold text-second">Time:</Text>
+                <Text className="text-lg font-semibold text-second">Time Paid:</Text>
                 <Text className="text-xs">{new Date().toLocaleString()}</Text>
               </div>
     
@@ -219,10 +219,10 @@ const BookItinerary = () => {
                 <Text className="text-xs">{itinerary?.name || "N/A"}</Text>
               </div>
 
-              <div className="flex justify-between items-center mb-4">
-  <Text className="text-lg font-semibold text-second">Selected Date:</Text>
-  <Text className="text-xs">{selectedDate ? dayjs(selectedDate).format("MMMM D, YYYY") : "None"}</Text>
-</div>
+              <div className="flex justify-between items-center mb-4 ">
+               <Text className="text-lg font-semibold text-second">Selected Date:</Text>
+               <Text className="text-xs">{selectedDate ? dayjs(selectedDate).format("MMMM D, YYYY") : "None"}</Text>
+                </div>
 
     
               {/* Promo Code */}
@@ -241,7 +241,6 @@ const BookItinerary = () => {
               <div className="flex justify-between items-center mb-4">
                 <Text className="text-lg font-semibold text-second">Before Discount:</Text>
                 <Text className="text-xs">
-                  {currency?.code} {(currency?.rate * itinerary?.price).toFixed(2)} -{" "}
                   {(currency?.rate * itinerary?.price).toFixed(2)}
                 </Text>
               </div>
@@ -250,7 +249,6 @@ const BookItinerary = () => {
               <div className="flex justify-between items-center mb-4 border-t pt-4">
                 <Text className="text-lg font-bold text-red-600">After Discount:</Text>
                 <Text className="text-s font-bold text-red-600">
-                  {currency?.code} {calculateFinalPrice(currency?.rate * itinerary?.price)} -{" "}
                   {calculateFinalPrice(currency?.rate * itinerary?.price)}
                 </Text>
               </div>

@@ -104,106 +104,128 @@ const ActivityCard = ({
         }
     };
 
-    return (<main className="flex flex-wrap justify-center items-center pt-6">
+    return (
+      <main className="flex flex-wrap justify-center items-center pt-6">
         <div
-            className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-2 cursor-pointer hover:border-2 hover:border-third">
-            {user && (<div className="absolute top-4 right-4 z-10 flex gap-2">
-                <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
-                    <Button
-                        type="text"
-                        icon={isSaved ? (<HeartFilled style={{color: "red", fontSize: "24px"}}/>) : (
-                            <HeartOutlined style={{color: "gray", fontSize: "24px"}}/>)}
-                        onClick={() => handleSaveActivity(id)}
-                    />
-                </Tooltip>
-                <Tooltip title={isNotified ? "Turn off notifications" : "Get notified"}>
-                    <Button
-                        type="text"
-                        icon={isNotified ? (<BellFilled style={{color: "#FFD700", fontSize: "24px"}}/>) : (
-                            <BellOutlined style={{color: "gray", fontSize: "24px"}}/>)}
-                        onClick={handleNotificationToggle}
-                    />
-                </Tooltip>
-            </div>)}
-
-            <Card
-                className="rounded-lg shadow-lg px-2 pt-2 transition-all duration-300 ease-in-out hover:text-white"
-                style={{backgroundColor: "#ffffff"}}
-            >
-                <Card.Meta
-                    title={<>
-                        <Tooltip title={name}>
-                  <span
-                      className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out relative"
-                      style={{color: "#333333"}}
-                  >
-                    {name}
-                      <hr className="my-4 border-t-2 border-second"/>
-                  </span>
-                        </Tooltip>
-                    </>}
-                    description={<div className="flex flex-col space-y-1 mb-0" style={{color: "#333333"}}>
-                        <Tooltip title="Date">
-                  <span className="font-semibold text-lg hover:text-third flex items-center">
-                    <CalendarOutlined className="mr-2"/>
-                      {new Date(date).toLocaleDateString()}
-                  </span>
-                        </Tooltip>
-                        <Tooltip title="Time">
-                  <span className="font-semibold text-lg hover:text-third flex items-center">
-                    <ClockCircleOutlined className="mr-2"/>
-                      {time}
-                  </span>
-                        </Tooltip>
-                        <Tooltip title="Category">
-                  <span className="font-semibold text-lg hover:text-third flex items-center">
-                    <FolderOutlined className="mr-2"/>
-                      {category || "N/A"}
-                  </span>
-                        </Tooltip>
-
-                        <div className="flex items-center justify-center gap-1 my-2">
-                            <Tooltip title="" overlayClassName="bg-fourth">
-                                <p className="text-xs font-bold mr-1">{currencyCode}</p>
-                            </Tooltip>
-                            <Tooltip title="Price" overlayClassName="bg-fourth">
-                                <p className="text-2xl sm:text-3xl font-bold">
-                                    {price?.min ? (currencyRate * price.min).toFixed(1) : "N/A"},
-                                </p>
-                            </Tooltip>
-
-                            <Tooltip title="" overlayClassName="bg-fourth">
-                                <p className="text-xs font-bold mr-1"></p>
-                            </Tooltip>
-                            <Tooltip title="Price" overlayClassName="bg-fourth">
-                                <p className="text-2xl sm:text-3xl font-bold">
-                                    {price?.max ? (currencyRate * price.max).toFixed(1) : "N/A"}
-                                </p>
-                            </Tooltip>
-                        </div>
-                    </div>}
+          className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-2 cursor-pointer hover:border-2 hover:border-third"
+          onClick={handleActivityDetails} // Navigate to the details page when the card is clicked
+        >
+          {user && (
+            <div className="absolute top-4 right-4 z-10 flex gap-2">
+              <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
+                <Button
+                  type="text"
+                  icon={
+                    isSaved ? (
+                      <HeartFilled style={{ color: "red", fontSize: "24px" }} />
+                    ) : (
+                      <HeartOutlined style={{ color: "gray", fontSize: "24px" }} />
+                    )
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent parent click
+                    handleSaveActivity(id);
+                  }}
                 />
-                <div className="flex justify-center items-center gap-4 p-0 mt-6">
-                    <Button
-                        type="danger"
-                        onClick={handleActivityDetails}
-                        className="text-white bg-second hover:bg-gray-700 transition-all duration-300"
+              </Tooltip>
+              <Tooltip title={isNotified ? "Turn off notifications" : "Get notified"}>
+                <Button
+                  type="text"
+                  icon={
+                    isNotified ? (
+                      <BellFilled style={{ color: "#FFD700", fontSize: "24px" }} />
+                    ) : (
+                      <BellOutlined style={{ color: "gray", fontSize: "24px" }} />
+                    )
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent parent click
+                    handleNotificationToggle();
+                  }}
+                />
+              </Tooltip>
+            </div>
+          )}
+    
+          <Card
+            className="rounded-lg shadow-lg px-2 pt-2 transition-all duration-300 ease-in-out hover:text-white"
+            style={{ backgroundColor: "#ffffff" }}
+          >
+            <Card.Meta
+              title={
+                <>
+                  <Tooltip title={name}>
+                    <span
+                      className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out relative"
+                      style={{ color: "#333333" }}
                     >
-                        Show Details
-                    </Button>
-
-                    <Button
-                        type="danger"
-                        onClick={handleLocationClick}
-                        className="text-white bg-third hover:bg-gray-500 transition-all duration-300"
-                    >
-                        <EnvironmentOutlined className="mr-2"/>
-                        Location
-                    </Button>
+                      {name}
+                      <hr className="my-4 border-t-2 border-second" />
+                    </span>
+                  </Tooltip>
+                </>
+              }
+              description={
+                <div className="flex flex-col space-y-1 mb-0" style={{ color: "#333333" }}>
+                  <Tooltip title="Date">
+                    <span className="font-semibold text-lg hover:text-third flex items-center">
+                      <CalendarOutlined className="mr-2" />
+                      {new Date(date).toLocaleDateString()}
+                    </span>
+                  </Tooltip>
+                  <Tooltip title="Time">
+                    <span className="font-semibold text-lg hover:text-third flex items-center">
+                      <ClockCircleOutlined className="mr-2" />
+                      {time}
+                    </span>
+                  </Tooltip>
+                  <Tooltip title="Category">
+                    <span className="font-semibold text-lg hover:text-third flex items-center">
+                      <FolderOutlined className="mr-2" />
+                      {category || "N/A"}
+                    </span>
+                  </Tooltip>
+    
+                  <div className="flex items-center justify-center gap-1 my-2">
+                    <Tooltip title="" overlayClassName="bg-fourth">
+                      <p className="text-xs font-bold mr-1">{currencyCode}</p>
+                    </Tooltip>
+                    <Tooltip title="Price" overlayClassName="bg-fourth">
+                      <p className="text-2xl sm:text-3xl font-bold">
+                        {price?.min ? (currencyRate * price.min).toFixed(1) : "N/A"}
+                      </p>
+                    </Tooltip>
+    
+                    <Tooltip title="" overlayClassName="bg-fourth">
+                      <p className="text-xs font-bold mr-1"></p>
+                    </Tooltip>
+                    <Tooltip title="Price" overlayClassName="bg-fourth">
+                      <p className="text-2xl sm:text-3xl font-bold">
+                        {price?.max ? (currencyRate * price.max).toFixed(1) : "N/A"}
+                      </p>
+                    </Tooltip>
+                  </div>
                 </div>
-            </Card>
+              }
+            />
+            <div className="flex justify-center items-center p-0 mt-6">
+  <Button
+    type="primary"
+    onClick={(e) => {
+      e.stopPropagation(); // Prevent card's onClick from triggering
+      navigate(`/touristActivities/book/${id}`);
+    }}
+    className="text-white bg-first text-xl py-4 px-6 hover:bg-second transition-all duration-300"
+  >
+    Book
+  </Button>
+</div>
+
+          </Card>
         </div>
-    </main>);
+      </main>
+    );
+    
 };
 
 export default ActivityCard;
