@@ -6,6 +6,7 @@ const ItinerarySchema = new mongoose.Schema(
         accessibility: String,
         pickupLocation: String,
         dropOffLocation: String,
+        imageUrl: String,
         language: {type: String, required: true},
         price: {type: Number, required: true},
         isActive: {type: Boolean, default: true},
