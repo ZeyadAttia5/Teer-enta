@@ -122,7 +122,7 @@ const Sidebar = ({ visible, onClose }) => {
                     key="4"
                     onClick={() =>
                         handleClick(
-                            user.userRole === "TourGuide"
+                            user.userRole === "TourGuide" || user.userRole === "Admin"
                                 ? "/itinerary/tourguide_itineraries"
                                 : "/itinerary"
                         )
