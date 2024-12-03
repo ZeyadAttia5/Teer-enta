@@ -20,10 +20,8 @@ import {
 import { ReloadOutlined } from "@ant-design/icons";
 import {
   GlobalOutlined,
-  DollarCircleOutlined,
   TeamOutlined,
   EnvironmentTwoTone,
-  SwapRightOutlined,
 } from "@ant-design/icons";
 import {
   MinusCircleOutlined,
@@ -363,7 +361,7 @@ const ItineraryScreen = ({ setFlag }) => {
     try {
       const response = await getCurrency();
       setCurrency(response.data);
-      console.log("Currency:", response.data);
+      // console.log("Currency:", response.data);
     } catch (error) {
       console.error("Fetch currency error:", error);
     }

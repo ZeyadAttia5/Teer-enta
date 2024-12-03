@@ -530,26 +530,22 @@ const TourguideItineraryScreen = ({ setFlag }) => {
   };
 
   return (
-    <div className="p-6 min-h-screen">
+    <div className="p-6 ">
       {/* <h1 className="text-9xl font-bold mb-4 text-[#496989]">Itineraries</h1> */}
       {user && user.userRole === "TourGuide" && (
         <div className="flex justify-end">
           <Button
-            type="primary"
+            type="danger"
             icon={<PlusOutlined />}
             onClick={() => showModal()}
-            className="mb-4"
-            style={{
-              backgroundColor: "#02735F",
-              borderColor: "#02735F",
-              float: "",
-            }}
+            className="mb-4 hover:bg-gray-200"
+            
           >
             Add Itinerary
           </Button>
         </div>
       )}
-      <div className="p-8 bg-fourth">
+      <div className="p-8">
         <div className="mb-6 flex flex-col items-center space-y-4">
           {/* Centered, smaller search bar */}
           <Search

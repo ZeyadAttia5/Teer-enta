@@ -39,7 +39,7 @@ const AddUser = ({setFlag}) => {
                 },
             }}
         >
-            <div className="min-h-screen bg-gray-50 p-6">
+            <div className=" p-6">
                 <div className="max-w-2xl mx-auto">
                     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                         {/* Header */}

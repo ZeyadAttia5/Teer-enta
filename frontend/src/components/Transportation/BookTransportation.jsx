@@ -96,7 +96,7 @@ const [pickupAddress, setPickupAddress] = useState(null);
 
   
     return (
-      
+      <div className="bg-fourth">
       <Badge.Ribbon
       text={item.isActive ? "Active" : "Inactive"}
       color={item.isActive ? "green" : "red"}
@@ -221,10 +221,10 @@ const [pickupAddress, setPickupAddress] = useState(null);
 
       {/* Book Now Button */}
               <Button
-                type="primary"
+                type="danger"
                 block
                 onClick={() => onBook(item._id, promoCode)}
-                className="bg-second border-fourth hover:bg-fourth hover:border-first"
+                className="bg-first text-white border-fourth hover:bg-black"
               >
                 Book Now
               </Button>
@@ -275,6 +275,7 @@ const [pickupAddress, setPickupAddress] = useState(null);
             </Space>
           </Card>
         </Badge.Ribbon>
+        </div>
       );
       
       

@@ -6,8 +6,9 @@ const BrevoService = require("../Util/mailsHandler/brevo/brevoService");
 const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
 const brevoService = new BrevoService(brevoConfig);
 const UpcomingEventTemplate = require("../Util/mailsHandler/mailTemplets/5UpcomingEventsBookedTemplate");
-const { getSocketIo } = require("../Util/socket");
-
+const getFCMToken = require('../Util/Notification/FCMTokenGetter');
+const sendNotification = require('../Util/Notification/NotificationSender');
+// Receive notifications reminding me of upcoming events that I booked/ paid for via email and push notification
 // TODO: Not tested yet
 cron.schedule('0 0 * * *', async () => {
     try {
@@ -44,13 +45,15 @@ cron.schedule('0 0 * * *', async () => {
                         emailParams.date,
                         `${process.env.FRONTEND_HOST}/itinerary/activityDetails/${activity._id}`
                     );
-                    const io = getSocketIo();
-                    io.emit("notification", {
-                        email: user.email,
-                        userName: user.username,
-
-                    })
                     await brevoService.send(emailTemplate, user.email);
+                    const fcmToken = await getFCMToken(user._id);
+                    if (fcmToken) {
+                        await sendNotification({
+                            title: 'Upcoming Event Reminder',
+                            body:`Don't forget about your upcoming event ${emailParams.name} on ${emailParams.date}`,
+                            tokens: [fcmToken],
+                        })
+                    }
                     console.log(`Reminder sent to ${user.email} for activity ${activity.name}`);
                 }
             }

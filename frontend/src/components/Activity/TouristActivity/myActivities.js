@@ -52,8 +52,8 @@ const TouristActivity = () => {
   }, [location?.pathname]);
 
   return (
-    <div className="p-16 bg-fourth">
-      <h1 className="text-3xl font-bold mb-4 text-center text-blue-600 p-2 rounded-lg shadow-md">
+    <div className="p-16">
+      <h1 className="text-3xl font-bold mb-4 text-center text-first p-2 rounded-lg shadow-md">
         My Activities
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">

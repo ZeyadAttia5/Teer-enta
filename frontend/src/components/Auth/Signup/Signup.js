@@ -13,7 +13,7 @@ import IDUpload from "./FilesUpload/IDUpload.js";
 import { uploadFile, uploadFiles } from "../../../api/account.ts";
 import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
 import { Link } from "react-router-dom";
-import logo from "../../../assets/logo/logo.jpeg";
+import logo from "../../../assets/logo/logo2.jpg";
 import HappyWoman from "../../../assets/svgs/happy-woman-svgrepo-com.svg";
 
 function Signup({ setFlag }) {
@@ -333,7 +333,7 @@ function Signup({ setFlag }) {
       if (selectedRole !== "Tourist") {
         try {
           response1 = await uploadFile(ID);
-          console.log("image url is: " + response1.data.imageUrl);
+          // console.log("image url is: " + response1.data.imageUrl);
           setIdUrl(response1.data.imageUrl);
         } catch (error) {
           setIsLoading(false);

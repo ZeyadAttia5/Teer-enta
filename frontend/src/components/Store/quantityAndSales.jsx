@@ -81,7 +81,7 @@ const QuantityAndSales = () => {
             },
           }}
       >
-        <div className="min-h-screen bg-gray-50/50 p-8">
+        <div className=" p-8">
           <div className="max-w-7xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
               {/* Header */}
