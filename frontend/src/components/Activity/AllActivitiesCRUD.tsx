@@ -51,7 +51,7 @@ import {
   FlagFilled,
 } from "@ant-design/icons";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-
+import ImageUploader from "../Images/imageUploader"
 import moment from "moment";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
@@ -76,6 +76,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   const [location, setLocation] = useState({ lat: 0, lng: 0 }); // Default location
   const [form] = Form.useForm();
   const locationn = useLocation();
+  const [selectedImage , setSelectedImage] = useState(null);
 
   // Fetch activities, categories, and tags on component load
   useEffect(() => {
@@ -89,6 +90,10 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     fetchCategories();
     fetchPreferenceTags();
   }, [locationn?.pathname]);
+
+  const handleImagePathChange = (path: string) => {
+    setSelectedImage(path);
+  }
 
   const fetchActivities = async () => {
     setLoading(true);
@@ -191,6 +196,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   const handleFormSubmit = async (values) => {
     const activityData = {
       ...values,
+      imageUrl : selectedImage,
       date: values.date.toISOString(),
       time: values.time.format("HH:mm"),
       location,
@@ -485,9 +491,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
               layout="vertical"
           >
             {/* Form items */}
-            <Item label="image" name ='image' rules={[{required:true}]}>
-
-            </Item>
+            <ImageUploader onImagePathChange={handleImagePathChange}/>
             <Item label="Name" name="name" rules={[{required: true}]}>
               <Input disabled={isViewing}/>
             </Item>
