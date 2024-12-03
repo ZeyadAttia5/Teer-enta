@@ -14,6 +14,7 @@ import { getTouristActivities } from "../../api/activity.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { getCurrency } from "../../api/account.ts";
 import VacationGuide from "../../components/VacationGuide.jsx";
+import { Hotel, Train, TrainIcon, Plane, PlaneIcon } from "lucide-react";
 import {
   DollarCircleOutlined,
   EnvironmentTwoTone,
@@ -197,19 +198,17 @@ const TouristWelcome = ({ setFlag }) => {
           <span>See the Vatican Museums like never before</span>
         </Fade>
 
-        {/* {user &&(user.userRole === "Tourist"&& (
-          <div className="absolute right-[100px] bottom-[30%] w-1/3 ">
-          <VacationGuide />
-        </div>
-            )
-          )
-        } */}
+        {user && user.userRole === "Tourist" && (
+          <div className="fixed bottom-4 right-4 z-10">
+            <VacationGuide />
+          </div>
+        )}
 
         <div className="absolute justify-around top-[72%] w-3/4 flex">
           <Button
             className={`p-8 px-12 font-bold ring-0 text-2xl font-playfair-display ${
               selectedButton === 1
-                ? "bg-white text-first"
+                ? "bg-backgroundColor text-first"
                 : "bg-transparent text-white"
             }`}
             type="danger"
@@ -234,31 +233,32 @@ const TouristWelcome = ({ setFlag }) => {
           <Button
             className={`p-8 px-12 font-bold ring-0 text-2xl font-playfair-display ${
               selectedButton === 2
-                ? "bg-white text-first"
+                ? "bg-backgroundColor text-first"
                 : "bg-transparent text-white"
             }`}
             type="danger"
             onClick={() => setSelectedButton(2)}
           >
-            <img src={taxi} alt="Icon" className="size-6" />
+            <Train />
             Transportations
           </Button>
           <Button
             className={`p-8 px-12 font-bold ring-0 font-playfair-display text-2xl ${
               selectedButton === 3
-                ? "bg-white text-first"
+                ? "bg-backgroundColor text-first"
                 : "bg-transparent text-white"
             }`}
             type="danger"
             onClick={() => setSelectedButton(3)}
           >
-            <img src={hotelSVG} alt="Icon" className="size-6" />
+            <Hotel />
+              
             Hotels
           </Button>
           <Button
             className={`p-8 px-12 font-bold font-playfair-display ring-0 text-2xl ${
               selectedButton === 4
-                ? "bg-white text-first"
+                ? "bg-backgroundColor text-first"
                 : "bg-transparent text-white"
             }`}
             type="danger"
