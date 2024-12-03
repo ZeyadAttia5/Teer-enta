@@ -68,6 +68,7 @@ import { toast } from "react-toastify";
 import CheckOutOrder from "./components/Store/checkOutOrder";
 import OrderHistory from "./components/Store/orderHistory";
 import OrderDetails from "./components/Store/orderDetails";
+import VacationGuide from "./components/VacationGuide.jsx";
 import {NotificationProvider} from "./components/notifications/NotificationContext";
 import './services/firebase.js';
 import {initializeFirebaseMessaging, setupMessageListener} from "./services/firebase";
@@ -82,6 +83,7 @@ function AppContent() {
   const showBackButton = location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/signup";
   const [isNotificationIncoming, setIsNotificationIncoming] = useState(true);
   const [incomingNotification, setIncomingNotification] = useState(null);
+  const user1 = JSON.parse(localStorage.getItem("user"));
 
   const handleNotification = useCallback((payload) => {
     // console.log("Received foreground message:", payload);
@@ -205,6 +207,14 @@ function AppContent() {
             <BackButton />
           </div>
         )}
+
+        {user1 &&(user1.userRole === "Tourist"&& (
+          <div className="absolute right-[100px] bottom-[30%] w-1/3 ">
+          <VacationGuide />
+        </div>
+            )
+          )
+        }
 
         <Routes>
           {/* General Routes */}
