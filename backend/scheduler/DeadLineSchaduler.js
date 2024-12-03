@@ -5,7 +5,7 @@ const BookedHotel = require('../models/Booking/BookedHotel');
 const BookedFlight = require('../models/Booking/BookedFlight');
 const errorHandler = require('../Util/ErrorHandler/errorSender');
 const cron = require('node-cron');
-
+// update the status of booked (any) to 'Completed' if the scheduled date has passed
 cron.schedule('0 0 * * *', async () => {
     try {
         console.log('Checking for deadlines for booked events');

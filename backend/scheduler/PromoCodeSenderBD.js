@@ -8,7 +8,7 @@ const brevoService = new BrevoService(brevoConfig);
 const PromoCodeTemplate = require("../Util/mailsHandler/mailTemplets/3PromoCodeTemplate");
 const moment = require('moment-timezone'); // Import moment-timezone
 
-
+// Receive a Promo code on my birthday that can be used on anything in the website by email and on the system
 cron.schedule('0 0 * * *', async () => {
     try {
         console.log('Sending promo codes to tourists for their birthdays');

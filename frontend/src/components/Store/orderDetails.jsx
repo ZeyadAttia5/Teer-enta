@@ -98,7 +98,7 @@ const OrderDetails = () => {
                     <div className="flex justify-between items-center mb-6">
                         <Button
                             icon={<ArrowLeftOutlined />}
-                            onClick={() => navigate('/orders')}
+                            onClick={() => navigate('/orderHistory')}
                             className="text-indigo-600 hover:text-indigo-800"
                         >
                             Back to Orders
