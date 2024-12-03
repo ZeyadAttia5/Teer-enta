@@ -540,7 +540,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
   return (
     <div className="p-6 ">
       {/* <h1 className="text-9xl font-bold mb-4 text-[#496989]">Itineraries</h1> */}
-      {user && user.userRole === "TourGuide" && (
+      {user && (
         <div className="flex justify-end">
           <Button
             type="danger"
@@ -722,7 +722,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
           </div>
         </div>
       </div>
-      {user === null || user?.userRole === "TourGuide" ? (
+      {(
         <main className="flex flex-wrap justify-center items-center min-h-screen py-10">
           {sortedItineraries?.map((itinerary, index) => (
             <div
@@ -818,8 +818,6 @@ const TourguideItineraryScreen = ({ setFlag }) => {
             </div>
           ))}
         </main>
-      ) : (
-        <></>
       )}
 
       <Modal
