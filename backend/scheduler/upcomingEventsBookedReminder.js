@@ -8,7 +8,7 @@ const brevoService = new BrevoService(brevoConfig);
 const UpcomingEventTemplate = require("../Util/mailsHandler/mailTemplets/5UpcomingEventsBookedTemplate");
 const getFCMToken = require('../Util/Notification/FCMTokenGetter');
 const sendNotification = require('../Util/Notification/NotificationSender');
-
+// Receive notifications reminding me of upcoming events that I booked/ paid for via email and push notification
 // TODO: Not tested yet
 cron.schedule('0 0 * * *', async () => {
     try {
