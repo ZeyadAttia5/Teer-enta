@@ -150,7 +150,7 @@ const ItineraryDetails: React.FC = () => {
   };
 
   return (
-    <div className="items-center bg-fourth">
+    <div className="items-center">
       <div className="min-h-screen p-8">
         
         <Space
@@ -158,9 +158,7 @@ const ItineraryDetails: React.FC = () => {
           size="large"
           className="relative w-full p-10"
         >
-          <div className="absolute top-1 left-1/2 animate-bounce">
-            <EnvironmentOutlined className="text-6xl text-first" />
-          </div>
+        
 
           {/* First Card for Itinerary Details */}
           <Row gutter={[16, 16]}>

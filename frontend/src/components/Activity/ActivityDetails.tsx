@@ -174,12 +174,9 @@ const ActivityDetails: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen p-8 bg-fourth">
+        <div className="min-h-screen p-8">
           <Space direction="vertical" size="large" className="relative w-full p-10">
-            {/* Animated Icon */}
-            <div className="absolute top-1 left-1/2 animate-bounce">
-              <RocketOutlined className="text-6xl text-first" />
-            </div>
+            
       
             {/* Header and Main Layout */}
             <Row gutter={[16, 16]} justify="space-between" align="top">
@@ -346,13 +343,14 @@ className="text-first bg-white hover:bg-gray-200"
 </div>
 
 <Button
+type="danger"
 onClick={() => handleActivityBooking(ActivityId)}
-className="w-full text-white text-4xl py-6 px-8 bg-first hover:bg-third transition-all duration-300 mt-4 border-2 border-[#496989] shadow-lg"
+className="w-full text-white text-4xl py-6 px-8 bg-first hover:bg-black transition-all duration-300 mt-4 shadow-lg"
 style={{
 fontSize: '40px', // Bigger font for the button
 padding: '30px 50px', // Larger button padding
 width: '100%', // Full width of the container
-backgroundColor: "#1a2b49",
+
 }}
 >
 Book Now
