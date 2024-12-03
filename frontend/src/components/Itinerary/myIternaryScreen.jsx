@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   Button,
@@ -20,13 +20,7 @@ import {
   Popconfirm,
 } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
-import {
-  GlobalOutlined,
-  DollarCircleOutlined,
-  TeamOutlined,
-  EnvironmentTwoTone,
-  SwapRightOutlined,
-} from "@ant-design/icons";
+
 import {
   MinusCircleOutlined,
   PlusOutlined,
@@ -43,10 +37,17 @@ import {
   getItineraries,
   flagIternaary,
 } from "../../api/itinerary.ts";
-import { SearchOutlined } from "@ant-design/icons";
 import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
-import { Filter, SortAsc, ChevronRight, CheckSquareIcon } from "lucide-react";
+import {
+  ChevronRight,
+  MapPin,
+  Gift,
+  RefreshCw,
+  Globe,
+  Users,
+  Plus,
+} from "lucide-react";
 
 import moment from "moment";
 import "antd";
@@ -64,149 +65,9 @@ const { Option } = Select;
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 
-const Button1 = ({ children, onClick, variant = "default" }) => {
-  const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
-  const variantClasses =
-    variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
-
-  return (
-    <button
-      className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-};
-
-const Button2 = ({ children, onClick, variant = "default" }) => {
-  const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
-  const variantClasses =
-    variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
-
-  return (
-    <Button
-      className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`}
-      onClick={onClick}
-      type="danger"
-      danger
-      icon={<ReloadOutlined />}
-    >
-      {children}
-    </Button>
-  );
-};
-
-const DropdownMenu = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
-      {React.Children.map(children, (child) =>
-        React.cloneElement(child, { isOpen, setIsOpen })
-      )}
-    </div>
-  );
-};
-
-const DropdownMenuTrigger = ({ children, isOpen, setIsOpen }) => {
-  return React.cloneElement(children, {
-    onClick: () => setIsOpen(!isOpen),
-    "aria-expanded": isOpen,
-    "aria-haspopup": true,
-  });
-};
-
-const DropdownMenuContent = ({ children, isOpen }) => {
-  if (!isOpen) return null;
-  return (
-    <div className="absolute right-0 left-0 mt-2 w-56 rounded-md shadow-lg bg-white text-gray-700 z-50">
-      <div className="py-1">{children}</div>
-    </div>
-  );
-};
-
-const DropdownMenuLabel = ({ children }) => (
-  <div className="px-3 py-2 text-sm font-semibold">{children}</div>
-);
-const DropdownMenuSeparator = () => <hr className="my-1 border-border" />;
-const DropdownMenuGroup = ({ children }) => <div>{children}</div>;
-const DropdownMenuItem = ({ children, onSelect }) => (
-  <button
-    className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-default"
-    onClick={onSelect}
-  >
-    {children}
-  </button>
-);
-
-const DropdownMenuPortal = ({ children }) => {
-  return <div className="relative cursor-pointer">{children}</div>;
-};
-
-const DropdownMenuSub = ({ trigger, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div
-      className="relative"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-    >
-      <DropdownMenuSubTrigger onClick={() => setIsOpen((prev) => !prev)}>
-        {trigger}
-      </DropdownMenuSubTrigger>
-      <DropdownMenuPortal>
-        <DropdownMenuSubContent isOpen={isOpen}>
-          {children}
-        </DropdownMenuSubContent>
-      </DropdownMenuPortal>
-    </div>
-  );
-};
-
-const DropdownMenuSubTrigger = ({ children, onClick }) => (
-  <button className="w-full text-left px-3 py-2 text-sm flex items-center justify-between hover:bg-accent hover:text-accent-foreground">
-    {children}
-    <ChevronRight className="h-4 w-4" />
-  </button>
-);
-
-const DropdownMenuSubContent = ({ children, isOpen }) => {
-  if (!isOpen) return null;
-  return (
-    <div className="absolute left-full top-1/2 -translate-y-10 w-56 rounded-md shadow-lg bg-white text-gray-700 z-50">
-      <div className="py-1 px-1 bg-white hover:bg-gray-100 hover:border-transparent rounded-md">
-        {children}
-      </div>
-    </div>
-  );
-};
-
 const MyItineraryScreen = ({ setFlag }) => {
   setFlag(false);
   const user = JSON.parse(localStorage.getItem("user"));
-  const accessToken = localStorage.getItem("accessToken");
   const [itineraries, setItineraries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -556,12 +417,7 @@ const MyItineraryScreen = ({ setFlag }) => {
           <Button
             icon={<EyeOutlined />}
             onClick={() => showViewModal(record)}
-            className="mr-2"
-            style={{
-              backgroundColor: "#02735F",
-              color: "#fff",
-              border: "none",
-            }}
+            className="mr-2 bg-first text-white border-none hover:bg-[#025D4C] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#025D4C]"
           >
             View
           </Button>
@@ -571,12 +427,7 @@ const MyItineraryScreen = ({ setFlag }) => {
               <Button
                 icon={<EditOutlined />}
                 onClick={() => showModal(record)}
-                className="mr-2"
-                style={{
-                  backgroundColor: "#02735F",
-                  color: "#fff",
-                  border: "none",
-                }}
+                className="mr-2 bg-first text-white border-none hover:bg-[#025D4C] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#025D4C]"
               >
                 Edit
               </Button>
@@ -588,20 +439,28 @@ const MyItineraryScreen = ({ setFlag }) => {
                 okText="Yes"
                 cancelText="No"
                 okButtonProps={{
-                  style: {
-                    backgroundColor: "#f00",
-                    borderColor: "#f00",
-                    color: "#fff",
-                  },
+                  className: `
+      bg-red-600 text-white hover:bg-red-700 
+      focus:ring-2 focus:ring-offset-2 focus:ring-red-600 
+      rounded-md px-6 py-2 text-sm font-semibold 
+      transition-all duration-200 ease-in-out
+    `,
+                }}
+                cancelButtonProps={{
+                  className: `
+      bg-gray-200 text-gray-700 hover:bg-gray-300 
+      focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 
+      rounded-md px-6 py-2 text-sm font-semibold 
+      transition-all duration-200 ease-in-out
+    `,
                 }}
               >
                 <Button
                   icon={<DeleteOutlined />}
-                  style={{
-                    backgroundColor: "#f00",
-                    color: "#fff",
-                    border: "none",
-                  }}
+                  className="mr-2 bg-white text-red-600 border-none 
+               hover:bg-red-50 focus:outline-none 
+               focus:ring-2 focus:ring-offset-2 
+               focus:ring-red-600 rounded-md px-4 py-2 text-sm font-medium"
                   danger
                 >
                   Delete
@@ -645,284 +504,186 @@ const MyItineraryScreen = ({ setFlag }) => {
   ];
 
   return (
-    <div className="p-6 min-h-screen">
-      {/* <h1 className="text-9xl font-bold mb-4 text-[#496989]">Itineraries</h1> */}
-      {user && user.userRole === "TourGuide" && (
-        <div className="flex justify-end">
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => showModal()}
-            className="mb-4"
-            style={{
-              backgroundColor: "#02735F",
-              borderColor: "#02735F",
-              float: "",
-            }}
-          >
-            Add Itinerary
-          </Button>
-        </div>
-      )}
-      <div className="p-8 bg-fourth">
-        <div className="mb-6 flex flex-col items-center space-y-4">
-          {/* Centered, smaller search bar */}
-          <Search
-            enterButton={<SearchOutlined />}
-            placeholder="Search by name, category, or tag..."
-            value={searchTerm}
-            allowClear
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 rounded-md w-[400px]" // Reduced width for smaller size
-          />
-
-          <div className="flex space-x-4">
-            {/* Sort Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button1 variant="outline">
-                  <SortAsc className="mr-2 h-4 w-4" />
-                  Sort
-                </Button1>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem asChild>
-                    <div>
-                      <select
-                        id="sortFilter"
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">None</option>
-                        <option value="pricingHighToLow">
-                          Price (High to Low)
-                        </option>
-                        <option value="pricingLowToHigh">
-                          Price (Low to High)
-                        </option>
-                        <option value="ratingHighToLow">
-                          Rating (High to Low)
-                        </option>
-                        <option value="ratingLowToHigh">
-                          Rating (Low to High)
-                        </option>
-                      </select>
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Filter Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button1 variant="outline">
-                  <Filter className="mr-2 h-4 w-4" />
-                  Filter
-                </Button1>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuSub trigger="Budget">
-                    <div className="w-full">
-                      <select
-                        id="budgetFilter"
-                        value={selectedBudget}
-                        onChange={(e) => setSelectedBudget(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">All Budgets</option>
-                        {budgets?.map((budget, index) => (
-                          <option key={index} value={budget}>
-                            {budget}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </DropdownMenuSub>
-
-                  <DropdownMenuSub trigger="Date">
-                    <div>
-                      <select
-                        id="dateFilter"
-                        value={selectedDateFilter}
-                        onChange={(e) => setSelectedDateFilter(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">All Dates</option>
-                        <option value="today">Today</option>
-                        <option value="thisWeek">This Week</option>
-                        <option value="thisMonth">This Month</option>
-                        <option value="thisYear">This Year</option>
-                        <option value="allUpcoming">All Upcoming</option>
-                      </select>
-                    </div>
-                  </DropdownMenuSub>
-
-                  <DropdownMenuSub trigger="Language">
-                    <div>
-                      <select
-                        id="languageFilter"
-                        value={selectedLanguage}
-                        onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">All Languages</option>
-                        {languages?.map((language, index) => (
-                          <option key={index} value={language}>
-                            {language}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </DropdownMenuSub>
-
-                  <DropdownMenuSub trigger="Preference">
-                    <div>
-                      <select
-                        id="preferenceFilter"
-                        value={selectedPreference}
-                        onChange={(e) => setSelectedPreference(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">All Preferences</option>
-                        {preferenceTagsList?.map((preference) => (
-                          <option key={preference._id} value={preference._id}>
-                            {preference.tag}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </DropdownMenuSub>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Reset Button */}
-            <Button2
-              type="primary"
-              danger
-              icon={<ReloadOutlined />}
-              onClick={resetFilters}
-              className="ml-4 h-9"
-            >
-              Reset Filters
-            </Button2>
-          </div>
-        </div>
-      </div>
-      {user === null || user?.userRole === "Tourist" ? (
-        <main className="flex flex-wrap justify-center items-center min-h-screen py-10">
-          {sortedItineraries?.map((itinerary, index) => (
-            <div
-              key={index}
-              className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
-            >
-              {/* Book Now Circle */}
-              <div className="absolute top-4 left-4 bg-second text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
-                <span>Book Now</span>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        <Card className="mb-6">
+          <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] text-white rounded-t-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-semibold flex items-center gap-2">
+                  <Gift className="h-6 w-6" />
+                  Itinerary Management
+                </h2>
+                <p className="text-gray-200 mt-1">
+                  Manage and monitor your itineraries
+                </p>
               </div>
-
-              <Card
-                className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
-                style={{ backgroundColor: "#ffffff" }} // Default background color
-              >
-                <Card.Meta
-                  title={
-                    <>
-                      <span
-                        className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out"
-                        style={{ color: "#333333" }}
-                      >
-                        <Tooltip title={itinerary?.name}>
-                          {itinerary?.name}
-                        </Tooltip>
-                        <hr className="my-4 border-t-2 border-second" />
-                      </span>
-                      {/* Travel Route */}
-
-                      <Tooltip title="Travel Route">
-                        <span className="font-semibold text-xl hover:text-third flex items-center mt-2">
-                          <EnvironmentTwoTone
-                            twoToneColor="#000000"
-                            style={{ marginRight: 8 }}
-                          />
-                          {itinerary?.pickupLocation}
-                          <span className="mx-2 text-[#333333]">⇢</span>
-                          {itinerary?.dropOffLocation}
-                        </span>
-                      </Tooltip>
-                    </>
-                  }
-                  description={
-                    <div
-                      className="flex flex-col space-y-1"
-                      style={{ color: "#333333" }}
-                    >
-                      {/* Horizontal Line to Split the Card */}
-
-                      <Tooltip title="Language">
-                        <span className="font-semibold text-lg hover:text-third">
-                          <GlobalOutlined style={{ marginRight: 8 }} />
-                          {itinerary?.language}
-                        </span>
-                      </Tooltip>
-                      <Tooltip title="Accessibility">
-                        <span className="font-semibold text-lg hover:text-third">
-                          <TeamOutlined style={{ marginRight: 8 }} />
-                          {itinerary?.accessibility || "N/A"}
-                        </span>
-                      </Tooltip>
-                      {/* Price Tooltip at the End */}
-                      <div className="flex justify-center items-center mt-4">
-                        <Tooltip title="Price">
-                          <span className="font-semibold text-4xl hover:text-third flex items-center">
-                            {currency?.code}{" "}
-                            {(itinerary?.price * currency?.rate).toFixed(2)}
-                          </span>
-                        </Tooltip>
-                      </div>
-                    </div>
-                  }
-                />
-              </Card>
-
-              <div className="flex justify-center items-center gap-4 p-4">
+              {user && user.userRole === "TourGuide" && (
                 <Button
-                  onClick={() => navigate(`iternaryDetails/${itinerary?._id}`)}
-                  className="text-white bg-second hover:bg-[#4a8f7a] transition-all duration-300"
+                  type="primary"
+                  icon={<Plus />}
+                  onClick={() => showModal()}
+                  className="bg-[#375894] hover:bg-[#2A4575]/90"
                 >
-                  Show Details
+                  Create Itinerary
                 </Button>
-                {user && user?.userRole === "Tourist" && (
-                  <Button
-                    onClick={() => handleBookItinerary(itinerary?._id)}
-                    className="text-white bg-[#496989] hover:bg-[#3b5b68] transition-all duration-300"
-                  >
-                    Book
-                  </Button>
-                )}
+              )}
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="filter-container bg-white p-4 rounded-lg shadow-lg mb-6 space-y-4">
+              <div className="flex flex-wrap gap-4">
+                <Search
+                  placeholder="Search by name, category, or tag..."
+                  allowClear
+                  onSearch={(value) => setSearchTerm(value)}
+                  style={{ width: 300 }}
+                />
+                <Select
+                  style={{ width: 200 }}
+                  placeholder="Sort by"
+                  onChange={(value) => setSortBy(value)}
+                >
+                  <Option value="">None</Option>
+                  <Option value="pricingHighToLow">Price (High to Low)</Option>
+                  <Option value="pricingLowToHigh">Price (Low to High)</Option>
+                  <Option value="ratingHighToLow">Rating (High to Low)</Option>
+                  <Option value="ratingLowToHigh">Rating (Low to High)</Option>
+                </Select>
+
+                <Select
+                  style={{ width: 200 }}
+                  placeholder="Filter by Budget"
+                  onChange={(value) => setSelectedBudget(value)}
+                >
+                  <Option value="">All Budgets</Option>
+                  {budgets?.map((budget, index) => (
+                    <Option key={index} value={budget.toString()}>
+                      {budget}
+                    </Option>
+                  ))}
+                </Select>
+
+                <Select
+                  style={{ width: 200 }}
+                  placeholder="Filter by Date"
+                  onChange={(value) => setSelectedDateFilter(value)}
+                >
+                  <Option value="">All Dates</Option>
+                  <Option value="today">Today</Option>
+                  <Option value="thisWeek">This Week</Option>
+                  <Option value="thisMonth">This Month</Option>
+                  <Option value="thisYear">This Year</Option>
+                  <Option value="allUpcoming">All Upcoming</Option>
+                </Select>
+
+                <Select
+                  style={{ width: 200 }}
+                  placeholder="Filter by Language"
+                  onChange={(value) => setSelectedLanguage(value)}
+                >
+                  <Option value="">All Languages</Option>
+                  {languages?.map((language, index) => (
+                    <Option key={index} value={language}>
+                      {language}
+                    </Option>
+                  ))}
+                </Select>
+
+                <Select
+                  style={{ width: 200 }}
+                  placeholder="Filter by Preference"
+                  onChange={(value) => setSelectedPreference(value)}
+                >
+                  <Option value="">All Preferences</Option>
+                  {preferenceTagsList?.map((preference) => (
+                    <Option key={preference._id} value={preference._id}>
+                      {preference.tag}
+                    </Option>
+                  ))}
+                </Select>
+
+                <Button icon={<RefreshCw />} onClick={resetFilters}>
+                  Reset Filters
+                </Button>
               </div>
             </div>
-          ))}
-        </main>
-      ) : (
-        <Table
-          dataSource={sortedItineraries}
-          columns={columns}
-          rowKey="_id"
-          loading={loading}
-          pagination={{ pageSize: 10 }}
-          className="border border-gray-200 rounded-lg"
-          rowClassName="hover:bg-[#1C325B]/5"
-        />
-      )}
+
+            {user === null || user?.userRole === "Tourist" ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {sortedItineraries?.map((itinerary, index) => (
+                  <Card
+                    key={index}
+                    className="relative overflow-hidden transition-all duration-300 hover:shadow-lg"
+                    cover={
+                      <div className="h-48 bg-gray-200 flex items-center justify-center">
+                        <Gift className="h-12 w-12 text-gray-400" />
+                      </div>
+                    }
+                    actions={[
+                      <Button
+                        onClick={() =>
+                          navigate(`iternaryDetails/${itinerary._id}`)
+                        }
+                      >
+                        Show Details
+                      </Button>,
+                      user && user?.userRole === "Tourist" && (
+                        <Button
+                          onClick={() => handleBookItinerary(itinerary._id)}
+                          type="primary"
+                        >
+                          Book
+                        </Button>
+                      ),
+                    ]}
+                  >
+                    <Badge.Ribbon
+                      text="Book Now"
+                      color="blue"
+                      className="absolute top-0 left-0"
+                    />
+                    <Card.Meta
+                      title={itinerary.name}
+                      description={
+                        <div className="space-y-2">
+                          <div className="flex items-center">
+                            <MapPin className="mr-2 h-4 w-4" />
+                            {itinerary.pickupLocation}{" "}
+                            <ChevronRight className="mx-1 h-4 w-4" />{" "}
+                            {itinerary.dropOffLocation}
+                          </div>
+                          <div className="flex items-center">
+                            <Globe className="mr-2 h-4 w-4" />
+                            <span>{itinerary.language}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <Users className="mr-2 h-4 w-4" />
+                            <span>{itinerary.accessibility || "N/A"}</span>
+                          </div>
+                          <div className="text-2xl font-bold text-center mt-4">
+                            {currency?.code}{" "}
+                            {(itinerary.price * currency?.rate).toFixed(2)}
+                          </div>
+                        </div>
+                      }
+                    />
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Table
+                dataSource={sortedItineraries}
+                columns={columns}
+                rowKey="_id"
+                loading={loading}
+                pagination={{ pageSize: 10 }}
+              />
+            )}
+          </div>
+        </Card>
+      </div>
+
       <Modal
         title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
         visible={isModalVisible}
@@ -1238,7 +999,7 @@ const MyItineraryScreen = ({ setFlag }) => {
             </Select>
           </Form.Item>
           <Form.Item
-            label="Booking Open"
+            label="Booking Status"
             name="isBookingOpen"
             valuePropName="checked"
           >

@@ -60,19 +60,20 @@ const HistoricalPlaceSingleCard = ({ currency, places }) => {
 
           <div className="mt-3">
             <div className="flex flex-wrap overflow-hidden">
-              <span className="inline-block bg-blue-100 rounded-full px-2 py-1 text-xs font-medium text-blue-600 mr-1 mb-1">
+              <div className="bg-blue-100 rounded-full px-2 py-1 text-xs font-medium text-blue-600 mr-1 mb-1">
                 {places?.location}
-              </span>
+              </div>
+              
               {places?.tags &&
                 places?.tags?.map((tag, index) => (
                   <React.Fragment key={tag.name + index}>
-                    <span className="inline-block bg-green-100 rounded-full px-2 py-1 text-xs font-medium text-green-600 mr-1 mb-1">
+                    <span className=" bg-green-100 rounded-full px-2 py-1 text-xs font-medium text-green-600 mr-1 mb-1">
                       {tag.name}
                     </span>
-                    <span className="inline-block bg-gray-200 rounded-full px-2 py-1 text-xs font-medium text-gray-400 mr-1 mb-1">
+                    <span className=" bg-gray-200 rounded-full px-2 py-1 text-xs font-medium text-gray-400 mr-1 mb-1">
                       {tag.type}
                     </span>
-                    <span className="inline-block bg-yellow-100 rounded-full px-2 py-1 text-xs font-medium text-yellow-600 mr-1 mb-1">
+                    <span className=" bg-yellow-100 rounded-full px-2 py-1 text-xs font-medium text-yellow-600 mr-1 mb-1">
                       {tag.historicalPeriod}
                     </span>
                   </React.Fragment>
