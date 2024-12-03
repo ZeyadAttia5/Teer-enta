@@ -197,13 +197,13 @@ const TouristWelcome = ({ setFlag }) => {
           <span>See the Vatican Museums like never before</span>
         </Fade>
 
-        {user &&(user.userRole === "Tourist"&& (
-          <div className="absolute left-[100px] bottom-[30%] w-1/3 ">
+        {/* {user &&(user.userRole === "Tourist"&& (
+          <div className="absolute right-[100px] bottom-[30%] w-1/3 ">
           <VacationGuide />
         </div>
-        )
-        
-      )}
+            )
+          )
+        } */}
 
         <div className="absolute justify-around top-[72%] w-3/4 flex">
           <Button
