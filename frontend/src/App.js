@@ -205,7 +205,7 @@ function AppContent() {
             <BackButton />
           </div>
         )}
-        <div>
+        <div className="mt-[80px]">
         <Routes>
           {/* General Routes */}
           <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
