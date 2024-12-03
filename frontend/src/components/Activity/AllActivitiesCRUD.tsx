@@ -51,7 +51,7 @@ import {
   FlagFilled,
 } from "@ant-design/icons";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-
+import ImageUploader from "../Images/imageUploader"
 import moment from "moment";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
@@ -76,6 +76,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   const [location, setLocation] = useState({ lat: 0, lng: 0 }); // Default location
   const [form] = Form.useForm();
   const locationn = useLocation();
+  const [selectedImage , setSelectedImage] = useState(null);
 
   // Fetch activities, categories, and tags on component load
   useEffect(() => {
@@ -89,6 +90,10 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     fetchCategories();
     fetchPreferenceTags();
   }, [locationn?.pathname]);
+
+  const handleImagePathChange = (path: string) => {
+    setSelectedImage(path);
+  }
 
   const fetchActivities = async () => {
     setLoading(true);
@@ -191,6 +196,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   const handleFormSubmit = async (values) => {
     const activityData = {
       ...values,
+      imageUrl : selectedImage,
       date: values.date.toISOString(),
       time: values.time.format("HH:mm"),
       location,
@@ -479,138 +485,139 @@ const AllActivitiesCRUD = ({ setFlag }) => {
           footer={null}
         >
           <Form
-            form={form}
-            onFinish={handleFormSubmit}
-            initialValues={{ isActive: false, isBookingOpen: false }}
-            layout="vertical"
+              form={form}
+              onFinish={handleFormSubmit}
+              initialValues={{isActive: false, isBookingOpen: false}}
+              layout="vertical"
           >
             {/* Form items */}
-            <Item label="Name" name="name" rules={[{ required: true }]}>
-              <Input disabled={isViewing} />
+            <ImageUploader onImagePathChange={handleImagePathChange}/>
+            <Item label="Name" name="name" rules={[{required: true}]}>
+              <Input disabled={isViewing}/>
             </Item>
-            <Item label="Date" name="date" rules={[{ required: true }]}>
-              <DatePicker disabled={isViewing} />
+            <Item label="Date" name="date" rules={[{required: true}]}>
+              <DatePicker disabled={isViewing}/>
             </Item>
-            <Item label="Time" name="time" rules={[{ required: true }]}>
-              <TimePicker format="HH:mm" disabled={isViewing} />
+            <Item label="Time" name="time" rules={[{required: true}]}>
+              <TimePicker format="HH:mm" disabled={isViewing}/>
             </Item>
             <Item label="Price Min" name="priceMin">
-              <InputNumber disabled={isViewing} />
+              <InputNumber disabled={isViewing}/>
             </Item>
             <Item label="Price Max" name="priceMax">
-              <InputNumber disabled={isViewing} />
+              <InputNumber disabled={isViewing}/>
             </Item>
             <Item label="Booking Open" name="isBookingOpen" valuePropName="checked">
-              <Switch disabled={isViewing} />
+              <Switch disabled={isViewing}/>
             </Item>
             <Item label="Active" name="isActive" valuePropName="checked">
-              <Switch disabled={isViewing} />
+              <Switch disabled={isViewing}/>
             </Item>
             {/* Map Container and Category Dropdown */}
             <Item label="Location">
               <MapContainer
-                longitude={location.lng}
-                latitude={location.lat}
-                outputLocation={(lat, lng) => setLocation({ lat, lng })}
+                  longitude={location.lng}
+                  latitude={location.lat}
+                  outputLocation={(lat, lng) => setLocation({lat, lng})}
               />
             </Item>
-            <Item label="Category" name="category" rules={[{ required: true }]}>
+            <Item label="Category" name="category" rules={[{required: true}]}>
               <Select placeholder="Select Category" disabled={isViewing}>
                 {categories.map((category) => (
-                  <Option key={category._id} value={category._id}>
-                    {category.category}
-                  </Option>
+                    <Option key={category._id} value={category._id}>
+                      {category.category}
+                    </Option>
                 ))}
               </Select>
             </Item>
             <Item label="Preference Tags" name="preferenceTags">
               <Select
-                mode="multiple"
-                placeholder="Select Tags"
-                disabled={isViewing}
+                  mode="multiple"
+                  placeholder="Select Tags"
+                  disabled={isViewing}
               >
                 {preferenceTags.map((tag) => (
-                  <Option key={tag._id} value={tag._id}>
-                    {tag.tag}
-                  </Option>
+                    <Option key={tag._id} value={tag._id}>
+                      {tag.tag}
+                    </Option>
                 ))}
               </Select>
             </Item>
-    
+
             {/* Special Discounts Section */}
             <Item label="Special Discounts">
               <Form.List name="specialDiscounts">
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map(({ key, name, fieldKey, ...restField }) => (
-                      <div key={key} style={{ display: "flex", marginBottom: 8 }}>
-                        <Form.Item
-                          {...restField}
-                          name={[name, "discount"]}
-                          fieldKey={[fieldKey, "discount"]}
-                          rules={[{ required: true, message: "Missing discount" }]}
-                          style={{ flex: 1 }}
-                        >
-                          <InputNumber
-                            placeholder="Discount (%)"
-                            disabled={isViewing}
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          name={[name, "Description"]}
-                          fieldKey={[fieldKey, "Description"]}
-                          rules={[{ required: true, message: "Missing description" }]}
-                          style={{ flex: 2, marginLeft: 8 }}
-                        >
-                          <Input placeholder="Description" disabled={isViewing} />
-                        </Form.Item>
-                        <Form.Item
-                          {...restField}
-                          name={[name, "isAvailable"]}
-                          fieldKey={[fieldKey, "isAvailable"]}
-                          valuePropName="checked"
-                          style={{ marginLeft: 8 }}
-                        >
-                          <Switch disabled={isViewing} />
-                        </Form.Item>
-                        {!isViewing && (
-                          <Button
-                            type="link"
-                            onClick={() => remove(name)}
-                            style={{ marginLeft: 8 }}
-                          >
-                            Remove
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-                    {!isViewing && (
-                      <Form.Item>
-                        <Button type="dashed" onClick={() => add()} block>
-                          Add Discount
-                        </Button>
-                      </Form.Item>
-                    )}
-                  </>
+                {(fields, {add, remove}) => (
+                    <>
+                      {fields.map(({key, name, fieldKey, ...restField}) => (
+                          <div key={key} style={{display: "flex", marginBottom: 8}}>
+                            <Form.Item
+                                {...restField}
+                                name={[name, "discount"]}
+                                fieldKey={[fieldKey, "discount"]}
+                                rules={[{required: true, message: "Missing discount"}]}
+                                style={{flex: 1}}
+                            >
+                              <InputNumber
+                                  placeholder="Discount (%)"
+                                  disabled={isViewing}
+                              />
+                            </Form.Item>
+                            <Form.Item
+                                {...restField}
+                                name={[name, "Description"]}
+                                fieldKey={[fieldKey, "Description"]}
+                                rules={[{required: true, message: "Missing description"}]}
+                                style={{flex: 2, marginLeft: 8}}
+                            >
+                              <Input placeholder="Description" disabled={isViewing}/>
+                            </Form.Item>
+                            <Form.Item
+                                {...restField}
+                                name={[name, "isAvailable"]}
+                                fieldKey={[fieldKey, "isAvailable"]}
+                                valuePropName="checked"
+                                style={{marginLeft: 8}}
+                            >
+                              <Switch disabled={isViewing}/>
+                            </Form.Item>
+                            {!isViewing && (
+                                <Button
+                                    type="link"
+                                    onClick={() => remove(name)}
+                                    style={{marginLeft: 8}}
+                                >
+                                  Remove
+                                </Button>
+                            )}
+                          </div>
+                      ))}
+                      {!isViewing && (
+                          <Form.Item>
+                            <Button type="dashed" onClick={() => add()} block>
+                              Add Discount
+                            </Button>
+                          </Form.Item>
+                      )}
+                    </>
                 )}
               </Form.List>
             </Item>
-    
+
             {/* Submit Button */}
             {!isViewing && (
-              <Button type="primary" htmlType="submit" className="bg-green-600">
-                {isEditing ? "Update" : "Create"}
-              </Button>
+                <Button type="primary" htmlType="submit" className="bg-green-600">
+                  {isEditing ? "Update" : "Create"}
+                </Button>
             )}
           </Form>
         </Modal>
-        
-      </div>
-      </ConfigProvider>
 
-    );
-    
+</div>
+    </ConfigProvider>
+
+  );
+
 };
 
 export default AllActivitiesCRUD;

@@ -57,6 +57,7 @@ import {
 } from "date-fns";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCurrency } from "../../api/account.ts";
+import ImageUploader from "../../components/Images/imageUploader";
 
 const { Option } = Select;
 const { Search } = Input;
@@ -225,6 +226,8 @@ const TourguideItineraryScreen = ({ setFlag }) => {
   const [selectedActive, setSelectedActive] = useState("");
   const [refreshItineraries, setRefreshItineraries] = useState(false);
 
+  const [selectedimage, setSelectedimage] = useState(null);
+  
   // New state variables for ActivityList and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
@@ -265,6 +268,10 @@ const TourguideItineraryScreen = ({ setFlag }) => {
     fetchActivities();
     fetchPreferenceTags();
   }, [location.pathname, refreshItineraries]);
+  
+  const handlePathChange = (path:string) => {
+    setSelectedimage(path);
+  }
 
   const resetFilters = () => {
     setSelectedBudget("");
@@ -500,6 +507,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
 
       const formattedData = {
         ...values,
+        imageUrl:selectedimage,
         availableDates: formattedAvailableDates,
         activities: formattedActivities,
         locations: formattedLocations,
@@ -827,6 +835,8 @@ const TourguideItineraryScreen = ({ setFlag }) => {
           onFinish={onFinish}
           initialValues={{ isActive: true }}
         >
+
+          <ImageUploader onImagePathChange={handlePathChange} />
           <Form.Item
             name="name"
             label="Itinerary Name"

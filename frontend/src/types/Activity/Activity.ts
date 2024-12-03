@@ -9,6 +9,7 @@ export type TActivity = {
     name: string;
     date: string; // ISO date string
     time: string;
+    imageUrl: string;
     isBookingOpen: boolean;
     location: {
         lat: number;

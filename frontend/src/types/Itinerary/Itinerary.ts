@@ -10,6 +10,7 @@ export type TItinerary = {
     pickupLocation?: string;
     dropOffLocation?: string;
     isBookingOpen: boolean;
+    imageUrl: string;
     language: string;
     price: number;
     isActive: boolean;

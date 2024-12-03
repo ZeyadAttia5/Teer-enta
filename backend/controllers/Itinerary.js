@@ -23,11 +23,6 @@ exports.getItineraries = async (req, res, next) => {
             .populate("activities.activity")
             .populate("preferenceTags")
             .populate("timeline.activity");
-        if (itineraries.length === 0) {
-            return res
-                .status(404)
-                .json({message: "No itineraries found or Inactive"});
-        }
         res.status(200).json(itineraries);
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -37,9 +32,6 @@ exports.getItineraries = async (req, res, next) => {
 exports.getFlaggedItineraries = async (req, res, next) => {
     try {
         const flaggedItineraries = await Itinerary.find({isAppropriate: false});
-        // if (flaggedItineraries.length === 0) {
-        //     return res.status(404).json({message: "No flagged itineraries found"});
-        // }
         res.status(200).json(flaggedItineraries);
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -51,9 +43,6 @@ exports.UnFlagInappropriate = async (req, res, next) => {
         const {id} = req.params;
         const itinerary = await Itinerary
             .findByIdAndUpdate(id, {isAppropriate: true}, {new: true});
-        if (!itinerary) {
-            return res.status(404).json({message: "Itinerary not found"});
-        }
         res.status(200).json({message: "Itinerary unflagged successfully", itinerary});
     } catch (err) {
         errorHandler.SendError(res, err);
@@ -105,9 +94,6 @@ exports.getMyItineraries = async (req, res, next) => {
             .populate("activities.activity")
             .populate("preferenceTags")
             .populate("timeline.activity");
-        if (itineraries.length === 0) {
-            return res.status(404).json({message: "No itineraries found"});
-        }
         res.status(200).json(itineraries);
     } catch (err) {
         errorHandler.SendError(res, err);
