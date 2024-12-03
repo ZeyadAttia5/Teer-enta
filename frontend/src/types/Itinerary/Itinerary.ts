@@ -32,6 +32,7 @@ export type TItinerary = {
     ratings: {
         createdBy: TTourist; // ObjectId referencing 'User'
         rating: number;
+
     }[];
     comments: {
         createdBy: TTourist; // ObjectId referencing 'User'

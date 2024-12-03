@@ -59,12 +59,14 @@ const ItinerarySchema = new mongoose.Schema(
             {
                 createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
                 rating: Number,
+                createdAt: {type: Date, default: Date.now}
             },
         ],
         comments: [
             {
                 createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
                 comment: String,
+                createdAt: {type: Date, default: Date.now}
             },
         ],
     },

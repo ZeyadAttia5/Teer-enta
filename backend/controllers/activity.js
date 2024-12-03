@@ -19,9 +19,9 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 exports.getActivities = async (req, res, next) => {
     try {
         const activities = await Activity
-            .find({isActive: true, isBookingOpen: true, isAppropriate: true})
+            .find({isActive: true, isAppropriate: true})
             .populate('category')
-            .populate('preferenceTags');
+            .populate('preferenceTags')
         if (activities.length === 0) {
             return res.status(404).json({message: 'No ActivityList found'});
         }
@@ -67,10 +67,11 @@ exports.getActivity = async (req, res, next) => {
             .populate('category')
             .populate('preferenceTags')
             .populate('createdBy')
+            .populate('ratings.user')
             .populate({
                 path: 'comments.user',  // Populate the user in comments
             });
-
+        console.log(activity);
         if (!activity) {
             return res.status(404).json({ message: 'Activity not found or inactive' });
         }
@@ -556,7 +557,7 @@ exports.addRatingToActivity = async (req, res) => {
         }
 
         activity.ratings.push({
-            createdBy: userId,
+            user: userId,
             rating: rating,
         });
 
@@ -609,7 +610,7 @@ exports.addCommentToActivity = async (req, res) => {
         }
 
         activity.comments.push({
-            createdBy: userId,
+            user: userId,
             comment: comment,
         });
 

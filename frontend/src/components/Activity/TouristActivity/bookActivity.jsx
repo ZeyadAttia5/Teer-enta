@@ -9,7 +9,7 @@ import StaticMap from "../../shared/GoogleMaps/ViewLocation";
 import CheckoutForm from "../../shared/CheckoutForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { TagOutlined } from '@ant-design/icons';
+import {CalendarOutlined, ClockCircleOutlined, DollarOutlined, TagOutlined} from '@ant-design/icons';
 import { WalletOutlined, CreditCardOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -100,178 +100,207 @@ const BookActivity = () => {
     };
 
     return (
-        <div className="max-w-8xl mx-auto p-4 sm:p-8 lg:p-10 bg-fourth min-h-screen flex flex-col items-center justify-center">
-          {/* Booking Title */}
-          <Title
-            level={1}
-            style={{ color: "#1a2b49" }}
-            className="text-9xl font-bold text-center mb-8"
-          >
-            {activity?.name} Booking on{" "}
-            {activity?.date
-              ? dayjs(activity?.date).format("MMMM D, YYYY [@] h:mm A")
-              : "Date not available"}{" "}
-            for {currency?.rate * activity?.price?.max} & {currency?.rate * activity?.price?.min} {currency?.code}
-          </Title>
-      
-          {/* Cards Container */}
-          <div className="space-y-6">
-            {/* Promo Code Section */}
-            {!showReceipt && (
-              <div className="max-w-sm bg-white p-4 rounded-lg shadow-md mx-auto">
-                <Text className="text-2xl font-bold text-first mb-2">Promo Code</Text>
-                <div className="flex gap-3">
-                  <Input
-                    prefix={<TagOutlined />}
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    placeholder="Enter promo code"
-                    className="flex-1"
-                  />
-                  <Button
-                    onClick={handleApplyPromo}
-                    loading={applyingPromo}
-                    type="primary"
-                    className="bg-first hover:bg-first text-white"
-                  >
-                    Apply
-                  </Button>
-                </div>
-              </div>
-            )}
-      
-            {/* Payment Method Section */}
-            {!showReceipt && (
-              <div className="max-w-sm bg-white p-4 rounded-lg shadow-md mx-auto">
-                <Form layout="vertical">
-                  <Form.Item
-                    label={
-                      <span className="text-2xl font-bold text-first">Payment Method</span>
-                    }
-                    required
-                  >
-                    <Radio.Group onChange={handlePaymentMethodChange} value={paymentMethod}>
-                      <div className="flex gap-4">
-                        <Radio value="wallet" className="flex items-center gap-2">
-                          <WalletOutlined className="text-xl" /> Wallet
-                        </Radio>
-                        <Radio value="Card" className="flex items-center gap-2">
-                          <CreditCardOutlined className="text-xl" /> Credit Card
-                        </Radio>
-                      </div>
-                    </Radio.Group>
-                  </Form.Item>
-      
-                  {paymentMethod === "Card" && (
-                    <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
-                      <CheckoutForm
-                        amount={calculateFinalPrice(currency?.rate * activity?.price?.max)}
-                      />
-                    </Elements>
-                  )}
-                </Form>
-              </div>
-            )}
-      
-            {/* Price Details Section (Conditional) */}
-            {showReceipt && (
-              <div className="bg-white rounded-lg shadow-md  p-4 w-[110%] mx-auto">
-                <div className="text-center mb-6 max-w-4xl">
-                  <Text className="text-4xl font-bold text-first">E-Receipt</Text>
-                </div>
+        <div className="min-h-screen py-12 px-4">
+            <div className="max-w-4xl mx-auto">
+                {/* Main Card Container */}
+                <Card className=" border-0" bodyStyle={{ padding: 0 }}>
+                    {/* Booking Header - Now inside the main card */}
+                    <div className="border-b border-gray-100 p-6">
+                        <div className="flex items-center gap-6">
+                            <div className="bg-blue-950 text-white p-4 rounded-xl">
+                                <CalendarOutlined className="text-3xl" />
+                            </div>
+                            <div className="text-left">
+                                <Text className="block text-sm uppercase tracking-wide text-gray-500 mb-1">
+                                    Activity Selected
+                                </Text>
+                                <Text className="block text-xl font-bold text-blue-950 mb-2">
+                                    {activity?.name}
+                                </Text>
+                                <Text className="block text-base text-gray-600 flex items-center gap-2">
+                                    <ClockCircleOutlined className="text-blue-950" />
+                                    {activity?.date
+                                        ? dayjs(activity?.date).format("MMMM D, YYYY [@] h:mm A")
+                                        : "Date not available"}
+                                </Text>
+                            </div>
+                        </div>
+                    </div>
 
-             {/* Payment Time */}
-               <div className="flex justify-between items-center mb-4">
-                  <Text className="text-lg font-semibold text-second">Time Paid:</Text>
-                  <Text className="text-xs">{new Date().toLocaleString()}</Text>
-                </div> 
-                
-                {/* Activity Name */}
-                <div className="flex justify-between items-center mb-4">
-                  <Text className="text-lg font-semibold text-second">Activity:</Text>
-                  <Text className="text-xs">{activity?.name || "N/A"}</Text>
-                </div>
-      
-             
-                
-      
-                {/* Promo Code */}
-                <div className="flex justify-between items-center mb-4">
-                  <Text className="text-lg font-semibold text-second">Promo Code :</Text>
-                  <Text className="text-xs">{promoCode || "none"} </Text>
-                </div>
-      
-                {/* Discounts */}
-                <div className="flex justify-between items-center mb-4">
-                  <Text className="text-lg font-semibold text-second">Discount:</Text>
-                  <Text className="text-xs">
-                    {activeDiscount > 0 || promoDiscount > 0 ? (
-                      <>
-                        {activeDiscount > 0 && ` ${activeDiscount}%`}
-                        {promoDiscount > 0 && `, Promo Discount: ${promoDiscount}%`}
-                      </>
+                    {!showReceipt ? (
+                        <div className="p-6 space-y-8">
+                            {/* Promo Code Section */}
+                            <div className="border-b border-gray-100 pb-8">
+                                <Title level={4} className="text-blue-950 flex items-center gap-2 mb-6">
+                                    <TagOutlined />
+                                    Promotional Discount
+                                </Title>
+                                <div className="flex gap-3">
+                                    <Input
+                                        prefix={<TagOutlined className="text-blue-950" />}
+                                        value={promoCode}
+                                        onChange={(e) => setPromoCode(e.target.value)}
+                                        placeholder="Enter promo code"
+                                        className="flex-1"
+                                        size="large"
+                                    />
+                                    <Button
+                                        onClick={handleApplyPromo}
+                                        loading={applyingPromo}
+                                        type="danger"
+                                        size="large"
+                                        className="bg-blue-950 text-white hover:bg-black border-none"
+                                    >
+                                        Apply Code
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {/* Payment Method Section */}
+                            <div className="border-b border-gray-100 pb-8">
+                                <Title level={4} className="text-blue-950 flex items-center gap-2 mb-6">
+                                    <DollarOutlined />
+                                    Payment Details
+                                </Title>
+                                <Form layout="vertical">
+                                    <Form.Item required className="mb-8">
+                                        <Radio.Group
+                                            onChange={handlePaymentMethodChange}
+                                            value={paymentMethod}
+                                            className="w-full"
+                                        >
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <Radio.Button
+                                                    value="wallet"
+                                                    className={`h-20 flex items-center justify-center text-lg
+                                                ${paymentMethod === 'wallet' ? 'bg-blue-950 text-white' : 'bg-white'}`}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <WalletOutlined className={`text-2xl ${paymentMethod === 'wallet' ? 'text-black' : 'text-blue-950'}`} />
+                                                        <span>Pay with Wallet</span>
+                                                    </div>
+                                                </Radio.Button>
+                                                <Radio.Button
+                                                    value="Card"
+                                                    className={`h-20 flex items-center justify-center text-lg
+                                                ${paymentMethod === 'Card' ? 'bg-blue-950 text-white' : 'bg-white'}`}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <CreditCardOutlined className={`text-2xl ${paymentMethod === 'Card' ? 'text-black' : 'text-blue-950'}`} />
+                                                        <span>Credit Card</span>
+                                                    </div>
+                                                </Radio.Button>
+                                            </div>
+                                        </Radio.Group>
+                                    </Form.Item>
+
+                                    {paymentMethod === "Card" && (
+                                        <div className="bg-gray-50 p-6 rounded-xl">
+                                            <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
+                                                <CheckoutForm
+                                                    amount={calculateFinalPrice(currency?.rate * activity?.price?.max)}
+                                                />
+                                            </Elements>
+                                        </div>
+                                    )}
+                                </Form>
+                            </div>
+
+                            {/* Price Summary Section */}
+                            <div className="bg-blue-100 rounded-xl p-6 space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <Text className="text-gray-600">Original Price</Text>
+                                    <Text className="text-lg text-gray-900">
+                                        {currency?.code} {(currency?.rate * activity?.price?.max).toFixed(2)}
+                                    </Text>
+                                </div>
+                                {(activeDiscount > 0 || promoDiscount > 0) && (
+                                    <div className="flex justify-between items-center text-green-600">
+                                        <Text>Total Discount</Text>
+                                        <Text>
+                                            -{activeDiscount + promoDiscount}%
+                                        </Text>
+                                    </div>
+                                )}
+                                <div className="flex justify-between items-center pt-4 border-t border-blue-200">
+                                    <Text className="text-lg font-semibold text-gray-900">Final Price</Text>
+                                    <Text className="text-xl font-bold text-blue-950">
+                                        {currency?.code} {calculateFinalPrice(currency?.rate * activity?.price?.max)}
+                                    </Text>
+                                </div>
+                            </div>
+
+                            {/* Confirm Button */}
+                            <Button
+                                type="danger"
+                                onClick={handleSubmit}
+                                loading={loading}
+                                size="large"
+                                className="w-full h-16 text-lg font-semibold bg-blue-950 text-white hover:bg-black border-none hover:shadow-xl transition-all duration-300"
+                            >
+                                Confirm Booking
+                            </Button>
+                        </div>
                     ) : (
-                      "none"
+                        /* Receipt View */
+                        <div className="p-6">
+                            <div className="text-center mb-8">
+                                <Title level={2} className="text-blue-950 mb-2">E-Receipt</Title>
+                                <Text className="text-gray-500">Thank you for your booking!</Text>
+                            </div>
+
+                            <div className="space-y-6">
+                                {[
+                                    {label: "Time Paid", value: new Date().toLocaleString()},
+                                    {label: "Activity", value: activity?.name || "N/A"},
+                                    {label: "Promo Code", value: promoCode || "None"},
+                                    {label: "Payment Method", value: paymentMethod === 'wallet' ? 'Wallet' : 'Credit Card'},
+                                    {
+                                        label: "Discount Applied",
+                                        value: activeDiscount > 0 || promoDiscount > 0
+                                            ? `${activeDiscount + promoDiscount}%`
+                                            : "None"
+                                    }
+                                ].map((item, index) => (
+                                    <div key={index} className="flex justify-between items-center py-3 border-b border-gray-100">
+                                        <Text className="text-gray-600">{item.label}</Text>
+                                        <Text className="font-medium">{item.value}</Text>
+                                    </div>
+                                ))}
+
+                                <div className="bg-blue-100 rounded-xl p-6 mt-8">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <Text className="text-gray-600">Original Price</Text>
+                                        <Text className="text-gray-900">
+                                            {currency?.code} {(currency?.rate * activity?.price?.max).toFixed(2)}
+                                        </Text>
+                                    </div>
+                                    <div className="flex justify-between items-center pt-4 border-t border-blue-200">
+                                        <Text className="text-lg font-semibold text-gray-900">Final Price</Text>
+                                        <Text className="text-xl font-bold text-blue-950">
+                                            {currency?.code} {calculateFinalPrice(currency?.rate * activity?.price?.max)}
+                                        </Text>
+                                    </div>
+                                </div>
+
+                                <div className="text-center mt-8">
+                                    <Button
+                                        type="danger"
+                                        onClick={() => navigate("/Bookings")}
+                                        size="large"
+                                        className="h-12 px-8 bg-blue-950 text-white hover:bg-black border-none"
+                                    >
+                                        View My Bookings
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     )}
-                  </Text>
-                </div>
-
-                      {/* Payment Method */}
-                <div className="flex justify-between items-center mb-4">
-                  <Text className="text-lg font-semibold text-second">Payment Method:</Text>
-                  <Text className="text-xs">{paymentMethod === 'wallet' ? 'Wallet' : 'Credit Card'}</Text>
-                </div>
-
-                {/* Price Before */}
-                <div className="flex justify-between items-center mb-4">
-                  <Text className="text-lg font-semibold text-second">Before Discount:</Text>
-                  <Text className="text-xs">
-                    {currency?.code} {(currency?.rate * activity?.price?.min).toFixed(2)} -{" "}
-                    {(currency?.rate * activity?.price?.max).toFixed(2)}
-                  </Text>
-                </div>
-      
-
-      
-                {/* Final Price */}
-                <div className="flex justify-between items-center mb-4 border-t pt-4">
-                  <Text className="text-lg font-bold text-red-600">After Discount:</Text>
-                  <Text className="text-s font-bold text-red-600">
-                    {currency?.code} {calculateFinalPrice(currency?.rate * activity?.price?.min)} -{" "}
-                    {calculateFinalPrice(currency?.rate * activity?.price?.max)}
-                  </Text>
-                </div>
-      
-                {/* Closing Message */}
-                <div className="text-center mt-8">
-                  <Button
-                    type="primary"
-                    onClick={() => navigate("/Bookings")}
-                    className="bg-first text-white hover:bg-first"
-                  >
-                    View My Bookings
-                  </Button>
-                </div>
-              </div>
-            )}
-      
-            {/* Confirm Button */}
-            {!showReceipt && (
-              <div className="mt-10 flex justify-center">
-                <Button
-                  type="primary"
-                  className="w-full lg:w-1/2 py-6 px-20 text-2xl text-bold bg-first hover:bg-first text-white rounded-lg"
-                  onClick={handleSubmit}
-                  loading={loading}
-                >
-                  Confirm
-                </Button>
-              </div>
-            )}
-          </div>
+                </Card>
+            </div>
         </div>
-      );
-      
+    );
+
 };
 
 export default BookActivity;
