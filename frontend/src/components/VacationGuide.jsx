@@ -76,7 +76,7 @@ export default function VacationGuide() {
           {/* Modal */}
           <div className="relative bg-white rounded-xl shadow-2xl w-[600px] overflow-hidden">
             <div className="px-8 pt-6">
-              <h2 className="text-2xl font-bold text-purple-800 mb-2">{steps[currentStep].title}</h2>
+              <h2 className="text-2xl font-bold text-first mb-2">{steps[currentStep].title}</h2>
               <p className="text-gray-600 mb-4">{steps[currentStep].description}</p>
             </div>
             
@@ -112,9 +112,9 @@ export default function VacationGuide() {
               key={index}
               className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentStep 
-                  ? 'bg-purple-600 w-3 h-3' 
+                  ? 'bg-second w-3 h-3' 
                   : index < currentStep 
-                    ? 'bg-purple-400' 
+                    ? 'bg-third' 
                     : 'bg-gray-300'
               }`}
               aria-current={index === currentStep ? 'step' : undefined}
@@ -126,13 +126,13 @@ export default function VacationGuide() {
             <div className="flex justify-between p-6 bg-gray-50">
               <button 
                 onClick={handleSkip}
-                className="px-6 py-2 rounded-full border-2 border-purple-600 text-purple-600 font-medium hover:bg-purple-50 transition-colors"
+                className="px-6 py-2 rounded-full border-2 border-second text-second font-medium hover:bg-third transition-colors"
               >
                 Skip
               </button>
               <button 
                 onClick={handleNext}
-                className="px-6 py-2 rounded-full bg-purple-600 text-white font-medium hover:bg-purple-700 transition-colors"
+                className="px-6 py-2 rounded-full bg-second text-white font-medium hover:bg-first transition-colors"
               >
                 {currentStep === steps.length - 1 ? 'Finish' : 'Next'}
               </button>
