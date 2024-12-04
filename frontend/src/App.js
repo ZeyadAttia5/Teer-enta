@@ -173,10 +173,10 @@ function AppContent() {
     setIsNavigate(true);
     setModalOpen(false);
   };
-
+  const [visibleFlag, setVisibleFlag] = useState(true);
   return (
     <div className="App relative pb-4 bg-backgroundColor  min-h-screen">
-    <PromoCodeStrip/>
+      
       <NotificationProvider
         incomingNotification={incomingNotification}
         isNotificationIncomming={isNotificationIncoming}
@@ -186,6 +186,7 @@ function AppContent() {
             onClose={onClose}
             showDrawer={showDrawer}
             drawerVisible={visible}
+            visibleFlag={visibleFlag}
           />
         )}
         {!flag && (
@@ -194,6 +195,7 @@ function AppContent() {
               setModalOpen={setModalOpen}
               isNavigate={isNavigate}
               setIsNavigate={setIsNavigate}
+              setVisibleFlagHome={setVisibleFlag}
             />
           </div>
         )}
@@ -210,7 +212,7 @@ function AppContent() {
             <BackButton />
           </div>
         )}
-        <div className={`${!flag ? 'mt-[80px]' : ''}`}>
+        <div className={`${!flag ? "mt-[80px]" : ""}`}>
           <Routes>
             {/* General Routes */}
             <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
