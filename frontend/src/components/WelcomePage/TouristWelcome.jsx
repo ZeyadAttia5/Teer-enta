@@ -14,7 +14,14 @@ import { getTouristActivities } from "../../api/activity.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { getCurrency } from "../../api/account.ts";
 import VacationGuide from "../../components/VacationGuide.jsx";
-import { Hotel, Train, TrainIcon, Plane, PlaneIcon } from "lucide-react";
+import {
+  Hotel,
+  Train,
+  TrainIcon,
+  Plane,
+  PlaneIcon,
+  PlaneTakeoff,
+} from "lucide-react";
 import {
   DollarCircleOutlined,
   EnvironmentTwoTone,
@@ -25,6 +32,9 @@ import { getGoogleMapsAddress } from "../../api/googleMaps.ts";
 import BookHotel from "../Hotel/BookHotel.jsx";
 import BookFlight from "../Flight/BookFlight.jsx";
 import BookTransportation from "../Transportation/BookTransportation.jsx";
+import ActivityCard from "../Activity/TouristActivity/ActivityCard.js";
+import dayjs from "dayjs";
+import { getItineraries } from "../../api/itinerary.ts";
 
 // const cards = [
 //   {
@@ -104,6 +114,25 @@ const TouristWelcome = ({ setFlag }) => {
       }
     };
     fetchCurrency();
+  }, []);
+  const handleBookItinerary = (id) => {
+    navigate(`/itinerary/book/${id}`);
+  };
+  const [itineraries, setItineraries] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  useEffect(() => {
+    const fetchItineraries = async () => {
+    setLoading(true);
+    try {
+      const data = await getItineraries();
+      setItineraries(data);
+    } catch (error) {
+      message.error("Failed to fetch itineraries");
+    }
+    setLoading(false);
+  };
+    fetchItineraries();
   }, []);
 
   var loc;
@@ -205,8 +234,8 @@ const TouristWelcome = ({ setFlag }) => {
         )}
 
         <div className="absolute justify-around top-[72%] w-3/4 flex">
-          <Button
-            className={`p-8 px-12 font-bold ring-0 text-2xl font-playfair-display ${
+          <button
+            className={`px-12 py-4 flex items-center rounded-lg gap-2 font-bold focus:outline-none active:outline-none ring-0 text-2xl  ${
               selectedButton === 1
                 ? "bg-backgroundColor text-first"
                 : "bg-transparent text-white"
@@ -229,9 +258,9 @@ const TouristWelcome = ({ setFlag }) => {
               />
             </svg>
             For you
-          </Button>
-          <Button
-            className={`p-8 px-12 font-bold ring-0 text-2xl font-playfair-display ${
+          </button>
+          <button
+            className={`px-12 py-4 font-bold rounded-lg flex items-center gap-2 text-2xl  ${
               selectedButton === 2
                 ? "bg-backgroundColor text-first"
                 : "bg-transparent text-white"
@@ -241,9 +270,9 @@ const TouristWelcome = ({ setFlag }) => {
           >
             <Train />
             Transportations
-          </Button>
-          <Button
-            className={`p-8 px-12 font-bold ring-0 font-playfair-display text-2xl ${
+          </button>
+          <button
+            className={`px-12 py-4 flex gap-2 items-center rounded-lg font-bold ring-0  text-2xl ${
               selectedButton === 3
                 ? "bg-backgroundColor text-first"
                 : "bg-transparent text-white"
@@ -252,11 +281,10 @@ const TouristWelcome = ({ setFlag }) => {
             onClick={() => setSelectedButton(3)}
           >
             <Hotel />
-              
             Hotels
-          </Button>
-          <Button
-            className={`p-8 px-12 font-bold font-playfair-display ring-0 text-2xl ${
+          </button>
+          <button
+            className={`px-12 py-4 flex gap-2 items-center rounded-lg font-bold ring-0  text-2xl ${
               selectedButton === 4
                 ? "bg-backgroundColor text-first"
                 : "bg-transparent text-white"
@@ -264,9 +292,9 @@ const TouristWelcome = ({ setFlag }) => {
             type="danger"
             onClick={() => setSelectedButton(4)}
           >
-            <img src={planeSVG} alt="Icon" className="size-6" />
+            <PlaneTakeoff />
             Flights
-          </Button>
+          </button>
         </div>
       </div>
       {selectedButton === 1 && (
@@ -275,19 +303,22 @@ const TouristWelcome = ({ setFlag }) => {
             Top historical places around the world
           </span>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center ">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 w-[90%]">
               {historicalPlaces.slice(5, 9).map((place, index) => (
                 <Link to={`/historicalPlace/details/${place?._id}`}>
-                  <div className="relative">
+                  <div className="relative hover:shadow-xl hover:border-b-2 transition-transform border-b-2 border-backgroundColor ease-in-out duration-300 hover:border-black">
                     <img
-                      className="w-full h-48 object-cover"
+                      className="w-full h-48 object-cover mb-2"
                       src={place?.images.length > 0 && place?.images[0]}
                       alt={historicalPlaces?.name}
                       loading="lazy"
                     />
-                    <span className="absolute top-1 left-1 text-white rounded-xl font-bold text-xl bg-first p-2">
-                      {index + 1 + ". " + place.name}
+                    <span
+                      className="absolute top-1 left-1 rounded-xl font-bold text-xl text-white p-2"
+                      style={{ backgroundColor: "rgba(26, 43, 73, 0.85)" }}
+                    >
+                      {place.name}
                     </span>
                   </div>
                 </Link>
@@ -318,82 +349,164 @@ const TouristWelcome = ({ setFlag }) => {
               </div>
             )}
           </div>
+
           <span className="text-4xl font-bold text-first ml-12 mt-16 block">
+            Top itineraries you can't miss
+          </span>
+
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-[90%]">
+            {itineraries?.slice(1,5).map((itinerary, index) => (
+            <div
+              key={index}
+              className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third" // Thicker border on hover
+              onClick={() => navigate(`itinerary/iternaryDetails/${itinerary?._id}`)} // Navigate on card click
+            >
+              {/* Book Now Circle */}
+              <div className="absolute top-4 left-4 bg-second text-white rounded-full w-12 h-12 flex justify-center items-center text-xs font-semibold shadow-lg">
+                <span>Book Now</span>
+              </div>
+
+              <Card
+                className="rounded-lg shadow-lg  p-4 transition-all duration-300 ease-in-out hover:text-white"
+                style={{ backgroundColor: "#ffffff" }} // Default background color
+              >
+                <Card.Meta
+                  title={
+                    <>
+                      <span
+                        className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out"
+                        style={{ color: "#333333" }}
+                      >
+                        <Tooltip title={itinerary?.name}>
+                          {itinerary?.name}
+                        </Tooltip>
+                        <hr className="my-4 border-t-2 border-second" />
+                      </span>
+                      {/* Travel Route */}
+                      <Tooltip title="Travel Route">
+                        <span className="font-semibold text-xl hover:text-third flex items-center mt-2">
+                          <EnvironmentTwoTone
+                            twoToneColor="#000000"
+                            style={{ marginRight: 8 }}
+                          />
+                          {itinerary?.pickupLocation}
+                          <span className="mx-2 text-[#333333]">⇢</span>
+                          {itinerary?.dropOffLocation}
+                        </span>
+                      </Tooltip>
+                    </>
+                  }
+                  description={
+                    <div
+                      className="flex flex-col space-y-1"
+                      style={{ color: "#333333" }}
+                    >
+                      {/* Horizontal Line to Split the Card */}
+                      <Tooltip title="Language">
+                        <span className="font-semibold text-lg hover:text-third">
+                          <GlobalOutlined style={{ marginRight: 8 }} />
+                          {itinerary?.language}
+                        </span>
+                      </Tooltip>
+                      <Tooltip title="Accessibility">
+                        <span className="font-semibold text-lg hover:text-third">
+                          <TeamOutlined style={{ marginRight: 8 }} />
+                          {itinerary?.accessibility || "N/A"}
+                        </span>
+                      </Tooltip>
+                      {/* Price Tooltip at the End */}
+                      <div className="flex justify-center items-center mt-4">
+                        <Tooltip title="Price">
+                          <span className="font-semibold flex items-center">
+                            <span className="text-1xl">{currency?.code}</span>
+                            <span className="text-3xl hover:text-third ml-1">
+                              {(itinerary?.price * currency?.rate).toFixed(2)}
+                            </span>
+                          </span>
+                        </Tooltip>
+                      </div>
+                    </div>
+                  }
+                />
+              </Card>
+
+              {user && user?.userRole === "Tourist" && (
+                <div className="flex justify-center items-center gap-4 p-4">
+                  <Button
+                    type="danger"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent navigation from the card click
+                      handleBookItinerary(itinerary?._id);
+                    }}
+                    className="text-white bg-first py-4 px-8 text-xl hover:bg-black transition-all duration-300"
+                  >
+                    Book
+                  </Button>
+                </div>
+              )}
+            </div>
+          ))}
+            </div>
+            {historicalPlaces.length > 4 && (
+              <div className="flex flex-col justify-center">
+                <Button
+                  type="danger"
+                  className="w-fit  rounded-full"
+                  href="/touristActivities"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="h-6 w-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                    />
+                  </svg>
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <span className="text-4xl font-bold text-first ml-12 mt-8 block">
             Top activities you can't miss
           </span>
 
           <div className="flex justify-center">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-4 w-[90%]">
-              {touristActivities?.slice(0, 4).map((itinerary, index) => {
-                return (
-                  <div
-                    key={index}
-                    className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-2 cursor-pointer" // Thicker border on hover
-                  >
-                    <Card
-                      onClick={() =>
-                        navigate(`itinerary/activityDetails/${itinerary?._id}`)
-                      }
-                      className="rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
-                      style={{ backgroundColor: "#ffffff" }} // Default background color
-                    >
-                      <Card.Meta
-                        title={
-                          <span
-                            className="font-bold text-first text-4xl mb-2 transition-transform duration-500 ease-out" // Increased font size
-                          >
-                            {itinerary?.name}
-                          </span>
-                        }
-                        description={
-                          <div
-                            className="flex flex-col space-y-3"
-                            style={{ color: "#333333" }}
-                          >
-                            {/* Horizontal Line to Split the Card */}
-                            <hr className="my-4 border-t-2 border-[#58A399]" />{" "}
-                            {/* Green line */}
-                            <Tooltip title="Category">
-                              <span className="font-semibold text-lg hover:text-[#58A399]">
-                                <GlobalOutlined style={{ marginRight: 8 }} />
-                                {itinerary?.category?.category}
-                              </span>
-                            </Tooltip>
-                            <Tooltip title="Accessibility">
-                              <span className="font-semibold text-lg hover:text-[#58A399]">
-                                <TeamOutlined style={{ marginRight: 8 }} />
-                                Available
-                              </span>
-                            </Tooltip>
-                            <Tooltip title="Travel Route">
-                              <span className="font-semibold text-lg hover:text-[#58A399] flex items-center">
-                                <EnvironmentTwoTone
-                                  twoToneColor="#000000" // Set the color to black
-                                  style={{ marginRight: 8 }}
-                                />
-                                <a href="/" className="hover:text-[#58A399]">
-                                  {locations[index]}
-                                </a>
-                              </span>
-                            </Tooltip>
-                            <Tooltip title="Price">
-                              <span className="font-semibold text-lg hover:text-[#58A399]">
-                                <DollarCircleOutlined
-                                  style={{ marginRight: 8 }}
-                                />
-                                {currency?.code}{" "}
-                                {(
-                                  itinerary?.price.min * currency?.rate
-                                ).toFixed(2)}
-                              </span>
-                            </Tooltip>
-                          </div>
-                        }
-                      />
-                    </Card>
-                  </div>
-                );
-              })}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-[90%]">
+              {touristActivities?.slice(5, 9).map((place) => (
+                // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
+                <ActivityCard
+                  id={place._id}
+                  name={place.name}
+                  date={dayjs(place.date).format("MMM DD, YYYY")}
+                  time={place.time}
+                  isBookingOpen={place.isBookingOpen}
+                  location={{
+                    lat: place.location.lat,
+                    lng: place.location.lng,
+                  }}
+                  price={place.price} // Using price.min for display and filtering
+                  category={place.category ? place.category.category : "N/A"}
+                  preferenceTags={
+                    place.preferenceTags
+                      ? place.preferenceTags.map((tag) => tag.tag)
+                      : []
+                  }
+                  averageRating={place.averageRating} // Pass average rating to ActivityCard
+                  isSaved={place.isSaved} // Pass isSaved to ActivityCard
+                  hasNotification={place.hasNotification}
+                  currencyCode={currency?.code}
+                  currencyRate={currency?.rate}
+                />
+                // </Link>
+              ))}
             </div>
             {historicalPlaces.length > 4 && (
               <div className="flex flex-col justify-center mt-4">

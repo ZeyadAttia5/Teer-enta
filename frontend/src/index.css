@@ -14,5 +14,10 @@ input:focus {
 button:focus {
   @apply ring-0 outline-none;
 }
+
+.button1:focus {
+  @apply ring-0 outline-none;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Faculty+Glyphic&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=Faculty+Glyphic:wght@400&family=Noto+Serif:wght@100..900&family=Playfair+Display:wght@400..900&display=swap');
