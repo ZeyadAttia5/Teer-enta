@@ -19,13 +19,13 @@ const PromoCodeStrip = ({backgroundColor = "red", textColor = "white", setVisibl
 
     useEffect(() => {
         fetchPromoCode();
-    })
+    } , [promoCode])
 
     if (!visible) return null;
 
     return (
         (promoCode && promoCode.code) &&(
-        <div className="flex items-center w-full fixed top-0 justify-between bg-red-500 text-white p-0 rounded-md shadow-lg space-x-4">
+        <div className="flex items-center w-full fixed top-0 justify-between bg-red-500 text-white p-0 shadow-lg space-x-4">
             <div className="flex row justify-center items-center w-full">
                 <div className="">
                     <span className="text-md "> 🎉 Get {promoCode.discount}% discount by using </span>
