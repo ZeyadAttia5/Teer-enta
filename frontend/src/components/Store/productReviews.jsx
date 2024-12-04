@@ -3,6 +3,7 @@ import { Card, List, Avatar, Typography, Space, message } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { getProductReviews, getProductRatings } from '../../api/products.ts';
 import StarRating from '../shared/starRating';
+import dayjs from 'dayjs';
 
 const { Text } = Typography;
 
@@ -68,42 +69,59 @@ const ProductReviews = ({ productId, refresh }) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <Card
-      title={
-        <Space>
-          <UserOutlined className="text-[#58A399]" />
-          <span>Reviews</span>
-        </Space>
-      }
-      className="bg-white shadow-lg rounded-lg transition-transform duration-300 hover:bg-[#ffffff] hover:scale-105 w-full"
-    >
-      {reviews.length === 0 ? (
-        <Text className="text-gray-500 text-center">No Reviews yet</Text>
-      ) : (
-        <List
-          itemLayout="horizontal"
-          dataSource={reviews}
-          renderItem={(review) => (
-            <List.Item className="transition-transform duration-300 hover:bg-[#496989] hover:scale-105 hover:text-white">
-              <List.Item.Meta
-                avatar={<Avatar icon={<UserOutlined />} />}
-                title={<Text className="text-gray-700 hover:text-white">{review.username}</Text>}
-                description={
-                  <div>
-                    <StarRating rating={review.rating} />
-                    {review.review && (
-                      <Text className="text-[#58A399] hover:text-white">
-                        {review.review}
-                      </Text>
-                    )}
-                  </div>
-                }
-              />
-            </List.Item>
-          )}
-        />
-      )}
-    </Card>
+      <Card
+          title={
+            <div className="flex items-center gap-3 text-indigo-900">
+              <UserOutlined className="text-xl" />
+              <span className="font-semibold">Reviews</span>
+            </div>
+          }
+          className="bg-white  rounded-xl border-0"
+      >
+        {reviews.length === 0 ? (
+            <div className="py-12 text-center">
+              <Text className="text-gray-400 text-lg">No reviews yet</Text>
+            </div>
+        ) : (
+            <List
+                itemLayout="horizontal"
+                dataSource={reviews}
+                renderItem={(review) => (
+                    <List.Item className="p-4 hover:bg-gray-50 transition-colors duration-200">
+                      <List.Item.Meta
+                          avatar={
+                            <Avatar
+                                icon={<UserOutlined />}
+                                className="bg-indigo-100 text-indigo-600"
+                                size="large"
+                            />
+                          }
+                          title={
+                            <div className="flex items-center gap-3">
+                              <Text className="font-semibold text-gray-800">
+                                {review.username}
+                              </Text>
+                              <StarRating rating={review.rating} />
+                            </div>
+                          }
+                          description={
+                            <div className="mt-2">
+                              {review.review && (
+                                  <Text className="text-gray-600 text-base">
+                                    {review.review}
+                                  </Text>
+                              )}
+                              <div className="mt-2 text-xs text-gray-400">
+                                {dayjs(review.createdAt).format('MMM DD, YYYY')}
+                              </div>
+                            </div>
+                          }
+                      />
+                    </List.Item>
+                )}
+            />
+        )}
+      </Card>
   );
 };
 
