@@ -75,6 +75,7 @@ import {
   initializeFirebaseMessaging,
   setupMessageListener,
 } from "./services/firebase";
+import PromoCodeStrip from "./components/PromoCodeAdmin/PromoCodeStrip";
 
 function AppContent() {
   const [flag, setFlag] = useState(false);
@@ -175,6 +176,7 @@ function AppContent() {
 
   return (
     <div className="App relative pb-4 bg-backgroundColor  min-h-screen">
+    <PromoCodeStrip/>
       <NotificationProvider
         incomingNotification={incomingNotification}
         isNotificationIncomming={isNotificationIncoming}
