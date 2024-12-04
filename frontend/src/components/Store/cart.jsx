@@ -134,7 +134,7 @@ const CartComponent = () => {
                   }
               >
                 <Link to="/products">
-                  <Button type="primary" icon={<ShoppingOutlined />} size="large">
+                  <Button type="danger" className="bg-blue-950 hover:bg-black text-white" icon={<ShoppingOutlined />} size="large">
                     Start Shopping
                   </Button>
                 </Link>
