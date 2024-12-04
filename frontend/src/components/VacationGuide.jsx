@@ -61,9 +61,9 @@ export default function VacationGuide() {
     <div>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-gradient-to-r from-third to-second hover:from-first hover:to-second text-white font-bold py-2 px-4 rounded-full shadow-lg transform transition duration-500 hover:scale-105 animate-bounce"
+        className="bg-gradient-to-r from-third to-second hover:from-first hover:to-second text-white font-bold py-2 px-4 rounded-full shadow-lg transform transition duration-500 hover:scale-105 "
       >
-        How To Start Your Vacation 
+        ? 
       </button>
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center p-4 z-50">

@@ -23,6 +23,7 @@ module.exports = {
         fourth: "#DDE6ED",
         bg: "#f9f9f9",
         fifth: "#686d7e",
+        backgroundColor: "#f0f2f5"
       },
       backgroundImage:{
         "reports-bg": 'url("assets/lumber-bg2.webp")',
