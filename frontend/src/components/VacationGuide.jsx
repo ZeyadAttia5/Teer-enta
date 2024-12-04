@@ -1,34 +1,35 @@
 import React, { useState } from 'react'
+import gif1 from './gifs/Recording 2024-12-03 211432.gif'
 
 const steps = [
   {
     title: "Choose Your Destination",
     description: "Click on the map to select your dream vacation spot.",
-    image: "https://images.travelandleisureasia.com/wp-content/uploads/sites/3/2023/02/02192048/great-wall-of-china.jpeg",
+    image: gif1,
     arrowPosition: { top: '50%', left: '50%' }
   },
   {
     title: "Select Your Dates",
     description: "Use the calendar to pick your travel dates.",
-    image: "https://media.cntraveler.com/photos/5818a486b6f3d25e7b5c6a3e/master/pass/GettyImages-573103543.jpg",
+    image: gif1,
     arrowPosition: { top: '30%', right: '20%' }
   },
   {
     title: "Book Your Flight",
     description: "Choose from available flights for your selected dates.",
-    image: "https://www.aesdes.org/wp-content/uploads/2019/01/pyramids.jpg",
+    image: gif1,
     arrowPosition: { bottom: '25%', left: '40%' }
   },
   {
     title: "Reserve Your Accommodation",
     description: "Select from a variety of hotels or vacation rentals.",
-    image: "http://www.sumit4allphotography.com/wp-content/uploads/2015/04/paris-013.jpg",
+    image: gif1,
     arrowPosition: { top: '60%', right: '30%' }
   },
   {
     title: "Plan Your Activities",
     description: "Browse and book exciting activities for your trip.",
-    image: "https://anamericaninrome.com/wp-content/uploads/2017/08/Colosseum-at-Night-2.jpg",
+    image: gif1,
     arrowPosition: { bottom: '20%', left: '25%' }
   }
 ]
@@ -86,7 +87,7 @@ export default function VacationGuide() {
                 alt={steps[currentStep].title} 
                 className="w-full h-full object-cover"
               />
-              <div 
+              {/* <div 
                 className="absolute w-12 h-12 bg-yellow-400 rounded-full animate-pulse"
                 style={{
                   ...steps[currentStep].arrowPosition,
@@ -102,26 +103,26 @@ export default function VacationGuide() {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </div>
+              </div> */}
             </div>
             
             {/* Step indicator dots */}
             <div className="flex justify-center items-center space-x-2 my-4" role="navigation" aria-label="Step progress">
-          {steps.map((_, index) => (
-            <div
-              key={index}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                index === currentStep 
-                  ? 'bg-second w-3 h-3' 
-                  : index < currentStep 
-                    ? 'bg-third' 
-                    : 'bg-gray-300'
-              }`}
-              aria-current={index === currentStep ? 'step' : undefined}
-              aria-label={`Step ${index + 1} of ${steps.length}`}
-            />
-          ))}
-        </div>
+              {steps.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentStep 
+                      ? 'bg-second w-3 h-3' 
+                      : index < currentStep 
+                        ? 'bg-third' 
+                        : 'bg-gray-300'
+                  }`}
+                  aria-current={index === currentStep ? 'step' : undefined}
+                  aria-label={`Step ${index + 1} of ${steps.length}`}
+                />
+              ))}
+            </div>
 
             <div className="flex justify-between p-6 bg-gray-50">
               <button 
