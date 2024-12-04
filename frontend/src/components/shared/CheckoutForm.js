@@ -19,56 +19,6 @@ const CheckoutForm = ({
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!stripe || !elements) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Get card details
-      const cardElement = elements.getElement(CardElement);
-
-      // Create payment method
-      const { error: methodError, paymentMethod } =
-        await stripe.createPaymentMethod({
-          type: "card",
-          card: cardElement,
-        });
-
-      if (methodError) {
-        throw new Error(methodError.message);
-      }
-
-      // Create payment intent
-      const {
-        data: { clientSecret },
-      } = await axios.post(`${API_BASE_URL}/payment/create-payment-intent`, {
-        amount:discountedAmount || amount,
-      });
-
-      // Confirm payment
-      const { paymentIntent, error: confirmError } =
-        await stripe.confirmCardPayment(clientSecret, {
-          payment_method: paymentMethod.id,
-        });
-
-      if (confirmError) {
-        throw new Error(confirmError.message);
-      }
-
-      if (paymentIntent.status === "succeeded") {
-        setSuccess(true);
-        onPaymentSuccess();
-      }
-    } catch (err) {
-      setError(err.message);
-      onError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const CARD_ELEMENT_OPTIONS = {
     style: {
@@ -89,7 +39,6 @@ const CheckoutForm = ({
 
   return (
     <form
-      onSubmit={handleSubmit}
       className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto"
     >
       <div className="mb-4">
@@ -103,22 +52,11 @@ const CheckoutForm = ({
 
       <div className="mb-4">
         <p className="text-lg font-medium">
-          Total Amount: <span className={`${discountedAmount && 'line-through'} `}>${(amount / 100).toFixed(2)}</span>
+          Total Amount: <span className={`${discountedAmount && 'line-through'} `}>${amount}</span>
           {discountedAmount&&<span className="ml-2 text-green-500">${(discountedAmount / 100).toFixed(2)}</span>}
         </p>
       </div>
 
-      {withPayButton && (
-        <Button
-          type="primary"
-          htmlType="submit"
-          disabled={!stripe || loading}
-          loading={loading}
-          className="w-full"
-        >
-          {loading ? "Processing..." : `Pay $${(amount / 100).toFixed(2)}`}
-        </Button>
-      )}
 
       {error && (
         <Alert
