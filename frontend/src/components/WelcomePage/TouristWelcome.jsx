@@ -14,6 +14,7 @@ import { getTouristActivities } from "../../api/activity.ts";
 import { Link, useNavigate } from "react-router-dom";
 import { getCurrency } from "../../api/account.ts";
 import VacationGuide from "../../components/VacationGuide.jsx";
+import { Hotel, Train, TrainIcon, Plane, PlaneIcon } from "lucide-react";
 import {
   DollarCircleOutlined,
   EnvironmentTwoTone,
@@ -238,7 +239,7 @@ const TouristWelcome = ({ setFlag }) => {
             type="danger"
             onClick={() => setSelectedButton(2)}
           >
-            <img src={taxi} alt="Icon" className="size-6" />
+            <Train />
             Transportations
           </Button>
           <Button
@@ -250,7 +251,8 @@ const TouristWelcome = ({ setFlag }) => {
             type="danger"
             onClick={() => setSelectedButton(3)}
           >
-            <img src={hotelSVG} alt="Icon" className="size-6" />
+            <Hotel />
+              
             Hotels
           </Button>
           <Button
