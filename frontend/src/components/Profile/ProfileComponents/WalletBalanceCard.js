@@ -2,7 +2,7 @@ import React from "react";
 
 const WalletBalanceCard = ({currency, value}) => {
   return (
-    <div className="flex items-center justify-start mt-4 gap-3 p-3 bg-third rounded-lg">
+    <div className="flex items-center justify-start mt-4 gap-3 p-3 bg-fourth rounded-lg">
       {/* SVG Wrapper */}
       <div className="w-7 flex items-center justify-center">
         <svg
@@ -45,7 +45,7 @@ const WalletBalanceCard = ({currency, value}) => {
       {/* Balance Wrapper */}
       <div className="flex flex-col items-start justify-start w-30 gap-0">
         <span className="text-lg text-first font-bold tracking-wider">Wallet balance</span>
-        <p className="text-sm text-white font-semibold tracking-wider flex gap-4">
+        <p className="text-sm text-first font-semibold tracking-wider flex gap-4">
           <span id="currency" className="text-first text-lg">{currency+"    "}</span><span className="text-lg">{" "+value}</span>
         </p>
       </div>

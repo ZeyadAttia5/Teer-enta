@@ -7,8 +7,8 @@ import {
   BarChart2,
   AlertCircle,
   ArrowUpOutlined,
-  ArrowDownOutlined
-} from 'lucide-react';
+  ArrowDownOutlined,
+} from "lucide-react";
 
 const QuantityAndSales = () => {
   const [data, setData] = useState([]);
@@ -24,8 +24,14 @@ const QuantityAndSales = () => {
         setData(response.data);
 
         // Calculate totals
-        const sales = response.data.reduce((acc, curr) => acc + (curr.totalSales || 0), 0);
-        const quantity = response.data.reduce((acc, curr) => acc + (curr.availableQuantity || 0), 0);
+        const sales = response.data.reduce(
+          (acc, curr) => acc + (curr.totalSales || 0),
+          0
+        );
+        const quantity = response.data.reduce(
+          (acc, curr) => acc + (curr.availableQuantity || 0),
+          0
+        );
         setTotalSales(sales);
         setTotalQuantity(quantity);
       } catch (err) {
@@ -44,10 +50,10 @@ const QuantityAndSales = () => {
       dataIndex: "name",
       key: "name",
       render: (text) => (
-          <div className="flex items-center gap-2">
-            <PackageIcon className="w-4 h-4 text-[#1C325B]" />
-            <span className="font-medium">{text}</span>
-          </div>
+        <div className="flex items-center gap-2">
+          <PackageIcon className="w-4 h-4 text-[#1C325B]" />
+          <span className="font-medium">{text}</span>
+        </div>
       ),
     },
     {
@@ -55,9 +61,7 @@ const QuantityAndSales = () => {
       dataIndex: "availableQuantity",
       key: "availableQuantity",
       render: (value) => (
-          <div className="font-medium">
-            {value.toLocaleString()}
-          </div>
+        <div className="font-medium">{value.toLocaleString()}</div>
       ),
     },
     {
@@ -65,23 +69,24 @@ const QuantityAndSales = () => {
       dataIndex: "totalSales",
       key: "totalSales",
       render: (value) => (
-          <div className="font-medium text-emerald-600">
-            ${value.toLocaleString()}
-          </div>
+        <div className="font-medium text-emerald-600">
+          ${value.toLocaleString()}
+        </div>
       ),
     },
   ];
 
   return (
-      <ConfigProvider
-          theme={{
-            token: {
-              colorPrimary: "#1C325B",
-              borderRadius: 8,
-            },
-          }}
-      >
-        <div className=" p-8">
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#1C325B",
+          borderRadius: 8,
+        },
+      }}
+    >
+      <div className="flex justify-center">
+        <div className="w-[90%] p-8">
           <div className="max-w-7xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
               {/* Header */}
@@ -102,7 +107,9 @@ const QuantityAndSales = () => {
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-md">
                   <div className="flex items-center gap-3 mb-2">
                     <PackageIcon className="w-5 h-5 text-[#1C325B]" />
-                    <span className="text-gray-600 font-medium">Total Quantity</span>
+                    <span className="text-gray-600 font-medium">
+                      Total Quantity
+                    </span>
                   </div>
                   <div className="text-3xl font-bold text-[#1C325B]">
                     {totalQuantity.toLocaleString()}
@@ -112,7 +119,9 @@ const QuantityAndSales = () => {
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-md">
                   <div className="flex items-center gap-3 mb-2">
                     <ShoppingCart className="w-5 h-5 text-emerald-500" />
-                    <span className="text-gray-600 font-medium">Total Sales</span>
+                    <span className="text-gray-600 font-medium">
+                      Total Sales
+                    </span>
                   </div>
                   <div className="text-3xl font-bold text-emerald-600">
                     ${totalSales.toLocaleString()}
@@ -122,31 +131,32 @@ const QuantityAndSales = () => {
 
               {/* Table */}
               {loading ? (
-                  <div className="flex items-center justify-center h-64">
-                    <Spin size="large" />
-                  </div>
+                <div className="flex items-center justify-center h-64">
+                  <Spin size="large" />
+                </div>
               ) : error ? (
-                  <div className="flex flex-col items-center justify-center h-64 text-red-500 gap-3">
-                    <AlertCircle className="w-12 h-12" />
-                    <p className="font-medium text-lg">{error}</p>
-                  </div>
+                <div className="flex flex-col items-center justify-center h-64 text-red-500 gap-3">
+                  <AlertCircle className="w-12 h-12" />
+                  <p className="font-medium text-lg">{error}</p>
+                </div>
               ) : (
-                  <Table
-                      dataSource={data}
-                      columns={columns}
-                      rowKey={(record) => record._id}
-                      pagination={{
-                        pageSize: 10,
-                        showTotal: (total) => `Total ${total} products`
-                      }}
-                      className="border border-gray-200 rounded-lg"
-                      rowClassName="hover:bg-[#1C325B]/5"
-                  />
+                <Table
+                  dataSource={data}
+                  columns={columns}
+                  rowKey={(record) => record._id}
+                  pagination={{
+                    pageSize: 10,
+                    showTotal: (total) => `Total ${total} products`,
+                  }}
+                  className="border border-gray-200 rounded-lg"
+                  rowClassName="hover:bg-[#1C325B]/5"
+                />
               )}
             </div>
           </div>
         </div>
-      </ConfigProvider>
+      </div>
+    </ConfigProvider>
   );
 };
 

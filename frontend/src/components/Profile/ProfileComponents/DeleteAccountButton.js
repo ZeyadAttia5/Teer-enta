@@ -15,9 +15,9 @@ const DeleteAccountButton = () => {
   const handleDelete = async () => {};
 
   return (
-    <div className="w-full">
+    <div className="">
       <button
-        className="flex w-full text-sm gap-2 items-center justify-center px-8 py-3 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-400 transition duration-300"
+        className="flex text-sm gap-2 items-center justify-center w-full px-16 py-3 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-400 transition duration-300"
         onClick={() => setModalOpen(true)}
       >
         <svg
