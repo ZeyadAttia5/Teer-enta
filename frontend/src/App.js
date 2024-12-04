@@ -68,12 +68,10 @@ import { toast } from "react-toastify";
 import CheckOutOrder from "./components/Store/checkOutOrder";
 import OrderHistory from "./components/Store/orderHistory";
 import OrderDetails from "./components/Store/orderDetails";
-import { NotificationProvider } from "./components/notifications/NotificationContext";
-import "./services/firebase.js";
-import {
-  initializeFirebaseMessaging,
-  setupMessageListener,
-} from "./services/firebase";
+import VacationGuide from "./components/VacationGuide.jsx";
+import {NotificationProvider} from "./components/notifications/NotificationContext";
+import './services/firebase.js';
+import {initializeFirebaseMessaging, setupMessageListener} from "./services/firebase";
 
 function AppContent() {
   const [flag, setFlag] = useState(false);
@@ -88,6 +86,7 @@ function AppContent() {
     location.pathname !== "/signup";
   const [isNotificationIncoming, setIsNotificationIncoming] = useState(true);
   const [incomingNotification, setIncomingNotification] = useState(null);
+  const user1 = JSON.parse(localStorage.getItem("user"));
 
   const handleNotification = useCallback((payload) => {
     // console.log("Received foreground message:", payload);
@@ -206,29 +205,29 @@ function AppContent() {
             <BackButton />
           </div>
         )}
-        <div className="mt-[80px]">
-          <Routes>
-            {/* General Routes */}
-            <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
-            {/* <Route path="/" element={<HomePage setFlag={setFlag} />} /> */}
-            <Route path="/signup" element={<Signup setFlag={setFlag} />} />
-            <Route
-              path="/login"
-              element={<Login setFlag={setFlag} flag={flag} />}
-            />
-            <Route path="/profile" element={<Profile setFlag={setFlag} />} />
-            <Route
-              path="/preference-tags"
-              element={<PreferenceTags setFlag={setFlag} />}
-            />
-            <Route
-              path="/forgot-password"
-              element={<ForgotPassword setFlag={setFlag} />}
-            />
-            <Route
-              path="/reset-password/:token"
-              element={<ResetPassword setFlag={setFlag} />}
-            />
+        <div>
+        <Routes>
+          {/* General Routes */}
+          <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
+          {/* <Route path="/" element={<HomePage setFlag={setFlag} />} /> */}
+          <Route path="/signup" element={<Signup setFlag={setFlag} />} />
+          <Route
+            path="/login"
+            element={<Login setFlag={setFlag} flag={flag} />}
+          />
+          <Route path="/profile" element={<Profile setFlag={setFlag} />} />
+          <Route
+            path="/preference-tags"
+            element={<PreferenceTags setFlag={setFlag} />}
+          />
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword setFlag={setFlag} />}
+          />
+          <Route
+            path="/reset-password/:token"
+            element={<ResetPassword setFlag={setFlag} />}
+          />
 
             {/* Activity Routes */}
             <Route
