@@ -19,7 +19,7 @@ const UserCard = ({
   level,
 }) => {
   return (
-    <div className="bg-third  p-4 rounded-lg m-8 w-[350px] h-[300px] shadow-2xl flex flex-col justify-between">
+    <div className="bg-white  p-4 rounded-lg m-8 w-[350px] h-[300px] shadow-2xl flex flex-col justify-between">
       <style>
         {`
   .card_box span::before {
@@ -48,7 +48,7 @@ const UserCard = ({
         <div className="flex flex-col justify-between h-28 w-full flex-1">
           <div>
             {/* Name and Function */}
-            <p className="text-xl font-medium text-white">{username}</p>
+            <p className="text-xl font-medium text-first">{username}</p>
             <p className="text-sm text-fifth">{userRole}</p>
           </div>
 

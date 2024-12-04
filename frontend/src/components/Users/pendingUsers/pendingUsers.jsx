@@ -172,7 +172,8 @@ const PendingUsers = ({ setFlag }) => {
             },
           }}
       >
-        <div className=" p-8">
+        <div className='flex justify-center'>
+        <div className=" p-8 w-[90%]">
           <div className="max-w-7xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
               {/* Header */}
@@ -206,6 +207,7 @@ const PendingUsers = ({ setFlag }) => {
               />
             </div>
           </div>
+        </div>
         </div>
       </ConfigProvider>
   );

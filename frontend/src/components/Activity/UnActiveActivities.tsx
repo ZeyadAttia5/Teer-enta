@@ -28,7 +28,7 @@ import {
   Tooltip,
   Spin,
   ConfigProvider,
-  message
+  message,
 } from "antd";
 import {
   Flag,
@@ -40,8 +40,8 @@ import {
   Percent,
   AlertCircle,
   PackageIcon,
-  ClipboardList
-} from 'lucide-react';
+  ClipboardList,
+} from "lucide-react";
 import {
   CalendarOutlined,
   ClockCircleOutlined,
@@ -66,12 +66,12 @@ const UnActiveActivities = ({ setFlag }) => {
   setFlag(false);
   const user = JSON.parse(localStorage.getItem("user"));
   const [activities, setActivities] = useState<TActivity[]>([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const fetchActivities = async () => {
-    setLoading(true)
-    let res=await getUnActiveActivities()
-      setActivities(res.data);
-   setLoading(false)
+    setLoading(true);
+    let res = await getUnActiveActivities();
+    setActivities(res.data);
+    setLoading(false);
   };
   const columns = [
     {
@@ -219,7 +219,7 @@ const UnActiveActivities = ({ setFlag }) => {
         b.ratings.reduce((acc, cur) => acc + cur.rating, 0) /
           (b.ratings.length || 1),
     },
-    
+
     {
       title: "Actions",
       dataIndex: "actions",
@@ -249,65 +249,68 @@ const UnActiveActivities = ({ setFlag }) => {
   useEffect(() => {
     columns.forEach((column) => {
       if (column.key === "preferenceTags")
-        column["filters"] = activities?.map((activity) => activity.preferenceTags)
+        column["filters"] = activities
+          ?.map((activity) => activity.preferenceTags)
           .flat()
           .map((tag) => ({ text: tag.tag, value: tag._id }));
     });
   }, [activities]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 overflow-x: auto;" >
-    <div className="max-w-6xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 overflow-x: auto;">
-        {/* Header Section */}
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-1 mb-2">
-                <ClipboardList className="w-6 h-6 text-white" />
-                <h3 className="m-0 text-lg font-semibold" style={{ color: "white" }}>
-                  Unactive Activity Management
-                </h3>
+    <div className="flex justify-center">
+      <div className="w-[90%] p-6 overflow-x: auto;">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 overflow-x: auto;">
+            {/* Header Section */}
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-1 mb-2">
+                    <ClipboardList className="w-6 h-6 text-white" />
+                    <h3
+                      className="m-0 text-lg font-semibold"
+                      style={{ color: "white" }}
+                    >
+                      Unactive Activity Management
+                    </h3>
+                  </div>
+                  <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                    View and manage unactive activities efficiently
+                  </p>
+                </div>
               </div>
-              <p className="text-gray-200 mt-2 mb-0 opacity-90">
-                View and manage unactive activities efficiently
-              </p>
             </div>
 
-           
-            
+            {/* Table Section */}
+            <div className="p-6">
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <Spin size="large" />
+                </div>
+              ) : (
+                <Table
+                  columns={columns}
+                  dataSource={activities}
+                  rowKey="_id"
+                  pagination={{
+                    pageSize: 10,
+                    showTotal: (total) => `Total ${total} activities`,
+                  }}
+                  className="border border-gray-200 rounded-lg"
+                  rowClassName="hover:bg-[#1C325B]/5"
+                  locale={{
+                    emptyText: (
+                      <div className="py-8 text-center text-gray-500">
+                        No activities found
+                      </div>
+                    ),
+                  }}
+                />
+              )}
+            </div>
           </div>
         </div>
-
-        {/* Table Section */}
-        <div className="p-6">
-          {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <Spin size="large" />
-            </div>
-          ) : (
-            <Table
-              columns={columns}
-              dataSource={activities}
-              rowKey="_id"
-              pagination={{
-                pageSize: 10,
-                showTotal: (total) => `Total ${total} activities`,
-              }}
-              className="border border-gray-200 rounded-lg"
-              rowClassName="hover:bg-[#1C325B]/5"
-              locale={{
-                emptyText: (
-                  <div className="py-8 text-center text-gray-500">
-                    No activities found
-                  </div>
-                ),
-              }}
-            />
-          )}
-        </div>
       </div>
-    </div>
     </div>
   );
 };
