@@ -20,7 +20,7 @@ import {
   Tag,
   Spin,
   ConfigProvider,
-  message
+  message,
 } from "antd";
 import {
   Flag,
@@ -32,8 +32,8 @@ import {
   Percent,
   AlertCircle,
   PackageIcon,
-  ClipboardList
-} from 'lucide-react';
+  ClipboardList,
+} from "lucide-react";
 import {
   getActivities,
   createActivity,
@@ -51,7 +51,7 @@ import {
   FlagFilled,
 } from "@ant-design/icons";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-import ImageUploader from "../Images/imageUploader"
+import ImageUploader from "../Images/imageUploader";
 import moment from "moment";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
@@ -76,7 +76,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   const [location, setLocation] = useState({ lat: 0, lng: 0 }); // Default location
   const [form] = Form.useForm();
   const locationn = useLocation();
-  const [selectedImage , setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Fetch activities, categories, and tags on component load
   useEffect(() => {
@@ -93,7 +93,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
 
   const handleImagePathChange = (path: string) => {
     setSelectedImage(path);
-  }
+  };
 
   const fetchActivities = async () => {
     setLoading(true);
@@ -112,9 +112,9 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       const response = await getMyActivities();
       setActivities(response.data);
     } catch (error) {
-      if(error.response.status === 404){
-        notification.info({message:"You didnt create any activities yet"})
-      }else{
+      if (error.response.status === 404) {
+        notification.info({ message: "You didnt create any activities yet" });
+      } else {
         notification.error({ message: "Error fetching activities" });
       }
     } finally {
@@ -196,7 +196,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   const handleFormSubmit = async (values) => {
     const activityData = {
       ...values,
-      imageUrl : selectedImage,
+      imageUrl: selectedImage,
       date: values.date.toISOString(),
       time: values.time.format("HH:mm"),
       location,
@@ -207,8 +207,6 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       preferenceTags: values.preferenceTags, // Assuming these are tag _ids
       category: values.category, // Assuming this is category _id
     };
-
-    
 
     try {
       if (isEditing && currentActivity) {
@@ -250,41 +248,49 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       title: "Date",
       dataIndex: "date",
       key: "date",
-      render: (date) => <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-[#1C325B]" />
-      <span>{moment(date).format("MMM DD, YYYY, h:mm A")}</span>
-      </div>
+      render: (date) => (
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-[#1C325B]" />
+          <span>{moment(date).format("MMM DD, YYYY, h:mm A")}</span>
+        </div>
+      ),
     },
     {
       title: "Time",
       dataIndex: "time",
       key: "time",
-      render: (time) => <div className="flex items-center gap-2">  
-      <Clock className="w-4 h-4" />
-      <span>{time}</span>
-      </div>,
+      render: (time) => (
+        <div className="flex items-center gap-2">
+          <Clock className="w-4 h-4" />
+          <span>{time}</span>
+        </div>
+      ),
     },
 
-    
-   
-    
-    
     {
       title: "Location",
       dataIndex: "location",
       key: "location",
       render: (loc) => (
         <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[#1C325B]" />
-            <span>({loc?.lat}, {loc?.lng})</span>
-          </div>
+          <MapPin className="w-4 h-4 text-[#1C325B]" />
+          <span>
+            ({loc?.lat}, {loc?.lng})
+          </span>
+        </div>
       ),
     },
     {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      render: (category) => ( <span><Tag className="px-3 py-1 bg-[#1C325B]/10 text-[#1C325B] border-0 rounded-lg">{category?.category || "N/A"}</Tag>
-      </span>),
+      render: (category) => (
+        <span>
+          <Tag className="px-3 py-1 bg-[#1C325B]/10 text-[#1C325B] border-0 rounded-lg">
+            {category?.category || "N/A"}
+          </Tag>
+        </span>
+      ),
     },
     {
       title: "Preference Tags",
@@ -304,8 +310,6 @@ const AllActivitiesCRUD = ({ setFlag }) => {
         </div>
       ),
     },
-    
-    
 
     {
       title: "Special Discounts",
@@ -326,15 +330,15 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                 <Percent className="w-4 h-4" />
                 {discount.discount}% Off
               </div>
-              <p className="text-sm text-gray-600 mt-1">{discount.Description}</p>
+              <p className="text-sm text-gray-600 mt-1">
+                {discount.Description}
+              </p>
             </div>
           ))}
         </div>
       ),
     },
-    
 
-    
     {
       title: user ? "Actions" : "",
       key: "actions",
@@ -346,8 +350,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
           />
           {user &&
             user.userRole === "Advertiser" &&
-            user._id === record.createdBy &&
-            (
+            user._id === record.createdBy && (
               <div>
                 <Button
                   icon={<EditOutlined />}
@@ -361,8 +364,8 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                 </Popconfirm>
               </div>
             )}
-          {user && user?.userRole === "Admin"&& (
-          <Badge count={0} offset={[-5, 5]}>
+          {user && user?.userRole === "Admin" && (
+            <Badge count={0} offset={[-5, 5]}>
               <Tooltip title={"Flag this item as Inappropriate"}>
                 <Button
                   danger
@@ -384,7 +387,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    margin: '5px',
+                    margin: "5px",
                   }}
                 />
               </Tooltip>
@@ -396,228 +399,250 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   ];
 
   return (
-
     <ConfigProvider
-    theme={{
+      theme={{
         token: {
-            colorPrimary: "#1C325B",
+          colorPrimary: "#1C325B",
         },
-    }}
->
-<div className="min-h-screen bg-gray-50 p-6">
-    <div className="max-w-6xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-        {/* Header Section */}
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-1 mb-2">
-                <ClipboardList className="w-6 h-6 text-white" />
-                <h3 className="m-0 text-lg font-semibold" style={{ color: "white" }}>
-                  Activity Management
-                </h3>
-              </div>
-              <p className="text-gray-200 mt-2 mb-0 opacity-90">
-                Create, view, and manage activities efficiently
-              </p>
-            </div>
-
-            {/* Action Button */}
-            {user && user.userRole === "Advertiser" && (
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={handleCreateActivity}
-                className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
-                size="large"
-              >
-                Create Activity
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {/* Table Section */}
-        <div className="p-6">
-          {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <Spin size="large" />
-            </div>
-          ) : (
-            <Table
-              columns={columns}
-              dataSource={activities}
-              rowKey="_id"
-              pagination={{
-                pageSize: 10,
-                showTotal: (total) => `Total ${total} activities`,
-              }}
-              className="border border-gray-200 rounded-lg"
-              rowClassName="hover:bg-[#1C325B]/5"
-              locale={{
-                emptyText: (
-                  <div className="py-8 text-center text-gray-500">
-                    No activities found
+      }}
+    >
+      <div className="flex justify-center">
+        <div className="w-[90%] p-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+              {/* Header Section */}
+              <div className="px-6 py-4 border-b border-gray-200">
+                <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-1 mb-2">
+                      <ClipboardList className="w-6 h-6 text-white" />
+                      <h3
+                        className="m-0 text-lg font-semibold"
+                        style={{ color: "white" }}
+                      >
+                        Activity Management
+                      </h3>
+                    </div>
+                    <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                      Create, view, and manage activities efficiently
+                    </p>
                   </div>
-                ),
-              }}
-            />
-          )}
-        </div>
-      </div>
-    </div>
-  
 
+                  {/* Action Button */}
+                  {user && user.userRole === "Advertiser" && (
+                    <Button
+                      type="primary"
+                      icon={<PlusOutlined />}
+                      onClick={handleCreateActivity}
+                      className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
+                      size="large"
+                    >
+                      Create Activity
+                    </Button>
+                  )}
+                </div>
+              </div>
 
+              {/* Table Section */}
+              <div className="p-6">
+                {loading ? (
+                  <div className="flex justify-center items-center py-12">
+                    <Spin size="large" />
+                  </div>
+                ) : (
+                  <Table
+                    columns={columns}
+                    dataSource={activities}
+                    rowKey="_id"
+                    pagination={{
+                      pageSize: 10,
+                      showTotal: (total) => `Total ${total} activities`,
+                    }}
+                    className="border border-gray-200 rounded-lg"
+                    rowClassName="hover:bg-[#1C325B]/5"
+                    locale={{
+                      emptyText: (
+                        <div className="py-8 text-center text-gray-500">
+                          No activities found
+                        </div>
+                      ),
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
 
-    
-        {/* Modal for Creating or Editing Activities */}
-        <Modal
-          title={
-            isViewing
-              ? "View Activity"
-              : isEditing
-              ? "Edit Activity"
-              : "Create Activity"
-          }
-          visible={isModalVisible}
-          onCancel={() => setIsModalVisible(false)}
-          footer={null}
-        >
-          <Form
+          {/* Modal for Creating or Editing Activities */}
+          <Modal
+            title={
+              isViewing
+                ? "View Activity"
+                : isEditing
+                ? "Edit Activity"
+                : "Create Activity"
+            }
+            visible={isModalVisible}
+            onCancel={() => setIsModalVisible(false)}
+            footer={null}
+          >
+            <Form
               form={form}
               onFinish={handleFormSubmit}
-              initialValues={{isActive: false, isBookingOpen: false}}
+              initialValues={{ isActive: false, isBookingOpen: false }}
               layout="vertical"
-          >
-            {/* Form items */}
-            <ImageUploader onImagePathChange={handleImagePathChange}/>
-            <Item label="Name" name="name" rules={[{required: true}]}>
-              <Input disabled={isViewing}/>
-            </Item>
-            <Item label="Date" name="date" rules={[{required: true}]}>
-              <DatePicker disabled={isViewing}/>
-            </Item>
-            <Item label="Time" name="time" rules={[{required: true}]}>
-              <TimePicker format="HH:mm" disabled={isViewing}/>
-            </Item>
-            <Item label="Price Min" name="priceMin">
-              <InputNumber disabled={isViewing}/>
-            </Item>
-            <Item label="Price Max" name="priceMax">
-              <InputNumber disabled={isViewing}/>
-            </Item>
-            <Item label="Booking Open" name="isBookingOpen" valuePropName="checked">
-              <Switch disabled={isViewing}/>
-            </Item>
-            <Item label="Active" name="isActive" valuePropName="checked">
-              <Switch disabled={isViewing}/>
-            </Item>
-            {/* Map Container and Category Dropdown */}
-            <Item label="Location">
-              <MapContainer
+            >
+              {/* Form items */}
+              <ImageUploader onImagePathChange={handleImagePathChange} />
+              <Item label="Name" name="name" rules={[{ required: true }]}>
+                <Input disabled={isViewing} />
+              </Item>
+              <Item label="Date" name="date" rules={[{ required: true }]}>
+                <DatePicker disabled={isViewing} />
+              </Item>
+              <Item label="Time" name="time" rules={[{ required: true }]}>
+                <TimePicker format="HH:mm" disabled={isViewing} />
+              </Item>
+              <Item label="Price Min" name="priceMin">
+                <InputNumber disabled={isViewing} />
+              </Item>
+              <Item label="Price Max" name="priceMax">
+                <InputNumber disabled={isViewing} />
+              </Item>
+              <Item
+                label="Booking Open"
+                name="isBookingOpen"
+                valuePropName="checked"
+              >
+                <Switch disabled={isViewing} />
+              </Item>
+              <Item label="Active" name="isActive" valuePropName="checked">
+                <Switch disabled={isViewing} />
+              </Item>
+              {/* Map Container and Category Dropdown */}
+              <Item label="Location">
+                <MapContainer
                   longitude={location.lng}
                   latitude={location.lat}
-                  outputLocation={(lat, lng) => setLocation({lat, lng})}
-              />
-            </Item>
-            <Item label="Category" name="category" rules={[{required: true}]}>
-              <Select placeholder="Select Category" disabled={isViewing}>
-                {categories.map((category) => (
+                  outputLocation={(lat, lng) => setLocation({ lat, lng })}
+                />
+              </Item>
+              <Item
+                label="Category"
+                name="category"
+                rules={[{ required: true }]}
+              >
+                <Select placeholder="Select Category" disabled={isViewing}>
+                  {categories.map((category) => (
                     <Option key={category._id} value={category._id}>
                       {category.category}
                     </Option>
-                ))}
-              </Select>
-            </Item>
-            <Item label="Preference Tags" name="preferenceTags">
-              <Select
+                  ))}
+                </Select>
+              </Item>
+              <Item label="Preference Tags" name="preferenceTags">
+                <Select
                   mode="multiple"
                   placeholder="Select Tags"
                   disabled={isViewing}
-              >
-                {preferenceTags.map((tag) => (
+                >
+                  {preferenceTags.map((tag) => (
                     <Option key={tag._id} value={tag._id}>
                       {tag.tag}
                     </Option>
-                ))}
-              </Select>
-            </Item>
+                  ))}
+                </Select>
+              </Item>
 
-            {/* Special Discounts Section */}
-            <Item label="Special Discounts">
-              <Form.List name="specialDiscounts">
-                {(fields, {add, remove}) => (
+              {/* Special Discounts Section */}
+              <Item label="Special Discounts">
+                <Form.List name="specialDiscounts">
+                  {(fields, { add, remove }) => (
                     <>
-                      {fields.map(({key, name, fieldKey, ...restField}) => (
-                          <div key={key} style={{display: "flex", marginBottom: 8}}>
-                            <Form.Item
-                                {...restField}
-                                name={[name, "discount"]}
-                                fieldKey={[fieldKey, "discount"]}
-                                rules={[{required: true, message: "Missing discount"}]}
-                                style={{flex: 1}}
+                      {fields.map(({ key, name, fieldKey, ...restField }) => (
+                        <div
+                          key={key}
+                          style={{ display: "flex", marginBottom: 8 }}
+                        >
+                          <Form.Item
+                            {...restField}
+                            name={[name, "discount"]}
+                            fieldKey={[fieldKey, "discount"]}
+                            rules={[
+                              { required: true, message: "Missing discount" },
+                            ]}
+                            style={{ flex: 1 }}
+                          >
+                            <InputNumber
+                              placeholder="Discount (%)"
+                              disabled={isViewing}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "Description"]}
+                            fieldKey={[fieldKey, "Description"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Missing description",
+                              },
+                            ]}
+                            style={{ flex: 2, marginLeft: 8 }}
+                          >
+                            <Input
+                              placeholder="Description"
+                              disabled={isViewing}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "isAvailable"]}
+                            fieldKey={[fieldKey, "isAvailable"]}
+                            valuePropName="checked"
+                            style={{ marginLeft: 8 }}
+                          >
+                            <Switch disabled={isViewing} />
+                          </Form.Item>
+                          {!isViewing && (
+                            <Button
+                              type="link"
+                              onClick={() => remove(name)}
+                              style={{ marginLeft: 8 }}
                             >
-                              <InputNumber
-                                  placeholder="Discount (%)"
-                                  disabled={isViewing}
-                              />
-                            </Form.Item>
-                            <Form.Item
-                                {...restField}
-                                name={[name, "Description"]}
-                                fieldKey={[fieldKey, "Description"]}
-                                rules={[{required: true, message: "Missing description"}]}
-                                style={{flex: 2, marginLeft: 8}}
-                            >
-                              <Input placeholder="Description" disabled={isViewing}/>
-                            </Form.Item>
-                            <Form.Item
-                                {...restField}
-                                name={[name, "isAvailable"]}
-                                fieldKey={[fieldKey, "isAvailable"]}
-                                valuePropName="checked"
-                                style={{marginLeft: 8}}
-                            >
-                              <Switch disabled={isViewing}/>
-                            </Form.Item>
-                            {!isViewing && (
-                                <Button
-                                    type="link"
-                                    onClick={() => remove(name)}
-                                    style={{marginLeft: 8}}
-                                >
-                                  Remove
-                                </Button>
-                            )}
-                          </div>
+                              Remove
+                            </Button>
+                          )}
+                        </div>
                       ))}
                       {!isViewing && (
-                          <Form.Item>
-                            <Button type="dashed" onClick={() => add()} block>
-                              Add Discount
-                            </Button>
-                          </Form.Item>
+                        <Form.Item>
+                          <Button type="dashed" onClick={() => add()} block>
+                            Add Discount
+                          </Button>
+                        </Form.Item>
                       )}
                     </>
-                )}
-              </Form.List>
-            </Item>
+                  )}
+                </Form.List>
+              </Item>
 
-            {/* Submit Button */}
-            {!isViewing && (
-                <Button type="primary" htmlType="submit" className="bg-green-600">
+              {/* Submit Button */}
+              {!isViewing && (
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="bg-green-600"
+                >
                   {isEditing ? "Update" : "Create"}
                 </Button>
-            )}
-          </Form>
-        </Modal>
-
-</div>
+              )}
+            </Form>
+          </Modal>
+        </div>
+      </div>
     </ConfigProvider>
-
   );
-
 };
 
 export default AllActivitiesCRUD;

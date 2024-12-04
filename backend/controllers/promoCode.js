@@ -73,3 +73,21 @@ exports.applyPromoCode = async (req, res) => {
         errorHandler.SendError(res, err);
     }
 }
+
+exports.getLatestPromoCode = async (req, res) => {
+    try{
+        const currentDate = new Date();
+
+        const latestPromoCode = await PromoCodes.findOne({
+            // Check if expiry date is in the future
+            expiryDate: { $gt: currentDate },
+            // Check if usage limit is greater than 0
+            usageLimit: { $gt: 0 }
+        })
+            .sort({ createdAt: -1 }) // Sort by creation date, newest first
+            .lean(); // Convert to plain JavaScript object for better performance
+        return res.status(200).json(latestPromoCode);
+    }catch (err){
+        errorHandler.SendError(res, err);
+    }
+}

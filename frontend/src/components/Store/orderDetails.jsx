@@ -94,7 +94,7 @@ const OrderDetails = () => {
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <Card className="shadow-lg rounded-lg mb-6">
+                <Card className="  rounded-lg mb-6">
                     <div className="flex justify-between items-center mb-6">
                         <Button
                             icon={<ArrowLeftOutlined />}
@@ -142,7 +142,7 @@ const OrderDetails = () => {
                     title={
                         <Text strong className="text-indigo-900">Order Items</Text>
                     }
-                    className="shadow-lg rounded-lg mb-6"
+                    className="  rounded-lg mb-6"
                 >
                     {order?.products.map((item, index) => (
                         <div key={index}>
@@ -204,7 +204,7 @@ const OrderDetails = () => {
                             Delivery Information
                         </Text>
                     }
-                    className="shadow-lg rounded-lg mb-6"
+                    className="  rounded-lg mb-6"
                 >
                     <Descriptions column={1} className="mb-4">
                         <Descriptions.Item
@@ -223,7 +223,7 @@ const OrderDetails = () => {
                             Order Timeline
                         </Text>
                     }
-                    className="shadow-lg rounded-lg"
+                    className="  rounded-lg"
                 >
                     <Timeline mode="left">
                         <Timeline.Item
@@ -278,7 +278,7 @@ const OrderDetails = () => {
                             Payment Information
                         </Text>
                     }
-                    className="shadow-lg rounded-lg mt-6"
+                    className="  rounded-lg mt-6"
                 >
                     <Descriptions column={1}>
                         <Descriptions.Item
@@ -306,28 +306,6 @@ const OrderDetails = () => {
                         </Descriptions.Item>
                     </Descriptions>
                 </Card>
-
-                {/* Action Buttons */}
-                <div className="flex justify-between mt-6">
-                    <Button
-                        icon={<ArrowLeftOutlined />}
-                        onClick={() => navigate('/orders')}
-                        size="large"
-                        className="text-indigo-600 hover:text-indigo-800"
-                    >
-                        Back to Orders
-                    </Button>
-                    {order?.status === 'Pending' && (
-                        <Button
-                            danger
-                            size="large"
-                            icon={<CloseCircleOutlined />}
-                            onClick={handleCancelOrder}
-                        >
-                            Cancel Order
-                        </Button>
-                    )}
-                </div>
             </div>
 
             {/* Custom Styles */}

@@ -5,6 +5,7 @@ const isAuth = require("../middlewares/isAuth");
 const router = express.Router();
 
 router.get("/", isAuth, promoCodeController.getAllPromoCodes);
+router.get("/latestPromoCode", promoCodeController.getLatestPromoCode);
 router.post("/create", isAuth, promoCodeController.createPromoCode);
 router.post("/apply", isAuth, promoCodeController.applyPromoCode);
 

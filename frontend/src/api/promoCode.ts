@@ -29,3 +29,7 @@ export const applyPromoCode = async (code) => {
         }
     );
 };
+
+export const latestPromoCode = async () => {
+    return await axios.get(`${API_BASE_URL}/promoCode/latestPromoCode`, {})
+}

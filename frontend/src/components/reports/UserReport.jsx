@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Typography, Select, Button, Row, Col } from 'antd';
-import { FilterOutlined, ReloadOutlined } from '@ant-design/icons';
-import NewUsersReport from './NewUsersReport';
-import SalesReport from './SalesReport';
+import React, { useState, useEffect } from "react";
+import { Card, Typography, Select, Button, Row, Col } from "antd";
+import { FilterOutlined, ReloadOutlined } from "@ant-design/icons";
+import NewUsersReport from "./NewUsersReport";
+import SalesReport from "./SalesReport";
 import {
   getActivityReport,
   getItineraryReport,
@@ -10,7 +10,7 @@ import {
   getTransportationReport,
   getOrderReport,
   getAdminRevenue,
-} from '../../api/statistics.ts';
+} from "../../api/statistics.ts";
 
 const { Title } = Typography;
 
@@ -23,14 +23,14 @@ const charts = [
     isMonthlyReports: true,
     idKey: null,
     nameKey: null,
-    category: "revenue"
+    category: "revenue",
   },
   {
     title: "Newly Registered Users",
     component: NewUsersReport,
     api_func: getNewUsersPerMonth,
     roles: ["admin"],
-    category: "users"
+    category: "users",
   },
   {
     title: "Itinerary Sales",
@@ -39,7 +39,7 @@ const charts = [
     roles: ["tourguide"],
     idKey: "itineraryId",
     nameKey: "itineraryName",
-    category: "Itinerary Sales"
+    category: "Itinerary Sales",
   },
   {
     title: "Activity Sales",
@@ -48,7 +48,7 @@ const charts = [
     roles: ["advertiser"],
     idKey: "activityId",
     nameKey: "activityName",
-    category: "Activity Sales"
+    category: "Activity Sales",
   },
   {
     title: "Transportation Sales",
@@ -57,7 +57,7 @@ const charts = [
     roles: ["advertiser"],
     idKey: "transportationId",
     nameKey: "transportationName",
-    category: "Transportation Sales"
+    category: "Transportation Sales",
   },
   {
     title: "Order Report",
@@ -66,82 +66,85 @@ const charts = [
     roles: ["admin", "seller"],
     idKey: "productId",
     nameKey: "productName",
-    category: "Order sales"
+    category: "Order sales",
   },
 ];
 
 const UserReport = () => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [filteredCharts, setFilteredCharts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const role = JSON.parse(localStorage.getItem("user"))?.userRole?.toLowerCase() || '';
+  const role =
+    JSON.parse(localStorage.getItem("user"))?.userRole?.toLowerCase() || "";
 
   useEffect(() => {
     if (!role) return;
 
-    let filtered = charts.filter(chart => chart.roles.includes(role));
+    let filtered = charts.filter((chart) => chart.roles.includes(role));
 
-    const newCategories = ['all', ...new Set(filtered.map(chart => chart.category))];
+    const newCategories = [
+      "all",
+      ...new Set(filtered.map((chart) => chart.category)),
+    ];
     setCategories(newCategories);
 
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(chart => chart.category === selectedCategory);
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter(
+        (chart) => chart.category === selectedCategory
+      );
     }
 
     setFilteredCharts(filtered);
   }, [selectedCategory, role]);
 
-// Reset the category selection
+  // Reset the category selection
   const handleReset = () => {
-    setSelectedCategory('all');
+    setSelectedCategory("all");
   };
 
   return (
-      <div className=" p-6">
+    <div className="flex justify-center">
+      <div className="w-[90%] p-6">
         {/* Header Card */}
-        <div className="max-w-[1400px] mx-auto mb-6">
-          <Card
-              bordered={false}
-              className="shadow-sm bg-white"
-          >
+        <div className="max-w-[1200px] mx-auto mb-6">
+          <Card bordered={false} className="shadow-sm bg-white">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-2">
               <Title level={2} className="!mb-0">
-               📈 Analytics Dashboard
+                📈 Analytics Dashboard
               </Title>
-              {(role === "admin" || role === "advertiser") && (<div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  <FilterOutlined className="text-gray-500 text-lg" />
-                  <Select
+              {(role === "admin" || role === "advertiser") && (
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    <FilterOutlined className="text-gray-500 text-lg" />
+                    <Select
                       value={selectedCategory}
                       onChange={setSelectedCategory}
                       style={{ width: 180 }}
                       size="large"
-                      options={categories.map(category => ({
+                      options={categories.map((category) => ({
                         value: category,
-                        label: category.charAt(0).toUpperCase() + category.slice(1)
+                        label:
+                          category.charAt(0).toUpperCase() + category.slice(1),
                       }))}
-                  />
-                </div>
-                <Button
+                    />
+                  </div>
+                  <Button
                     icon={<ReloadOutlined />}
                     onClick={handleReset}
                     size="large"
                     className="flex items-center"
-                >
-                  Reset
-                </Button>
-              </div>)}
+                  >
+                    Reset
+                  </Button>
+                </div>
+              )}
             </div>
           </Card>
         </div>
 
         {/* Reports Grid */}
-        <div className="max-w-[1400px] mx-auto">
-          <Row
-              gutter={[16, 16]}
-              justify="center"
-              className="items-stretch"
-          >
+        <div className="max-w-[1200px] mx-auto">
+          <Row gutter={[16, 16]} justify="center" className="items-stretch">
             {filteredCharts.map((chart, index) => {
               const Component = chart.component;
               // If there's only one chart, make it full width
@@ -150,43 +153,43 @@ const UserReport = () => {
               const colSpan = filteredCharts.length === 1 ? 24 : 12;
 
               return (
-                  <Col
-                      xs={24}
-                      xl={colSpan}
-                      key={index}
-                      className={`flex ${filteredCharts.length === 1 ? 'justify-center' : ''}`}
+                <Col
+                  xs={24}
+                  xl={colSpan}
+                  key={index}
+                  className={`flex ${
+                    filteredCharts.length === 1 ? "justify-center" : ""
+                  }`}
+                >
+                  <Card
+                    bordered={false}
+                    className={`shadow-sm hover:shadow-md transition-all duration-300 bg-white
+                  ${filteredCharts.length === 1 ? "w-2/3" : "w-full"}`}
+                    title={
+                      <span className="text-lg font-medium text-gray-800">
+                        {chart.title}
+                      </span>
+                    }
+                    bodyStyle={{
+                      padding: 24,
+                      minHeight: 400,
+                    }}
+                    headStyle={{
+                      borderBottom: "1px solid #f0f0f0",
+                      padding: "16px 24px",
+                    }}
                   >
-                    <Card
-                        bordered={false}
-                        className={`shadow-sm hover:shadow-md transition-all duration-300 bg-white
-                  ${filteredCharts.length === 1 ? 'w-2/3' : 'w-full'}`}
-                        title={
-                          <span className="text-lg font-medium text-gray-800">
-                    {chart.title}
-                  </span>
-                        }
-                        bodyStyle={{
-                          padding: 24,
-                          minHeight: 400
-                        }}
-                        headStyle={{
-                          borderBottom: '1px solid #f0f0f0',
-                          padding: '16px 24px'
-                        }}
-                    >
-                      <div className="h-full">
-                        <Component
-                            {...chart}
-                            className="w-full h-full"
-                        />
-                      </div>
-                    </Card>
-                  </Col>
+                    <div className="">
+                      <Component {...chart} className="" />
+                    </div>
+                  </Card>
+                </Col>
               );
             })}
           </Row>
         </div>
       </div>
+    </div>
   );
 };
 

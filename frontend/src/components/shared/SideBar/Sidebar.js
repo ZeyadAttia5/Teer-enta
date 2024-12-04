@@ -61,9 +61,11 @@ const Sidebar = ({ visible, onClose }) => {
         className="bg-fourth"
       >
         {user && user.userRole !== "Tourist"  && user.userRole !== "TourismGovernor" && (
-            <Menu.Item key="22" onClick={() => handleClick("/reports/")}>
-              Dashboard
-            </Menu.Item>
+           
+              <Menu.Item key="22" onClick={() => handleClick("/reports/")} icon={<BarChartOutlined />}>
+                Dashboard
+              </Menu.Item>
+            
         )}
         {user &&
           (user.userRole === "Admin" ||
@@ -362,11 +364,7 @@ const Sidebar = ({ visible, onClose }) => {
             ])}
           </Menu.SubMenu>
         )}
-        {user && user.userRole !== "Tourist" && (
-          <Menu.Item key="22" onClick={() => handleClick("/reports/")} icon={<BarChartOutlined />}>
-            Reports
-          </Menu.Item>
-        )}
+        
       </Menu>
     </Drawer>
   );

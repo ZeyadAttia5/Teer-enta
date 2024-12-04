@@ -75,6 +75,7 @@ import {
   initializeFirebaseMessaging,
   setupMessageListener,
 } from "./services/firebase";
+import PromoCodeStrip from "./components/PromoCodeAdmin/PromoCodeStrip";
 
 function AppContent() {
   const [flag, setFlag] = useState(false);
@@ -175,6 +176,7 @@ function AppContent() {
 
   return (
     <div className="App relative pb-4 bg-backgroundColor  min-h-screen">
+    <PromoCodeStrip/>
       <NotificationProvider
         incomingNotification={incomingNotification}
         isNotificationIncomming={isNotificationIncoming}
@@ -208,7 +210,7 @@ function AppContent() {
             <BackButton />
           </div>
         )}
-        <div className="mt-[80px]">
+        <div className={`${!flag ? 'mt-[80px]' : ''}`}>
           <Routes>
             {/* General Routes */}
             <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
