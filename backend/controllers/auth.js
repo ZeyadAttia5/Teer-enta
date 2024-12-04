@@ -166,9 +166,9 @@ exports.changePassword = async (req, res) => {
 
 exports.toggleFirstLoginAndUpdatePrefrences = async (req, res) => {
     try {
-        const preferences = req.body.preferences;
+        const preferences = req.body;
         const user = await Tourist.findById(req.user._id);
-        const updated = await Tourist.findByIdAndUpdate(req.user._id, {firstLogin: false, preferences}, {new: true});
+        const updated = await Tourist.findByIdAndUpdate(req.user._id, {firstLogin: false, preferences:preferences}, {new: true});
         res.status(200).json({message: 'First login status changed successfully.'});
     } catch (err) {
         errorHandler.SendError(res, err);

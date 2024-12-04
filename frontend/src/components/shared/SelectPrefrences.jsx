@@ -150,6 +150,7 @@ const SelectPrefrences = ({
                       >
                         {category.category}
                       </Tag>
+
                     )
                   );
                 })}

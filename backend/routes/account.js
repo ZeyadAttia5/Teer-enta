@@ -9,6 +9,8 @@ router.get('/accepted', isAuth ,accountController.getAllAcceptedUsers);
 router.get('/pending',isAuth , accountController.getAllPendingUsers);
 router.get('/all' ,isAuth , accountController.getAllUsers)
 router.get('/preferences', accountController.getAllPreferences);
+router.get('/suggestedActivites' , isAuth,accountController.getSuggestedActivites) ;
+router.get('/suggestedItinerary' , isAuth,accountController.getSuggestedItinerary) ;
 router.post('/create',isAuth ,accountController.createAccount);
 router.post('/acceptTermsAndConditions',isAuth , accountController.acceptTermsAndConditions);
 router.put("/choosePreferences",isAuth , accountController.chooseMyPreferences);

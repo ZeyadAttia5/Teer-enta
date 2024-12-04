@@ -11,6 +11,7 @@ const Itinerary = require('../models/Itinerary/Itinerary');
 const Product = require('../models/Product/Product');
 const Advertiser = require("../models/Users/Advertiser");
 const errorHandler = require("../Util/ErrorHandler/errorSender");
+const PreferenceTag = require('../models/Itinerary/PreferenceTags');
 const bcrypt = require('bcryptjs');
 const userModel = require('../models/Users/userModels');
 const TourGuide = require('../models/Users/TourGuide');
@@ -428,6 +429,69 @@ exports.uploadCertificates = async (req, res) => {
         res.status(200).json({message: 'Certificates uploaded successfully', user});
     } catch (err) {
         errorHandler.SendError(res, err);
+    }
+}
+
+
+
+exports.getSuggestedItinerary = async (req, res) => {
+    try {
+        // Get the user from the request (make sure user is authenticated)
+        const userId = req.user._id; // assuming user is attached to the request after authentication
+
+        // Fetch the user's preferences
+        const user = await Tourist.findById(userId);
+
+
+        // Extract the user preference tags
+        const preferenceTagIds = user.preferences.preferenceTags;
+
+
+        // Query the Itineraries collection to find itineraries that match the preference tags
+        const itineraries = await Itinerary.find({
+            preferenceTags: {$in: preferenceTagIds}
+        }).populate('preferenceTags');
+
+        // Return the found itineraries
+        if (itineraries.length > 0) {
+            return res.json(itineraries);
+        } else {
+            return res.status(404).json({message: 'No itineraries found with your preferences'});
+        }
+    } catch (error) {
+        console.error('Error fetching itineraries:', error);
+        return res.status(500).json({message: 'Server error'});
+    }
+}
+
+exports.getSuggestedActivites = async (req, res) => {
+    try {
+        // Get the user from the request (make sure user is authenticated)
+        const userId = req.user._id; // assuming user is attached to the request after authentication
+
+        // Fetch the user's preferences (specifically the activity categories)
+        const user = await Tourist.findById(userId).populate('preferences.activityCategories');
+
+
+        // Extract the user activity categories
+        const activityCategoryIds = user.preferences.activityCategories.map(category => category._id);
+
+
+
+        // Query the Activities collection to find activities that match the user's selected categories
+        const activities = await Activity.find({
+            category: {$in: activityCategoryIds}
+        }).populate('category'); // Populate the category field for better readability
+
+        // Return the found activities
+        if (activities.length > 0) {
+            return res.json(activities);
+        } else {
+            return res.status(404).json({message: 'No activities found in your selected categories'});
+        }
+    } catch (error) {
+        console.error('Error fetching activities:', error);
+        return res.status(500).json({message: 'Server error'});
     }
 }
 
