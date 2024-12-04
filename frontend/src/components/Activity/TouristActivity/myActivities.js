@@ -114,7 +114,7 @@ const TouristActivity = () => {
                 {activities.map((place) => (
                     <div
                         key={place._id}
-                        className="transform hover:-translate-y-1 transition-transform duration-300"
+                        className="transform  transition-transform duration-300"
                     >
                       <ActivityCard
                           id={place._id}
@@ -133,12 +133,13 @@ const TouristActivity = () => {
                                 ? place.preferenceTags.map((tag) => tag.tag)
                                 : []
                           }
-                          image={place.imagePath}
+                          imageUrl={place.imageUrl}
                           averageRating={place.averageRating}
                           currencyCode={currency?.code}
                           currencyRate={currency?.rate}
                           isSaved={true}
                           hasNotification={place.hasNotification}
+                          specialDiscounts={place.specialDiscounts}
                       />
                     </div>
                 ))}
