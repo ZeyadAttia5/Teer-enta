@@ -299,7 +299,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
   };
 
   return (
-    <Card className="max-w-xl mx-auto my-6 p-6 bg-[#DDE6ED] border border-gray-300">
+    <Card className="max-w-xl mx-auto my-6 p-6 border-none">
       <Form
         form={form}
         layout="vertical"
@@ -400,7 +400,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
         </Form.Item>
       </Form>
 
-      <Space direction="vertical" className="w-full mt-4">
+      {/* <Space direction="vertical" className="w-full mt-4">
         <Button
           block
           onClick={() => form.resetFields()}
@@ -408,7 +408,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
         >
           Reset Form
         </Button>
-      </Space>
+      </Space> */}
     </Card>
   );
 };
@@ -495,7 +495,7 @@ const BookHotel = () => {
         className="w-11/12 min-h-[600px] flex my-20 mx-auto shadow"
         classNames={{
           body: "flex flex-1 flex-col justify-center",
-          cover: "flex-1",
+          cover: "w-2/5", // Changed from w-1/3 to w-2/5
         }}
         cover={
           <img
