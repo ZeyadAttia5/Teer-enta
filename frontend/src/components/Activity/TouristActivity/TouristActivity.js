@@ -352,146 +352,209 @@ const TouristActivity = ({ setFlag }) => {
         {/* Search and Filters Section */}
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Search Bar Section */}
-          <div className="flex flex-col items-center space-y-6" >
+          <div className="flex flex-col items-center space-y-6">
             <Search
                 placeholder="Search by name, category, or tag"
                 onSearch={handleSearch}
-                enterButton={<SearchOutlined />}
+                enterButton={<SearchOutlined/>}
                 className="max-w-md w-full"
                 allowClear
             />
 
             {/* Filters Row */}
-            <div className="flex flex-wrap justify-center gap-3">
-              {/* Budget Filter */}
+            <div className="flex flex-wrap justify-center space-x-4 items-center">
+              {/* Budget Filter Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button1 variant="outline">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="size-5"
                         fill="none"
                         viewBox="0 0 24 24"
-                        strokeWidth="1.5"
+                        stroke-width="1.5"
                         stroke="currentColor"
+                        class="size-6"
                     >
                       <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
                           d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
                       />
                     </svg>
-                    <span className="ml-2">Budget</span>
+                    <span className="ml-1">Budget</span>
                   </Button1>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
-                  {/* ... Budget dropdown content ... */}
+                  <DropdownMenuLabel>Budget Range</DropdownMenuLabel>
+                  <DropdownMenuSeparator/>
+                  <div className="p-4">
+                    <p className="mb-2">
+                      Budget: ${budget[0]} - ${budget[1]}
+                    </p>
+                    <Slider
+                        range
+                        value={budget}
+                        max={maxBudget}
+                        onChange={(value) => setBudget(value)}
+                        tooltipVisible
+                        tooltipPlacement="bottom"
+                        className="mt-2"
+                    />
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Category Filter */}
+              {/* Category Filter Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button1 variant="outline">
-                    <FaLayerGroup className="size-4" />
-                    <span className="ml-2">Category</span>
+                    <FaLayerGroup className="mr-2 h-4 w-4"/>
+                    Category
                   </Button1>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
-                  {/* ... Category dropdown content ... */}
+                  <DropdownMenuLabel>Select Category</DropdownMenuLabel>
+                  <DropdownMenuSeparator/>
+                  <div className="p-4">
+                    <select
+                        id="categoryFilter"
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        value={category || undefined}
+                    >
+                      <option value="">All Categories</option>
+                      {uniqueCategories?.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                      ))}
+                    </select>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Rating Filter */}
+              {/* Rating Filter Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button1 variant="outline">
-                    <Star className="size-4" />
-                    <span className="ml-2">Rating</span>
+                    <Star className="mr-2 h-4 w-4"/>
+                    Rating
                   </Button1>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
-                  {/* ... Rating dropdown content ... */}
+                  <DropdownMenuLabel>Minimum Rating</DropdownMenuLabel>
+                  <DropdownMenuSeparator/>
+                  <div className="p-4">
+                    <select
+                        id="ratingFilter"
+                        onChange={(e) => setRating(e.target.value)}
+                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        value={rating || undefined}
+                    >
+                      <option value={0}>All Ratings</option>
+                      <option value={4}>4 Stars & Above</option>
+                      <option value={3}>3 Stars & Above</option>
+                      <option value={2}>2 Stars & Above</option>
+                      <option value={1}>1 Star & Above</option>
+                    </select>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Sort Filter */}
+              {/* Sorting Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button1 variant="outline">
-                    <SortAsc className="size-4" />
-                    <span className="ml-2">Sort</span>
+                    <SortAsc className="mr-2 h-4 w-4"/>
+                    Sort
                   </Button1>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
-                  {/* ... Sort dropdown content ... */}
+                  <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                  <DropdownMenuSeparator/>
+                  <div className="p-4">
+                    <select
+                        id="sortFilter"
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        value={sortBy || undefined}
+                    >
+                      <option value="">No Sorting</option>
+                      <option value="price">Price (Low to High)</option>
+                      <option value="price_desc">Price (High to Low)</option>
+                      <option value="rating">Rating (High to Low)</option>
+                      <option value="rating_asc">Rating (Low to High)</option>
+                    </select>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
 
               {/* Reset Button */}
               <Button2
+                  type="danger"
+                  icon={<ReloadOutlined/>}
                   onClick={resetFilters}
-                  className="flex items-center gap-2"
+                  className="h-9"
               >
-                {/*<ReloadOutlined />*/}
                 Reset
               </Button2>
             </div>
+        </div>
+
+        {/* Activities Section */}
+        <div className="space-y-6">
+          {/* Upcoming Activities Checkbox */}
+          <div className="flex justify-center">
+            <Checkbox
+                checked={showUpcoming}
+                onChange={(e) => setShowUpcoming(e.target.checked)}
+                className="text-sm font-medium text-gray-600"
+            >
+              Show Upcoming Activities
+            </Checkbox>
           </div>
 
-          {/* Activities Section */}
-          <div className="space-y-6">
-            {/* Upcoming Activities Checkbox */}
-            <div className="flex justify-center">
-              <Checkbox
-                  checked={showUpcoming}
-                  onChange={(e) => setShowUpcoming(e.target.checked)}
-                  className="text-sm font-medium text-gray-600"
-              >
-                Show Upcoming Activities
-              </Checkbox>
-            </div>
-
-            {/* Activities Grid */}
-            <div className="flex justify-center">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl">
-                {filteredActivities?.length > 0 ? (
-                    filteredActivities?.map((place) => (
-                        <ActivityCard
-                            key={place._id}
-                            id={place._id}
-                            name={place.name}
-                            date={dayjs(place.date).format("MMM DD, YYYY")}
-                            time={place.time}
-                            isBookingOpen={place.isBookingOpen}
-                            location={{
-                              lat: place.location.lat,
-                              lng: place.location.lng,
-                            }}
-                            price={place.price}
-                            category={place.category ? place.category.category : "N/A"}
-                            preferenceTags={place.preferenceTags?.map((tag) => tag.tag) || []}
-                            averageRating={place.averageRating}
-                            isSaved={place.isSaved}
-                            hasNotification={place.hasNotification}
-                            currencyCode={currency?.code}
-                            currencyRate={currency?.rate}
-                            ratings={place.ratings}
-                            specialDiscounts={place.specialDiscounts}
-                            imageUrl={place.imageUrl}
-                        />
-                    ))
-                ) : (
-                    <div className="col-span-full text-center py-12 text-gray-500">
-                      No activities found based on the applied filters.
-                    </div>
-                )}
-              </div>
+          {/* Activities Grid */}
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl">
+              {filteredActivities?.length > 0 ? (
+                  filteredActivities?.map((place) => (
+                      <ActivityCard
+                          key={place._id}
+                          id={place._id}
+                          name={place.name}
+                          date={dayjs(place.date).format("MMM DD, YYYY")}
+                          time={place.time}
+                          isBookingOpen={place.isBookingOpen}
+                          location={{
+                            lat: place.location.lat,
+                            lng: place.location.lng,
+                          }}
+                          price={place.price}
+                          category={place.category ? place.category.category : "N/A"}
+                          preferenceTags={place.preferenceTags?.map((tag) => tag.tag) || []}
+                          averageRating={place.averageRating}
+                          isSaved={place.isSaved}
+                          hasNotification={place.hasNotification}
+                          currencyCode={currency?.code}
+                          currencyRate={currency?.rate}
+                          ratings={place.ratings}
+                          specialDiscounts={place.specialDiscounts}
+                          imageUrl={place.imageUrl}
+                      />
+                  ))
+              ) : (
+                  <div className="col-span-full text-center py-12 text-gray-500">
+                    No activities found based on the applied filters.
+                  </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-  );
+</div>
+)
+  ;
 };
 
 export default TouristActivity;
