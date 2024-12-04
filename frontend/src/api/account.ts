@@ -28,13 +28,28 @@ export const addUser = async (user) => {
 
 }
 
+export const getSuggestedActivites = async () => {
+    return await axios.get(`${API_BASE_URL}/account/suggestedActivites`, {
+        headers:{
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    }) ;
+}
+
+export const getSuggestedItinerary = async ()  => {
+    return await axios.get(`${API_BASE_URL}/account/suggestedItinerary`, {
+        headers:{
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    })
+}
+
 export const acceptUser = async (userId) => {
     return await axios.patch(`${API_BASE_URL}/account/accept/${userId}`, {}, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
     });
-
 }
 
 export const rejectUser = async (userId) => {

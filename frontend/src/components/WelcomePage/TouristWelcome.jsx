@@ -12,7 +12,7 @@ import planeSVG from "../../assets/svgs/plane.svg";
 import { getHistoricalPlaces } from "../../api/historicalPlaces.ts";
 import { getTouristActivities } from "../../api/activity.ts";
 import { Link, useNavigate } from "react-router-dom";
-import { getCurrency } from "../../api/account.ts";
+import {getCurrency, getSuggestedActivites, getSuggestedItinerary} from "../../api/account.ts";
 import VacationGuide from "../../components/VacationGuide.jsx";
 import { Hotel, Train, TrainIcon, Plane, PlaneIcon } from "lucide-react";
 import {
@@ -104,6 +104,7 @@ const TouristWelcome = ({ setFlag }) => {
       }
     };
     fetchCurrency();
+    getSugeestions();
   }, []);
 
   var loc;
@@ -111,6 +112,13 @@ const TouristWelcome = ({ setFlag }) => {
     const fetchAddress = async () => {};
     fetchAddress();
   }, [loc]);
+
+const getSugeestions = async () => {
+  const suggestedActivites = await getSuggestedActivites();
+  const suggestedItinerries = await getSuggestedItinerary() ;
+  console.log("suggestedItinerries" + suggestedItinerries.data);
+  console.log("suggestedActivites" + suggestedActivites.data);
+}
 
   const callMaps = async (loc) => {
     var y;
