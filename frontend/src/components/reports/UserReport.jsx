@@ -39,7 +39,7 @@ const charts = [
     roles: ["tourguide"],
     idKey: "itineraryId",
     nameKey: "itineraryName",
-    category: "sales"
+    category: "Itinerary Sales"
   },
   {
     title: "Activity Sales",
@@ -48,7 +48,7 @@ const charts = [
     roles: ["advertiser"],
     idKey: "activityId",
     nameKey: "activityName",
-    category: "sales"
+    category: "Activity Sales"
   },
   {
     title: "Transportation Sales",
@@ -57,7 +57,7 @@ const charts = [
     roles: ["advertiser"],
     idKey: "transportationId",
     nameKey: "transportationName",
-    category: "sales"
+    category: "Transportation Sales"
   },
   {
     title: "Order Report",
@@ -66,19 +66,23 @@ const charts = [
     roles: ["admin", "seller"],
     idKey: "productId",
     nameKey: "productName",
-    category: "sales"
+    category: "Order sales"
   },
 ];
 
 const UserReport = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [filteredCharts, setFilteredCharts] = useState([]);
-  const role = JSON.parse(localStorage.getItem("user"))?.userRole?.toLowerCase();
-
-  const categories = ['all', ...new Set(charts.map(chart => chart.category))];
+  const [categories, setCategories] = useState([]);
+  const role = JSON.parse(localStorage.getItem("user"))?.userRole?.toLowerCase() || '';
 
   useEffect(() => {
+    if (!role) return;
+
     let filtered = charts.filter(chart => chart.roles.includes(role));
+
+    const newCategories = ['all', ...new Set(filtered.map(chart => chart.category))];
+    setCategories(newCategories);
 
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(chart => chart.category === selectedCategory);
@@ -87,6 +91,7 @@ const UserReport = () => {
     setFilteredCharts(filtered);
   }, [selectedCategory, role]);
 
+// Reset the category selection
   const handleReset = () => {
     setSelectedCategory('all');
   };
@@ -103,7 +108,7 @@ const UserReport = () => {
               <Title level={2} className="!mb-0">
                📈 Analytics Dashboard
               </Title>
-              <div className="flex items-center gap-4">
+              {(role === "admin" || role === "advertiser") && (<div className="flex items-center gap-4">
                 <div className="flex items-center gap-3">
                   <FilterOutlined className="text-gray-500 text-lg" />
                   <Select
@@ -125,7 +130,7 @@ const UserReport = () => {
                 >
                   Reset
                 </Button>
-              </div>
+              </div>)}
             </div>
           </Card>
         </div>
