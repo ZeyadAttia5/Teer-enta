@@ -1,9 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {Rate, Button, Card, Tooltip, message} from "antd";
-import {getGoogleMapsAddress} from "../../../api/googleMaps.ts";
-import {saveActivity, removeSavedActivity} from "../../../api/profile.ts";
-import {updateNotificationRequestStatus, createNotificationRequest, getMyRequest} from "../../../api/notifications.ts";
-import {useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Rate, Button, Tooltip, message } from "antd";
+import { useNavigate } from "react-router-dom";
 import {
     CalendarOutlined,
     ClockCircleOutlined,
@@ -15,6 +12,9 @@ import {
     BellOutlined,
     BellFilled,
 } from "@ant-design/icons";
+import {createNotificationRequest, getMyRequest, updateNotificationRequestStatus} from "../../../api/notifications.ts";
+import {removeSavedActivity, saveActivity} from "../../../api/profile.ts";
+import {getGoogleMapsAddress} from "../../../api/googleMaps.ts";
 
 const ActivityCard = ({
                           id,
@@ -37,10 +37,12 @@ const ActivityCard = ({
     const [address, setAddress] = useState("");
     const [isSaved, setIsSaved] = useState(initialSavedState);
     const [isNotified, setIsNotified] = useState(initialNotificationState);
+    const [isHovered, setIsHovered] = useState(false);
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("user"));
 
     useEffect(() => {
+
         const fetchAddress = async () => {
             try {
                 const response = await getGoogleMapsAddress(location);
@@ -57,39 +59,38 @@ const ActivityCard = ({
         navigate(`/itinerary/activityDetails/${id}`);
     };
 
-    const handleActivityBooking = () => {
-        navigate(`/touristActivities/book/${id}`);
+    const handleLocationClick = (e) => {
+        e.stopPropagation();
+        window.open(`https://www.google.com/maps?q=${location?.lat},${location?.lng}`, "_blank");
     };
 
-    const handleLocationClick = () => {
-        window.open(`https://www.google.com/maps?q=${location?.lat},${location?.lng}`, "_blank");
-    }
-
-    const handleSaveActivity = async (activityId) => {
+    const handleSaveActivity = async (e) => {
+        e.stopPropagation();
         try {
             if (!isSaved) {
-                setIsSaved(!isSaved);
-                await saveActivity(activityId);
+                await saveActivity(id);
+                setIsSaved(true);
                 message.success("Activity saved successfully!");
             } else {
-                setIsSaved(!isSaved);
-                await removeSavedActivity(activityId);
+                await removeSavedActivity(id);
+                setIsSaved(false);
                 message.info("Activity removed from saved activities!");
             }
         } catch (error) {
             console.error("Error saving activity:", error);
+            message.error("Failed to update saved status");
         }
     };
 
-    const handleNotificationToggle = async () => {
+    const handleNotificationToggle = async (e) => {
+        e.stopPropagation();
         try {
             if (!isNotified) {
                 const response = await getMyRequest(id);
-                // console.log(response);
                 if (response.data.notificationsRequests.length > 0) {
                     await updateNotificationRequestStatus(id, "Pending");
-                }else{
-                    await createNotificationRequest({activityId: id});
+                } else {
+                    await createNotificationRequest({ activityId: id });
                 }
                 setIsNotified(true);
                 message.success("You will be notified about this activity!");
@@ -105,127 +106,189 @@ const ActivityCard = ({
     };
 
     return (
-      <main className="flex flex-wrap justify-center items-center pt-6">
         <div
-          className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-2 cursor-pointer hover:border-2 hover:border-third"
-          onClick={handleActivityDetails} // Navigate to the details page when the card is clicked
+            className="w-full max-w-sm mx-auto transition-shadow duration-300 hover:shadow-xl cursor-pointer"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={handleActivityDetails}
         >
-          {user && (
-            <div className="absolute top-4 right-4 z-10 flex gap-2">
-              <Tooltip title={isSaved ? "Unsave Activity" : "Save Activity"}>
-                <Button
-                  type="text"
-                  icon={
-                    isSaved ? (
-                      <HeartFilled style={{ color: "red", fontSize: "24px" }} />
-                    ) : (
-                      <HeartOutlined style={{ color: "gray", fontSize: "24px" }} />
-                    )
-                  }
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent parent click
-                    handleSaveActivity(id);
-                  }}
-                />
-              </Tooltip>
-              <Tooltip title={isNotified ? "Turn off notifications" : "Get notified"}>
-                <Button
-                  type="text"
-                  icon={
-                    isNotified ? (
-                      <BellFilled style={{ color: "#FFD700", fontSize: "24px" }} />
-                    ) : (
-                      <BellOutlined style={{ color: "gray", fontSize: "24px" }} />
-                    )
-                  }
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent parent click
-                    handleNotificationToggle();
-                  }}
-                />
-              </Tooltip>
-            </div>
-          )}
-    
-          <Card
-            className="rounded-lg shadow-lg px-2 pt-2 transition-all duration-300 ease-in-out hover:text-white"
-            style={{ backgroundColor: "#ffffff" }}
-          >
-            <Card.Meta
-              title={
-                <>
-                  <Tooltip title={name}>
-                    <span
-                      className="font-bold text-6xl mb-2 transition-transform duration-500 ease-out relative"
-                      style={{ color: "#333333" }}
-                    >
-                      {name}
-                      <hr className="my-4 border-t-2 border-second" />
-                    </span>
-                  </Tooltip>
-                </>
-              }
-              description={
-                <div className="flex flex-col space-y-1 mb-0" style={{ color: "#333333" }}>
-                  <Tooltip title="Date">
-                    <span className="font-semibold text-lg hover:text-third flex items-center">
-                      <CalendarOutlined className="mr-2" />
-                      {new Date(date).toLocaleDateString()}
-                    </span>
-                  </Tooltip>
-                  <Tooltip title="Time">
-                    <span className="font-semibold text-lg hover:text-third flex items-center">
-                      <ClockCircleOutlined className="mr-2" />
-                      {time}
-                    </span>
-                  </Tooltip>
-                  <Tooltip title="Category">
-                    <span className="font-semibold text-lg hover:text-third flex items-center">
-                      <FolderOutlined className="mr-2" />
-                      {category || "N/A"}
-                    </span>
-                  </Tooltip>
-    
-                  <div className="flex items-center justify-center gap-1 my-2">
-                    <Tooltip title="" overlayClassName="bg-fourth">
-                      <p className="text-xs font-bold mr-1">{currencyCode}</p>
-                    </Tooltip>
-                    <Tooltip title="Price" overlayClassName="bg-fourth">
-                      <p className="text-2xl sm:text-3xl font-bold">
-                        {price?.min ? (currencyRate * price.min).toFixed(1) : "N/A"}
-                      </p>
-                    </Tooltip>
-    
-                    <Tooltip title="" overlayClassName="bg-fourth">
-                      <p className="text-xs font-bold mr-1"></p>
-                    </Tooltip>
-                    <Tooltip title="Price" overlayClassName="bg-fourth">
-                      <p className="text-2xl sm:text-3xl font-bold">
-                        {price?.max ? (currencyRate * price.max).toFixed(1) : "N/A"}
-                      </p>
-                    </Tooltip>
-                  </div>
-                </div>
-              }
-            />
-            <div className="flex justify-center items-center p-0 mt-6">
-  <Button
-    type="primary"
-    onClick={(e) => {
-      e.stopPropagation(); // Prevent card's onClick from triggering
-      navigate(`/touristActivities/book/${id}`);
-    }}
-    className="text-white bg-first text-xl py-4 px-6 hover:bg-second transition-all duration-300"
-  >
-    Book
-  </Button>
-</div>
+            <div className="relative bg-white rounded-lg  overflow-hidden border border-gray-100">
+                {/* Image Section */}
+                <div className="relative h-72 overflow-hidden">
+                    <img
+                        src={imageUrl || "/api/placeholder/400/320"}
+                        alt={name}
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#808080]/70 via-[#808080]/20 to-transparent" />
 
-          </Card>
+                    {/* Action Buttons - Reduced Size */}
+                    {user && (
+                        <div className="absolute top-3 right-3 flex gap-2">
+                            <Tooltip title={isSaved ? "Remove from favorites" : "Add to favorites"}>
+                                <button
+                                    onClick={handleSaveActivity}
+                                    className="p-2 rounded-full bg-white/95 shadow-lg backdrop-blur-sm transition-all duration-300
+                                         hover:scale-105 hover:bg-white cursor-pointer"
+                                >
+                                    {isSaved ? (
+                                        <HeartFilled className="text-red-500 text-base" />
+                                    ) : (
+                                        <HeartOutlined className="text-gray-600 text-base hover:text-red-500" />
+                                    )}
+                                </button>
+                            </Tooltip>
+                            {!isBookingOpen && (
+                                <Tooltip title={isNotified ? "Turn off notifications" : "Get notified"}>
+                                    <button
+                                        onClick={handleNotificationToggle}
+                                        className="p-2 rounded-full bg-white/95 shadow-lg backdrop-blur-sm transition-all duration-300
+                                         hover:scale-105 hover:bg-white cursor-pointer"
+                                    >
+                                        {isNotified ? (
+                                            <BellFilled className="text-[#FFD700] text-base" />
+                                        ) : (
+                                            <BellOutlined className="text-gray-600 text-base hover:text-[#FFD700]" />
+                                        )}
+                                    </button>
+                                </Tooltip>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Title and Rating */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-gray-400/30 via-gray-400/30 to-transparent">
+                        <h3 className="text-white text-2xl font-bold tracking-wide truncate mb-2">{name}</h3>
+                        <div className="flex items-center space-x-3">
+                            <Rate
+                                disabled
+                                defaultValue={averageRating || 0}
+                                className="text-[#FFD700] text-sm"
+                            />
+                            <span className="text-white/90 text-sm">
+                            {ratings?.length ? `(${ratings.length} reviews)` : '(No reviews yet)'}
+                        </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Status Tags Section - Moved outside image */}
+                <div className="p-4 bg-white border-b border-gray-100">
+                    <div className="flex flex-wrap gap-2 items-center">
+                        {/* Booking Status Tag */}
+                        <div className={`px-3 py-1 rounded-md text-sm font-medium inline-flex items-center
+                        ${isBookingOpen
+                            ? 'bg-green-100 text-green-700 border border-green-200'
+                            : 'bg-red-100 text-red-700 border border-red-200'
+                        }`}
+                        >
+                            <span className={`w-1.5 h-1.5 rounded-full ${isBookingOpen ? 'bg-green-500' : 'bg-red-500'} mr-2`}></span>
+                            {isBookingOpen ? 'Booking Open' : 'Booking Closed'}
+                        </div>
+
+                        {/* Discount Tags */}
+                        {specialDiscounts?.map((discount, index) => (
+                            discount.isAvailable && (
+                                <div
+                                    key={index}
+                                    className="bg-yellow-50 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-md text-sm font-medium flex items-center gap-2"
+                                >
+                                    <DollarOutlined className="text-sm" />
+                                    {`${discount.discount}% OFF`}
+                                </div>
+                            )
+                        ))}
+                    </div>
+                </div>
+
+                {/* Content Section */}
+                <div className="p-6 space-y-6 bg-white">
+                    {/* Discount Details Section */}
+                    {/*{specialDiscounts?.some(discount => discount.isAvailable) && (*/}
+                    {/*    <div className="space-y-2">*/}
+                    {/*        {specialDiscounts.map((discount, index) => (*/}
+                    {/*            discount.isAvailable && (*/}
+                    {/*                <div*/}
+                    {/*                    key={index}*/}
+                    {/*                    className="bg-yellow-50 p-3 rounded-md flex items-start gap-3"*/}
+                    {/*                >*/}
+                    {/*                    <DollarOutlined className="text-yellow-600 mt-1 text-sm" />*/}
+                    {/*                    <div>*/}
+                    {/*                        <div className="text-sm font-semibold text-yellow-800">*/}
+                    {/*                            {discount.discount}% Discount Available*/}
+                    {/*                        </div>*/}
+                    {/*                        <p className="text-sm text-yellow-600">*/}
+                    {/*                            {discount.Description}*/}
+                    {/*                        </p>*/}
+                    {/*                    </div>*/}
+                    {/*                </div>*/}
+                    {/*            )*/}
+                    {/*        ))}*/}
+                    {/*    </div>*/}
+                    {/*)}*/}
+
+                    {/* Info Grid */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <Tooltip title="Date">
+                            <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <CalendarOutlined className="text-[#2A3663] text-lg" />
+                                <span className="text-sm font-medium text-gray-700">
+                                {new Date(date).toLocaleDateString()}
+                            </span>
+                            </div>
+                        </Tooltip>
+                        <Tooltip title="Time">
+                            <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <ClockCircleOutlined className="text-[#2A3663] text-lg" />
+                                <span className="text-sm font-medium text-gray-700">{time}</span>
+                            </div>
+                        </Tooltip>
+                        <Tooltip title="Category">
+                            <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <FolderOutlined className="text-[#2A3663] text-lg" />
+                                <span className="text-sm font-medium text-gray-700">{category || "N/A"}</span>
+                            </div>
+                        </Tooltip>
+                        <Tooltip title="View on map">
+                            <div
+                                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                                onClick={handleLocationClick}
+                            >
+                                <EnvironmentOutlined className="text-[#2A3663] text-lg" />
+                                <span className="text-sm font-medium text-gray-700">View Location</span>
+                            </div>
+                        </Tooltip>
+                    </div>
+
+                    {/* Price and Booking Section */}
+                    <div className="flex justify-between items-center border-t border-gray-100 pt-6">
+                        <div className="flex flex-col">
+                            <span className="text-sm text-gray-500 mb-1">Starting from</span>
+                            <div className="flex items-baseline space-x-1">
+                                <span className="text-sm font-medium text-gray-500">{currencyCode}</span>
+                                <span className="text-3xl font-bold text-[#2A3663]">
+                                {price?.min ? (currencyRate * price.min).toFixed(1) : "N/A"}
+                            </span>
+                            </div>
+                        </div>
+                        <Button
+                            type="danger"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/touristActivities/book/${id}`);
+                            }}
+                            className="bg-[#2A3663] text-white px-8 py-4 text-lg font-semibold rounded-lg
+                                 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer
+                                 hover:bg-black disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            disabled={!isBookingOpen}
+                        >
+                            {isBookingOpen ? "Book Now" : "Not Available"}
+                        </Button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </main>
     );
-    
 };
 
 export default ActivityCard;

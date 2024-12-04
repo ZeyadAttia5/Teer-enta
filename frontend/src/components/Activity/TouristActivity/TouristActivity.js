@@ -348,210 +348,213 @@ const TouristActivity = ({ setFlag }) => {
     return acc;
   }, []);
   return (
-    <div className="p-0">
-      {/* <p className="font-bold text-8xl mb-8 " style={{ color: "#496989" }}>Activities</p> */}
+      <div className="min-h-screen bg-gray-50 px-4 py-8">
+        {/* Search and Filters Section */}
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Search Bar Section */}
+          <div className="flex flex-col items-center space-y-6">
+            <Search
+                placeholder="Search by name, category, or tag"
+                onSearch={handleSearch}
+                enterButton={<SearchOutlined/>}
+                className="max-w-md w-full"
+                allowClear
+            />
 
-      <div className="flex flex-col items-center space-y-4">
-        {/* Centered Search Bar */}
-        <Search
-          placeholder="Search by name, category, or tag"
-          onSearch={handleSearch}
-          enterButton={<SearchOutlined />}
-          className="p-2 rounded-md w-[400px]"
-          allowClear
-        />
+            {/* Filters Row */}
+            <div className="flex flex-wrap justify-center space-x-4 items-center">
+              {/* Budget Filter Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button1 variant="outline">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-6"
+                    >
+                      <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
+                      />
+                    </svg>
+                    <span className="ml-1">Budget</span>
+                  </Button1>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>Budget Range</DropdownMenuLabel>
+                  <DropdownMenuSeparator/>
+                  <div className="p-4">
+                    <p className="mb-2">
+                      Budget: ${budget[0]} - ${budget[1]}
+                    </p>
+                    <Slider
+                        range
+                        value={budget}
+                        max={maxBudget}
+                        onChange={(value) => setBudget(value)}
+                        tooltipVisible
+                        tooltipPlacement="bottom"
+                        className="mt-2"
+                    />
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-        {/* Centered Filters and Reset Button */}
-        <div className="flex flex-wrap justify-center space-x-4 items-center">
-          {/* Budget Filter Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button1 variant="outline">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
-                  />
-                </svg>
-                <span className="ml-1">Budget</span>
-              </Button1>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>Budget Range</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <div className="p-4">
-                <p className="mb-2">
-                  Budget: ${budget[0]} - ${budget[1]}
-                </p>
-                <Slider
-                  range
-                  value={budget}
-                  max={maxBudget}
-                  onChange={(value) => setBudget(value)}
-                  tooltipVisible
-                  tooltipPlacement="bottom"
-                  className="mt-2"
-                />
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              {/* Category Filter Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button1 variant="outline">
+                    <FaLayerGroup className="mr-2 h-4 w-4"/>
+                    Category
+                  </Button1>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>Select Category</DropdownMenuLabel>
+                  <DropdownMenuSeparator/>
+                  <div className="p-4">
+                    <select
+                        id="categoryFilter"
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        value={category || undefined}
+                    >
+                      <option value="">All Categories</option>
+                      {uniqueCategories?.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                      ))}
+                    </select>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-          {/* Category Filter Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button1 variant="outline">
-                <FaLayerGroup className="mr-2 h-4 w-4" />
-                Category
-              </Button1>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>Select Category</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <div className="p-4">
-                <select
-                  id="categoryFilter"
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                  value={category || undefined}
-                >
-                  <option value="">All Categories</option>
-                  {uniqueCategories?.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              {/* Rating Filter Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button1 variant="outline">
+                    <Star className="mr-2 h-4 w-4"/>
+                    Rating
+                  </Button1>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>Minimum Rating</DropdownMenuLabel>
+                  <DropdownMenuSeparator/>
+                  <div className="p-4">
+                    <select
+                        id="ratingFilter"
+                        onChange={(e) => setRating(e.target.value)}
+                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        value={rating || undefined}
+                    >
+                      <option value={0}>All Ratings</option>
+                      <option value={4}>4 Stars & Above</option>
+                      <option value={3}>3 Stars & Above</option>
+                      <option value={2}>2 Stars & Above</option>
+                      <option value={1}>1 Star & Above</option>
+                    </select>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-          {/* Rating Filter Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button1 variant="outline">
-                <Star className="mr-2 h-4 w-4" />
-                Rating
-              </Button1>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>Minimum Rating</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <div className="p-4">
-                <select
-                  id="ratingFilter"
-                  onChange={(e) => setRating(e.target.value)}
-                  className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                  value={rating || undefined}
-                >
-                  <option value={0}>All Ratings</option>
-                  <option value={4}>4 Stars & Above</option>
-                  <option value={3}>3 Stars & Above</option>
-                  <option value={2}>2 Stars & Above</option>
-                  <option value={1}>1 Star & Above</option>
-                </select>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              {/* Sorting Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button1 variant="outline">
+                    <SortAsc className="mr-2 h-4 w-4"/>
+                    Sort
+                  </Button1>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                  <DropdownMenuSeparator/>
+                  <div className="p-4">
+                    <select
+                        id="sortFilter"
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        value={sortBy || undefined}
+                    >
+                      <option value="">No Sorting</option>
+                      <option value="price">Price (Low to High)</option>
+                      <option value="price_desc">Price (High to Low)</option>
+                      <option value="rating">Rating (High to Low)</option>
+                      <option value="rating_asc">Rating (Low to High)</option>
+                    </select>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-          {/* Sorting Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button1 variant="outline">
-                <SortAsc className="mr-2 h-4 w-4" />
-                Sort
-              </Button1>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <div className="p-4">
-                <select
-                  id="sortFilter"
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                  value={sortBy || undefined}
-                >
-                  <option value="">No Sorting</option>
-                  <option value="price">Price (Low to High)</option>
-                  <option value="price_desc">Price (High to Low)</option>
-                  <option value="rating">Rating (High to Low)</option>
-                  <option value="rating_asc">Rating (Low to High)</option>
-                </select>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Reset Button */}
-          <Button2
-            type="danger"
-            icon={<ReloadOutlined />}
-            onClick={resetFilters}
-            className="h-9"
-          >
-            Reset
-          </Button2>
-        </div>
-      </div>
-
-      <div className="mt-8">
-        {/* Activity Cards */}
-            <div className="ml-16">
-            <Checkbox
-              checked={showUpcoming}
-              onChange={(e) => setShowUpcoming(e.target.checked)}
+              {/* Reset Button */}
+              <Button2
+                  type="danger"
+                  icon={<ReloadOutlined/>}
+                  onClick={resetFilters}
+                  className="h-9"
               >
+                Reset
+              </Button2>
+            </div>
+        </div>
+
+        {/* Activities Section */}
+        <div className="space-y-6">
+          {/* Upcoming Activities Checkbox */}
+          <div className="flex justify-center">
+            <Checkbox
+                checked={showUpcoming}
+                onChange={(e) => setShowUpcoming(e.target.checked)}
+                className="text-sm font-medium text-gray-600"
+            >
               Show Upcoming Activities
             </Checkbox>
+          </div>
+
+          {/* Activities Grid */}
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl">
+              {filteredActivities?.length > 0 ? (
+                  filteredActivities?.map((place) => (
+                      <ActivityCard
+                          key={place._id}
+                          id={place._id}
+                          name={place.name}
+                          date={dayjs(place.date).format("MMM DD, YYYY")}
+                          time={place.time}
+                          isBookingOpen={place.isBookingOpen}
+                          location={{
+                            lat: place.location.lat,
+                            lng: place.location.lng,
+                          }}
+                          price={place.price}
+                          category={place.category ? place.category.category : "N/A"}
+                          preferenceTags={place.preferenceTags?.map((tag) => tag.tag) || []}
+                          averageRating={place.averageRating}
+                          isSaved={place.isSaved}
+                          hasNotification={place.hasNotification}
+                          currencyCode={currency?.code}
+                          currencyRate={currency?.rate}
+                          ratings={place.ratings}
+                          specialDiscounts={place.specialDiscounts}
+                          imageUrl={place.imageUrl}
+                      />
+                  ))
+              ) : (
+                  <div className="col-span-full text-center py-12 text-gray-500">
+                    No activities found based on the applied filters.
+                  </div>
+              )}
             </div>
-        <div className="flex justify-center">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-[90%]">
-          {/* <div className="flex flex-wrap justify-between w-[80%]"> */}
-            {filteredActivities?.length > 0 ? (
-              filteredActivities?.map((place) => (
-                
-                // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
-                <ActivityCard
-                  id={place._id}
-                  name={place.name}
-                  date={dayjs(place.date).format("MMM DD, YYYY")}
-                  time={place.time}
-                  isBookingOpen={place.isBookingOpen}
-                  location={{
-                    lat: place.location.lat,
-                    lng: place.location.lng,
-                  }}
-                  price={place.price} // Using price.min for display and filtering
-                  category={place.category ? place.category.category : "N/A"}
-                  preferenceTags={
-                    place.preferenceTags
-                      ? place.preferenceTags.map((tag) => tag.tag)
-                      : []
-                  }
-                  
-                  averageRating={place.averageRating} // Pass average rating to ActivityCard
-                  isSaved={place.isSaved} // Pass isSaved to ActivityCard
-                  hasNotification={place.hasNotification}
-                  currencyCode={currency?.code}
-                  currencyRate={currency?.rate}
-                />
-                // </Link>
-              ))
-            ) : (
-              <p>No activities found based on the applied filters.</p>
-            )}
           </div>
         </div>
       </div>
-    </div>
-  );
+</div>
+)
+  ;
 };
 
 export default TouristActivity;

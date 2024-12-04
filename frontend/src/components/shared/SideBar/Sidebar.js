@@ -255,13 +255,14 @@ const Sidebar = ({ visible, onClose }) => {
                   Wishlist
                 </Menu.Item>
               ),
+              user && user.userRole === "Tourist" && (
               <Menu.Item
                 key="16"
                 onClick={() => handleClick("/orderHistory")}
                 icon={<ShoppingOutlined />}
               >
                 Orders History
-              </Menu.Item>,
+              </Menu.Item>),
               user &&
                 (user.userRole === "Seller" || user.userRole === "Admin") && (
                   <>
