@@ -2,12 +2,14 @@ import React, {useEffect, useState} from "react";
 import {CloseOutlined} from "@ant-design/icons";
 import {latestPromoCode} from "../../api/promoCode.ts";
 
-const PromoCodeStrip = ({backgroundColor = "red", textColor = "white"}) => {
+const PromoCodeStrip = ({backgroundColor = "red", textColor = "white", setVisibleFlag, setVisibleFlagHome}) => {
     const [visible, setVisible] = useState(true);
     const [promoCode, setPromoCode] = useState("");
 
     const handleClose = () => {
         setVisible(false);
+        setVisibleFlag(false);
+        setVisibleFlagHome(false);
     };
 
     const fetchPromoCode = async () => {
@@ -22,7 +24,7 @@ const PromoCodeStrip = ({backgroundColor = "red", textColor = "white"}) => {
     if (!visible) return null;
 
     return (
-        <div className="flex items-center justify-between bg-red-500 text-white p-0 rounded-md shadow-lg space-x-4">
+        <div className="flex items-center w-full fixed top-0 justify-between bg-red-500 text-white p-0 rounded-md shadow-lg space-x-4">
             <div className="flex row justify-center items-center w-full">
                 <div className="">
                     <span className="text-md "> 🎉 Get {promoCode.discount}% discount by using </span>

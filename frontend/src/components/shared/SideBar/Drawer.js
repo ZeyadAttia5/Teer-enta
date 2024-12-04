@@ -2,11 +2,11 @@ import React from "react";
 import { Button, Drawer } from "antd";
 import Sidebar from "./Sidebar";
 import { MenuOutlined } from "@ant-design/icons";
-const DrawerBar = ({ showDrawer, drawerVisible, onClose }) => {
+const DrawerBar = ({ showDrawer, drawerVisible, onClose, visibleFlag }) => {
 
   
   return (
-    <div className="fixed top-8 left-4 z-50 ">
+    <div className={`fixed ${visibleFlag ? "top-[70px]" : "top-8"} left-4 z-50 `}>
       {/* Floating Button */}
       <Button
         type="danger"
