@@ -90,7 +90,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate }) => {
 
   return (
     <div
-      className={`w-full z-50 fixed bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
+      className={`w-full fixed bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
     >
       <div className="flex gap-4 ml-8">
         {/* Logo Section */}

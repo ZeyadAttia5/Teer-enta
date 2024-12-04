@@ -172,7 +172,7 @@ function AppContent() {
   };
 
   return (
-    <div className="App relative pb-4 bg-backgroundColor  min-h-screen font-playfair-display">
+    <div className="App relative pb-4 bg-backgroundColor  min-h-screen">
       <NotificationProvider
         incomingNotification={incomingNotification}
         isNotificationIncomming={isNotificationIncoming}
@@ -185,7 +185,7 @@ function AppContent() {
           />
         )}
         {!flag && (
-          <div className="relative  z-10 size-full flex flex-col items-center">
+          <div className="relative z-40 size-full flex flex-col items-center">
             <TouristNavBar
               setModalOpen={setModalOpen}
               isNavigate={isNavigate}
@@ -202,7 +202,7 @@ function AppContent() {
         />
 
         {showBackButton && (
-          <div className="p-4 z-10 mt-[80px] bg-transparent fixed top-0 left-4 cursor-pointer">
+          <div className="p-4 z-10 mt-[80px] bg-transparent absolute top-0 left-4 cursor-pointer">
             <BackButton />
           </div>
         )}

@@ -6,7 +6,7 @@ const DrawerBar = ({ showDrawer, drawerVisible, onClose }) => {
 
   
   return (
-    <div className="fixed top-8 left-4 z-20 ">
+    <div className="fixed top-8 left-4 z-50 ">
       {/* Floating Button */}
       <Button
         type="danger"

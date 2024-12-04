@@ -8,6 +8,7 @@ module.exports = {
         'faculty-glyphic': ['Faculty Glyphic', 'sans-serif'],
         'noto-serif': ['Noto Serif', 'serif'],
         'playfair-display': ['Playfair Display', 'serif'],
+        'times': ['"Times New Roman"', "serif"],
       },
       fontWeight: {
         100: '100',
