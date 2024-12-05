@@ -136,7 +136,7 @@ exports.getBookedTransportations = async (req, res) => {
         const userId = req.user._id;
         const bookedTransportations = await BookedTransportation
             .find({ createdBy: userId, isActive: true })
-            .populate('transportation');
+            .populate('transportation').populate('createdBy');
         res.status(200).json(bookedTransportations);
     } catch (err) {
         errorHandler.SendError(res, err);

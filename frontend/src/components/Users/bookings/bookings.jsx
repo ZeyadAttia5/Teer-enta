@@ -21,7 +21,7 @@ import {
   message,
   Segmented,
   Typography,
-  Empty,
+  Empty, Modal, Rate,
 } from "antd";
 import {
   CalendarOutlined,
@@ -61,6 +61,12 @@ const BookingGrid = () => {
   const [currency, setCurrency] = useState(null);
   const [feedbackVisibility, setFeedbackVisibility] = useState({});
   const [timeFilter, setTimeFilter] = useState("all");
+  const [feedbackModal, setFeedbackModal] = useState({
+    visible: false,
+    type: null,
+    entityId: null,
+    entityName: null
+  });
 
   useEffect(() => {
     fetchCurrency();
@@ -209,636 +215,466 @@ const BookingGrid = () => {
     }
   };
 
+  const canShowFeedback = (status) => {
+    return status === "Completed";
+  };
+
+  const handleFeedbackSubmit = async (values) => {
+    try {
+      const { rating, comment } = values;
+
+      switch(feedbackModal.type) {
+        case 'activity':
+          await addRatingToActivity(feedbackModal.entityId, rating);
+          await addCommentToActivity(feedbackModal.entityId, comment);
+          break;
+        case 'itinerary':
+          await addRatingToItinerary(feedbackModal.entityId, rating);
+          await addCommentToItinerary(feedbackModal.entityId, comment);
+          break;
+        case 'tourGuide':
+          await rateTourGuide(feedbackModal.entityId, rating);
+          await commentOnTourGuide(feedbackModal.entityId, comment);
+          break;
+      }
+
+      message.success('Feedback submitted successfully');
+      setFeedbackModal({ visible: false, type: null, entityId: null });
+    } catch (error) {
+      message.error('Failed to submit feedback');
+    }
+  };
+
+  const openFeedbackModal = (type, entityId, entityName) => {
+    setFeedbackModal({
+      visible: true,
+      type,
+      entityId,
+      entityName
+    });
+  };
+
+
+
   return (
-    <div className="flex justify-center">
-      <div className="w-[90%] p-6 md:p-8">
-        {/* Header Section */}
-        <div className="mb-8">
-          <Title level={2} className="mb-2">
-            My Bookings
-          </Title>
-          <Text className="text-gray-500">
-            Manage your travel bookings and reservations
-          </Text>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Header Section */}
+          <div className="mb-12 text-center">
+            <Title level={2} className="text-4xl font-bold text-blue-950 mb-4">My Travel Bookings</Title>
+            <Text className="text-lg text-gray-600">Manage all your travel experiences in one place</Text>
+          </div>
 
-        {/* Filters Section */}
-        <Card className="mb-6 shadow-sm border-0">
-          <Space direction="vertical" className="w-full" size="large">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <Segmented
-                options={[
-                  "Activities",
-                  "Itineraries",
-                  "Flights",
-                  "Hotels",
-                  "Transportations",
-                ]}
-                value={selectedType}
-                onChange={setSelectedType}
-                className="bg-white border border-gray-100 shadow-sm w-full md:w-auto"
-              />
-
-              <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                <Select
-                  value={timeFilter}
-                  onChange={setTimeFilter}
-                  className="min-w-[150px]"
-                  options={[
-                    {
-                      label: "All Time",
-                      value: "all",
-                      icon: <ClockCircleOutlined />,
-                    },
-                    {
-                      label: "Upcoming",
-                      value: "upcoming",
-                      icon: <CalendarOutlined />,
-                    },
-                    { label: "Past", value: "past", icon: <HistoryOutlined /> },
-                  ]}
-                  optionRender={(option) => (
-                    <Space>
-                      {option.data.icon}
-                      {option.label}
-                    </Space>
-                  )}
+          {/* Filters Section */}
+          <Card className="mb-8 shadow-lg rounded-xl border-0 bg-white">
+            <Space direction="vertical" className="w-full" size="large">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                <Segmented
+                    options={[
+                      { label: "Activities", value: "Activities", icon: <UnorderedListOutlined /> },
+                      { label: "Itineraries", value: "Itineraries", icon: <GlobalOutlined /> },
+                      { label: "Flights", value: "Flights", icon: <ClockCircleOutlined /> },
+                      { label: "Hotels", value: "Hotels", icon: <EnvironmentOutlined /> },
+                      { label: "Transportations", value: "Transportations", icon: <UserOutlined /> }
+                    ]}
+                    value={selectedType}
+                    onChange={setSelectedType}
+                    className="bg-white border border-gray-200 shadow-sm rounded-lg p-1"
                 />
 
-                <Select
-                  value={
-                    selectedType === "Activities"
-                      ? activityStatus
-                      : selectedType === "Itineraries"
-                      ? itineraryStatus
-                      : selectedType === "Flights"
-                      ? flightStatus
-                      : selectedType === "Hotels"
-                      ? hotelStatus
-                      : transportationStatus
-                  }
-                  onChange={(value) => {
-                    switch (selectedType) {
-                      case "Activities":
-                        setActivityStatus(value);
-                        break;
-                      case "Itineraries":
-                        setItineraryStatus(value);
-                        break;
-                      case "Flights":
-                        setFlightStatus(value);
-                        break;
-                      case "Hotels":
-                        setHotelStatus(value);
-                        break;
-                      case "Transportations":
-                        setTransportationStatus(value);
-                        break;
-                    }
-                  }}
-                  className="min-w-[150px]"
-                  options={[
-                    {
-                      label: "All Status",
-                      value: "All",
-                      icon: <UnorderedListOutlined />,
-                    },
-                    {
-                      label: "Pending",
-                      value: "Pending",
-                      icon: <ClockCircleOutlined className="text-orange-500" />,
-                    },
-                    {
-                      label: "Completed",
-                      value: "Completed",
-                      icon: <CheckCircleOutlined className="text-green-500" />,
-                    },
-                    {
-                      label: "Cancelled",
-                      value: "Cancelled",
-                      icon: <CloseCircleOutlined className="text-red-500" />,
-                    },
-                  ]}
-                  optionRender={(option) => (
-                    <Space>
-                      {option.data.icon}
-                      {option.label}
-                    </Space>
-                  )}
-                />
-              </div>
-            </div>
+                <div className="flex flex-wrap gap-4">
+                  <Select
+                      value={timeFilter}
+                      onChange={setTimeFilter}
+                      className="min-w-[180px]"
+                      options={[
+                        { label: "All Time", value: "all", icon: <ClockCircleOutlined /> },
+                        { label: "Upcoming", value: "upcoming", icon: <CalendarOutlined /> },
+                        { label: "Past", value: "past", icon: <HistoryOutlined /> }
+                      ]}
+                  />
 
-            {/* Active Filters */}
-            <div className="flex flex-wrap gap-2">
-              {timeFilter !== "all" && (
-                <Tag
-                  color="blue"
-                  closable
-                  onClose={() => setTimeFilter("all")}
-                  icon={
-                    timeFilter === "upcoming" ? (
-                      <CalendarOutlined />
-                    ) : (
-                      <HistoryOutlined />
-                    )
-                  }
-                >
-                  {timeFilter === "upcoming" ? "Upcoming" : "Past"}
-                </Tag>
-              )}
-              {selectedType === "Activities" && activityStatus !== "All" && (
-                <Tag
-                  color={
-                    activityStatus === "Pending"
-                      ? "orange"
-                      : activityStatus === "Completed"
-                      ? "green"
-                      : "red"
-                  }
-                  closable
-                  onClose={() => setActivityStatus("All")}
-                >
-                  {activityStatus}
-                </Tag>
-              )}
-              {/* Add similar tags for other booking types */}
-            </div>
-          </Space>
-        </Card>
-
-        {/* Results Summary */}
-        <div className="mb-6 text-gray-600">
-          <Text>
-            Showing{" "}
-            {selectedType === "Activities"
-              ? filteredActivities?.length
-              : selectedType === "Itineraries"
-              ? filteredItineraries?.length
-              : selectedType === "Flights"
-              ? filteredFlights?.length
-              : selectedType === "Hotels"
-              ? filteredHotels?.length
-              : filteredTransportations?.length || 0}{" "}
-            {timeFilter !== "all" ? `${timeFilter} ` : ""}
-            {selectedType.toLowerCase()}
-          </Text>
-        </div>
-
-        {/* Activities Grid */}
-        {selectedType === "Activities" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredActivities?.length > 0 ? (
-              filteredActivities.map(
-                (activity) =>
-                  activity.activity && (
-                    <Card
-                      key={activity._id}
-                      className="transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0"
-                      cover={
-                        <div className="h-48 bg-gray-100 relative overflow-hidden">
-                          <img
-                            alt={activity.activity.name}
-                            src={
-                              activity.activity.imageUrl || "/placeholder.jpg"
-                            }
-                            className="object-cover w-full h-full"
-                          />
-                          <div className="absolute top-2 right-2">
-                            {renderStatusTag(activity.status)}
-                          </div>
-                        </div>
+                  <Select
+                      value={
+                        selectedType === "Activities" ? activityStatus :
+                            selectedType === "Itineraries" ? itineraryStatus :
+                                selectedType === "Flights" ? flightStatus :
+                                    selectedType === "Hotels" ? hotelStatus : transportationStatus
                       }
-                    >
-                      <div className="space-y-4">
-                        <div>
-                          <Title level={4} className="mb-2">
-                            {activity.activity.name}
-                          </Title>
-                          <div className="flex items-center text-gray-500 text-sm">
-                            <CalendarOutlined className="mr-2" />
-                            <span>
-                              {new Date(activity.date).toLocaleDateString()}
-                            </span>
-                          </div>
-                        </div>
+                      onChange={(value) => {
+                        switch (selectedType) {
+                          case "Activities": setActivityStatus(value); break;
+                          case "Itineraries": setItineraryStatus(value); break;
+                          case "Flights": setFlightStatus(value); break;
+                          case "Hotels": setHotelStatus(value); break;
+                          case "Transportations": setTransportationStatus(value); break;
+                        }
+                      }}
+                      className="min-w-[180px]"
+                      options={[
+                        { label: "All Status", value: "All", icon: <UnorderedListOutlined /> },
+                        { label: "Pending", value: "Pending", icon: <ClockCircleOutlined /> },
+                        { label: "Completed", value: "Completed", icon: <CheckCircleOutlined /> },
+                        { label: "Cancelled", value: "Cancelled", icon: <CloseCircleOutlined /> }
+                      ]}
+                  />
+                </div>
+              </div>
+            </Space>
+          </Card>
 
-                        <div className="space-y-2 text-sm text-gray-600">
-                          <div className="flex items-center">
-                            <UserOutlined className="mr-2" />
-                            <span>{activity.createdBy.username}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <EnvironmentOutlined className="mr-2" />
-                            <span>
-                              Location:{" "}
-                              {activity.activity.location.lat.toFixed(2)},{" "}
-                              {activity.activity.location.lng.toFixed(2)}
-                            </span>
-                          </div>
-                          <div className="flex items-center font-medium">
-                            <DollarOutlined className="mr-2" />
-                            <span>
-                              {currency?.code}{" "}
-                              {(
-                                currency?.rate * activity.activity.price.min
-                              ).toFixed(2)}
-                            </span>
-                          </div>
-                        </div>
+          {/* Results Count */}
+          <Text className="block mb-6 text-lg text-gray-600">
+            Showing {
+            selectedType === "Activities" ? filteredActivities?.length :
+                selectedType === "Itineraries" ? filteredItineraries?.length :
+                    selectedType === "Flights" ? filteredFlights?.length :
+                        selectedType === "Hotels" ? filteredHotels?.length :
+                            filteredTransportations?.length || 0
+          } {timeFilter !== "all" ? `${timeFilter} ` : ""}{selectedType.toLowerCase()}
+          </Text>
 
-                        <div className="flex flex-col gap-2 pt-4">
-                          {activity.status === "Pending" && (
-                            <Button
-                              danger
-                              type="primary"
-                              onClick={() =>
-                                cancelBooking(activity._id, "activity")
-                              }
-                              icon={<CloseOutlined />}
-                            >
-                              Cancel Booking
-                            </Button>
-                          )}
-                          <Button
-                            onClick={() =>
-                              toggleFeedbackVisibility(activity._id, "activity")
+          {/* Activities Grid */}
+          {selectedType === "Activities" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredActivities?.length > 0 ? (
+                    filteredActivities.map((activity) => activity.activity && (
+                        <Card
+                            key={activity._id}
+                            className="shadow-lg rounded-xl border-0"
+                            cover={
+                              <div className="relative h-48">
+                                <img
+                                    alt={activity.activity.name}
+                                    src={activity.activity.imageUrl || "/placeholder.jpg"}
+                                    className="object-cover w-full h-full"
+                                />
+                                <div
+                                    className="absolute inset-0"
+                                    style={{
+                                      background: 'linear-gradient(180deg, rgba(75,85,99,0) 0%, rgba(75,85,99,0.5) 100%)'
+                                    }}
+                                />
+                                <div className="absolute top-4 right-4">{renderStatusTag(activity.status)}</div>
+                              </div>
                             }
-                            type="default"
-                            icon={<CommentOutlined />}
-                          >
-                            {feedbackVisibility[activity._id]?.activity
-                              ? "Hide Feedback"
-                              : "Give Feedback"}
-                          </Button>
-                        </div>
+                        >
+                          <div className="p-6 space-y-4">
+                            <Title level={4}
+                                   className="text-xl font-bold text-blue-950">{activity.activity.name}</Title>
 
-                        {feedbackVisibility[activity._id]?.activity && (
-                          <div className="mt-4 border-t pt-4">
-                            <FeedbackForm
-                              entity={{
-                                name: activity.activity.name,
-                                _id: activity.activity._id,
-                              }}
-                              onSubmit={(feedback) =>
-                                submitActivityRateAndReview(
-                                  activity.activity._id,
-                                  feedback
-                                )
-                              }
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </Card>
-                  )
-              )
-            ) : (
-              <div className="col-span-full">
-                <Empty
-                  description={
-                    <span className="text-gray-500">No activities found</span>
-                  }
-                  className="my-12"
-                />
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Itineraries Grid */}
-        {selectedType === "Itineraries" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredItineraries?.length > 0 ? (
-              filteredItineraries.map(
-                (itinerary) =>
-                  itinerary.itinerary && (
-                    <Card
-                      key={itinerary._id}
-                      className="transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0"
-                    >
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <Title level={4} className="mb-2">
-                              {itinerary.itinerary.name}
-                            </Title>
-                            <div className="flex items-center text-gray-500 text-sm">
-                              <CalendarOutlined className="mr-2" />
-                              <span>
-                                {new Date(itinerary.date).toLocaleDateString()}
-                              </span>
+                            <div className="space-y-3">
+                              <div className="flex items-center text-gray-600">
+                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <span>{new Date(activity.date).toLocaleDateString()}</span>
+                              </div>
+                              <div className="flex items-center text-gray-600">
+                                <UserOutlined className="mr-2 text-blue-950" />
+                                <span>{activity.createdBy.username}</span>
+                              </div>
+                              <div className="flex items-center text-gray-600">
+                                <EnvironmentOutlined className="mr-2 text-blue-950" />
+                                <span>Location: {activity.activity.location.lat.toFixed(2)}, {activity.activity.location.lng.toFixed(2)}</span>
+                              </div>
+                              <div className="flex items-center font-semibold text-blue-950">
+                                <DollarOutlined className="mr-2" />
+                                <span>{currency?.code} {(currency?.rate * activity.activity.price.min).toFixed(2)}</span>
+                              </div>
                             </div>
-                          </div>
-                          {renderStatusTag(itinerary.status)}
-                        </div>
 
-                        <div className="space-y-2 text-sm text-gray-600">
-                          <div className="flex items-center">
-                            <UserOutlined className="mr-2" />
-                            <span>{itinerary.createdBy.username}</span>
-                          </div>
-                          <div className="flex items-center font-medium">
-                            <DollarOutlined className="mr-2" />
-                            <span>
-                              {currency?.code}{" "}
-                              {(
-                                currency?.rate * itinerary.itinerary.price
-                              ).toFixed(2)}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2 pt-4">
-                          {itinerary.status === "Pending" && (
-                            <Button
-                              danger
-                              type="primary"
-                              onClick={() =>
-                                cancelBooking(itinerary._id, "itinerary")
-                              }
-                              icon={<CloseOutlined />}
-                            >
-                              Cancel Booking
-                            </Button>
-                          )}
-                          <Space direction="vertical" className="w-full">
-                            <Button
-                              onClick={() =>
-                                toggleFeedbackVisibility(
-                                  itinerary._id,
-                                  "tourGuide"
-                                )
-                              }
-                              type="default"
-                              icon={<UserOutlined />}
-                            >
-                              {feedbackVisibility[itinerary._id]?.tourGuide
-                                ? "Hide Guide Feedback"
-                                : "Rate Tour Guide"}
-                            </Button>
-                            <Button
-                              onClick={() =>
-                                toggleFeedbackVisibility(
-                                  itinerary._id,
-                                  "itinerary"
-                                )
-                              }
-                              type="default"
-                              icon={<CommentOutlined />}
-                            >
-                              {feedbackVisibility[itinerary._id]?.itinerary
-                                ? "Hide Feedback"
-                                : "Rate Itinerary"}
-                            </Button>
-                          </Space>
-                        </div>
-
-                        {(feedbackVisibility[itinerary._id]?.tourGuide ||
-                          feedbackVisibility[itinerary._id]?.itinerary) && (
-                          <div className="mt-4 border-t pt-4">
-                            {feedbackVisibility[itinerary._id]?.tourGuide && (
-                              <FeedbackForm
-                                entity={{
-                                  name: itinerary.itinerary.createdBy.username,
-                                  _id: itinerary.itinerary.createdBy._id,
-                                }}
-                                onSubmit={(feedback) =>
-                                  submitTourGuideRateAndReview(
-                                    itinerary.itinerary.createdBy._id,
-                                    feedback
-                                  )
-                                }
-                              />
-                            )}
-                            {feedbackVisibility[itinerary._id]?.itinerary && (
-                              <FeedbackForm
-                                entity={{
-                                  name: itinerary.itinerary.name,
-                                  _id: itinerary.itinerary._id,
-                                }}
-                                onSubmit={(feedback) =>
-                                  submitItineraryRateAndReview(
-                                    itinerary.itinerary._id,
-                                    feedback
-                                  )
-                                }
-                              />
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </Card>
-                  )
-              )
-            ) : (
-              <div className="col-span-full">
-                <Empty
-                  description={
-                    <span className="text-gray-500">No itineraries found</span>
-                  }
-                  className="my-12"
-                />
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Flights Grid */}
-        {selectedType === "Flights" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredFlights?.length > 0 ? (
-              filteredFlights.map((flight) => (
-                <Card
-                  key={flight._id}
-                  className="transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0"
-                >
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <Title level={4} className="mb-2">
-                          Flight Booking
-                        </Title>
-                        <div className="flex items-center text-gray-500 text-sm">
-                          <CalendarOutlined className="mr-2" />
-                          <span>
-                            {new Date(
-                              flight.departureDate
-                            ).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                      {renderStatusTag(flight.status)}
-                    </div>
-
-                    <div className="space-y-2 text-sm text-gray-600">
-                      <div className="flex items-center">
-                        <GlobalOutlined className="mr-2" />
-                        <span>From: {flight.departureAirport}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <GlobalOutlined className="mr-2" />
-                        <span>To: {flight.arrivalAirport}</span>
-                      </div>
-                      <div className="flex items-center font-medium">
-                        <DollarOutlined className="mr-2" />
-                        <span>
-                          {currency?.code}{" "}
-                          {(currency?.rate * flight.price).toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              ))
-            ) : (
-              <div className="col-span-full">
-                <Empty
-                  description={
-                    <span className="text-gray-500">No flights found</span>
-                  }
-                  className="my-12"
-                />
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Hotels Grid */}
-        {selectedType === "Hotels" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredHotels?.length > 0 ? (
-              filteredHotels.map(
-                (hotel) =>
-                  hotel.hotel && (
-                    <Card
-                      key={hotel._id}
-                      className="transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0"
-                    >
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <Title level={4} className="mb-2">
-                              {hotel.hotel.name}
-                            </Title>
-                            <div className="flex items-center text-gray-500 text-sm">
-                              <CalendarOutlined className="mr-2" />
-                              <span>
-                                {new Date(
-                                  hotel.checkInDate
-                                ).toLocaleDateString()}{" "}
-                                -
-                                {new Date(
-                                  hotel.checkOutDate
-                                ).toLocaleDateString()}
-                              </span>
-                            </div>
-                          </div>
-                          {renderStatusTag(hotel.status)}
-                        </div>
-
-                        <div className="space-y-2 text-sm text-gray-600">
-                          <div className="flex items-center">
-                            <UserOutlined className="mr-2" />
-                            <span>{hotel.createdBy.username}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <UserOutlined className="mr-2" />
-                            <span>Guests: {hotel.guests}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <EnvironmentOutlined className="mr-2" />
-                            <span>Location: {hotel.hotel.cityCode}</span>
-                          </div>
-                          <div className="flex items-center font-medium">
-                            <DollarOutlined className="mr-2" />
-                            <span>
-                              {currency?.code}{" "}
-                              {(currency?.rate * hotel.price).toFixed(2)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  )
-              )
-            ) : (
-              <div className="col-span-full">
-                <Empty
-                  description={
-                    <span className="text-gray-500">No hotels found</span>
-                  }
-                  className="my-12"
-                />
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Transportations Grid */}
-        {selectedType === "Transportations" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTransportations?.length > 0 ? (
-              filteredTransportations.map(
-                (transportation) =>
-                  transportation.transportation && (
-                    <Card
-                      key={transportation._id}
-                      className="transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-0"
-                    >
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <Title level={4} className="mb-2">
-                              {transportation.transportation.name}
-                            </Title>
-                            <div className="flex items-center text-gray-500 text-sm">
-                              <CalendarOutlined className="mr-2" />
-                              <span>
-                                {new Date(
-                                  transportation.date
-                                ).toLocaleDateString()}
-                              </span>
-                            </div>
-                          </div>
-                          {renderStatusTag(transportation.status)}
-                        </div>
-
-                        <div className="space-y-2 text-sm text-gray-600">
-                          <div className="flex items-center">
-                            <UserOutlined className="mr-2" />
-                            <span>{transportation.createdBy.username}</span>
-                          </div>
-                          <div className="flex items-center font-medium">
-                            <DollarOutlined className="mr-2" />
-                            <span>
-                              {currency?.code}{" "}
-                              {(currency?.rate * transportation.price).toFixed(
-                                2
+                            <div className="flex flex-col gap-3">
+                              {activity.status === "Pending" && (
+                                  <Button
+                                      danger
+                                      className="bg-red-600 text-white hover:bg-red-700 border-0"
+                                      onClick={() => cancelBooking(activity._id, "activity")}
+                                      icon={<CloseOutlined />}
+                                  >
+                                    Cancel Booking
+                                  </Button>
                               )}
-                            </span>
+                              {activity.status === "Completed" && (
+                                  <Button
+                                      onClick={() => openFeedbackModal('activity', activity.activity._id, activity.activity.name)}
+                                      className="bg-blue-950 text-white hover:bg-blue-900 border-0"
+                                      icon={<CommentOutlined />}
+                                  >
+                                    Rate & Review
+                                  </Button>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </Card>
-                  )
-              )
-            ) : (
-              <div className="col-span-full">
-                <Empty
-                  description={
-                    <span className="text-gray-500">
-                      No transportations found
-                    </span>
-                  }
-                  className="my-12"
-                />
+                        </Card>
+                    ))
+                ) : (
+                    <div className="col-span-full">
+                      <Empty description={<span className="text-gray-500 text-lg">No activities found</span>} className="my-16" />
+                    </div>
+                )}
               </div>
-            )}
-          </div>
-        )}
+          )}
+
+          {/* Itineraries Grid */}
+          {selectedType === "Itineraries" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredItineraries?.length > 0 ? (
+                    filteredItineraries.map((itinerary) => itinerary.itinerary && (
+                        <Card
+                            key={itinerary._id}
+                            className="shadow-lg rounded-xl border-0"
+                            cover={
+                              <div className="relative h-48">
+                                <img
+                                    alt={itinerary.itinerary.name}
+                                    src={itinerary.itinerary.imageUrl || "/placeholder.jpg"}
+                                    className="object-cover w-full h-full"
+                                />
+                                <div
+                                    className="absolute inset-0"
+                                    style={{
+                                      background: 'linear-gradient(180deg, rgba(75,85,99,0) 0%, rgba(75,85,99,0.5) 100%)'
+                                    }}
+                                />
+                                <div className="absolute top-4 right-4">{renderStatusTag(itinerary.status)}</div>
+                              </div>
+                            }
+                        >
+                          <div className="p-6 space-y-4">
+                            <Title level={4}
+                                   className="text-xl font-bold text-blue-950">{itinerary.itinerary.name}</Title>
+
+                            <div className="space-y-3">
+                              <div className="flex items-center text-gray-600">
+                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <span>{new Date(itinerary.date).toLocaleDateString()}</span>
+                              </div>
+                              <div className="flex items-center text-gray-600">
+                                <UserOutlined className="mr-2 text-blue-950" />
+                                <span>{itinerary.createdBy.username}</span>
+                              </div>
+                              <div className="flex items-center font-semibold text-blue-950">
+                                <DollarOutlined className="mr-2" />
+                                <span>{currency?.code} {(currency?.rate * itinerary.itinerary.price).toFixed(2)}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                              {itinerary.status === "Pending" && (
+                                  <Button
+                                      danger
+                                      className="bg-red-600 text-white hover:bg-red-700 border-0"
+                                      onClick={() => cancelBooking(itinerary._id, "itinerary")}
+                                      icon={<CloseOutlined />}
+                                  >
+                                    Cancel Booking
+                                  </Button>
+                              )}
+                              {itinerary.status === "Completed" && (
+                                  <>
+                                    <Button
+                                        onClick={() => openFeedbackModal('tourGuide', itinerary.itinerary.createdBy._id, itinerary.itinerary.createdBy.username)}
+                                        className="bg-blue-950 text-white hover:bg-blue-900 border-0"
+                                        icon={<UserOutlined />}
+                                    >
+                                      Rate Tour Guide
+                                    </Button>
+                                    <Button
+                                        onClick={() => openFeedbackModal('itinerary', itinerary.itinerary._id, itinerary.itinerary.name)}
+                                        className="bg-blue-950 text-white hover:bg-blue-900 border-0"
+                                        icon={<CommentOutlined />}
+                                    >
+                                      Rate Itinerary
+                                    </Button>
+                                  </>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="col-span-full">
+                      <Empty description={<span className="text-gray-500 text-lg">No itineraries found</span>} className="my-16" />
+                    </div>
+                )}
+              </div>
+          )}
+
+          {/* Flights Grid */}
+          {selectedType === "Flights" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredFlights?.length > 0 ? (
+                    filteredFlights.map((flight) => (
+                        <Card key={flight._id} className="shadow-lg rounded-xl border-0">
+                          <div className="p-6 space-y-4">
+                            <div className="flex justify-between items-start">
+                              <Title level={4} className="text-xl font-bold text-blue-950">Flight Booking</Title>
+                              {renderStatusTag(flight.status)}
+                            </div>
+
+                            <div className="space-y-3">
+                              <div className="flex items-center text-gray-600">
+                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <span>{new Date(flight.departureDate).toLocaleDateString()}</span>
+                              </div>
+                              <div className="flex items-center text-gray-600">
+                                <GlobalOutlined className="mr-2 text-blue-950" />
+                                <span>From: {flight.departureAirport}</span>
+                              </div>
+                              <div className="flex items-center text-gray-600">
+                                <GlobalOutlined className="mr-2 text-blue-950" />
+                                <span>To: {flight.arrivalAirport}</span>
+                              </div>
+                              <div className="flex items-center font-semibold text-blue-950">
+                                <DollarOutlined className="mr-2" />
+                                <span>{currency?.code} {(currency?.rate * flight.price).toFixed(2)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="col-span-full">
+                      <Empty description={<span className="text-gray-500 text-lg">No flights found</span>} className="my-16" />
+                    </div>
+                )}
+              </div>
+          )}
+
+          {/* Hotels Grid */}
+          {selectedType === "Hotels" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredHotels?.length > 0 ? (
+                    filteredHotels.map((hotel) => hotel.hotel && (
+                        <Card key={hotel._id} className="shadow-lg rounded-xl border-0">
+                          <div className="p-6 space-y-4">
+                            <div className="flex justify-between items-start">
+                              <Title level={4} className="text-xl font-bold text-blue-950">{hotel.hotel.name}</Title>
+                              {renderStatusTag(hotel.status)}
+                            </div>
+
+                            <div className="space-y-3">
+                              <div className="flex items-center text-gray-600">
+                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <span>{new Date(hotel.checkInDate).toLocaleDateString()} - {new Date(hotel.checkOutDate).toLocaleDateString()}</span>
+                              </div>
+                              <div className="flex items-center text-gray-600">
+                                <UserOutlined className="mr-2 text-blue-950" />
+                                <span>Guests: {hotel.guests}</span>
+                              </div>
+                              <div className="flex items-center text-gray-600">
+                                <EnvironmentOutlined className="mr-2 text-blue-950" />
+                                <span>{hotel.hotel.cityCode}</span>
+                              </div>
+                              <div className="flex items-center font-semibold text-blue-950">
+                                <DollarOutlined className="mr-2" />
+                                <span>{currency?.code} {(currency?.rate * hotel.price).toFixed(2)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="col-span-full">
+                      <Empty description={<span className="text-gray-500 text-lg">No hotels found</span>} className="my-16" />
+                    </div>
+                )}
+              </div>
+          )}
+
+          {/* Transportations Grid */}
+          {selectedType === "Transportations" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredTransportations?.length > 0 ? (
+                    filteredTransportations.map((transportation) => transportation.transportation && (
+                        <Card key={transportation._id} className="shadow-lg rounded-xl border-0">
+                          <div className="p-6 space-y-4">
+                            <div className="flex justify-between items-start">
+                              <Title level={4} className="text-xl font-bold text-blue-950">
+                                {`Trip #${transportation._id.slice(-6)}`}
+                              </Title>
+                              {renderStatusTag(transportation.status)}
+                            </div>
+
+                            <div className="space-y-3">
+                              <div className="flex items-center text-gray-600">
+                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <span>{new Date(transportation.date).toLocaleDateString()}</span>
+                              </div>
+                              <div className="flex items-center text-gray-600">
+                                <UserOutlined className="mr-2 text-blue-950" />
+                                <span>{transportation.createdBy.username}</span>
+                              </div>
+                              <div className="flex items-center font-semibold text-blue-950">
+                                <DollarOutlined className="mr-2" />
+                                <span>{currency?.code} {(currency?.rate * transportation.price).toFixed(2)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="col-span-full">
+                      <Empty description={<span className="text-gray-500 text-lg">No transportations found</span>} className="my-16" />
+                    </div>
+                )}
+              </div>
+          )}
+
+          {/* Feedback Modal */}
+          <Modal
+              title={`Rate & Review ${feedbackModal.entityName}`}
+              open={feedbackModal.visible}
+              onCancel={() => setFeedbackModal({ visible: false })}
+              footer={null}
+              className="rounded-lg"
+          >
+            <div className="p-6">
+              <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleFeedbackSubmit({
+                      rating: Number(formData.get('rating')),
+                      comment: formData.get('comment')
+                    });
+                  }}
+                  className="space-y-6"
+              >
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Rating</label>
+                  <Rate name="rating" defaultValue={0} className="text-blue-950" />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">Comment</label>
+                  <textarea
+                      name="comment"
+                      rows={4}
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-950 focus:ring-blue-950"
+                      placeholder="Share your experience..."
+                  />
+                </div>
+
+                <div className="flex justify-end gap-4">
+                  <Button
+                      onClick={() => setFeedbackModal({ visible: false })}
+                      className="border-gray-300"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                      type="primary"
+                      htmlType="submit"
+                      className="bg-blue-950 border-0"
+                  >
+                    Submit
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </Modal>
+        </div>
       </div>
-    </div>
   );
 };
 
