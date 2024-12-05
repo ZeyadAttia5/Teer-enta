@@ -80,8 +80,8 @@ function Login({ setFlag, flag }) {
       setIsLoading(true);
       const response = await login(details);
       setIsLoading(false);
-      user = response.data.user;
-      accessToken = response.data.accessToken;
+      user = response?.data.user;
+      accessToken = response?.data.accessToken;
 
       if (user.userRole === "Tourist" && user.firstLogin) {
         setShowPrefernceSelection(true);
@@ -92,12 +92,13 @@ function Login({ setFlag, flag }) {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
       // Initialize notifications after storing credentials
-      setMessage(response.data.message);
+      setMessage(response?.data.message);
       navigate("/");
+      // window.reload();
       setFlag(false);
     } catch (error) {
       setIsLoading(false);
-      setMessage(error.response.data.message || "Login failed");
+      setMessage(error.response?.data.message || "Login failed");
       return false;
     }
   };

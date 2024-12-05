@@ -33,6 +33,8 @@ const PromoCodeStrip = ({
     };
 
     useEffect(() => {
+        setVisibleFlag(visible);
+        setVisibleFlagHome(visible);
         fetchPromoCode();
     }, []);
 
@@ -42,7 +44,7 @@ const PromoCodeStrip = ({
         promoCode?.code && (
             <div className="w-full fixed top-0 z-50 animate-slideDown">
                 <div
-                    className="flex items-center justify-between px-4 py-2 h-12 shadow-lg"
+                    className="flex items-center justify-between px-4  h-9 shadow-lg"
                     style={{
                         background: `linear-gradient(135deg, ${backgroundColor} 0%, #FF8E53 100%)`,
                         color: textColor
