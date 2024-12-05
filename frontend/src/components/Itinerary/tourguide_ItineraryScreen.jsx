@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Modal,
@@ -10,201 +10,55 @@ import {
   Space,
   Divider,
   message,
-  Card,
   notification,
   Tooltip,
   Switch,
+  ConfigProvider,
+  Spin,
+  Badge,
+  Table,
+  Tag, Popconfirm, Image, TimePicker
 } from "antd";
-import { ReloadOutlined } from "@ant-design/icons";
 import {
   GlobalOutlined,
   DollarCircleOutlined,
   TeamOutlined,
   EnvironmentTwoTone,
-  SwapRightOutlined,
-} from "@ant-design/icons";
-import {
-  MinusCircleOutlined,
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
   FlagFilled,
+  SearchOutlined, ExclamationCircleOutlined,
 } from "@ant-design/icons";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Tag as TagIcon,
+  ClipboardList, ImageIcon,
+} from "lucide-react";
+import moment from "moment";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   getItineraries,
   createItinerary,
   updateItinerary,
   deleteItinerary,
   getMyItineraries,
-  getUnActiveItineraries,
-  activateItinerary,
   flagIternaary,
 } from "../../api/itinerary.ts";
-import { SearchOutlined } from "@ant-design/icons";
+import { getCurrency } from "../../api/account.ts";
 import { getActivities } from "../../api/activity.ts";
 import { getPreferenceTags } from "../../api/preferenceTags.ts";
-import { Filter, SortAsc, ChevronRight } from "lucide-react";
-
-import moment from "moment";
-import "antd";
-import {
-  isToday,
-  isThisWeek,
-  isThisMonth,
-  isThisYear,
-  parseISO,
-} from "date-fns";
-import { useLocation, useNavigate } from "react-router-dom";
-import { getCurrency } from "../../api/account.ts";
 import ImageUploader from "../../components/Images/imageUploader";
 
 const { Option } = Select;
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 
-const Button1 = ({ children, onClick, variant = "default" }) => {
-  const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
-  const variantClasses =
-    variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
-
-  return (
-    <button
-      className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-};
-
-const Button2 = ({ children, onClick, variant = "default" }) => {
-  const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-white";
-  const variantClasses =
-    variant === "outline"
-      ? "hover:bg-gray-100 hover:text-accent-foreground" // Light gray hover background for outline variant
-      : "text-gray-700 hover:bg-gray-100"; // Light gray hover background for default variant
-
-  return (
-    <Button
-      className={`${baseClasses} ${variantClasses} h-10 py-2 px-4`}
-      onClick={onClick}
-      type="danger"
-      danger
-      icon={<ReloadOutlined />}
-    >
-      {children}
-    </Button>
-  );
-};
-
-const DropdownMenu = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  return (
-    <div className="relative inline-block text-left" ref={dropdownRef}>
-      {React.Children.map(children, (child) =>
-        React.cloneElement(child, { isOpen, setIsOpen })
-      )}
-    </div>
-  );
-};
-
-const DropdownMenuTrigger = ({ children, isOpen, setIsOpen }) => {
-  return React.cloneElement(children, {
-    onClick: () => setIsOpen(!isOpen),
-    "aria-expanded": isOpen,
-    "aria-haspopup": true,
-  });
-};
-
-const DropdownMenuContent = ({ children, isOpen }) => {
-  if (!isOpen) return null;
-  return (
-    <div className="absolute right-0 left-0 mt-2 w-56 rounded-md shadow-lg bg-white text-gray-700 z-50">
-      <div className="py-1">{children}</div>
-    </div>
-  );
-};
-
-const DropdownMenuLabel = ({ children }) => (
-  <div className="px-3 py-2 text-sm font-semibold">{children}</div>
-);
-const DropdownMenuSeparator = () => <hr className="my-1 border-border" />;
-const DropdownMenuGroup = ({ children }) => <div>{children}</div>;
-const DropdownMenuItem = ({ children, onSelect }) => (
-  <button
-    className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-default"
-    onClick={onSelect}
-  >
-    {children}
-  </button>
-);
-
-const DropdownMenuPortal = ({ children }) => {
-  return <div className="relative cursor-pointer">{children}</div>;
-};
-
-const DropdownMenuSub = ({ trigger, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div
-      className="relative"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-    >
-      <DropdownMenuSubTrigger onClick={() => setIsOpen((prev) => !prev)}>
-        {trigger}
-      </DropdownMenuSubTrigger>
-      <DropdownMenuPortal>
-        <DropdownMenuSubContent isOpen={isOpen}>
-          {children}
-        </DropdownMenuSubContent>
-      </DropdownMenuPortal>
-    </div>
-  );
-};
-
-const DropdownMenuSubTrigger = ({ children, onClick }) => (
-  <button className="w-full text-left px-3 py-2 text-sm flex items-center justify-between hover:bg-accent hover:text-accent-foreground">
-    {children}
-    <ChevronRight className="h-4 w-4" />
-  </button>
-);
-
-const DropdownMenuSubContent = ({ children, isOpen }) => {
-  if (!isOpen) return null;
-  return (
-    <div className="absolute left-full top-1/2 -translate-y-10 w-56 rounded-md shadow-lg bg-white text-gray-700 z-50">
-      <div className="py-1 px-1 bg-white hover:bg-gray-100 hover:border-transparent rounded-md">
-        {children}
-      </div>
-    </div>
-  );
-};
-
 const TourguideItineraryScreen = ({ setFlag }) => {
   setFlag(false);
-  // Add these states at the top of your component
   const [isEditFormVisible, setIsEditFormVisible] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
@@ -215,51 +69,31 @@ const TourguideItineraryScreen = ({ setFlag }) => {
   const [editingItinerary, setEditingItinerary] = useState(null);
   const navigate = useNavigate();
   const [form] = Form.useForm();
-
-  // States for filters
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBudget, setSelectedBudget] = useState("");
-  const [selectedDateFilter, setSelectedDateFilter] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
-  const [selectedPreference, setSelectedPreference] = useState("");
-  const [sortBy, setSortBy] = useState("");
-  const [selectedActive, setSelectedActive] = useState("");
-  const [refreshItineraries, setRefreshItineraries] = useState(false);
-
   const [selectedimage, setSelectedimage] = useState(null);
-  
-  // New state variables for ActivityList and Preference Tags
   const [activitiesList, setActivitiesList] = useState([]);
   const [preferenceTagsList, setPreferenceTagsList] = useState([]);
-
-  // New state variables for viewing itinerary
-  const [viewingItinerary, setViewingItinerary] = useState(null);
-  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
-
+  const [refreshItineraries, setRefreshItineraries] = useState(false);
   const [currency, setCurrency] = useState(null);
-
   const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const [itinerariesData, myItinerariesData] = await Promise.all([
           getItineraries(),
           getMyItineraries(),
         ]);
 
-        setItineraries(itinerariesData);
-        setMyItineraries(myItinerariesData);
-
-        // Combine after fetching
-        const combinedItineraries = [
-          ...new Set([...itinerariesData, ...myItinerariesData]),
-        ];
-        console.log("Combined Itineraries:", combinedItineraries);
-
+        const combinedItineraries = [...new Set([...itinerariesData, ...myItinerariesData])];
         setItineraries(combinedItineraries);
+        setMyItineraries(myItinerariesData);
       } catch (error) {
         console.error("Error fetching data:", error);
+        notification.error({ message: "Failed to fetch itineraries" });
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -268,114 +102,14 @@ const TourguideItineraryScreen = ({ setFlag }) => {
     fetchActivities();
     fetchPreferenceTags();
   }, [location.pathname, refreshItineraries]);
-  
-  const handlePathChange = (path:string) => {
-    setSelectedimage(path);
-  }
 
-  const resetFilters = () => {
-    setSelectedBudget("");
-    setSelectedDateFilter("");
-    setSelectedLanguage("");
-    setSelectedPreference("");
-    setSortBy("");
-    setSearchTerm("");
-    setSelectedActive("");
-  };
-
-  const budgets = [...new Set((itineraries || []).map((itin) => itin.price))];
-  const languages = [
-    ...new Set((itineraries || []).map((itin) => itin.language)),
-  ];
-
-  const filterByDate = (itin) => {
-    return itin.availableDates.some((availableDate) => {
-      const date = parseISO(availableDate.Date);
-
-      if (isNaN(date)) {
-        console.error("Invalid date format:", availableDate.Date);
-        return false;
-      }
-
-      if (selectedDateFilter === "today") {
-        return isToday(date);
-      } else if (selectedDateFilter === "thisWeek") {
-        return isThisWeek(date, { weekStartsOn: 1 });
-      } else if (selectedDateFilter === "thisMonth") {
-        return isThisMonth(date);
-      } else if (selectedDateFilter === "thisYear") {
-        return isThisYear(date);
-      } else if (selectedDateFilter === "allUpcoming") {
-        return date >= new Date();
-      }
-
-      return true;
-    });
-  };
-
-  const filteredItineraries = itineraries?.filter(
-    (itin) =>
-      (selectedBudget ? itin.price <= selectedBudget : true) &&
-      filterByDate(itin) &&
-      (selectedLanguage ? itin.language === selectedLanguage : true) &&
-      (selectedPreference
-        ? itin.preferenceTags.some((tag) => tag._id === selectedPreference)
-        : true) &&
-      (selectedActive !== ""
-        ? itin.isActive.toString() === selectedActive.toString()
-        : "true") &&
-      ((itin.name &&
-        itin.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        itin.preferenceTags.some((tag) =>
-          tag.tag.toLowerCase().includes(searchTerm.toLowerCase())
-        ))
-  );
-
-  const sortedItineraries = filteredItineraries?.sort((a, b) => {
-    if (sortBy === "pricingHighToLow") {
-      return b.price - a.price;
-    } else if (sortBy === "pricingLowToHigh") {
-      return a.price - b.price;
-    } else if (sortBy === "ratingHighToLow") {
-      const avgRatingA =
-        a.ratings.reduce((sum, r) => sum + r.rating, 0) / a.ratings.length || 0;
-      const avgRatingB =
-        b.ratings.reduce((sum, r) => sum + r.rating, 0) / b.ratings.length || 0;
-      return avgRatingB - avgRatingA;
-    } else if (sortBy === "ratingLowToHigh") {
-      const avgRatingA =
-        a.ratings.reduce((sum, r) => sum + r.rating, 0) / a.ratings.length || 0;
-      const avgRatingB =
-        b.ratings.reduce((sum, r) => sum + r.rating, 0) / b.ratings.length || 0;
-      return avgRatingA - avgRatingB;
-    }
-    return 0;
-  });
-
-  const fetchItineraries = async () => {
-    setLoading(true);
+  const fetchCurrency = async () => {
     try {
-      const data = await getItineraries();
-      setItineraries(data); // No need to await this
+      const response = await getCurrency();
+      setCurrency(response.data);
     } catch (error) {
-      message.error("Failed to fetch itineraries");
+      console.error("Fetch currency error:", error);
     }
-    setLoading(false);
-  };
-
-  const fetchMyIternaries = async () => {
-    setLoading(true);
-    try {
-      const data = await getMyItineraries();
-      setMyItineraries(data);
-    } catch (error) {
-      if (error.response.status === 404) {
-        notification.info({ message: "You didn't create any itineraries yet" });
-      } else {
-        notification.error({ message: "Error fetching itineraries" });
-      }
-    }
-    setLoading(false);
   };
 
   const fetchActivities = async () => {
@@ -395,52 +129,42 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       message.error("Failed to fetch preference tags");
     }
   };
-  const fetchCurrency = async () => {
-    try {
-      const response = await getCurrency();
-      setCurrency(response.data);
-      console.log("Currency:", response.data);
-    } catch (error) {
-      console.error("Fetch currency error:", error);
-    }
+
+  const handlePathChange = (path) => {
+    setSelectedimage(path);
   };
 
-  const showModal = async (itinerary = null) => {
+  const showModal = (itinerary = null) => {
     setEditingItinerary(itinerary);
     setIsModalVisible(true);
     if (itinerary) {
-      await fetchActivities();
-      await fetchPreferenceTags();
+      const formattedAvailableDates = itinerary.availableDates?.map((date) => {
+        const startDate = moment(date.Date);
+        const endTime = moment(date.Times, "HH:mm");
+        const endDate = moment(date.Date).set({
+          hour: endTime.get('hour'),
+          minute: endTime.get('minute')
+        });
 
-      const formattedAvailableDates = itinerary?.availableDates?.map((date) => [
-        moment(date.Date),
-        moment(`${date.Date} ${date.Times}`, "YYYY-MM-DD HH:mm"),
-      ]);
-      console.log("formattedAvailableDates", formattedAvailableDates);
+        return [startDate, endDate];
+      });
 
-      const formattedTimeline = itinerary?.timeline?.map((tl) => ({
-        ...tl,
-        activity: tl.activity ? tl.activity.name : "Activity not found",
-        startTime: tl.startTime ? moment(tl.startTime, "HH:mm") : null,
+      const formattedTimeline = itinerary.timeline?.map(item => ({
+        ...item,
+        startTime: moment(item.startTime, "HH:mm"),
       }));
 
-      console.log("formattedTimeline", formattedTimeline);
-
-      const formattedActivities = itinerary?.activities?.map((act) => ({
-        activity: act.activity ? act.activity._id : "Activity not found",
-        duration: act.duration,
+      const formattedActivities = itinerary.activities?.map(item => ({
+        activity: item.activity._id || item.activity,
+        duration: item.duration
       }));
-
-      const formattedPreferenceTags = itinerary?.preferenceTags?.map(
-        (tag) => tag._id
-      );
 
       form.setFieldsValue({
         ...itinerary,
-        activities: formattedActivities,
         availableDates: formattedAvailableDates,
         timeline: formattedTimeline,
-        preferenceTags: formattedPreferenceTags,
+        activities: formattedActivities,
+        preferenceTags: itinerary.preferenceTags.map((tag) => tag._id),
       });
     } else {
       form.resetFields();
@@ -453,841 +177,670 @@ const TourguideItineraryScreen = ({ setFlag }) => {
     form.resetFields();
   };
 
-  const handleEditButtonClick = (itinerary) => {
-    showModal(itinerary);
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await deleteItinerary(id);
-      message.success("Itinerary deleted successfully");
-      fetchItineraries();
-    } catch (error) {
-      message.error(
-        error.response && error.response.status === 400
-          ? "Cannot delete itinerary with existing bookings"
-          : "Failed to delete itinerary"
-      );
-    }
-  };
-
   const onFinish = async (values) => {
     try {
-      const formattedAvailableDates = values.availableDates.map(
-        ([start, end]) => ({
-          Date: start.format("YYYY-MM-DD"),
-          Times: end.format("HH:mm"),
-        })
-      );
-
-      const formattedActivities = values.activities.map((act) => ({
-        activity: act.activity,
-        duration: act.duration,
+      const formattedAvailableDates = values.availableDates.map(([startDate, endDate]) => ({
+        Date: startDate.format("YYYY-MM-DD"),
+        Times: endDate.format("HH:mm"),
       }));
 
-      const formattedLocations = values.locations
-        ? values.locations.map((loc) => ({
-            name: loc.name,
-          }))
-        : [];
+      const formattedActivities = values.activities.map(activity => ({
+        activity: activity.activity,
+        duration: parseInt(activity.duration),
+      }));
 
-      const formattedTimeline = values.timeline
-        ? values.timeline.map((tl) => ({
-            activity: tl.activity._id,
-            startTime: tl.startTime ? tl.startTime.format("HH:mm") : null,
-            duration: tl.duration,
-          }))
-        : [];
-
-      console.log("formattedTimeline", formattedTimeline);
-
-      const formattedPreferenceTags = values.preferenceTags
-        ? values.preferenceTags.map((tag) => tag)
-        : [];
+      const formattedTimeline = values.timeline.map(item => ({
+        activity: item.activity,
+        startTime: item.startTime.format("HH:mm"),
+        duration: parseInt(item.duration),
+      }));
 
       const formattedData = {
         ...values,
-        imageUrl:selectedimage,
+        imageUrl: selectedimage,
         availableDates: formattedAvailableDates,
         activities: formattedActivities,
-        locations: formattedLocations,
         timeline: formattedTimeline,
-        preferenceTags: formattedPreferenceTags,
       };
-      console.log("Here", formattedData);
 
       if (editingItinerary) {
-        console.log("Updating itinerary", formattedData);
         await updateItinerary(editingItinerary._id, formattedData);
         message.success("Itinerary updated successfully");
       } else {
         await createItinerary(formattedData);
         message.success("Itinerary created successfully");
       }
+
       handleCancel();
-      setRefreshItineraries((prev) => !prev);
+      setRefreshItineraries(prev => !prev);
     } catch (error) {
       message.error("Failed to save itinerary");
       console.error(error);
     }
   };
 
-  const handleViewCancel = () => {
-    setIsViewModalVisible(false);
-    setViewingItinerary(null);
+  const handleDelete = async (id) => {
+    try {
+      await deleteItinerary(id);
+      message.success("Itinerary deleted successfully");
+      setRefreshItineraries((prev) => !prev);
+    } catch (error) {
+      message.error("Failed to delete itinerary");
+    }
   };
 
-  return (
-    <div className="p-6 ">
-      {/* <h1 className="text-9xl font-bold mb-4 text-[#496989]">Itineraries</h1> */}
-      {user && (
-        <div className="flex justify-end">
-          <Button
-            type="danger"
-            icon={<PlusOutlined />}
-            onClick={() => showModal()}
-            className="mb-4 hover:bg-gray-200"
-            
-          >
-            Add Itinerary
-          </Button>
-        </div>
-      )}
-      <div className="p-8">
-        <div className="mb-6 flex flex-col items-center space-y-4">
-          {/* Centered, smaller search bar */}
-          <Search
-            enterButton={<SearchOutlined />}
-            placeholder="Search by name, category, or tag..."
-            value={searchTerm}
-            allowClear
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 rounded-md w-[400px]" // Reduced width for smaller size
-          />
-
-          <div className="flex space-x-4">
-            {/* Sort Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button1 variant="outline">
-                  <SortAsc className="mr-2 h-4 w-4" />
-                  Sort
-                </Button1>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem asChild>
-                    <div>
-                      <select
-                        id="sortFilter"
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">None</option>
-                        <option value="pricingHighToLow">
-                          Price (High to Low)
-                        </option>
-                        <option value="pricingLowToHigh">
-                          Price (Low to High)
-                        </option>
-                        <option value="ratingHighToLow">
-                          Rating (High to Low)
-                        </option>
-                        <option value="ratingLowToHigh">
-                          Rating (Low to High)
-                        </option>
-                      </select>
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Filter Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button1 variant="outline">
-                  <Filter className="mr-2 h-4 w-4" />
-                  Filter
-                </Button1>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuSub trigger="Budget">
-                    <div className="w-full">
-                      <select
-                        id="budgetFilter"
-                        value={selectedBudget}
-                        onChange={(e) => setSelectedBudget(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">All Budgets</option>
-                        {budgets?.map((budget, index) => (
-                          <option key={index} value={budget}>
-                            {budget}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </DropdownMenuSub>
-                  <DropdownMenuSub trigger="Active">
-                    <div>
-                      <select
-                        id="activeFilter"
-                        value={selectedActive}
-                        onChange={(e) => {
-                          setSelectedActive(e.target.value);
-                        }}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">All</option>
-                        <option value="true">Active</option>
-                        <option value="false">Inactive</option>
-                      </select>
-                    </div>
-                  </DropdownMenuSub>
-
-                  <DropdownMenuSub trigger="Date">
-                    <div>
-                      <select
-                        id="dateFilter"
-                        value={selectedDateFilter}
-                        onChange={(e) => setSelectedDateFilter(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">All Dates</option>
-                        <option value="today">Today</option>
-                        <option value="thisWeek">This Week</option>
-                        <option value="thisMonth">This Month</option>
-                        <option value="thisYear">This Year</option>
-                        <option value="allUpcoming">All Upcoming</option>
-                      </select>
-                    </div>
-                  </DropdownMenuSub>
-
-                  <DropdownMenuSub trigger="Language">
-                    <div>
-                      <select
-                        id="languageFilter"
-                        value={selectedLanguage}
-                        onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">All Languages</option>
-                        {languages?.map((language, index) => (
-                          <option key={index} value={language}>
-                            {language}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </DropdownMenuSub>
-
-                  <DropdownMenuSub trigger="Preference">
-                    <div>
-                      <select
-                        id="preferenceFilter"
-                        value={selectedPreference}
-                        onChange={(e) => setSelectedPreference(e.target.value)}
-                        className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                      >
-                        <option value="">All Preferences</option>
-                        {preferenceTagsList?.map((preference) => (
-                          <option key={preference._id} value={preference._id}>
-                            {preference.tag}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </DropdownMenuSub>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Reset Button */}
-            <Button2
-              type="primary"
-              danger
-              icon={<ReloadOutlined />}
-              onClick={resetFilters}
-              className="ml-4 h-9"
+  const columns = [
+    {
+      title: "Image",
+      dataIndex: "imageUrl",
+      key: "image",
+      width: 100,
+      render: (imageUrl) => (
+          <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
+            {imageUrl ? (
+                <Image
+                    src={imageUrl}
+                    alt="Itinerary Image"
+                    width={64}
+                    height={64}
+                    style={{ objectFit: 'cover' }}
+                    preview={{
+                      maskClassName: 'w-full h-full',
+                      mask: (
+                          <div className="flex items-center justify-center w-full h-full bg-black/50 cursor-pointer">
+                            <EyeOutlined className="text-white text-lg" />
+                          </div>
+                      )
+                    }}
+                />
+            ) : (
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                  <ImageIcon className="w-6 h-6 text-gray-400" />
+                </div>
+            )}
+          </div>
+      ),
+    },
+    ,{
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (name) => <span className="font-medium">{name}</span>,
+    },
+    {
+      title: "Dates",
+      dataIndex: "availableDates",
+      key: "dates",
+      render: (dates) => (
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-[#1C325B]" />
+            <div className="flex flex-col">
+              {dates?.map((date, index) => (
+                  <span key={index}>
+                {moment(date.Date).format("MMM DD, YYYY")} at {date.Times}
+              </span>
+              ))}
+            </div>
+          </div>
+      ),
+    },
+    {
+      title: "Location",
+      key: "location",
+      render: (record) => (
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-[#1C325B]" />
+            <span>
+            {record.pickupLocation} → {record.dropOffLocation}
+          </span>
+          </div>
+      ),
+    },
+    {
+      title: "Language",
+      dataIndex: "language",
+      key: "language",
+      render: (language) => (
+          <Tag className="px-3 py-1 bg-[#1C325B]/10 text-[#1C325B] border-0 rounded-lg">
+            <GlobalOutlined style={{ marginRight: 8 }} />
+            {language}
+          </Tag>
+      ),
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      render: (price) => (
+          <div className="flex items-center gap-1">
+            <DollarCircleOutlined className="text-[#1C325B]" />
+            <span className="font-medium">
+            {currency?.code} {(price * currency?.rate).toFixed(2)}
+          </span>
+          </div>
+      ),
+    },
+    {
+      title: "Accessibility",
+      dataIndex: "accessibility",
+      key: "accessibility",
+      render: (accessibility) => (
+          <div className="flex items-center gap-2">
+            <TeamOutlined className="text-[#1C325B]" />
+            <span>{accessibility || "N/A"}</span>
+          </div>
+      ),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (record) => (
+          <div className="flex space-x-2">
+            <Button
+                type="primary"
+                icon={<EyeOutlined />}
+                onClick={() => navigate(`/itinerary/iternaryDetails/${record._id}`)}
+                className="bg-[#1C325B] hover:bg-[#1C325B]/90 flex items-center gap-1"
             >
-              Reset Filters
-            </Button2>
+              View
+            </Button>
+
+            {myItineraries?.some((myItinerary) => myItinerary._id === record._id) && (
+                <>
+                  <Button
+                      type="primary"
+                      icon={<EditOutlined />}
+                      onClick={() => showModal(record)}
+                      className="bg-[#1C325B] hover:bg-[#1C325B]/90 flex items-center gap-1"
+                  >
+                    Edit
+                  </Button>
+                  <Popconfirm
+                      title="Delete Itinerary"
+                      description="Are you sure you want to delete this itinerary?"
+                      icon={<ExclamationCircleOutlined className="text-red-500" />}
+                      okText="Delete"
+                      cancelText="Cancel"
+                      okButtonProps={{
+                        className: "bg-red-500 hover:bg-red-600 border-red-500",
+                      }}
+                      onConfirm={() => handleDelete(record._id)}
+                  >
+                    <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined className="text-lg" />}
+                        className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
+               transition-all duration-200 hover:border-red-500"
+                    >
+                      <span className="text-red-500 font-medium">Delete</span>
+                    </Button>
+                  </Popconfirm>
+                </>
+            )}
+
+            {user?.userRole === "Admin" && (
+                <Tooltip title="Flag as Inappropriate">
+                  <Badge count={0} offset={[-5, 5]}>
+                    <Button
+                        type="text"
+                        danger
+                        icon={<FlagFilled className="text-lg" />}
+                        onClick={async () => {
+                          try {
+                            await flagIternaary(record._id);
+                            message.success("Itinerary flagged as inappropriate");
+                            setRefreshItineraries((prev) => !prev);
+                          } catch (error) {
+                            message.error("Failed to flag itinerary");
+                          }
+                        }}
+                        className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
+               transition-all duration-200 hover:border-red-500"
+                    >
+                      <span className="text-red-500 font-medium">Flag</span>
+                    </Button>
+                  </Badge>
+                </Tooltip>
+            )}
+          </div>
+      ),
+    }
+  ];
+
+  const filteredItineraries = itineraries?.filter((itin) =>
+      itin.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+      <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#1C325B",
+            },
+          }}
+      >
+        <div className="flex justify-center">
+          <div className="w-[90%] p-6">
+            <div className="max-w-6xl mx-auto">
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                {/* Header Section */}
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-1 mb-2">
+                        <ClipboardList className="w-6 h-6 text-white" />
+                        <h3 className="m-0 text-lg font-semibold text-white">
+                          Itinerary Management
+                        </h3>
+                      </div>
+                      <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                        Create, view, and manage your itineraries efficiently
+                      </p>
+                    </div>
+
+                    {user?.userRole === "TourGuide" && (
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={() => showModal()}
+                            className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
+                            size="large"
+                        >
+                          Add Itinerary
+                        </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Search Section */}
+                <div className="p-6">
+                  {/* Table Section */}
+                  {loading ? (
+                      <div className="flex justify-center items-center py-12">
+                        <Spin size="large" />
+                      </div>
+                  ) : (
+                      <Table
+                          columns={columns}
+                          dataSource={filteredItineraries}
+                          rowKey="_id"
+                          pagination={{
+                            pageSize: 10,
+                            showTotal: (total) => `Total ${total} itineraries`,
+                          }}
+                          className="border border-gray-200 rounded-lg"
+                          rowClassName="hover:bg-[#1C325B]/5"
+                      />
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      {(
-        <main className="flex flex-wrap justify-center items-center min-h-screen py-10">
-          {sortedItineraries?.map((itinerary, index) => (
-            <div
-              key={index}
-              className="max-w-sm w-full rounded-lg overflow-hidden shadow-lg bg-white transform transition-all duration-300 ease-in-out m-4 cursor-pointer hover:border-2 hover:border-third"
-            >
-              <Card
-                className="relative rounded-lg shadow-lg p-4 transition-all duration-300 ease-in-out hover:text-white"
-                style={{ backgroundColor: "#ffffff" }}
-              >
-                {/* Edit button as a circular icon in the top-right corner */}
-                {myItineraries?.some(
-                  (myItinerary) => myItinerary._id === itinerary._id
-                ) ? (
-                  <div
-                    className="absolute top-3 right-3 bg-white rounded-full p-3 shadow-lg hover:bg-blue-500 hover:text-white cursor-pointer transition-all duration-300"
-                    onClick={() => showModal(itinerary)}
-                  >
-                    <EditOutlined className="text-xl text-gray-600 hover:text-white" />
-                  </div>
-                ) : null}
 
-                {/* Card content */}
-                <Card.Meta
-                  onClick={() =>
-                    navigate(`/itinerary/iternaryDetails/${itinerary?._id}`, {
-                      replace: true,
-                    })
-                  }
-                  title={
-                    <>
-                      <Tooltip title={itinerary?.name}>
-                        <span
-                          className="font-bold text-2xl mb-2 transition-transform duration-500 ease-out overflow-hidden text-ellipsis whitespace-nowrap"
-                          style={{
-                            color: "#333333",
-                            maxWidth: "100%",
-                            display: "block",
-                          }}
-                        >
-                          {itinerary?.name}
-                        </span>
-                      </Tooltip>
-                      <hr className="my-4 border-t-2 border-second" />
-                      {/* Travel Route */}
-                      <Tooltip title="Travel Route">
-                        <span className="font-semibold text-xl hover:text-third flex items-center mt-2">
-                          <EnvironmentTwoTone
-                            twoToneColor="#000000"
-                            style={{ marginRight: 8 }}
-                          />
-                          {itinerary?.pickupLocation}
-                          <span className="mx-2 text-[#333333]">⇢</span>
-                          {itinerary?.dropOffLocation}
-                        </span>
-                      </Tooltip>
-                    </>
-                  }
-                  description={
-                    <div
-                      className="flex flex-col space-y-1"
-                      style={{ color: "#333333" }}
-                    >
-                      {/* Language and Accessibility */}
-                      <Tooltip title="Language">
-                        <span className="font-semibold text-lg hover:text-third">
-                          <GlobalOutlined style={{ marginRight: 8 }} />
-                          {itinerary?.language}
-                        </span>
-                      </Tooltip>
-                      <Tooltip title="Accessibility">
-                        <span className="font-semibold text-lg hover:text-third">
-                          <TeamOutlined style={{ marginRight: 8 }} />
-                          {itinerary?.accessibility || "N/A"}
-                        </span>
-                      </Tooltip>
-
-                      {/* Price Tooltip */}
-                      <div className="flex justify-center items-center mt-4">
-                        <Tooltip title="Price">
-                          <span className="font-semibold flex items-center">
-                            <span className="text-1xl">{currency?.code}</span>
-                            <span className="text-3xl hover:text-third ml-1">
-                              {(itinerary?.price * currency?.rate).toFixed(2)}
-                            </span>
-                          </span>
-                        </Tooltip>
-                      </div>
-                    </div>
-                  }
-                />
-              </Card>
-            </div>
-          ))}
-        </main>
-      )}
-
-      <Modal
-        title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
-        visible={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-        width={1000}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          initialValues={{ isActive: true }}
+        <Modal
+            title={editingItinerary ? "Edit Itinerary" : "Add Itinerary"}
+            visible={isModalVisible}
+            onCancel={handleCancel}
+            footer={null}
+            width={1000}
         >
-
-          <ImageUploader onImagePathChange={handlePathChange} />
-          <Form.Item
-            name="name"
-            label="Itinerary Name"
-            rules={[
-              { required: true, message: "Please enter the itinerary name" },
-            ]}
+          <Form
+              form={form}
+              layout="vertical"
+              onFinish={onFinish}
+              initialValues={{
+                isActive: true,
+                isBookingOpen: true,
+                locations: [{ name: '' }],
+                activities: [{ activity: undefined, duration: undefined }],
+                timeline: [{ activity: undefined, startTime: undefined, duration: undefined }]
+              }}
           >
-            <Input placeholder="Enter itinerary name" />
-          </Form.Item>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Basic Information */}
+              <div className="md:col-span-2">
+                <ImageUploader onImagePathChange={handlePathChange} />
+              </div>
 
-          <Form.Item
-            name="language"
-            label="Language"
-            rules={[{ required: true }]}
-          >
-            <Select placeholder="Select language">
-              <Option value="English">English</Option>
-              <Option value="Spanish">Spanish</Option>
-              <Option value="Arabic">Arabic</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item name="price" label="Price" rules={[{ required: true }]}>
-            <InputNumber
-              min={0}
-              style={{ width: "100%" }}
-              formatter={(value) => `$ ${value}`}
-              parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-              placeholder="Enter price"
-            />
-          </Form.Item>
-
-          <Form.Item name="accessibility" label="Accessibility">
-            <Input placeholder="Enter accessibility details" />
-          </Form.Item>
-
-          <Form.Item name="pickupLocation" label="Pickup Location">
-            <Input placeholder="Enter pickup location" />
-          </Form.Item>
-
-          <Form.Item name="dropOffLocation" label="Drop Off Location">
-            <Input placeholder="Enter drop off location" />
-          </Form.Item>
-
-          <Divider />
-
-          <Form.List name="activities">
-            {(fields, { add, remove }) => (
-              <>
-                <label className="block font-medium mb-2">Activities</label>
-                {fields?.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    style={{ display: "flex", marginBottom: 8 }}
-                    align="start"
-                  >
-                    <Form.Item
-                      {...restField}
-                      name={[name, "activity"]}
-                      rules={[{ required: true, message: "Missing activity" }]}
-                    >
-                      <Select
-                        placeholder="Select activity"
-                        style={{ width: 200 }}
-                      >
-                        {activitiesList?.map((activity) => (
-                          <Option key={activity.name} value={activity._id}>
-                            {activity.name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                      {...restField}
-                      name={[name, "duration"]}
-                      rules={[{ required: true, message: "Missing duration" }]}
-                    >
-                      <InputNumber
-                        min={1}
-                        formatter={(value) => `${value} min`}
-                        parser={(value) => value.replace(" min", "")}
-                        placeholder="Duration (min)"
-                      />
-                    </Form.Item>
-
-                    <MinusCircleOutlined onClick={() => remove(name)} />
-                  </Space>
-                ))}
-
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                    style={{
-                      backgroundColor: "#02735F",
-                      borderColor: "#02735F",
-                      color: "#fff",
-                    }}
-                  >
-                    Add Activity
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-
-          <Divider />
-
-          <Form.List name="locations">
-            {(fields, { add, remove }) => (
-              <>
-                <label className="block font-medium mb-2">Locations</label>
-                {fields?.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    style={{ display: "flex", marginBottom: 8 }}
-                    align="start"
-                  >
-                    <Form.Item
-                      {...restField}
-                      name={[name, "name"]}
-                      rules={[
-                        { required: true, message: "Missing location name" },
-                      ]}
-                    >
-                      <Input placeholder="Location Name" />
-                    </Form.Item>
-
-                    <MinusCircleOutlined onClick={() => remove(name)} />
-                  </Space>
-                ))}
-
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                    style={{
-                      backgroundColor: "#02735F",
-                      borderColor: "#02735F",
-                      color: "#fff",
-                    }}
-                  >
-                    Add Location
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-
-          <Divider />
-
-          <Form.List name="timeline">
-            {(fields, { add, remove }) => (
-              <>
-                <label className="block font-medium mb-2">Timeline</label>
-                {fields.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    style={{ display: "flex", marginBottom: 8 }}
-                    align="start"
-                  >
-                    <Form.Item
-                      {...restField}
-                      name={[name, "activity"]}
-                      rules={[{ required: true, message: "Missing activity" }]}
-                    >
-                      <Select
-                        placeholder="Select activity"
-                        style={{ width: 200 }}
-                      >
-                        {activitiesList?.map((activity) => (
-                          <Option key={activity._id} value={activity._id}>
-                            {activity.name}
-                          </Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                      {...restField}
-                      name={[name, "startTime"]}
-                      rules={[
-                        { required: true, message: "Missing start time" },
-                      ]}
-                    >
-                      <DatePicker
-                        showTime
-                        format="HH:mm"
-                        placeholder="Start Time"
-                        style={{ width: 150 }}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      {...restField}
-                      name={[name, "duration"]}
-                      rules={[{ required: true, message: "Missing duration" }]}
-                    >
-                      <InputNumber
-                        min={1}
-                        formatter={(value) => `${value} min`}
-                        parser={(value) => value.replace(" min", "")}
-                        placeholder="Duration (min)"
-                      />
-                    </Form.Item>
-
-                    <MinusCircleOutlined onClick={() => remove(name)} />
-                  </Space>
-                ))}
-
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                    style={{
-                      backgroundColor: "#02735F",
-                      borderColor: "#02735F",
-                      color: "#fff",
-                    }}
-                  >
-                    Add Timeline Entry
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-
-          <Divider />
-
-          <Form.List name="availableDates">
-            {(fields, { add, remove }) => (
-              <>
-                <label className="block font-medium mb-2">
-                  Available Dates and Times
-                </label>
-                {fields.map(({ key, name, ...restField }) => (
-                  <Space
-                    key={key}
-                    style={{ display: "flex", marginBottom: 8 }}
-                    align="start"
-                  >
-                    <Form.Item
-                      {...restField}
-                      name={[name]}
-                      rules={[
-                        { required: true, message: "Missing date range" },
-                      ]}
-                    >
-                      <RangePicker
-                        showTime
-                        format="YYYY-MM-DD HH:mm"
-                        style={{ width: 300 }}
-                        placeholder={["Start Date", "End Date"]}
-                      />
-                    </Form.Item>
-
-                    <MinusCircleOutlined onClick={() => remove(name)} />
-                  </Space>
-                ))}
-
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                    style={{
-                      backgroundColor: "#02735F",
-                      borderColor: "#02735F",
-                      color: "#fff",
-                    }}
-                  >
-                    Add Available Date
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-
-          <Divider />
-
-          <Form.Item name="preferenceTags" label="Preference Tags">
-            <Select
-              mode="multiple"
-              placeholder="Select preference tags"
-              allowClear
-            >
-              {preferenceTagsList?.map((tag) => (
-                <Option key={tag._id} value={tag._id}>
-                  {tag.tag}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Booking Open"
-            name="isBookingOpen"
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item label="Active" name="isActive" valuePropName="checked">
-            <Switch />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              style={{ backgroundColor: "#02735F", borderColor: "#02735F" }}
-            >
-              {editingItinerary ? "Update" : "Create"}
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      <Modal
-        title="View Itinerary"
-        visible={isViewModalVisible}
-        onCancel={handleViewCancel}
-        footer={[
-          <Button key="close" onClick={handleViewCancel}>
-            Close
-          </Button>,
-        ]}
-        width={1000}
-      >
-        {viewingItinerary && (
-          <Form layout="vertical">
-            <Form.Item label="Itinerary Name">
-              <Input value={viewingItinerary.name} disabled />
-            </Form.Item>
-            <Form.Item label="Language">
-              <Input value={viewingItinerary.language} disabled />
-            </Form.Item>
-            <Form.Item label="Price">
-              <InputNumber
-                value={viewingItinerary.price}
-                formatter={(value) => `$ ${value}`}
-                disabled
-              />
-            </Form.Item>
-            <Form.Item label="Accessibility">
-              <Input value={viewingItinerary.accessibility} disabled />
-            </Form.Item>
-            <Form.Item label="Pickup Location">
-              <Input value={viewingItinerary.pickupLocation} disabled />
-            </Form.Item>
-            <Form.Item label="Drop Off Location">
-              <Input value={viewingItinerary.dropOffLocation} disabled />
-            </Form.Item>
-
-            <Divider />
-
-            <Form.Item label="Activities">
-              {viewingItinerary.activities?.map((activity, index) => (
-                <div key={index}>
-                  <Input
-                    value={`${activity?.activity?.name} - ${activity?.duration} min`}
-                    disabled
-                  />
-                </div>
-              ))}
-            </Form.Item>
-
-            <Divider />
-
-            <Form.Item label="Locations">
-              {viewingItinerary?.locations?.map((location, index) => (
-                <div key={index}>
-                  <Input value={location.name} disabled />
-                </div>
-              ))}
-            </Form.Item>
-
-            <Divider />
-
-            <Form.Item label="Timeline">
-              {viewingItinerary?.timeline?.map(
-                (entry, index) => (
-                  console.log("entry", entry),
-                  (
-                    <div key={index}>
-                      <Input
-                        value={`${entry.activity.name} - Start: ${entry.startTime}, Duration: ${entry.duration} min`}
-                        disabled
-                      />
-                    </div>
-                  )
-                )
-              )}
-            </Form.Item>
-
-            <Divider />
-            <Form.Item label="Available Dates">
-              {viewingItinerary?.availableDates?.map(
-                (date, index) => (
-                  console.log("date", date),
-                  console.log("time", date.Times),
-                  (
-                    <div key={index}>
-                      <Input
-                        value={`${moment(date.Date).format(
-                          "dddd, MMMM D, YYYY"
-                        )} ${moment(
-                          `${date.Date} ${date.Times}`,
-                          "YYYY-MM-DD HH:mm"
-                        ).format("hh:mm A")}`}
-                        disabled
-                      />
-                    </div>
-                  )
-                )
-              )}
-            </Form.Item>
-
-            <Divider />
-
-            <Form.Item label="Preference Tags">
-              <Select
-                mode="multiple"
-                value={viewingItinerary?.preferenceTags?.map((tag) => tag._id)}
-                disabled
+              <Form.Item
+                  name="name"
+                  label="Itinerary Name"
+                  rules={[{ required: true, message: "Please enter the itinerary name" }]}
               >
-                {preferenceTagsList?.map((tag) => (
-                  <Option key={tag._id} value={tag._id}>
-                    {tag.tag}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Booking Open"
-              name="isBookingOpen"
-              valuePropName="checked"
-            >
-              <Switch disabled={true} value={viewingItinerary?.isBookingOpen} />
-            </Form.Item>
-            <Form.Item label="Active" name="isActive" valuePropName="checked">
-              <Switch disabled={true} value={viewingItinerary?.isActive} />
-            </Form.Item>
+                <Input placeholder="Enter itinerary name" />
+              </Form.Item>
+
+              <Form.Item
+                  name="language"
+                  label="Language"
+                  rules={[{ required: true }]}
+              >
+                <Select placeholder="Select language">
+                  <Option value="English">English</Option>
+                  <Option value="Spanish">Spanish</Option>
+                  <Option value="Arabic">Arabic</Option>
+                  <Option value="French">French</Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                  name="price"
+                  label="Price"
+                  rules={[{ required: true }]}
+              >
+                <InputNumber
+                    min={0}
+                    className="w-full"
+                    formatter={value => `$ ${value}`}
+                    parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                />
+              </Form.Item>
+
+              <Form.Item name="accessibility" label="Accessibility">
+                <Input placeholder="Enter accessibility details" />
+              </Form.Item>
+
+              <Form.Item name="pickupLocation" label="Pickup Location">
+                <Input placeholder="Enter pickup location" />
+              </Form.Item>
+
+              <Form.Item name="dropOffLocation" label="Drop Off Location">
+                <Input placeholder="Enter drop off location" />
+              </Form.Item>
+
+              {/* Activities Section */}
+              <div className="md:col-span-2">
+                <Divider orientation="left">Activities</Divider>
+                <Form.List name="activities">
+                  {(fields, { add, remove }) => (
+                      <>
+                        {fields.map(({ key, name, ...restField }) => (
+                            <div key={key} className="flex gap-4 mb-4">
+                              <Form.Item
+                                  {...restField}
+                                  name={[name, "activity"]}
+                                  className="flex-1"
+                                  rules={[{ required: true, message: "Please select an activity" }]}
+                              >
+                                <Select placeholder="Select activity">
+                                  {activitiesList?.map((activity) => (
+                                      <Option key={activity._id} value={activity._id}>
+                                        {activity.name}
+                                      </Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+                              <Form.Item
+                                  {...restField}
+                                  name={[name, "duration"]}
+                                  className="w-32"
+                                  rules={[{ required: true, message: "Duration required" }]}
+                              >
+                                <InputNumber
+                                    placeholder="Minutes"
+                                    min={1}
+                                    addonAfter="min"
+                                />
+                              </Form.Item>
+                              <Button type="text" onClick={() => remove(name)} icon={<DeleteOutlined />} />
+                            </div>
+                        ))}
+                        <Button
+                            type="dashed"
+                            onClick={() => add()}
+                            block
+                            icon={<PlusOutlined />}
+                            className="mt-2"
+                        >
+                          Add Activity
+                        </Button>
+                      </>
+                  )}
+                </Form.List>
+              </div>
+
+              {/* Locations Section */}
+              <div className="md:col-span-2">
+                <Divider orientation="left">Locations</Divider>
+                <Form.List name="locations">
+                  {(fields, { add, remove }) => (
+                      <>
+                        {fields.map(({ key, name, ...restField }) => (
+                            <div key={key} className="flex gap-4 mb-4">
+                              <Form.Item
+                                  {...restField}
+                                  name={[name, "name"]}
+                                  className="flex-1"
+                                  rules={[{ required: true, message: "Location name required" }]}
+                              >
+                                <Input placeholder="Enter location name" />
+                              </Form.Item>
+                              <Button type="text" onClick={() => remove(name)} icon={<DeleteOutlined />} />
+                            </div>
+                        ))}
+                        <Button
+                            type="dashed"
+                            onClick={() => add()}
+                            block
+                            icon={<PlusOutlined />}
+                            className="mt-2"
+                        >
+                          Add Location
+                        </Button>
+                      </>
+                  )}
+                </Form.List>
+              </div>
+
+              {/* Timeline Section */}
+              <div className="md:col-span-2">
+                <Divider orientation="left">Timeline</Divider>
+                <Form.List name="timeline">
+                  {(fields, { add, remove }) => (
+                      <>
+                        {fields.map(({ key, name, ...restField }) => (
+                            <div key={key} className="flex gap-4 mb-4">
+                              <Form.Item
+                                  {...restField}
+                                  name={[name, "activity"]}
+                                  className="flex-1"
+                                  rules={[{ required: true, message: "Please select an activity" }]}
+                              >
+                                <Select placeholder="Select activity">
+                                  {activitiesList?.map((activity) => (
+                                      <Option key={activity._id} value={activity._id}>
+                                        {activity.name}
+                                      </Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+                              <Form.Item
+                                  {...restField}
+                                  name={[name, "startTime"]}
+                                  className="w-32"
+                                  rules={[{ required: true, message: "Start time required" }]}
+                              >
+                                <TimePicker format="HH:mm" className="w-full" />
+                              </Form.Item>
+                              <Form.Item
+                                  {...restField}
+                                  name={[name, "duration"]}
+                                  className="w-32"
+                                  rules={[{ required: true, message: "Duration required" }]}
+                              >
+                                <InputNumber
+                                    placeholder="Minutes"
+                                    min={1}
+                                    addonAfter="min"
+                                />
+                              </Form.Item>
+                              <Button type="text" onClick={() => remove(name)} icon={<DeleteOutlined />} />
+                            </div>
+                        ))}
+                        <Button
+                            type="dashed"
+                            onClick={() => add()}
+                            block
+                            icon={<PlusOutlined />}
+                            className="mt-2"
+                        >
+                          Add Timeline Entry
+                        </Button>
+                      </>
+                  )}
+                </Form.List>
+              </div>
+
+              {/* Available Dates Section */}
+              <div className="md:col-span-2">
+                <Divider orientation="left">Available Dates</Divider>
+                <Form.List name="availableDates">
+                  {(fields, { add, remove }) => (
+                      <>
+                        {fields.map(({ key, name, ...restField }) => (
+                            <div key={key} className="flex gap-4 mb-4">
+                              <Form.Item
+                                  {...restField}
+                                  name={[name]}
+                                  className="flex-1"
+                                  rules={[{ required: true, message: "Please select date and time" }]}
+                              >
+                                <DatePicker.RangePicker
+                                    showTime
+                                    format="YYYY-MM-DD HH:mm"
+                                    className="w-full"
+                                />
+                              </Form.Item>
+                              <Button type="text" onClick={() => remove(name)} icon={<DeleteOutlined />} />
+                            </div>
+                        ))}
+                        <Button
+                            type="dashed"
+                            onClick={() => add()}
+                            block
+                            icon={<PlusOutlined />}
+                            className="mt-2"
+                        >
+                          Add Available Date
+                        </Button>
+                      </>
+                  )}
+                </Form.List>
+              </div>
+
+              {/* Preference Tags */}
+              <div className="md:col-span-2">
+                <Form.Item name="preferenceTags" label="Preference Tags">
+                  <Select
+                      mode="multiple"
+                      placeholder="Select preference tags"
+                      allowClear
+                      className="w-full"
+                  >
+                    {preferenceTagsList?.map((tag) => (
+                        <Option key={tag._id} value={tag._id}>
+                          {tag.tag}
+                        </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </div>
+
+              {/* Status Toggles */}
+              <Form.Item label="Booking Status" name="isBookingOpen" valuePropName="checked">
+                <Switch checkedChildren="Open" unCheckedChildren="Closed" />
+              </Form.Item>
+
+              <Form.Item label="Active Status" name="isActive" valuePropName="checked">
+                <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
+              </Form.Item>
+
+              {/* Form Actions */}
+              <div className="md:col-span-2 flex justify-end gap-2">
+                <Button onClick={handleCancel}>Cancel</Button>
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="bg-[#1C325B]"
+                    loading={loading}
+                >
+                  {editingItinerary ? "Update Itinerary" : "Create Itinerary"}
+                </Button>
+              </div>
+            </div>
           </Form>
-        )}
-      </Modal>
-    </div>
+        </Modal>
+
+        {/* View Modal */}
+        <Modal
+            title="View Itinerary Details"
+            visible={isEditFormVisible}
+            onCancel={() => setIsEditFormVisible(false)}
+            footer={[
+              <Button key="back" onClick={() => setIsEditFormVisible(false)}>
+                Close
+              </Button>,
+            ]}
+        >
+          {selectedItinerary && (
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Name</h4>
+                  <p className="mt-1">{selectedItinerary.name}</p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Language</h4>
+                  <p className="mt-1">{selectedItinerary.language}</p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Price</h4>
+                  <p className="mt-1">
+                    {currency?.code} {(selectedItinerary.price * currency?.rate).toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Route</h4>
+                  <p className="mt-1">
+                    {selectedItinerary.pickupLocation} → {selectedItinerary.dropOffLocation}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Available Dates</h4>
+                  <div className="mt-1 space-y-1">
+                    {selectedItinerary.availableDates?.map((date, index) => (
+                        <p key={index}>
+                          {moment(date.Date).format("MMM DD, YYYY")} at {date.Times}
+                        </p>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Preference Tags</h4>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {selectedItinerary.preferenceTags?.map((tag) => (
+                        <Tag key={tag._id} className="bg-[#1C325B]/10 text-[#1C325B] border-0">
+                          {tag.tag}
+                        </Tag>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Status</h4>
+                  <div className="mt-1 space-x-4">
+                    <Tag color={selectedItinerary.isActive ? "success" : "error"}>
+                      {selectedItinerary.isActive ? "Active" : "Inactive"}
+                    </Tag>
+                    <Tag color={selectedItinerary.isBookingOpen ? "success" : "error"}>
+                      Booking {selectedItinerary.isBookingOpen ? "Open" : "Closed"}
+                    </Tag>
+                  </div>
+                </div>
+              </div>
+          )}
+        </Modal>
+      </ConfigProvider>
   );
 };
 

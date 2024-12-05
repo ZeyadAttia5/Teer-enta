@@ -93,7 +93,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
     <div className="fixed w-full">
       <PromoCodeStrip setVisibleFlag={setVisible} setVisibleFlagHome={setVisibleFlagHome}/>
       <div
-        className={`w-full fixed ${visible ? "top-11" : "top-0"} bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
+        className={`w-full fixed ${visible ? "top-9" : "top-0"} bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
       >
         <div className="flex gap-4 ml-8">
           {/* Logo Section */}
@@ -180,22 +180,24 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
               (user.userRole === "Tourist" ||
                 user.userRole === "Advertiser" ||
                 user.userRole === "TourGuide") && (
-                <div className=" text-first hover:border-b-2 px-2 hover:border-first transition-all duration-300 transform cursor-pointer">
-                  <div className="flex justify-center">
-                    <NotificationIcon
-                      className={`text-fifth text-2xl transition-colors`}
-                    />
-                  </div>
-                  <span className="text-fifth text-sm">Notifications</span>
-                </div>
-              )}
+                    <div
+                        className="flex-row text-first hover:border-b-2 px-2 hover:border-first transition-all duration-300 transform cursor-pointer">
+                      <div className="flex justify-center mt-3">
+                        <NotificationIcon className="text-fifth text-md transition-colors"/>
+                      </div>
+                      <span
+                          className="text-fifth text-sm transition-transform transform relative hover:translate-y-[-4px]">
+                          Notifications
+                      </span>
+                    </div>
+                )}
 
             {/* Account and Logout Buttons */}
             <div className="flex justify-end items-center lg:flex-1 mt-2  mr-16">
               <AccountButton
-                extra_tw={` transition duration-300 px-2 pt-2 transform`}
-                onClick={onAccountClick}
-                setModalOpen={setModalOpen}
+                  extra_tw={` transition duration-300 px-2 pt-2 transform`}
+                  onClick={onAccountClick}
+                  setModalOpen={setModalOpen}
               />
             </div>
           </div>

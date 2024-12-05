@@ -203,30 +203,6 @@ const ActivityCard = ({
 
                 {/* Content Section */}
                 <div className="p-6 space-y-6 bg-white">
-                    {/* Discount Details Section */}
-                    {/*{specialDiscounts?.some(discount => discount.isAvailable) && (*/}
-                    {/*    <div className="space-y-2">*/}
-                    {/*        {specialDiscounts.map((discount, index) => (*/}
-                    {/*            discount.isAvailable && (*/}
-                    {/*                <div*/}
-                    {/*                    key={index}*/}
-                    {/*                    className="bg-yellow-50 p-3 rounded-md flex items-start gap-3"*/}
-                    {/*                >*/}
-                    {/*                    <DollarOutlined className="text-yellow-600 mt-1 text-sm" />*/}
-                    {/*                    <div>*/}
-                    {/*                        <div className="text-sm font-semibold text-yellow-800">*/}
-                    {/*                            {discount.discount}% Discount Available*/}
-                    {/*                        </div>*/}
-                    {/*                        <p className="text-sm text-yellow-600">*/}
-                    {/*                            {discount.Description}*/}
-                    {/*                        </p>*/}
-                    {/*                    </div>*/}
-                    {/*                </div>*/}
-                    {/*            )*/}
-                    {/*        ))}*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
-
                     {/* Info Grid */}
                     <div className="grid grid-cols-2 gap-4">
                         <Tooltip title="Date">
@@ -262,24 +238,28 @@ const ActivityCard = ({
 
                     {/* Price and Booking Section */}
                     <div className="flex justify-between items-center border-t border-gray-100 pt-6">
-                        <div className="flex flex-col">
-                            <span className="text-sm text-gray-500 mb-1">Starting from</span>
-                            <div className="flex items-baseline space-x-1">
-                                <span className="text-sm font-medium text-gray-500">{currencyCode}</span>
-                                <span className="text-3xl font-bold text-[#2A3663]">
-                                {price?.min ? (currencyRate * price.min).toFixed(1) : "N/A"}
-                            </span>
+                        <div className="flex flex-col bg-white rounded-lg p-3">
+                            <span className="text-xs text-gray-500 block mb-1">Starting from</span>
+                            <div className="flex items-center space-x-1">
+                                <span className="text-base font-semibold text-[#2A3663] bg-gray-50 px-2 py-1 rounded">
+                                    {currencyCode}
+                                </span>
+                                                        <span className="text-3xl font-bold text-[#2A3663]">
+                                    {price?.min ? (currencyRate * price.min).toFixed(2) : "N/A"}
+                                </span>
                             </div>
                         </div>
                         <Button
-                            type="danger"
+                            type={isBookingOpen ? "danger" : "default"}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 navigate(`/touristActivities/book/${id}`);
                             }}
-                            className="bg-[#2A3663] text-white px-8 py-4 text-lg font-semibold rounded-lg
-                                 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer
-                                 hover:bg-black disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            className={`px-6 h-10 rounded-lg font-medium shadow-sm ${
+                                isBookingOpen
+                                    ? 'bg-[#2A3663] hover:bg-black text-white'
+                                    : 'bg-gray-100 text-gray-500 cursor-not-allowed hover:bg-gray-100'
+                            }`}
                             disabled={!isBookingOpen}
                         >
                             {isBookingOpen ? "Book Now" : "Not Available"}
