@@ -391,7 +391,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
             type="danger"
             block
             size="large"
-            className="bg-[#1a2b49] border-[#1a2b49] hover:bg-[#526D82] hover:border-[#526D82] text-white"
+            className="bg-[#1a2b49] border-[#1a2b49] hover:bg-black hover:border-[#526D82] text-white"
             icon={<SearchOutlined />}
             onClick={handleSearch}
           >
@@ -491,56 +491,58 @@ const BookHotel = () => {
         },
       }}
     >
-      <Card
-        className="w-11/12 min-h-[600px] flex my-20 mx-auto shadow"
-        classNames={{
-          body: "flex flex-1 flex-col justify-center",
-          cover: "flex-1",
-        }}
-        cover={
-          <img
-            alt=""
-            className="size-full"
-            src="https://img.freepik.com/premium-vector/hotel-building-near-sea-seafront-resort-view-vector-illustration-flat-cartoon_101884-681.jpg?w=740"
-          />
-        }
-      >
-        <header className="flex flex-col gap-5">
-          {step > 0 && !loading && (
-            <ArrowLeftOutlined
-              onClick={() => setStep(step - 1)}
-              className="stroke-black text-lg cursor-pointer"
+      <div className="flex justify-center  min-h-[600px] my-20 mx-auto shadow">
+        <Card
+          className="w-[90%] min-h-[600px] flex my-20 mx-auto shadow"
+          classNames={{
+            body: "flex flex-1 flex-col justify-center",
+            cover: "flex-1",
+          }}
+          cover={
+            <img
+              alt=""
+              className="size-full"
+              src="https://img.freepik.com/premium-vector/hotel-building-near-sea-seafront-resort-view-vector-illustration-flat-cartoon_101884-681.jpg?w=740"
             />
-          )}
-          <Typography.Title level={4} className="mb-6">
-            Book Your Hotel
-          </Typography.Title>
-        </header>
-        <main className="h-full flex mt-6">
-          <section className="flex-1 flex flex-col justify-center items-center">
-            <Form
-              scrollToFirstError
-              className="w-full flex flex-col justify-center px-4 flex-1"
-              layout="vertical"
-            >
-              <Fade direction="up" triggerOnce>
-                {loading ? (
-                  <Spin className="flex-1 justify-center flex" />
-                ) : (
-                  steps[step]?.content
-                )}
-              </Fade>
-            </Form>
-          </section>
-          <section className="h-full flex-[0.4]">
-            <CustomProgressBar
-              step={step}
-              setStep={setStep}
-              loading={loading}
-            />
-          </section>
-        </main>
-      </Card>
+          }
+        >
+          <header className="flex flex-col gap-5">
+            {step > 0 && !loading && (
+              <ArrowLeftOutlined
+                onClick={() => setStep(step - 1)}
+                className="stroke-black text-lg cursor-pointer"
+              />
+            )}
+            <Typography.Title level={4} className="mb-6">
+              Book Your Hotel
+            </Typography.Title>
+          </header>
+          <main className="h-full flex mt-6">
+            <section className="flex-1 flex flex-col justify-center items-center">
+              <Form
+                scrollToFirstError
+                className="w-full flex flex-col justify-center px-4 flex-1"
+                layout="vertical"
+              >
+                <Fade direction="up" triggerOnce>
+                  {loading ? (
+                    <Spin className="flex-1 justify-center flex" />
+                  ) : (
+                    steps[step]?.content
+                  )}
+                </Fade>
+              </Form>
+            </section>
+            <section className="h-full flex-[0.4]">
+              <CustomProgressBar
+                step={step}
+                setStep={setStep}
+                loading={loading}
+              />
+            </section>
+          </main>
+        </Card>
+      </div>
     </ConfigProvider>
   );
 };

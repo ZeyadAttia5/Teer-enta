@@ -33,6 +33,8 @@ const PromoCodeStrip = ({
     };
 
     useEffect(() => {
+        setVisibleFlag(visible);
+        setVisibleFlagHome(visible);
         fetchPromoCode();
     }, []);
 
