@@ -12,6 +12,7 @@ import {
   notification,
   Popconfirm,
   InputNumber,
+    Image,
   Row,
   Col,
   Card,
@@ -32,7 +33,7 @@ import {
   Percent,
   AlertCircle,
   PackageIcon,
-  ClipboardList,
+  ClipboardList, ImageIcon,
 } from "lucide-react";
 import {
   getActivities,
@@ -48,7 +49,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
-  FlagFilled,
+  FlagFilled, ExclamationCircleOutlined
 } from "@ant-design/icons";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import ImageUploader from "../Images/imageUploader";
@@ -239,45 +240,72 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   };
   const columns = [
     {
+      title: "Image",
+      dataIndex: "imageUrl",
+      key: "image",
+      width: 100,
+      render: (imageUrl) => (
+          <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
+            {imageUrl ? (
+                <Image
+                    src={imageUrl}
+                    alt="Activity"
+                    width={64}
+                    height={64}
+                    style={{ objectFit: 'cover' }}
+                    preview={{
+                      maskClassName: 'w-full h-full',
+                      mask: (
+                          <div className="flex items-center justify-center w-full h-full bg-black/50 cursor-pointer">
+                            <EyeOutlined className="text-white text-lg" />
+                          </div>
+                      )
+                    }}
+                />
+            ) : (
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                  <ImageIcon className="w-6 h-6 text-gray-400" />
+                </div>
+            )}
+          </div>
+      ),
+    },
+    {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (name) => <span>{name}</span>,
+      render: (name) => (
+          <span className="font-medium text-[#1C325B]">{name}</span>
+      ),
     },
     {
-      title: "Date",
+      title: "Date & Time",
       dataIndex: "date",
       key: "date",
-      render: (date) => (
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-[#1C325B]" />
-          <span>{moment(date).format("MMM DD, YYYY, h:mm A")}</span>
-        </div>
+      render: (date, record) => (
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-gray-700">
+              <Calendar className="w-4 h-4 text-[#1C325B]" />
+              <span>{moment(date).format("MMM DD, YYYY")}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-700">
+              <Clock className="w-4 h-4 text-[#1C325B]" />
+              <span>{record.time}</span>
+            </div>
+          </div>
       ),
     },
-    {
-      title: "Time",
-      dataIndex: "time",
-      key: "time",
-      render: (time) => (
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4" />
-          <span>{time}</span>
-        </div>
-      ),
-    },
-
     {
       title: "Location",
       dataIndex: "location",
       key: "location",
       render: (loc) => (
-        <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-[#1C325B]" />
-          <span>
-            ({loc?.lat}, {loc?.lng})
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-[#1C325B]" />
+            <span className="text-gray-700">
+            ({loc?.lat.toFixed(4)}, {loc?.lng.toFixed(4)})
           </span>
-        </div>
+          </div>
       ),
     },
     {
@@ -285,115 +313,133 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       dataIndex: "category",
       key: "category",
       render: (category) => (
-        <span>
-          <Tag className="px-3 py-1 bg-[#1C325B]/10 text-[#1C325B] border-0 rounded-lg">
+          <Tag className="px-3 py-1.5 bg-[#1C325B]/10 text-[#1C325B] border-0 rounded-lg font-medium">
             {category?.category || "N/A"}
           </Tag>
-        </span>
       ),
     },
     {
-      title: "Preference Tags",
+      title: "Tags",
       dataIndex: "preferenceTags",
       key: "preferenceTags",
       render: (tags) => (
-        <div className="flex flex-wrap gap-2">
-          {tags?.map((tag, index) => (
-            <Tag
-              key={index}
-              className="px-2 py-1 bg-emerald-50 text-emerald-600 border-0 rounded-lg flex items-center gap-1"
-            >
-              <TagIcon className="w-3 h-3" /> {/* Ensure TagIcon is imported */}
-              {tag.tag}
-            </Tag>
-          ))}
-        </div>
+          <div className="flex flex-wrap gap-1.5">
+            {tags?.map((tag, index) => (
+                <Tag
+                    key={index}
+                    className="px-2 py-1 bg-emerald-50 text-emerald-600 border-0 rounded-lg flex items-center gap-1"
+                >
+                  <TagIcon className="w-3 h-3" />
+                  {tag.tag}
+                </Tag>
+            ))}
+          </div>
       ),
     },
-
     {
-      title: "Special Discounts",
+      title: "Discounts",
       dataIndex: "specialDiscounts",
       key: "specialDiscounts",
       render: (discounts) => (
-        <div className="space-y-2">
-          {discounts?.map((discount, index) => (
-            <div
-              key={index}
-              className={`p-2 rounded-lg border ${
-                discount.isAvailable
-                  ? "border-emerald-200 bg-emerald-50"
-                  : "border-gray-200 bg-gray-50"
-              }`}
-            >
-              <div className="flex items-center gap-2 text-emerald-600 font-medium">
-                <Percent className="w-4 h-4" />
-                {discount.discount}% Off
-              </div>
-              <p className="text-sm text-gray-600 mt-1">
-                {discount.Description}
-              </p>
-            </div>
-          ))}
-        </div>
+          <div className="space-y-2 max-w-xs">
+            {discounts?.map((discount, index) => (
+                <div
+                    key={index}
+                    className={`p-2 rounded-lg border ${
+                        discount.isAvailable
+                            ? "border-emerald-200 bg-emerald-50"
+                            : "border-gray-200 bg-gray-50"
+                    }`}
+                >
+                  <div className="flex items-center gap-2 text-emerald-600 font-medium">
+                    <Percent className="w-4 h-4" />
+                    {discount.discount}% Off
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1 truncate">
+                    {discount.Description}
+                  </p>
+                </div>
+            ))}
+          </div>
       ),
     },
-
     {
-      title: user ? "Actions" : "",
+      title: "Actions",
       key: "actions",
+      width: 200,
       render: (record) => (
-        <span>
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() => handleViewActivity(record)}
-          />
-          {user &&
-            user.userRole === "Advertiser" &&
-            user._id === record.createdBy && (
-              <div>
-                <Button
-                  icon={<EditOutlined />}
-                  onClick={() => handleEditActivity(record)}
-                />
-                <Popconfirm
-                  title="Are you sure you want to delete this activity?"
-                  onConfirm={() => handleDeleteActivity(record._id)}
-                >
-                  <Button icon={<DeleteOutlined />} danger />
-                </Popconfirm>
-              </div>
+          <div className="flex space-x-2">
+            <Button
+                type="primary"
+                icon={<EyeOutlined />}
+                onClick={() => handleViewActivity(record)}
+                className="bg-[#1C325B] hover:bg-[#1C325B]/90 flex items-center gap-1"
+            >
+              View
+            </Button>
+
+            {user && user.userRole === "Advertiser" && user._id === record.createdBy && (
+                <>
+                  <Button
+                      type="primary"
+                      icon={<EditOutlined />}
+                      onClick={() => handleEditActivity(record)}
+                      className="bg-[#1C325B] hover:bg-[#1C325B]/90 flex items-center gap-1"
+                  >
+                    Edit
+                  </Button>
+                  <Popconfirm
+                      title="Delete Activity"
+                      description="Are you sure you want to delete this activity?"
+                      icon={<ExclamationCircleOutlined className="text-red-500" />}
+                      okText="Delete"
+                      cancelText="Cancel"
+                      okButtonProps={{
+                        className: "bg-red-500 hover:bg-red-600 border-red-500",
+                      }}
+                      onConfirm={() => handleDeleteActivity(record._id)}
+                  >
+                    <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined className="text-lg" />}
+                        className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
+                   transition-all duration-200 hover:border-red-500"
+                    >
+                      <span className="text-red-500 font-medium">Delete</span>
+                    </Button>
+                  </Popconfirm>
+                </>
             )}
-          {user && user?.userRole === "Admin" && (
-            <Badge count={0} offset={[-5, 5]}>
-              <Tooltip title={"Flag this item as Inappropriate"}>
-                <Button
-                  danger
-                  icon={<FlagFilled />}
-                  onClick={async () => {
-                    try {
-                      setLoading(true);
-                      await flagActivity(record._id);
-                      message.success("Item flagged as inappropriate");
-                      await fetchActivities();
-                    } catch (error) {
-                      message.error("Failed to flag item as inappropriate");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  shape="circle"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "5px",
-                  }}
-                />
-              </Tooltip>
-            </Badge>
-          )}
-        </span>
+
+            {user && user?.userRole === "Admin" && (
+                <Tooltip title="Flag as Inappropriate">
+                  <Badge count={0} offset={[-5, 5]}>
+                    <Button
+                        type="text"
+                        danger
+                        icon={<FlagFilled className="text-lg" />}
+                        onClick={async () => {
+                          try {
+                            setLoading(true);
+                            await flagActivity(record._id);
+                            message.success("Activity flagged as inappropriate");
+                            await fetchActivities();
+                          } catch (error) {
+                            message.error("Failed to flag activity");
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                        className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
+                   transition-all duration-200 hover:border-red-500"
+                    >
+                      <span className="text-red-500 font-medium">Flag</span>
+                    </Button>
+                  </Badge>
+                </Tooltip>
+            )}
+          </div>
       ),
     },
   ];
