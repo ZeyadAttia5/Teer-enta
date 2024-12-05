@@ -340,7 +340,7 @@ const ItineraryScreen = ({ setFlag }) => {
           {/* Search Bar Section */}
           <div className="flex flex-col items-center space-y-6">
             <Search
-                enterButton={<SearchOutlined />}
+                enterButton={<SearchOutlined/>}
                 placeholder="Search by name, category, or tag..."
                 value={searchTerm}
                 allowClear
@@ -349,18 +349,18 @@ const ItineraryScreen = ({ setFlag }) => {
             />
 
             {/* Filters Row */}
-            <div className="flex flex-wrap justify-center space-x-4 items-center">
+            <div className="flex space-x-4">
               {/* Sort Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button1 variant="outline">
-                    <SortAsc className="mr-2 h-4 w-4" />
+                    <SortAsc className="mr-2 h-4 w-4"/>
                     Sort
                   </Button1>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator/>
                   <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
                       <div>
@@ -371,10 +371,18 @@ const ItineraryScreen = ({ setFlag }) => {
                             className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                         >
                           <option value="">None</option>
-                          <option value="pricingHighToLow">Price (High to Low)</option>
-                          <option value="pricingLowToHigh">Price (Low to High)</option>
-                          <option value="ratingHighToLow">Rating (High to Low)</option>
-                          <option value="ratingLowToHigh">Rating (Low to High)</option>
+                          <option value="pricingHighToLow">
+                            Price (High to Low)
+                          </option>
+                          <option value="pricingLowToHigh">
+                            Price (Low to High)
+                          </option>
+                          <option value="ratingHighToLow">
+                            Rating (High to Low)
+                          </option>
+                          <option value="ratingLowToHigh">
+                            Rating (Low to High)
+                          </option>
                         </select>
                       </div>
                     </DropdownMenuItem>
@@ -386,16 +394,85 @@ const ItineraryScreen = ({ setFlag }) => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button1 variant="outline">
-                    <Filter className="mr-2 h-4 w-4" />
+                    <Filter className="mr-2 h-4 w-4"/>
                     Filter
                   </Button1>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator/>
                   <DropdownMenuGroup>
-                    {/* Keep your existing filter options */}
-                    {/* ... */}
+                    <DropdownMenuSub trigger="Budget">
+                      <div className="w-full">
+                        <select
+                            id="budgetFilter"
+                            value={selectedBudget}
+                            onChange={(e) => setSelectedBudget(e.target.value)}
+                            className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        >
+                          <option value="">All Budgets</option>
+                          {budgets?.map((budget, index) => (
+                              <option key={index} value={budget}>
+                                {budget}
+                              </option>
+                          ))}
+                        </select>
+                      </div>
+                    </DropdownMenuSub>
+
+                    <DropdownMenuSub trigger="Date">
+                      <div>
+                        <select
+                            id="dateFilter"
+                            value={selectedDateFilter}
+                            onChange={(e) => setSelectedDateFilter(e.target.value)}
+                            className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        >
+                          <option value="">All Dates</option>
+                          <option value="today">Today</option>
+                          <option value="thisWeek">This Week</option>
+                          <option value="thisMonth">This Month</option>
+                          <option value="thisYear">This Year</option>
+                          <option value="allUpcoming">All Upcoming</option>
+                        </select>
+                      </div>
+                    </DropdownMenuSub>
+
+                    <DropdownMenuSub trigger="Language">
+                      <div>
+                        <select
+                            id="languageFilter"
+                            value={selectedLanguage}
+                            onChange={(e) => setSelectedLanguage(e.target.value)}
+                            className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        >
+                          <option value="">All Languages</option>
+                          {languages?.map((language, index) => (
+                              <option key={index} value={language}>
+                                {language}
+                              </option>
+                          ))}
+                        </select>
+                      </div>
+                    </DropdownMenuSub>
+
+                    <DropdownMenuSub trigger="Preference">
+                      <div>
+                        <select
+                            id="preferenceFilter"
+                            value={selectedPreference}
+                            onChange={(e) => setSelectedPreference(e.target.value)}
+                            className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                        >
+                          <option value="">All Preferences</option>
+                          {preferenceTagsList?.map((preference) => (
+                              <option key={preference._id} value={preference._id}>
+                                {preference.tag}
+                              </option>
+                          ))}
+                        </select>
+                      </div>
+                    </DropdownMenuSub>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -404,35 +481,43 @@ const ItineraryScreen = ({ setFlag }) => {
               <Button2
                   type="primary"
                   danger
-                  icon={<ReloadOutlined />}
+                  icon={<ReloadOutlined/>}
                   onClick={resetFilters}
-                  className="h-9"
+                  className="ml-4 h-9"
               >
                 Reset filters
               </Button2>
             </div>
-          </div>
         </div>
-
-        {/* Itineraries Grid Section */}
-        {(user === null || (user && user?.userRole === "Tourist")) && (
-            <div className="max-w-7xl mx-auto mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sortedItineraries?.map((itinerary, index) => (
-                    <ItineraryCard
-                        key={index}
-                        itinerary={itinerary}
-                        currency={currency}
-                        handleBookItinerary={handleBookItinerary}
-                        navigate={navigate}
-                        user={user}
-                    />
-                ))}
-              </div>
-            </div>
-        )}
       </div>
-  );
+
+  {/* Itineraries Grid Section */
+  }
+        {user === null || user?.userRole === "Tourist" ? (
+            sortedItineraries && sortedItineraries.length > 0 ? (
+                <div className="max-w-7xl mx-auto mt-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {sortedItineraries.map((itinerary, index) => (
+                        <ItineraryCard
+                            key={index}
+                            itinerary={itinerary}
+                            currency={currency}
+                            handleBookItinerary={handleBookItinerary}
+                            navigate={navigate}
+                            user={user}
+                        />
+                    ))}
+                  </div>
+                </div>
+            ) : (
+                <div className="max-w-7xl mx-auto mt-8 text-center">
+                  <p className="text-lg text-gray-500">No itineraries available at the moment. Please check back later.</p>
+                </div>
+            )
+        ) : null}
+</div>
+)
+  ;
 };
 
 export default ItineraryScreen;
