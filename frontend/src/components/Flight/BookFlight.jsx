@@ -743,6 +743,42 @@ const BookFlight = () => {
       message.error("Please fill in all required fields");
     }
   };
+    const handleFinish = async (values) => {
+    console.log(values);
+    setLoading(true);
+    try {
+      const user = localStorage.getItem("user");
+      if (user) {
+        let data = await bookFlight(flights[selectedOffer], [
+          {
+            id: 1,
+            ...values.passenger,
+            dateOfBirth: values.passenger.dateOfBirth.format("YYYY-MM-DD"),
+            contact: {
+              ...values.passenger.contact,
+              phones: [
+                {
+                  deviceType: "MOBILE",
+                  ...values.passenger.contact.phones[0],
+                },
+              ],
+            },
+          },
+        ],promoCode);
+        console.log(data.data);
+        message.success("Booking submitted successfully!");
+        setCurrentStep(0);
+      } else {
+        message.error("Please login to book a flight");
+      }
+    } catch (error) {
+      console.log("Error submitting booking:");
+      console.log(error);
+      message.error(error.data);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fields = {
     0: [
@@ -960,7 +996,7 @@ const BookFlight = () => {
       <BookingPayment
         onBookingClick={form.submit}
         isloading={loading === 3}
-        amount={selectedOffer && selectedOffer.price.total}
+        amount={flights[selectedOffer] && flights[selectedOffer].price.total}
         setPromoCode={setPromoCode}
       />
     ),
@@ -1006,7 +1042,9 @@ const BookFlight = () => {
                 scrollToFirstError
                 className="w-full flex flex-col justify-center px-4 flex-1"
                 form={form}
+                onFinish={handleFinish}
                 layout="vertical"
+                preserve
               >
                 <Fade direction="up" cascade>
                   {loading !== -1 ? (
