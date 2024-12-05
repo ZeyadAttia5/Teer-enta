@@ -12,7 +12,8 @@ import {
     Spin,
     message,
     Space,
-    Tooltip
+    Tooltip,
+    Rate
 } from 'antd';
 import {
     ShoppingOutlined,
@@ -21,11 +22,15 @@ import {
     CheckCircleOutlined,
     CloseCircleOutlined,
     EnvironmentOutlined,
-    DollarOutlined
+    DollarOutlined,
+    CommentOutlined
 } from '@ant-design/icons';
 import { getOrder, cancelOrder } from '../../api/order.ts';
 import { getMyCurrency } from '../../api/profile.ts';
+import { addRatingToProduct, addReviewToProduct } from '../../api/products.ts';
 import dayjs from 'dayjs';
+import FeedbackForm from "../shared/feedBackForm";
+import ProductReviews from "./productReviews";
 
 const { Title, Text } = Typography;
 
@@ -35,6 +40,8 @@ const OrderDetails = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currency, setCurrency] = useState(null);
+    const [productReviews, setProductReviews] = useState({});
+    const [refreshReviews, setRefreshReviews] = useState({});
 
     useEffect(() => {
         fetchOrderDetails();
@@ -49,11 +56,40 @@ const OrderDetails = () => {
             ]);
             setOrder(orderResponse.data);
             setCurrency(currencyResponse.data);
+
+            // Initialize review status for each product
+            const reviewStatuses = {};
+            orderResponse.data.products.forEach(item => {
+                reviewStatuses[item.product._id] = false;
+            });
+            setProductReviews(reviewStatuses);
         } catch (error) {
             message.error('Failed to fetch order details');
             navigate('/orders');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleReviewSubmit = async (productId, values) => {
+        try {
+            await addReviewToProduct(productId, values.comment);
+            await addRatingToProduct(productId, values.rating);
+            message.success('Review and rating submitted successfully');
+
+            // Update review status for the specific product
+            setProductReviews(prev => ({
+                ...prev,
+                [productId]: true
+            }));
+
+            // Trigger review refresh for the specific product
+            setRefreshReviews(prev => ({
+                ...prev,
+                [productId]: !prev[productId]
+            }));
+        } catch (error) {
+            message.error('Failed to submit review and rating');
         }
     };
 
@@ -93,8 +129,8 @@ const OrderDetails = () => {
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header */}
-                <Card className="  rounded-lg mb-6">
+                {/* Order Header Card */}
+                <Card className="rounded-lg mb-6">
                     <div className="flex justify-between items-center mb-6">
                         <Button
                             icon={<ArrowLeftOutlined />}
@@ -122,27 +158,21 @@ const OrderDetails = () => {
                     )}
 
                     <Descriptions column={1} className="mt-4">
-                        <Descriptions.Item
-                            label={<Text strong>Status</Text>}
-                        >
+                        <Descriptions.Item label={<Text strong>Status</Text>}>
                             <Tag color={getStatusColor(order?.status)}>
                                 {order?.status}
                             </Tag>
                         </Descriptions.Item>
-                        <Descriptions.Item
-                            label={<Text strong>Order Date</Text>}
-                        >
+                        <Descriptions.Item label={<Text strong>Order Date</Text>}>
                             {dayjs(order?.createdAt).format('MMMM D, YYYY h:mm A')}
                         </Descriptions.Item>
                     </Descriptions>
                 </Card>
 
-                {/* Order Items */}
+                {/* Order Items Card */}
                 <Card
-                    title={
-                        <Text strong className="text-indigo-900">Order Items</Text>
-                    }
-                    className="  rounded-lg mb-6"
+                    title={<Text strong className="text-indigo-900">Order Items</Text>}
+                    className="rounded-lg mb-6"
                 >
                     {order?.products.map((item, index) => (
                         <div key={index}>
@@ -153,8 +183,7 @@ const OrderDetails = () => {
                                     width={80}
                                     height={80}
                                     className="rounded-lg object-cover"
-                                    fallback="data:image/png;base64,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"
-                                />
+                                    fallback="data:image/png;base64,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"/>
                                 <div className="flex-1">
                                     <Text strong className="text-indigo-900">
                                         {item.product.name}
@@ -170,6 +199,34 @@ const OrderDetails = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Review and Rating Section */}
+                            {order?.status === 'Completed' && (
+                                <div className="mt-6">
+                                    {!productReviews[item.product._id] ? (
+                                        <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-xl border border-indigo-100 shadow-sm">
+                                            <Title level={5} className="flex items-center gap-3 text-indigo-900 mb-4">
+                                                <CommentOutlined className="text-xl text-indigo-500" />
+                                                Share Your Experience
+                                            </Title>
+                                            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4">
+                                                <FeedbackForm
+                                                    entity={item.product}
+                                                    onSubmit={(values) => handleReviewSubmit(item.product._id, values)}
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200 shadow-sm">
+                                            <Text className="flex items-center gap-2 text-emerald-600 font-medium">
+                                                <CheckCircleOutlined className="text-lg" />
+                                                Review submitted successfully!
+                                            </Text>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
                             {index < order.products.length - 1 && <Divider />}
                         </div>
                     ))}
@@ -196,7 +253,7 @@ const OrderDetails = () => {
                     </div>
                 </Card>
 
-                {/* Delivery Details */}
+                {/* Delivery Information Card */}
                 <Card
                     title={
                         <Text strong className="text-indigo-900">
@@ -204,18 +261,16 @@ const OrderDetails = () => {
                             Delivery Information
                         </Text>
                     }
-                    className="  rounded-lg mb-6"
+                    className="rounded-lg mb-6"
                 >
-                    <Descriptions column={1} className="mb-4">
-                        <Descriptions.Item
-                            label={<Text strong>Delivery Address</Text>}
-                        >
-                            <Text>{order?.deliveryAddress}</Text>
+                    <Descriptions column={1}>
+                        <Descriptions.Item label={<Text strong>Delivery Address</Text>}>
+                            {order?.deliveryAddress}
                         </Descriptions.Item>
                     </Descriptions>
                 </Card>
 
-                {/* Order Timeline */}
+                {/* Order Timeline Card */}
                 <Card
                     title={
                         <Text strong className="text-indigo-900">
@@ -223,7 +278,7 @@ const OrderDetails = () => {
                             Order Timeline
                         </Text>
                     }
-                    className="  rounded-lg"
+                    className="rounded-lg mb-6"
                 >
                     <Timeline mode="left">
                         <Timeline.Item
@@ -270,7 +325,7 @@ const OrderDetails = () => {
                     </Timeline>
                 </Card>
 
-                {/* Payment Information */}
+                {/* Payment Information Card */}
                 <Card
                     title={
                         <Text strong className="text-indigo-900">
@@ -278,26 +333,18 @@ const OrderDetails = () => {
                             Payment Information
                         </Text>
                     }
-                    className="  rounded-lg mt-6"
+                    className="rounded-lg"
                 >
                     <Descriptions column={1}>
-                        <Descriptions.Item
-                            label={<Text strong>Payment Method</Text>}
-                        >
-                            <Tag color="blue">
-                                {order.paymentMethod}
-                            </Tag>
+                        <Descriptions.Item label={<Text strong>Payment Method</Text>}>
+                            <Tag color="blue">{order?.paymentMethod}</Tag>
                         </Descriptions.Item>
-                        <Descriptions.Item
-                            label={<Text strong>Payment Status</Text>}
-                        >
+                        <Descriptions.Item label={<Text strong>Payment Status</Text>}>
                             <Tag color={order?.status === 'Completed' ? 'green' : 'gold'}>
                                 {order?.status === 'Completed' ? 'Paid' : 'Pending'}
                             </Tag>
                         </Descriptions.Item>
-                        <Descriptions.Item
-                            label={<Text strong>Amount</Text>}
-                        >
+                        <Descriptions.Item label={<Text strong>Amount</Text>}>
                             <Tooltip title={`Original: $${order?.totalPrice.toFixed(2)}`}>
                                 <Text strong className="text-indigo-600">
                                     {getPriceDisplay(order?.totalPrice)}
@@ -314,48 +361,38 @@ const OrderDetails = () => {
                     font-size: 1.1rem;
                     color: #312e81;
                 }
-
                 .ant-timeline-item-tail {
                     border-left: 2px solid #e5e7eb;
                 }
-
                 .ant-timeline-item-head {
                     background: #ffffff;
                 }
-
                 .ant-descriptions-item-label {
                     color: #6b7280;
                 }
-
                 .ant-tag {
                     border-radius: 4px;
                     padding: 4px 8px;
                 }
-
                 .ant-btn-dangerous {
                     background: #fee2e2;
                     border-color: #ef4444;
                     color: #ef4444;
                 }
-
                 .ant-btn-dangerous:hover {
                     background: #fecaca;
                     border-color: #dc2626;
                     color: #dc2626;
                 }
-
                 .ant-card {
                     border-radius: 8px;
                 }
-
                 .ant-card-head {
                     border-bottom: 2px solid #e5e7eb;
                 }
-
                 .ant-timeline {
                     padding: 16px;
                 }
-
                 .ant-tooltip {
                     max-width: 300px;
                 }

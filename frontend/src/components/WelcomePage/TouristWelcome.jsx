@@ -35,6 +35,8 @@ import BookTransportation from "../Transportation/BookTransportation.jsx";
 import ActivityCard from "../Activity/TouristActivity/ActivityCard.js";
 import dayjs from "dayjs";
 import { getItineraries } from "../../api/itinerary.ts";
+import {getSavedActivities} from "../../api/profile.ts";
+import {getAllMyRequests} from "../../api/notifications.ts";
 
 // const cards = [
 //   {
@@ -74,6 +76,7 @@ const TouristWelcome = ({ setFlag }) => {
   const [notAccepted, setNotAccepted] = useState(true);
   const [historicalPlaces, setHistoricalPlaces] = useState([]);
 
+
   useEffect(() => {
     const fetchHistoricalPlaces = async () => {
       try {
@@ -89,17 +92,61 @@ const TouristWelcome = ({ setFlag }) => {
   const [touristActivities, setTouristActivities] = useState([]);
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchTouristActivities = async () => {
       try {
-        const response = await getTouristActivities();
-        setTouristActivities(response.data);
-        // touristActivities.forEach((place) => console.log(place));
+        const activitiesResponse = await getTouristActivities();
+        if (!mounted) return;
+
+        const activitiesWithRatings = activitiesResponse.data.map((activity) => {
+          const totalRating = activity.ratings.reduce(
+              (acc, curr) => acc + curr.rating,
+              0
+          );
+          const avgRating = activity.ratings.length > 0
+              ? (totalRating / activity.ratings.length).toFixed(1)
+              : 0;
+          return { ...activity, averageRating: parseFloat(avgRating) };
+        });
+
+        if (user) {
+          const [savedResponse, notificationResponse] = await Promise.all([
+            getSavedActivities(),
+            getAllMyRequests()
+          ]);
+
+          if (!mounted) return;
+
+          const savedActivitiesId = savedResponse.data.savedActivities.map(
+              (activity) => activity._id
+          );
+
+          const notificationRequests = notificationResponse.data.notificationsRequests || [];
+          const notificationLookup = notificationRequests.reduce((acc, req) => {
+            acc[req.activity] = req.status === 'Pending';
+            return acc;
+          }, {});
+
+          activitiesWithRatings.forEach((activity) => {
+            activity.isSaved = savedActivitiesId.includes(activity._id);
+            activity.hasNotification = notificationLookup[activity._id] || false;
+          });
+        }
+
+        if (!mounted) return;
+        setTouristActivities(activitiesWithRatings);
       } catch (error) {
-        console.error("Error fetching historical places:", error);
+        console.error("Error fetching tourist activities:", error);
       }
     };
+
     fetchTouristActivities();
-  }, []);
+
+    return () => {
+      mounted = false;
+    };
+  }, [user]);
 
   const [currency, setCurrency] = useState(null);
 

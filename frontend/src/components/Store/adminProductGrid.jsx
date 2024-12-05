@@ -54,7 +54,7 @@ const AdminProductGrid = ({ setFlag }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     minPrice: 0,
-    maxPrice: 1000,
+    maxPrice: 1000000,
     sortBy: "rating",
     sortOrder: "desc",
   });
@@ -438,17 +438,27 @@ const AdminProductGrid = ({ setFlag }) => {
                         {/* Action Buttons */}
                         <div className="flex gap-2 pt-2">
                           {user && user.userRole === "Tourist" && (
-                            <Button
-                              type="danger"
-                              icon={<ShoppingCartOutlined />}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleAddToCartRequest(product._id);
-                              }}
-                              className="flex-1 bg-first text-white hover:bg-black"
-                            >
-                              Add to Cart
-                            </Button>
+                              product.quantity > 0 ? (
+                                  <Button
+                                      type="danger"
+                                      icon={<ShoppingCartOutlined />}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        handleAddToCartRequest(product._id);
+                                      }}
+                                      className="flex-1 bg-first text-white hover:bg-black"
+                                  >
+                                    Add to Cart
+                                  </Button>
+                              ) : (
+                                  <Button
+                                      type="default"
+                                      disabled
+                                      className="flex-1 bg-gray-200 text-gray-500 hover:bg-gray-200 cursor-not-allowed border-gray-300"
+                                  >
+                                    Out of Stock
+                                  </Button>
+                              )
                           )}
                           {user && user._id === product.createdBy && (
                             <Link to={`/products/edit/${product._id}`}>
