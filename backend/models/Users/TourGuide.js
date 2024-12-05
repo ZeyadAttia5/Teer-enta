@@ -23,11 +23,13 @@ const TourGuideProfileSchema = new mongoose.Schema({
     ],
     ratings: [{
         createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-        rating: {type: Number}
+        rating: {type: Number} ,
+        createdAt: {type: Date, default: Date.now}
     }],
     comments: [{
         createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
         comment: {type: String},
+        createdAt: {type: Date, default: Date.now}
     }],
     isAccepted: {type: String, enum: ['Pending', 'Accepted', 'Rejected'], default: 'Pending'},
     isTermsAndConditionsAccepted: {type: Boolean, default: false}

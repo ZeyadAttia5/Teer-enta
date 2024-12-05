@@ -14,6 +14,7 @@ import {
   Col,
   message,
   Button,
+  Tabs, Spin,
 } from "antd";
 import {
   ArrowRightOutlined,
@@ -26,13 +27,15 @@ import {
   CheckCircleOutlined,
   CopyOutlined,
   MailOutlined,
-  TrophyOutlined,
+  TrophyOutlined, StarOutlined, MessageOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { getIternary } from "../../api/itinerary.ts";
 import { TItinerary } from "../../types/Itinerary/Itinerary";
-import { getCommentsForTourGuide } from "../../api/tourGuide.ts";
+import {getCommentsForTourGuide, getRatingsForTourGuide} from "../../api/tourGuide.ts";
 import BackButton from "../shared/BackButton/BackButton.js";
+import {getMyCurrency} from "../../api/profile.ts";
+import TabPane from "antd/es/tabs/TabPane";
 
 const { Title, Text } = Typography;
 
@@ -42,25 +45,31 @@ const ItineraryDetails: React.FC = () => {
   const [tourGuide, setTourGuide] = useState();
   const navigate = useNavigate();
   const [tourGuideComments, setTourGuideComments] = useState([]);
+  const [tourGuideRatings, setTourGuideRatings] = useState([]);
   const [hoveredCard, setHoveredCard] = useState(null);
-
-  const cardStyle =
-    "bg-white shadow-xl rounded-lg w-full h-full overflow-hidden";
-  const gradientBg = "bg-slate-400";
-  const titleStyle =
-    "text-lg font-semibold mb-4 flex items-center gap-2 text-first";
+  const [currency, setCurrency] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [activeTab, setActiveTab] = useState('1');
+    const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getIternary(itineraryId)
-      .then((res) => {
-        setItinerary(res.data.itinerary);
-        setTourGuide(res.data.tourGuide);
-        fetchTourGuideComments(res.data.itinerary.createdBy);
-      })
-      .catch((error) => {
-        message.error("Failed to fetch itinerary details");
-      });
-  }, [itineraryId]);
+    const fetchInitialData = async () => {
+        try {
+            const response = await getIternary(itineraryId);
+            console.log(response.data);
+            setItinerary(response.data.itinerary);
+            setTourGuide(response.data.tourGuide);
+            fetchTourGuideComments(response.data.itinerary.createdBy);
+            fetchTourGuideRatings(response.data.itinerary.createdBy);
+            const response2 = await getMyCurrency();
+            setCurrency(response2.data);
+            setLoading(false);
+        } catch (error) {
+            message.error("Failed to fetch itinerary details");
+        }
+    };
+
+    fetchInitialData();
+  }, [itineraryId,user?._id]);
 
   const fetchTourGuideComments = async (tourGuideId) => {
     try {
@@ -72,16 +81,27 @@ const ItineraryDetails: React.FC = () => {
     }
   };
 
-  const averageRating = React.useMemo(() => {
-    if (itinerary?.ratings.length === 0) return 0;
-    return Number(
-      (
-        (itinerary?.ratings ?? []).reduce((acc, curr) => acc + curr.rating, 0) /
-        (itinerary?.ratings?.length || 1)
-      ).toFixed(1)
-    );
-  }, [itinerary?.ratings]);
-
+  const fetchTourGuideRatings = async (tourGuideId) => {
+    try {
+      // console.log(tourGuideId);
+      const response = await getRatingsForTourGuide(tourGuideId);
+      console.log(response.ratings);
+      setTourGuideRatings(response.ratings);
+    } catch (error) {
+      message.error("Failed to fetch tour guide ratings");
+    }
+  }
+  const calculateAverageRating = () => {
+    if (!itinerary?.ratings?.length) return 0;
+    const sum = itinerary.ratings.reduce((acc, curr) => acc + curr.rating, 0);
+    return (sum / itinerary.ratings.length).toFixed(1);
+  };
+  const calculateTourGuideRating = () => {
+    if (!tourGuideRatings?.length) return 0;
+    const sum = tourGuideRatings.reduce((acc, curr) => acc + curr.rating, 0);
+    return sum / tourGuideRatings.length;
+  };
+  const averageRating = calculateAverageRating();
   // Copy Link function
   const handleCopyLink = () => {
     const url = `${window.location.origin}/itinerary/iternaryDetails/${itineraryId}`;
@@ -90,7 +110,6 @@ const ItineraryDetails: React.FC = () => {
       () => message.error("Failed to copy link")
     );
   };
-
   // Share via Email function
   const handleShareEmail = () => {
     const subject = `Check out this itinerary: ${itinerary?.name}`;
@@ -149,485 +168,518 @@ const ItineraryDetails: React.FC = () => {
     window.location.href = `${window.location.origin}/itinerary/book/${ItineraryId}`;
   };
 
+  if (loading) {
+    return (
+        <div className="flex justify-center items-center h-screen">
+          <Spin size="large" />
+        </div>
+    );
+  }
+
   return (
-    <div className="items-center">
-      <div className="min-h-screen p-8">
-        
-        <Space
-          direction="vertical"
-          size="large"
-          className="relative w-full p-10"
-        >
-        
-
-          {/* First Card for Itinerary Details */}
-          <Row gutter={[16, 16]}>
-  {/* First Column (Itinerary Details Card) */}
-  <Col xs={150} sm={100} md={8} className="flex justify-center gap-4">
-    <Card
-      bordered={true} // Add border to the card
-      className={`${cardStyle} ${gradientBg} w-1/3 border-third max-w-2xl mx-auto ml-0`}
-      bodyStyle={{ height: "100%" }}
-    >
-      
-      <div className="space-y-4">
-        {/* Itinerary Name */}
-        <Row justify="center" className="text-center mb-0 ">
-          <Title
-            level={2}
-            className="font-extrabold text-first  mb-0"
-            style={{ fontSize: "7rem", marginBottom: "0.15rem", color: "#1a2b49" }}
-          >
-            {itinerary?.name}
-          </Title>
-        </Row>
-
-        {/* Description */}
-        <Row justify="center" className="text-center">
-          <p
-            className="text-first text-lg font-medium mb-4"
-            style={{ fontSize: "2rem" }}
-          >
-            {"Explore amazing travel experiences!"}
-          </p>
-        </Row>
-        <Row
-          justify="center"
-          align="middle"
-          className="text-center space-x-2"
-        >
-          {itinerary?.pickupLocation && (
-            <Col>
-              <Text className="text-first font-semibold text-2xl">
-                {itinerary?.pickupLocation}
-              </Text>
-            </Col>
-          )}
-
-          {/* Arrow between the locations */}
-          <Col className="flex items-center">
-            <ArrowRightOutlined className="text-first text-1xl" />
-          </Col>
-
-          {itinerary?.dropOffLocation && (
-            <Col>
-              <Text className="text-first font-semibold text-2xl">
-                {itinerary?.dropOffLocation}
-              </Text>
-            </Col>
-          )}
-        </Row>
-
-        {/* Tags */}
-        <Row justify="space-between" align="middle" gutter={[16, 16]}>
-          <Col>
-            <Space size="small">
-              <Tag
-                icon={<GlobalOutlined />}
-                color="magenta"
-                className="text-white"
-              >
-                {itinerary?.language}
-              </Tag>
-              <Tag
-                icon={<DollarOutlined />}
-                color="green"
-                className="text-white"
-              >
-                ${itinerary?.price}
-              </Tag>
-              {itinerary?.isActive && (
-                <Tag
-                  icon={<CheckCircleOutlined />}
-                  color="success"
-                  className="text-white"
-                >
-                  Active
-                </Tag>
-              )}
-            </Space>
-          </Col>
-
-          {/* Rating and Actions */}
-          <Col>
-            <Space direction="vertical" align="center">
-              <Rate disabled value={averageRating} allowHalf />
-              <Text type="secondary" className="text-white">
-                {itinerary?.ratings.length} ratings
-              </Text>
-              <Space>
-                {/* Copy Link Button with Icon and Text on Hover */}
-                <div className="flex items-center gap-4">
-  {/* Copy Link Button */}
-  <div className="relative group">
-    {/* Invisible text, visible on hover */}
-    <span className="absolute left-1/2 transform -translate-x-1/2 -top-8 opacity-0 group-hover:opacity-100 bg-fourth text-first text-sm px-2 py-1 rounded shadow whitespace-nowrap">
-      Copy Link
-    </span>
-    <Button
-      icon={<CopyOutlined />}
-      onClick={handleCopyLink}
-      className="text-first bg-white hover:bg-gray-200"
-    />
-  </div>
-
-  {/* Send Mail Button */}
-  <div className="relative group">
-    {/* Invisible text, visible on hover */}
-    <span className="absolute left-1/2 transform -translate-x-1/2 -top-8 opacity-0 group-hover:opacity-100 bg-fourth text-first text-sm px-2 py-1 rounded shadow whitespace-nowrap">
-      Send Mail
-    </span>
-    <Button
-      icon={<MailOutlined />}
-      onClick={handleShareEmail}
-      className="text-first bg-white hover:bg-gray-200"
-    />
-  </div>
-</div>
-
-                
-              </Space>
-              
-            </Space>
-          </Col>
-        </Row>
-      </div>
-      {user && user?.userRole === "Tourist" && (
-  <Button
-  onClick={() => handleBookItinerary(itinerary?._id)}
-  className="w-full text-white text-4xl py-6 px-8 bg-first hover:bg-first transition-all duration-300 mt-4 border-2 border-[#496989] shadow-lg"
->
-  Book
-</Button>
-
-)}
-
-    </Card>
-  </Col>
-
-  {/* Second Column (Activities, Timeline, Available Dates Cards) */}
-  <Col xs={24} sm={120} md={16} >
-  <Row gutter={[16, 16]}>
-  {/* Activities Card */}
-  <Col xs={24} sm={12} md={8} className="flex justify-center gap-4">
-    <Card
-      className={`${cardStyle} ${gradientBg}  bg-third transform transition-all duration-300 ease-in-out`}
-      bodyStyle={{ height: "220px", padding: "16px" }} // Same height and padding
-    >
-      <div className="flex items-center justify-center text-first mb-4">
-        <TrophyOutlined size={20} className="mr-2 text-third text-bold text-2xl" />
-        <span className="font-bold text-xl">Activities</span>
-      </div>
-      <List
-        dataSource={itinerary?.activities}
-        renderItem={(item) => (
-          <List.Item
-            className="cursor-pointer rounded-md px-2 py-1 mb-2 bg-white/10 hover:bg-white/20 transition-all duration-300"
-            onClick={() => navigate(`../activityDetails/${item.activity?._id}`)}
-          >
-            <Text className="text-first text-sm pl-3">
-              {item.activity?.name}
-            </Text>
-            <Tag className="bg-second text-white border-none">
-              {item.duration} min
-            </Tag>
-          </List.Item>
-        )}
-      />
-    </Card>
-  </Col>
-
-  {/* Timeline Card */}
-  <Col xs={24} sm={12} md={8} className="flex justify-center gap-4">
-    <Card
-      className={`${cardStyle} ${gradientBg} transform transition-all duration-300 ease-in-out`}
-      bodyStyle={{ height: "220px", padding: "16px" }} // Same height and padding
-    >
-      <div className="flex items-center justify-center text-first mb-4">
-        <Clock size={20} className="mr-2 text-third text-bold text-2xl" />
-        <span className="font-bold text-xl">Timeline</span>
-      </div>
-      <Timeline
-        items={itinerary?.timeline.map((item, index) => ({
-          color: "#526D82",
-          children: (
-            <>
-              <Text strong className="text-first">
-                {item.activity?.name}
-              </Text>
-              {item.startTime && (
-                <Text className="text-first/80 block">
-                  Starts at {item.startTime}
-                </Text>
-              )}
-              {item.duration && (
-                <Tag className="bg-second text-white border-none mt-1">
-                  {item.duration} min
-                </Tag>
-              )}
-            </>
-          ),
-        }))}
-      />
-    </Card>
-  </Col>
-
-  {/* Available Dates Card */}
-  <Col xs={24} sm={12} md={8} className="flex justify-center gap-4">
-    <Card
-      className={`${cardStyle} ${gradientBg} transform transition-all duration-300 ease-in-out `}
-      bodyStyle={{ height: "220px", padding: "16px" }} // Same height and padding
-    >
-      <div className="flex items-center justify-center text-first mb-4">
-        <Calendar size={20} className="mr-2 text-third text-bold text-2xl" />
-        <span className="font-bold text-xl">Available Dates</span>
-      </div>
-      <List
-        grid={{ gutter: 16, column: 1 }}
-        dataSource={itinerary?.availableDates}
-        renderItem={(date) => (
-          <List.Item>
-            <Card
-              size="small"
-              className="bg-white/10 shadow-sm rounded-lg mb-2 hover:bg-white/20 transition-all duration-300"
-            >
-              <Space className="justify-between w-full">
-                <Text className="text-first">
-                  {new Date(date.Date).toLocaleDateString()}
-                </Text>
-                <Tag className="bg-cyan-500 text-white border-none">
-                  {date.Times}
-                </Tag>
-              </Space>
-            </Card>
-          </List.Item>
-        )}
-      />
-    </Card>
-  </Col>
-</Row>
-
-<Row xs={24} sm={12} md={8} className="flex justify-center gap-4">
-  {/* Card for Comments */}
-  <Card
-    bordered={true}
-    className={`${cardStyle} ${gradientBg} w-full border-third mt-4`}
-    bodyStyle={{ padding: "8px 16px", height: "auto" }}
-  >
-    <div className={titleStyle}>
-      <UserOutlined className="text-third" />
-      <span className="text-first text-bold text-lg">Comments</span>
-    </div>
-
-    <div className="space-y-2">
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "nowrap",
-          overflowX: "auto",
-          whiteSpace: "nowrap",
-          paddingBottom: "8px",
-          height: "80px",
-        }}
-      >
-        {itinerary?.comments.length > 0 ? (
-          <List
-            itemLayout="horizontal"
-            dataSource={itinerary.comments}
-            renderItem={(comment) => (
-              <List.Item
-                className="transition-all duration-300 text-first rounded-xl"
-                style={{
-                  marginRight: "10px",
-                  display: "inline-flex",
-                  flexShrink: 0,
-                  minWidth: "150px",
-                }}
-              >
-                <List.Item.Meta
-                  className="pl-3"
-                  avatar={<Avatar icon={<UserOutlined />} />}
-                  title={
-                    <span className="text-third text-xs">
-                      {comment?.createdBy?.username}
-                    </span>
-                  }
-                  description={
-                    <Space>
-                      <Text className="text-first text-xs">
-                        {comment?.comment}
-                      </Text>
-                    </Space>
-                  }
-                />
-              </List.Item>
-            )}
-            style={{ padding: 0 }}
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+        {/* Hero Section */}
+        <div className="relative h-[400px] overflow-hidden   ">
+          <img
+              src={itinerary.imageUrl ||''}
+              alt={itinerary.name}
+              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
           />
-        ) : (
-          <div className="text-first text-xs pl-3">No comments yet</div>
-        )}
-      </div>
-    </div>
-  </Card>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"/>
 
-  {/* Card for Tour Guide Reviews */}
-  <Card
-    bordered={true}
-    className={`${cardStyle} ${gradientBg} w-full border-third mt-0`}
-    bodyStyle={{ height: "100%", padding: 10 }}
-  >
-    <div className={titleStyle}>
-      <UserOutlined className="text-third" />
-      <span className="text-first">Tour Guide Reviews</span>
-    </div>
+          {/* Share Actions */}
+          <div className="absolute top-6 right-6 flex gap-2">
+            <Button
+                icon={<CopyOutlined />}
+                onClick={handleCopyLink}
+                className="bg-white/90 hover:bg-white border-none"
+            />
+            <Button
+                icon={<MailOutlined />}
+                onClick={handleShareEmail}
+                className="bg-white/90 hover:bg-white border-none"
+            />
+          </div>
 
-    <div className="space-y-2">
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "nowrap",
-          overflowX: "auto",
-          whiteSpace: "nowrap",
-          paddingBottom: "8px",
-          height: "80px",
-        }}
-      >
-        {tourGuideComments?.length > 0 ? (
-          <List
-            itemLayout="horizontal"
-            dataSource={tourGuideComments}
-            renderItem={(comment) => (
-              <List.Item
-                className="transition-all duration-300 rounded-xl text-xs"
-                style={{
-                  marginRight: "0px",
-                  display: "inline-flex",
-                  flexShrink: 0,
-                  minWidth: "150px",
-                }}
-              >
-                <List.Item.Meta
-                  className="pl-3"
-                  avatar={<Avatar icon={<UserOutlined />} />}
-                  title={
-                    <span className="text-third text-xs">
-                      {comment?.createdBy?.username}
-                    </span>
-                  }
-                  description={
-                    <Space>
-                      <Text className="text-first text-xs">
-                        {comment?.comment}
-                      </Text>
-                    </Space>
-                  }
+          {/* Hero Content */}
+          <div className="absolute bottom-0 left-0 right-0 p-8">
+            <div className="max-w-7xl mx-auto">
+              <div className="space-y-4">
+                <Title level={1} className="text-white m-0 text-4xl md:text-5xl font-bold">
+                  {itinerary.name}
+                </Title>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-white">
+                    <GlobalOutlined />
+                    <span>{itinerary.language}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-white">
+                    <DollarOutlined />
+                    <span>{currency.code} {(itinerary.price * currency.rate).toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-white">
+                    <StarOutlined />
+                    <Rate disabled value={Number(averageRating)} allowHalf className="text-sm"/>
+                    <span>({itinerary.ratings?.length || 0} reviews)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <Row gutter={[24, 24]}>
+            {/* Left Column */}
+            <Col xs={24} lg={16}>
+              {/* Booking Card */}
+              <Card className="mb-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+                <div className="flex flex-wrap justify-between items-center gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Text className="text-xl font-semibold">{itinerary.pickupLocation}</Text>
+                      <span className="text-gray-400">→</span>
+                      <Text className="text-xl font-semibold">{itinerary.dropOffLocation}</Text>
+                    </div>
+                    <div className="flex gap-2">
+                      {itinerary.isActive && (
+                          <Tag color="success">Active</Tag>
+                      )}
+                      {itinerary.isBookingOpen && (
+                          <Tag color="processing">Booking Open</Tag>
+                      )}
+                    </div>
+                  </div>
+                  {user?.userRole === "Tourist" && (
+                      <Button
+                          size="large"
+                          type="danger"
+                          onClick={() => handleBookItinerary(itinerary._id)}
+                          className={`px-6 h-10 rounded-lg font-medium shadow-sm ${
+                                itinerary.isBookingOpen
+                                    ? 'bg-[#2A3663] hover:bg-black text-white'
+                                    : 'bg-gray-100 text-gray-500 cursor-not-allowed hover:bg-gray-100'
+                            }`}
+                          disabled={!itinerary.isBookingOpen}
+                      >
+                        {itinerary.isBookingOpen ? "Book Now" : "Not Available"}
+                      </Button>
+                  )}
+                </div>
+              </Card>
+
+              {/* Activities & Timeline Combined */}
+              <Card className="mb-6    bg-gradient-to-br from-gray-50 to-white">
+                <div className="flex items-center gap-3 mb-6">
+                  <Clock className="h-7 w-7 text-blue-950"/>
+                  <Title level={4} className="m-0">Timeline & Activities</Title>
+                </div>
+
+                <Tabs
+                    defaultActiveKey="1"
+                    className="activity-timeline-tabs"
+                    items={[
+                      {
+                        key: '1',
+                        label: 'Timeline View',
+                        children: (
+                            <Timeline className="p-4">
+                              {itinerary.timeline.map((item, index) => (
+                                  <Timeline.Item
+                                      key={index}
+                                      dot={<Clock className="h-5 w-5 text-blue-950" />}
+                                      className="p-4 rounded-xl transition-all duration-300"
+                                  >
+                                    <div className="bg-white shadow-sm rounded-lg p-4">
+                                      <Text strong className="text-lg block text-gray-800">
+                                        {item.activity?.name}
+                                      </Text>
+                                      <div className="mt-2 flex flex-wrap items-center gap-3">
+                                        <Tag color="blue" className="px-3 py-1 text-sm">
+                                          {item.duration} min
+                                        </Tag>
+                                        <Text className="text-gray-500 flex items-center gap-1">
+                                          <ClockCircleOutlined /> {item.startTime}
+                                        </Text>
+                                      </div>
+                                    </div>
+                                  </Timeline.Item>
+                              ))}
+                            </Timeline>
+                        ),
+                      },
+                      {
+                        key: '2',
+                        label: 'List View',
+                        children: (
+                            <List
+                                className="p-4"
+                                dataSource={itinerary.activities}
+                                renderItem={(item) => (
+                                    <List.Item className="hover:bg-blue-50 rounded-xl transition-all duration-300">
+                                      <Card className="w-full border-none shadow-sm bg-white">
+                                        <div className="flex items-center justify-between">
+                                          <div>
+                                            <Text strong className="text-lg text-gray-800">
+                                              {item.activity?.name}
+                                            </Text>
+                                            <Tag color="blue" className="ml-3">
+                                              {item.duration} min
+                                            </Tag>
+                                          </div>
+                                          <Button
+                                              type="text"
+                                              icon={<ArrowRightOutlined />}
+                                              className="text-blue-500 hover:text-blue-600"
+                                              onClick={() => navigate(`/itinerary/activityDetails/${item.activity._id}`)}
+                                          />
+                                        </div>
+                                      </Card>
+                                    </List.Item>
+                                )}
+                            />
+                        ),
+                      },
+                    ]}
                 />
-              </List.Item>
-            )}
-            style={{ padding: 0 }}
-          />
-        ) : (
-          <div className="text-first text-xs pl-3">No reviews yet</div>
-        )}
+
+                <style jsx>{`
+    .activity-timeline-tabs .ant-tabs-nav::before {
+      display: none;
+    }
+    .activity-timeline-tabs .ant-tabs-tab {
+      padding: 8px 16px;
+      margin: 0 8px 0 0;
+      background: white;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+    .activity-timeline-tabs .ant-tabs-tab:hover {
+      background: #f3f4f6;
+    }
+    .activity-timeline-tabs .ant-tabs-tab-active {
+      background: #e5e7eb !important;
+    }
+    .activity-timeline-tabs .ant-tabs-content {
+      background: #f9fafb;
+      border-radius: 12px;
+      margin-top: 16px;
+      color: rgba(0,0,54,0.68);
+    }
+  `}</style>
+              </Card>
+
+              {/* Available Dates */}
+              <Card className="  ">
+                <Title level={4} className="mb-6 flex items-center gap-2">
+                  <CalendarOutlined />
+                  Available Dates
+                </Title>
+                <List
+                    grid={{ gutter: 16, column: 2 }}
+                    dataSource={itinerary.availableDates}
+                    renderItem={(date) => (
+                        <List.Item>
+                          <Card className="hover:shadow-md transition-all duration-300">
+                            <Text strong>{new Date(date.Date).toLocaleDateString()}</Text>
+                            <Tag color="blue" className="ml-2">{date.Times}</Tag>
+                          </Card>
+                        </List.Item>
+                    )}
+                />
+              </Card>
+            </Col>
+
+            {/* Right Column */}
+            <Col xs={24} lg={8}>
+              <Card className="shadow-xl rounded-xl bg-gradient-to-br from-white to-gray-50">
+                <Tabs
+                    activeKey={activeTab}
+                    onChange={setActiveTab}
+                    className="fancy-tabs"
+                    tabBarGutter={8}
+                    items={[
+                      {
+                        key: '1',
+                        label: (
+                            <span className="flex items-center gap-2 px-3 py-2">
+              <StarOutlined className="text-yellow-500"/>
+              <span className="font-medium">Itinerary Reviews</span>
+            </span>
+                        ),
+                        children: (
+                            <>
+                              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-4">
+                                <div className="text-center">
+                                  <Text className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                                    {averageRating}
+                                  </Text>
+                                  <div className="my-3">
+                                    <Rate disabled value={Number(averageRating)} allowHalf className="text-yellow-400"/>
+                                  </div>
+                                  <Text className="text-gray-600">
+                                    Based on {itinerary.ratings?.length || 0} reviews
+                                  </Text>
+                                </div>
+                              </div>
+                              <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                                <List
+                                    itemLayout="horizontal"
+                                    dataSource={itinerary.ratings}
+                                    renderItem={(rating) => (
+                                        <List.Item className="hover:bg-blue-50 rounded-xl transition-all duration-300 p-4 mb-2">
+                                          <List.Item.Meta
+                                              avatar={
+                                                <div className="relative">
+                                                  <Avatar icon={<UserOutlined/>} className="bg-gradient-to-r from-blue-500 to-indigo-500"/>
+                                                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1">
+                                                    <StarOutlined className="text-yellow-400 text-xs"/>
+                                                  </div>
+                                                </div>
+                                              }
+                                              title={
+                                                <div className="flex justify-between items-center">
+                                                  <Text strong className="text-gray-800">{rating.createdBy?.username}</Text>
+                                                  <Rate disabled value={rating.rating} className="text-sm"/>
+                                                </div>
+                                              }
+                                              description={
+                                                <div className="mt-2 bg-white/50 p-3 rounded-lg">
+                                                  <Text className="text-gray-600 italic">"{rating.comment}"</Text>
+                                                  <div className="mt-2 text-right">
+                                                    <Text className="text-xs text-gray-400">
+                                                      {new Date(rating.createdAt).toLocaleDateString()}
+                                                    </Text>
+                                                  </div>
+                                                </div>
+                                              }
+                                          />
+                                        </List.Item>
+                                    )}
+                                />
+                              </div>
+                            </>
+                        )
+                      },
+                      {
+                        key: '2',
+                        label: (
+                            <span className="flex items-center gap-2 px-3 py-2">
+                              <MessageOutlined className="text-emerald-500"/>
+                              <span className="font-medium">Itinerary Comments</span>
+                            </span>
+                        ),
+                        children: (
+                            <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                              <List
+                                  itemLayout="horizontal"
+                                  dataSource={itinerary.comments}
+                                  renderItem={(comment) => (
+                                      <List.Item className="hover:bg-emerald-50 rounded-xl transition-all duration-300 p-4 mb-2">
+                                        <List.Item.Meta
+                                            avatar={
+                                              <Avatar
+                                                  icon={<UserOutlined/>}
+                                                  className="bg-gradient-to-r from-emerald-500 to-green-500"
+                                              />
+                                            }
+                                            title={
+                                              <div className="flex justify-between items-center">
+                                                <Text strong className="text-gray-800">{comment.createdBy?.username}</Text>
+                                                <Text className="text-xs bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full">
+                                                  {new Date(comment.createdAt).toLocaleDateString()}
+                                                </Text>
+                                              </div>
+                                            }
+                                            description={
+                                              <div className="mt-2 bg-white p-3 rounded-lg shadow-sm">
+                                                <Text className="text-gray-600">{comment.comment}</Text>
+                                              </div>
+                                            }
+                                        />
+                                      </List.Item>
+                                  )}
+                              />
+                            </div>
+                        )
+                      },
+                      {
+                        key: '3',
+                        label: (
+                            <span className="flex items-center gap-2 px-3 py-2">
+                              <StarOutlined className="text-purple-500"/>
+                              <span className="font-medium">Guide Ratings</span>
+                            </span>
+                        ),
+                        children: (
+                            <>
+                              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 mb-4">
+                                <div className="text-center">
+                                  <Text className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+                                    {calculateTourGuideRating().toFixed(1)}
+                                  </Text>
+                                  <div className="my-3">
+                                    <Rate disabled value={calculateTourGuideRating()} allowHalf className="text-purple-400"/>
+                                  </div>
+                                  <Text className="text-gray-600">
+                                    Based on {tourGuideRatings?.length || 0} ratings
+                                  </Text>
+                                </div>
+                              </div>
+                              <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+                                <List
+                                    itemLayout="horizontal"
+                                    dataSource={tourGuideRatings || []}
+                                    renderItem={(rating) => (
+                                        <List.Item className="hover:bg-purple-50 rounded-xl transition-all duration-300 p-4 mb-2">
+                                          <List.Item.Meta
+                                              avatar={
+                                                <div className="relative">
+                                                  <Avatar icon={<UserOutlined/>} className="bg-gradient-to-r from-purple-500 to-pink-500"/>
+                                                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1">
+                                                    <StarOutlined className="text-purple-400 text-xs"/>
+                                                  </div>
+                                                </div>
+                                              }
+                                              title={
+                                                <div className="flex justify-between items-center">
+                                                  <Text strong className="text-gray-800">{rating.createdBy?.username}</Text>
+                                                  <div className="flex items-center gap-2">
+                                                    <Rate disabled defaultValue={rating.rating} className="text-sm"/>
+                                                    <Text className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full">
+                                                      {new Date(rating.createdAt).toLocaleDateString()}
+                                                    </Text>
+                                                  </div>
+                                                </div>
+                                              }
+                                          />
+                                        </List.Item>
+                                    )}
+                                    locale={{
+                                      emptyText: (
+                                          <div className="text-center py-8">
+                                            <StarOutlined className="text-4xl text-gray-300 mb-2"/>
+                                            <Text className="block text-gray-400">No ratings yet</Text>
+                                          </div>
+                                      )
+                                    }}
+                                />
+                              </div>
+                            </>
+                        )
+                      },
+                      {
+                        key: '4',
+                        label: (
+                            <span className="flex items-center gap-2 px-3 py-2">
+                              <MessageOutlined className="text-pink-500"/>
+                              <span className="font-medium">Guide Reviews</span>
+                            </span>
+                        ),
+                        children: (
+                            <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                              <List
+                                  itemLayout="horizontal"
+                                  dataSource={tourGuideComments}
+                                  renderItem={(comment) => (
+                                      <List.Item className="hover:bg-pink-50 rounded-xl transition-all duration-300 p-4 mb-2">
+                                        <List.Item.Meta
+                                            avatar={
+                                              <Avatar
+                                                  icon={<UserOutlined/>}
+                                                  className="bg-gradient-to-r from-pink-500 to-rose-500"
+                                              />
+                                            }
+                                            title={
+                                              <div className="flex justify-between items-center">
+                                                <Text strong className="text-gray-800">{comment.createdBy?.username}</Text>
+                                                <Text className="text-xs bg-pink-100 text-pink-600 px-3 py-1 rounded-full">
+                                                  {new Date(comment.createdAt).toLocaleDateString()}
+                                                </Text>
+                                              </div>
+                                            }
+                                            description={
+                                              <div className="mt-2 bg-white p-3 rounded-lg shadow-sm">
+                                                <Text className="text-gray-600">{comment.comment}</Text>
+                                              </div>
+                                            }
+                                        />
+                                      </List.Item>
+                                  )}
+                              />
+                            </div>
+                        )
+                      }
+                    ]}
+                />
+              </Card>
+
+              <style jsx>{`
+                .fancy-tabs .ant-tabs-nav {
+                  margin-bottom: 1rem;
+                  background: #f8fafc;
+                  padding: 0.5rem;
+                  border-radius: 0.75rem;
+                }
+                .fancy-tabs .ant-tabs-tab {
+                  margin: 0 !important;
+                  padding: 0.5rem !important;
+                  border-radius: 0.5rem;
+                  transition: all 0.3s;
+                }
+                .fancy-tabs .ant-tabs-tab:hover {
+                  background: white;
+                }
+                .fancy-tabs .ant-tabs-tab-active {
+                  background: white !important;
+                  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+                }
+                .fancy-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+                  color: #4f46e5 !important;
+                }
+                .fancy-tabs .ant-tabs-ink-bar {
+                  display: none;
+                }
+                .custom-scrollbar::-webkit-scrollbar {
+                  width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                  background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                  background: #e2e8f0;
+                  border-radius: 1rem;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                  background: #cbd5e1;
+                }
+              `}</style>
+            </Col>
+          </Row>
+
+          {/* Footer Info */}
+          <Card className="mt-8 bg-white text-white ">
+            <Row justify="space-between" align="middle" className="py-2">
+              <Col>
+                <Text className="text-gray-800 flex items-center gap-2">
+                  <UserOutlined/> Created by: {tourGuide}
+                </Text>
+              </Col>
+              <Col>
+                <Text className="text-gray-800 flex items-center gap-2">
+                  <CalendarOutlined/> Created: {new Date(itinerary?.createdAt).toLocaleDateString()}
+                </Text>
+              </Col>
+              <Col>
+                <Text className="text-gray-800 flex items-center gap-2">
+                  <ClockCircleOutlined/> Updated: {new Date(itinerary?.updatedAt).toLocaleDateString()}
+                </Text>
+              </Col>
+            </Row>
+          </Card>
+        </div>
       </div>
-    </div>
-  </Card>
-</Row>
-
-  </Col>
-</Row>
-
-          
-<Card
-  size="small"
-  style={{
-    borderColor: "black",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    borderRadius: "15px",
-    transition: "background-color 0.3s ease, box-shadow 0.3s ease",
-    backgroundColor: "#94A3B8",
-    height: "auto",
-    maxHeight: "250px",
-    width: "100%",  // Full width by default
-    maxWidth: "800px", // Maximum width to prevent the card from becoming too wide
-    margin: "0 auto",  // Centers the card
-  }}
-  onMouseEnter={() => setHoveredCard("footer")}
-  onMouseLeave={() => setHoveredCard(null)}
-  className="text-center"
->
-  <Row xs={24} sm={12} md={8} className="flex justify-center gap-4">
-    <Col span={24}>
-      <div className="text-xl font-bold text-white mb-4">
-        <EnvironmentOutlined size={20} className="text-fourth" />
-        <span className="ml-2">Itinerary Information</span>
-      </div>
-
-      <Space
-        direction="vertical"
-        size="small"
-        style={{ textAlign: "center" }}
-        className="mt-6 flex justify-center sm:flex sm:flex-row sm:space-x-6 sm:text-left sm:items-center sm:space-y-0"
-      >
-        <Text
-          type="secondary"
-          style={{ color: "black" }}
-          className="flex items-center"
-        >
-          <UserOutlined className="mr-2 text-fourth" />
-          <strong>Created by: </strong> {tourGuide}
-        </Text>
-        <Text
-          type="secondary"
-          style={{ color: "black" }}
-          className="flex items-center "
-        >
-          <CalendarOutlined className="mr-2 text-fourth" />
-          <strong>Created on:</strong>{" "}
-          {new Date(itinerary?.createdAt ?? "").toLocaleDateString()}
-        </Text>
-        <Text
-          type="secondary"
-          style={{ color: "black" }}
-          className="flex items-center"
-        >
-          <ClockCircleOutlined className="mr-2 text-fourth" />
-          <strong>Last Updated:</strong>{" "}
-          {new Date(itinerary?.updatedAt ?? "").toLocaleDateString()}
-        </Text>
-      </Space>
-    </Col>
-
-    <Col span={24}>
-      <div className="mt-2 flex justify-center space-x-6">
-        <a
-          href="#"
-          className="text-white text-lg font-medium hover:text-fourth hover:underline transition-all duration-300"
-        >
-          Privacy Policy
-        </a>
-        <a
-          href="#"
-          className="text-white text-lg font-medium hover:text-fourth hover:underline transition-all duration-300"
-        >
-          Terms of Service
-        </a>
-      </div>
-    </Col>
-
-    <Col span={24}>
-      <div className="mt-0 text-sm text-gray-400">
-        <Text>© 2024 Teer Enta. All rights reserved.</Text>
-      </div>
-    </Col>
-  </Row>
-</Card>
-
-
-        </Space>
-      </div>
-    </div>
-  );
+);
 };
 export default ItineraryDetails;
