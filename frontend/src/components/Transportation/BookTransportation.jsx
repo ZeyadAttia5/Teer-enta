@@ -11,6 +11,7 @@ import {
   message,
   Button,
   Input,
+  Modal,
 } from "antd";
 import {
   CarOutlined,
@@ -32,6 +33,7 @@ import {
 } from "../../api/transportation.ts";
 import { getCurrency } from "../../api/account.ts";
 import StaticMap from "../shared/GoogleMaps/ViewLocation.jsx";
+import BookingPayment from "../shared/BookingPayment.jsx";
 
 const { Text } = Typography;
 
@@ -348,7 +350,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
         onCancel={handleModalCancel}
         footer={null}
       >
-        <PaymentComponent
+        <BookingPayment
           onBookingClick={handleModalOk}
           currency={currency}
           amount={item.price}

@@ -34,6 +34,7 @@ import { bookHotel, getHotels } from "../../api/hotels.ts";
 import AutoComplete from "react-google-autocomplete";
 import BookingPayment from "../shared/BookingPayment.jsx";
 import { Fade } from "react-awesome-reveal";
+import { SquareChevronLeft } from "lucide-react";
 
 const { Text, Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -391,7 +392,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
             type="danger"
             block
             size="large"
-            className="bg-[#1a2b49] border-[#1a2b49] hover:bg-black hover:border-[#526D82] text-white"
+            className="bg-[#1a2b49] border-[#1a2b49] hover:bg-second hover:border-[#526D82] text-white"
             icon={<SearchOutlined />}
             onClick={handleSearch}
           >
@@ -507,12 +508,6 @@ const BookHotel = () => {
           }
         >
           <header className="flex flex-col gap-5">
-            {step > 0 && !loading && (
-              <ArrowLeftOutlined
-                onClick={() => setStep(step - 1)}
-                className="stroke-black text-lg cursor-pointer"
-              />
-            )}
             <Typography.Title level={4} className="mb-6">
               Book Your Hotel
             </Typography.Title>
@@ -541,6 +536,16 @@ const BookHotel = () => {
               />
             </section>
           </main>
+          <Fade direction="up">
+            <footer className="flex gap-2 ml-10 mt-6 ">
+              {step > 0 && !loading && (
+                <Button type="default" onClick={() => setStep(step - 1)}>
+                  <SquareChevronLeft strokeWidth={3} />
+                  Previous
+                </Button>
+              )}
+            </footer>
+          </Fade>
         </Card>
       </div>
     </ConfigProvider>

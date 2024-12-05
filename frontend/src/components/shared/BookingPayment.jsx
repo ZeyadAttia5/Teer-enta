@@ -95,8 +95,8 @@ const BookingPayment = ({
         <Button
           onClick={handleApplyPromo}
           loading={applyingPromo}
-          type="primary"
-          className="bg-[#526D82] hover:bg-[#1a2b49] text-white"
+          type="danger"
+          className="bg-first hover:bg-second text-white"
         >
           Apply
         </Button>
@@ -155,8 +155,8 @@ const BookingPayment = ({
 
       <Form.Item className="mt-6">
         <Button
-          type="default"
-          className="w-full h-12 text-lg  hover:bg-indigo-700 disabled:hover:bg-gray-400"
+          type="danger"
+          className="w-full h-12 text-lg text-white bg-first hover:bg-second disabled:hover:bg-gray-400"
           onClick={onBookingClick}
           loading={isloading}
           disabled={paymentMethod === "Card" && !paymentSucceed}
