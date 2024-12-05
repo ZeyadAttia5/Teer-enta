@@ -253,10 +253,9 @@ const ItineraryDetails: React.FC = () => {
                   </div>
                   {user?.userRole === "Tourist" && (
                       <Button
-                          size="large"
-                          type="danger"
+                          type={itinerary.isBookingOpen ? "danger" : "default"}
                           onClick={() => handleBookItinerary(itinerary._id)}
-                          className={`px-6 h-10 rounded-lg font-medium shadow-sm ${
+                          className={`px-12 h-14 text-lg rounded-lg font-semibold rounded-lg ${
                                 itinerary.isBookingOpen
                                     ? 'bg-[#2A3663] hover:bg-black text-white'
                                     : 'bg-gray-100 text-gray-500 cursor-not-allowed hover:bg-gray-100'
