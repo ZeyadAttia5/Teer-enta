@@ -479,7 +479,7 @@ function Signup({ setFlag }) {
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center pb-8">
       {isLoading && <LoadingCircle />}
 
       <div className="flex flex-col justify-center items-center w-full">

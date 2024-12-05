@@ -46,14 +46,24 @@ const CheckoutForm = ({
           Card Details
         </label>
         <div className="p-3 border rounded-md">
-          <CardElement options={CARD_ELEMENT_OPTIONS} />
+          <CardElement onChange={e=>{
+            if (e.complete)
+              onPaymentSuccess()
+            else 
+              onError()
+            if (e.error)
+              setError(e.error.message)
+            else
+              setError(null)
+          
+          }} options={CARD_ELEMENT_OPTIONS} />
         </div>
       </div>
 
       <div className="mb-4">
         <p className="text-lg font-medium">
           Total Amount: <span className={`${discountedAmount && 'line-through'} `}>${amount}</span>
-          {discountedAmount&&<span className="ml-2 text-green-500">${(discountedAmount / 100).toFixed(2)}</span>}
+          {discountedAmount&&<span className="ml-2 text-green-500">${discountedAmount}</span>}
         </p>
       </div>
 

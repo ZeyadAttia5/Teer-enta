@@ -11,7 +11,6 @@ import {
   message,
   Button,
   Input,
-  Modal,
 } from "antd";
 import {
   CarOutlined,
@@ -33,7 +32,6 @@ import {
 } from "../../api/transportation.ts";
 import { getCurrency } from "../../api/account.ts";
 import StaticMap from "../shared/GoogleMaps/ViewLocation.jsx";
-import PaymentComponent from "../shared/BookingPayment.jsx";
 
 const { Text } = Typography;
 
@@ -413,7 +411,7 @@ const BookTransportation = () => {
   };
 
   return (
-    <div className="flex justify-center ">
+    <div className="flex justify-center">
       <List
         grid={{
           xs: 1,
@@ -423,7 +421,7 @@ const BookTransportation = () => {
           xl: 3,
           xxl: 3,
         }}
-        className="py-4 w-[90%] "
+        className="p-2 w-[90%]"
         dataSource={data}
         loading={loading}
         renderItem={(item) => (

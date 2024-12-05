@@ -212,6 +212,46 @@ const BookFlight = () => {
       message.error("Please fill in all required fields");
     }
   };
+  const handleFinish = async (values) => {
+    console.log(values);
+    setLoading(true);
+    try {
+      const user = localStorage.getItem("user");
+      if (user) {
+        let data = await bookFlight(
+          flights[selectedOffer],
+          [
+            {
+              id: 1,
+              ...values.passenger,
+              dateOfBirth: values.passenger.dateOfBirth.format("YYYY-MM-DD"),
+              contact: {
+                ...values.passenger.contact,
+                phones: [
+                  {
+                    deviceType: "MOBILE",
+                    ...values.passenger.contact.phones[0],
+                  },
+                ],
+              },
+            },
+          ],
+          promoCode
+        );
+        console.log(data.data);
+        message.success("Booking submitted successfully!");
+        setCurrentStep(0);
+      } else {
+        message.error("Please login to book a flight");
+      }
+    } catch (error) {
+      console.log("Error submitting booking:");
+      console.log(error);
+      message.error(error.data);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fields = {
     0: [
@@ -439,7 +479,7 @@ const BookFlight = () => {
       <BookingPayment
         onBookingClick={form.submit}
         isloading={loading === 3}
-        amount={selectedOffer && selectedOffer.price.total}
+        amount={flights[selectedOffer] && flights[selectedOffer].price.total}
         setPromoCode={setPromoCode}
       />
     ),
@@ -459,98 +499,103 @@ const BookFlight = () => {
         },
       }}
     >
-      <Card
-        className="w-11/12 min-h-[600px] flex my-20 mx-auto shadow"
-        classNames={{
-          body: "flex flex-1 flex-col justify-center",
-          cover: " w-1/3",
-        }}
-        cover={<img alt="" className="size-full" src={bookFlightPic} />}
-      >
-        <header>
-          <Typography.Title level={4} className="mb-6">
-            Book Your Flight
-          </Typography.Title>
-        </header>
-        <main className="h-full flex mt-6 ">
-          <section className="flex-1 flex flex-col justify-center items-center">
-            <Form
-              scrollToFirstError
-              className="w-full flex flex-col justify-center px-4 flex-1"
-              form={form}
-              layout="vertical"
-            >
-              <Fade direction="up" cascade>
-                {loading !== -1 ? (
-                  <Spin className="flex-1 justify-center flex" />
-                ) : (
-                  stepContent[currentStep]
-                )}
-              </Fade>
-            </Form>
+      <div className="flex justify-center">
+        <Card
+          className="w-[90%] min-h-[600px] flex my-20 mx-auto shadow"
+          classNames={{
+            body: "flex flex-1 flex-col justify-center",
+            cover: "w-1/3",
+          }}
+          cover={<img alt="" className="size-full" src={bookFlightPic} />}
+        >
+          <header>
+            <Typography.Title level={4} className="mb-6">
+              Book Your Flight
+            </Typography.Title>
+          </header>
+          <main className="h-full flex mt-6 ">
+            <section className="flex-1 flex flex-col justify-center items-center">
+              <Form
+                scrollToFirstError
+                className="w-full flex flex-col justify-center px-4 flex-1"
+                form={form}
+                onFinish={handleFinish}
+                layout="vertical"
+                preserve
+              >
+                <Fade direction="up" cascade>
+                  {loading !== -1 ? (
+                    <Spin className="flex-1 justify-center flex" />
+                  ) : (
+                    stepContent[currentStep]
+                  )}
+                </Fade>
+              </Form>
 
-            {loading === -1 && (
-              <Fade direction="up">
-                <footer className="flex gap-2">
-                  {currentStep > 0 && (
-                    <Button
-                      type="default"
-                      onClick={() => setCurrentStep(currentStep - 1)}
-                    >
-                      <SquareChevronLeft strokeWidth={3} />
-                      Previous
-                    </Button>
-                  )}
-                  {currentStep != 4 && (
-                    <Button
-                      type="default"
-                      onClick={() => handleStepChange(currentStep + 1)}
-                    >
-                      Next
-                      <SquareChevronRight strokeWidth={3} />
-                    </Button>
-                  )}
-                </footer>
-              </Fade>
-            )}
-          </section>
-          <section className="h-full flex-[0.4]">
-            <Steps
-              direction="vertical"
-              current={currentStep}
-              onChange={handleStepChange}
-              className="h-full"
-              items={[
-                {
-                  title: "Select cities ",
-                  icon: <Flag strokeWidth={1.5} />,
-                },
-                {
-                  title: "Select Airports and Departure Date",
-                  icon: loading === 1 ? <LoadingOutlined /> : <PlaneTakeoff />,
-                },
-                {
-                  title: "Select Offer",
-                  icon: loading === 2 ? <LoadingOutlined /> : <Ticket />,
-                },
-                {
-                  title: "Passenger Details",
-                  icon: loading === 3 ? <LoadingOutlined /> : <UserRound />,
-                },
-                {
-                  title: "Payment",
-                  icon:
-                    loading === 4 ? (
-                      <LoadingOutlined />
-                    ) : (
-                      <CreditCard strokeWidth={1.5} />
-                    ),
-                },
-              ]}
-            />
-          </section>
-        </main>
-      </Card>
+              {loading === -1 && (
+                <Fade direction="up">
+                  <footer className="flex gap-2">
+                    {currentStep > 0 && (
+                      <Button
+                        type="default"
+                        onClick={() => setCurrentStep(currentStep - 1)}
+                      >
+                        <SquareChevronLeft strokeWidth={3} />
+                        Previous
+                      </Button>
+                    )}
+                    {currentStep != 4 && (
+                      <Button
+                        type="default"
+                        onClick={() => handleStepChange(currentStep + 1)}
+                      >
+                        Next
+                        <SquareChevronRight strokeWidth={3} />
+                      </Button>
+                    )}
+                  </footer>
+                </Fade>
+              )}
+            </section>
+            <section className="h-full flex-[0.4]">
+              <Steps
+                direction="vertical"
+                current={currentStep}
+                onChange={handleStepChange}
+                className="h-full"
+                items={[
+                  {
+                    title: "Select cities ",
+                    icon: <Flag strokeWidth={1.5} />,
+                  },
+                  {
+                    title: "Select Airports and Departure Date",
+                    icon:
+                      loading === 1 ? <LoadingOutlined /> : <PlaneTakeoff />,
+                  },
+                  {
+                    title: "Select Offer",
+                    icon: loading === 2 ? <LoadingOutlined /> : <Ticket />,
+                  },
+                  {
+                    title: "Passenger Details",
+                    icon: loading === 3 ? <LoadingOutlined /> : <UserRound />,
+                  },
+                  {
+                    title: "Payment",
+                    icon:
+                      loading === 4 ? (
+                        <LoadingOutlined />
+                      ) : (
+                        <CreditCard strokeWidth={1.5} />
+                      ),
+                  },
+                ]}
+              />
+            </section>
+          </main>
+        </Card>
+      </div>
     </ConfigProvider>
   );
 };
