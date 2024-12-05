@@ -413,28 +413,30 @@ const BookTransportation = () => {
   };
 
   return (
-    <List
-      grid={{
-        xs: 1,
-        sm: 1,
-        md: 2,
-        lg: 2,
-        xl: 3,
-        xxl: 3,
-      }}
-      className="p-2"
-      dataSource={data}
-      loading={loading}
-      renderItem={(item) => (
-        <List.Item style={{ marginLeft: "20px", marginBottom: "20px" }}>
-          <TransportationCard
-            item={item}
-            currency={currency}
-            onBook={handleBook}
-          />
-        </List.Item>
-      )}
-    />
+    <div className="flex justify-center ">
+      <List
+        grid={{
+          xs: 1,
+          sm: 1,
+          md: 2,
+          lg: 2,
+          xl: 3,
+          xxl: 3,
+        }}
+        className="py-4 w-[90%] "
+        dataSource={data}
+        loading={loading}
+        renderItem={(item) => (
+          <List.Item style={{ marginLeft: "20px", marginBottom: "20px" }}>
+            <TransportationCard
+              item={item}
+              currency={currency}
+              onBook={handleBook}
+            />
+          </List.Item>
+        )}
+      />
+    </div>
   );
 };
 
