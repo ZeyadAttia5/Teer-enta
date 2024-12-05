@@ -482,7 +482,7 @@ const TouristWelcome = ({ setFlag }) => {
 
           <div className="flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-[90%]">
-              {touristActivities?.slice(5, 9).map((place) => (
+              {touristActivities?.slice(5, 8).map((place) => (
                 // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
                 <ActivityCard
                   id={place._id}
