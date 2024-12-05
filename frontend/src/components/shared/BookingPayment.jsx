@@ -137,9 +137,10 @@ const BookingPayment = ({
       {paymentMethod === "Card" && (
         <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
           <CheckoutForm
-            amount={parseFloat(amount) * 100}
-            discountedAmount={calculateFinalPrice(parseFloat(amount) * 100)}
+            amount={parseFloat(amount)}
+            discountedAmount={calculateFinalPrice(parseFloat(amount))}
             onPaymentSuccess={() => setPaymentSucceed(true)}
+            onError={() => setPaymentSucceed(false)}
             // withPayButton={false}
           />
         </Elements>
