@@ -67,7 +67,7 @@ const BookingGrid = () => {
     entityId: null,
     entityName: null
   });
-
+  const [rating, setRating] = useState(0);
   useEffect(() => {
     fetchCurrency();
     fetchBookings();
@@ -222,18 +222,19 @@ const BookingGrid = () => {
   const handleFeedbackSubmit = async (values) => {
     try {
       const { rating, comment } = values;
-
+      console.log("feedbackModal", values);
+      console.log('feedbackModal', feedbackModal.type);
       switch(feedbackModal.type) {
         case 'activity':
-          await addRatingToActivity(feedbackModal.entityId, rating);
+          await addRatingToActivity(feedbackModal.entityId, rating); console.log('rating', rating);
           await addCommentToActivity(feedbackModal.entityId, comment);
           break;
         case 'itinerary':
-          await addRatingToItinerary(feedbackModal.entityId, rating);
+          await addRatingToItinerary(feedbackModal.entityId, rating);console.log('rating', rating);
           await addCommentToItinerary(feedbackModal.entityId, comment);
           break;
         case 'tourGuide':
-          await rateTourGuide(feedbackModal.entityId, rating);
+          await rateTourGuide(feedbackModal.entityId, rating);console.log('rating', rating);
           await commentOnTourGuide(feedbackModal.entityId, comment);
           break;
       }
@@ -346,7 +347,7 @@ const BookingGrid = () => {
                               <div className="relative h-48">
                                 <img
                                     alt={activity.activity.name}
-                                    src={activity.activity.imageUrl || "/placeholder.jpg"}
+                                    src={activity.activity.imageUrl}
                                     className="object-cover w-full h-full"
                                 />
                                 <div
@@ -395,8 +396,9 @@ const BookingGrid = () => {
                               )}
                               {activity.status === "Completed" && (
                                   <Button
+                                      type="danger"
                                       onClick={() => openFeedbackModal('activity', activity.activity._id, activity.activity.name)}
-                                      className="bg-blue-950 text-white hover:bg-blue-900 border-0"
+                                      className="bg-blue-950 text-white hover:bg-black border-0"
                                       icon={<CommentOutlined />}
                                   >
                                     Rate & Review
@@ -473,14 +475,16 @@ const BookingGrid = () => {
                                   <>
                                     <Button
                                         onClick={() => openFeedbackModal('tourGuide', itinerary.itinerary.createdBy._id, itinerary.itinerary.createdBy.username)}
-                                        className="bg-blue-950 text-white hover:bg-blue-900 border-0"
+                                        className="bg-blue-950 text-white hover:bg-black border-0"
+                                        type="danger"
                                         icon={<UserOutlined />}
                                     >
                                       Rate Tour Guide
                                     </Button>
                                     <Button
                                         onClick={() => openFeedbackModal('itinerary', itinerary.itinerary._id, itinerary.itinerary.name)}
-                                        className="bg-blue-950 text-white hover:bg-blue-900 border-0"
+                                        className="bg-blue-950 text-white hover:bg-black border-0"
+                                        type="danger"
                                         icon={<CommentOutlined />}
                                     >
                                       Rate Itinerary
@@ -634,7 +638,7 @@ const BookingGrid = () => {
                     e.preventDefault();
                     const formData = new FormData(e.target);
                     handleFeedbackSubmit({
-                      rating: Number(formData.get('rating')),
+                      rating: rating, // Use state instead of form data
                       comment: formData.get('comment')
                     });
                   }}
@@ -642,7 +646,11 @@ const BookingGrid = () => {
               >
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">Rating</label>
-                  <Rate name="rating" defaultValue={0} className="text-blue-950" />
+                  <Rate
+                      value={rating}
+                      onChange={(value) => setRating(value)}
+                      className="text-blue-950"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -650,6 +658,7 @@ const BookingGrid = () => {
                   <textarea
                       name="comment"
                       rows={4}
+                      required
                       className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-950 focus:ring-blue-950"
                       placeholder="Share your experience..."
                   />
@@ -657,15 +666,17 @@ const BookingGrid = () => {
 
                 <div className="flex justify-end gap-4">
                   <Button
-                      onClick={() => setFeedbackModal({ visible: false })}
-                      className="border-gray-300"
+                      onClick={() => setFeedbackModal({visible: false})}
+                      className="bg-red-700 border-0 hover:bg-red-500 text-white"
+                      type="danger"
                   >
                     Cancel
                   </Button>
                   <Button
-                      type="primary"
+                      type="danger"
                       htmlType="submit"
-                      className="bg-blue-950 border-0"
+                      disabled={!rating}
+                      className="bg-blue-950 border-0 hover:bg-black text-white disabled:opacity-50"
                   >
                     Submit
                   </Button>

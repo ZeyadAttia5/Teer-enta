@@ -103,6 +103,7 @@ export const getActivityRatings = async (activityId) => {
 };
 
 export const addRatingToActivity = async (activityId, rating) => {
+    console.log(rating);
     const response = await axios.post(`${API_BASE_URL}/activity/${activityId}/rate`,
         {rating},
         {
