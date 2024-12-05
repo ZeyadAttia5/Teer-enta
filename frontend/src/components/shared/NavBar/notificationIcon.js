@@ -19,7 +19,7 @@ const NotificationIcon = ({ navbarcolor = "first" }) => {
     };
 
     return (
-        <div className="relative">
+        <div className="">
             <div
                 onClick={handleClick}
                 className={`
@@ -27,7 +27,6 @@ const NotificationIcon = ({ navbarcolor = "first" }) => {
                     inline-flex
                     items-center
                     justify-center
-                    p-2
                     rounded-full
                     cursor-pointer
                     transition-all
@@ -40,8 +39,8 @@ const NotificationIcon = ({ navbarcolor = "first" }) => {
             >
                 <Bell
                     className={`
-                        w-6 
-                        h-6 
+                        w-6
+                        h-6
                         transition-transform 
                         duration-200 
                         hover:scale-110
