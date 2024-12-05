@@ -8,6 +8,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const CheckoutForm = ({
   amount,
+  code = "$",
   discountedAmount,
   onPaymentSuccess,
   onError,
@@ -18,7 +19,6 @@ const CheckoutForm = ({
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-
 
   const CARD_ELEMENT_OPTIONS = {
     style: {
@@ -38,35 +38,40 @@ const CheckoutForm = ({
   };
 
   return (
-    <form
-      className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto"
-    >
+    <form className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Card Details
         </label>
         <div className="p-3 border rounded-md">
-          <CardElement onChange={e=>{
-            if (e.complete)
-              onPaymentSuccess()
-            else 
-              onError()
-            if (e.error)
-              setError(e.error.message)
-            else
-              setError(null)
-          
-          }} options={CARD_ELEMENT_OPTIONS} />
+          <CardElement
+            onChange={(e) => {
+              if (e.complete) onPaymentSuccess();
+              else onError();
+              if (e.error) setError(e.error.message);
+              else setError(null);
+            }}
+            options={CARD_ELEMENT_OPTIONS}
+          />
         </div>
       </div>
 
       <div className="mb-4">
         <p className="text-lg font-medium">
-          Total Amount: <span className={`${discountedAmount && 'line-through'} `}>${amount}</span>
-          {discountedAmount&&<span className="ml-2 text-green-500">${discountedAmount}</span>}
+          Total Amount:{" "}
+          <span className={`${discountedAmount && "line-through"} `}>
+            {amount}
+            {code}
+          </span>
+          {discountedAmount && (
+            <span className="ml-2 text-green-500">
+              {" "}
+              {discountedAmount}
+              {code && <span className="ml-2">{code}</span>}
+            </span>
+          )}
         </p>
       </div>
-
 
       {error && (
         <Alert
