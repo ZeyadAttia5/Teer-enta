@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import hotelPic from "./hotelPic.webp";
+
 import {
   Card,
   Form,
@@ -499,13 +501,7 @@ const BookHotel = () => {
             body: "flex flex-1 flex-col justify-center",
             cover: "w-2/5",
           }}
-          cover={
-            <img
-              alt=""
-              className="size-full"
-              src="https://img.freepik.com/premium-vector/hotel-building-near-sea-seafront-resort-view-vector-illustration-flat-cartoon_101884-681.jpg?w=740"
-            />
-          }
+          cover={<img alt="" className="size-full " src={hotelPic} />}
         >
           <header className="flex flex-col gap-5">
             <Typography.Title level={4} className="mb-6">
