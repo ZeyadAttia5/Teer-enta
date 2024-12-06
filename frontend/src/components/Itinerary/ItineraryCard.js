@@ -89,9 +89,9 @@ const ItineraryCard = ({itinerary, navigate, currency  ,avgRating}) => {
                         <Button
                             type={itinerary.isBookingOpen ? "danger" : "default"}
                             onClick={(e) => {e.stopPropagation(); navigate(`/itineraries/book/${itinerary._id}`);}}
-                            className={`px-6 h-10 rounded-lg font-medium shadow-sm${
+                            className={`px-6 h-10 rounded-lg font-medium ${
                                 itinerary.isBookingOpen
-                                    ? 'bg-[#2A3663] hover:bg-black text-white'
+                                    ? 'bg-blue-950 hover:bg-black text-white'
                                     : 'bg-gray-100 text-gray-500 cursor-not-allowed hover:bg-gray-100'
                             }`}
                             disabled={!itinerary.isBookingOpen }
