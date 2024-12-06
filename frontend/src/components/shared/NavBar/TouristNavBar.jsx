@@ -100,7 +100,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
           <span className="ml-16 text-lg leading-7">
             <div className="cursor-pointer w-fit border border-transparent  p-2 rounded-md transition-all duration-300 hover:scale-105">
               {/* Logo Link */}
-              <Link to={"/"} className="ring-0">
+              <Link to={(user === null) || (user && user.userRole === "Tourist") ? "/" : "/reports"} className="ring-0">
                 <img
                   src={logo}
                   alt="Logo"

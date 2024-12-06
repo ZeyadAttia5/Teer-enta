@@ -157,7 +157,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
   };
 
   return (
-    <div className="bg-fourth">
+    <div className="">
       <Badge.Ribbon
         text={item.isActive ? "Active" : "Inactive"}
         color={item.isActive ? "green" : "red"}
@@ -258,7 +258,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
               type="danger"
               block
               onClick={handleBookNow}
-              className="bg-first text-white border-fourth hover:bg-second"
+              className="bg-first text-white border-fourth hover:bg-black"
             >
               Book Now
             </Button>
