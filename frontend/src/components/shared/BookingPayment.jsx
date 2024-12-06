@@ -15,6 +15,7 @@ const BookingPayment = ({
   isloading,
   amount: euroAmount,
   setPromoCode: setOuterPromoCode,
+  setPaymentMethod: setOuterPaymentMethod,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [paymentSucceed, setPaymentSucceed] = useState(false);
@@ -104,7 +105,10 @@ const BookingPayment = ({
             className={`text-center ${
               paymentMethod === "wallet" ? "border-primary bg-[#e6f7ff]" : ""
             }`}
-            onClick={() => setPaymentMethod("wallet")}
+            onClick={() => {
+              setPaymentMethod("wallet");
+              setOuterPaymentMethod("wallet");
+            }}
           >
             <WalletOutlined
               style={{
@@ -121,7 +125,10 @@ const BookingPayment = ({
             className={`text-center ${
               paymentMethod === "Card" ? "border-primary bg-[#e6f7ff]" : ""
             }`}
-            onClick={() => setPaymentMethod("Card")}
+            onClick={() => {
+              setPaymentMethod("Card");
+              setOuterPaymentMethod("Card");
+            }}
           >
             <CreditCardOutlined
               style={{
