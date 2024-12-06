@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import bookFlightPic from "./bookFlightPic.webp";
 import {
   Card,
   Form,
@@ -445,13 +446,23 @@ const BookFlight = () => {
     )),
     2: (
       <Form.Item
-        className="mt-8 "
+        className="mt-8"
+        style={{
+          scrollbarWidth: "none", // Firefox
+          msOverflowStyle: "none", // Internet Explorer and Edge
+        }}
         name={"selectedFlight"}
         label="Select Flight Offer"
-        rootClassName="h-[400px] overflow-scroll"
+        rootClassName="h-[400px] overflow-y-scroll overflow-hide"
         rules={[{ required: true, message: "Please Select An offer" }]}
       >
-        <div className="h-[400px] overflow-scroll">
+        <div
+          className="h-[400px] overflow-y-scroll overflow-hidden"
+          style={{
+            scrollbarWidth: "none", // Firefox
+            msOverflowStyle: "none", // Internet Explorer and Edge
+          }}
+        >
           <Fade direction="up" triggerOnce>
             {flights.map((flight, index) => (
               <FlightTicket
@@ -530,15 +541,9 @@ const BookFlight = () => {
           className="w-[90%] min-h-[600px] flex my-20 mx-auto shadow"
           classNames={{
             body: "flex flex-1 flex-col justify-center",
-            cover: "flex-1",
+            cover: "w-1/3",
           }}
-          cover={
-            <img
-              alt=""
-              className="size-full"
-              src="https://watermark.lovepik.com/photo/50099/3731.jpg_wh1200.jpg"
-            />
-          }
+          cover={<img alt="" className="size-full" src={bookFlightPic} />}
         >
           <header>
             <Typography.Title level={4} className="mb-6">

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import hotelPic from "./hotelPic.webp";
+
 import {
   Card,
   Form,
@@ -34,6 +36,7 @@ import { bookHotel, getHotels } from "../../api/hotels.ts";
 import AutoComplete from "react-google-autocomplete";
 import BookingPayment from "../shared/BookingPayment.jsx";
 import { Fade } from "react-awesome-reveal";
+import { SquareChevronLeft } from "lucide-react";
 
 const { Text, Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -299,7 +302,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
   };
 
   return (
-    <Card className="max-w-xl mx-auto my-6 p-6 bg-[#DDE6ED] border border-gray-300">
+    <Card className="max-w-xl mx-auto my-6 p-6 border-none">
       <Form
         form={form}
         layout="vertical"
@@ -391,7 +394,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
             type="danger"
             block
             size="large"
-            className="bg-[#1a2b49] border-[#1a2b49] hover:bg-black hover:border-[#526D82] text-white"
+            className="bg-[#1a2b49] border-[#1a2b49] hover:bg-second hover:border-[#526D82] text-white"
             icon={<SearchOutlined />}
             onClick={handleSearch}
           >
@@ -400,7 +403,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
         </Form.Item>
       </Form>
 
-      <Space direction="vertical" className="w-full mt-4">
+      {/* <Space direction="vertical" className="w-full mt-4">
         <Button
           block
           onClick={() => form.resetFields()}
@@ -408,7 +411,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
         >
           Reset Form
         </Button>
-      </Space>
+      </Space> */}
     </Card>
   );
 };
@@ -496,23 +499,11 @@ const BookHotel = () => {
           className="w-[90%] min-h-[600px] flex my-20 mx-auto shadow"
           classNames={{
             body: "flex flex-1 flex-col justify-center",
-            cover: "flex-1",
+            cover: "w-2/5",
           }}
-          cover={
-            <img
-              alt=""
-              className="size-full"
-              src="https://img.freepik.com/premium-vector/hotel-building-near-sea-seafront-resort-view-vector-illustration-flat-cartoon_101884-681.jpg?w=740"
-            />
-          }
+          cover={<img alt="" className="size-full " src={hotelPic} />}
         >
           <header className="flex flex-col gap-5">
-            {step > 0 && !loading && (
-              <ArrowLeftOutlined
-                onClick={() => setStep(step - 1)}
-                className="stroke-black text-lg cursor-pointer"
-              />
-            )}
             <Typography.Title level={4} className="mb-6">
               Book Your Hotel
             </Typography.Title>
@@ -541,6 +532,16 @@ const BookHotel = () => {
               />
             </section>
           </main>
+          <Fade direction="up">
+            <footer className="flex gap-2 ml-10 mt-6 ">
+              {step > 0 && !loading && (
+                <Button type="default" onClick={() => setStep(step - 1)}>
+                  <SquareChevronLeft strokeWidth={3} />
+                  Previous
+                </Button>
+              )}
+            </footer>
+          </Fade>
         </Card>
       </div>
     </ConfigProvider>
