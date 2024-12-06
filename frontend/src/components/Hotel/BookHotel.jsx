@@ -435,6 +435,7 @@ const BookHotel = () => {
   const [offer, setOffer] = useState(null);
   const [promoCode, setPromoCode] = useState(null);
   const [currency,setCurrency] = useState(null);
+  const [paymentMethod,setPaymentMethod] = useState(null);
   useEffect(() => {
     fetchCurrency() ;
   }, []);
@@ -500,6 +501,7 @@ const BookHotel = () => {
           amount={offer && offer.offer.price.total }
           setPromoCode={setPromoCode}
           currency={currency}
+          setPaymentMethod={setPaymentMethod}
         />
       ),
     },
