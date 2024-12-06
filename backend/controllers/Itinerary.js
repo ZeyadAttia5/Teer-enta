@@ -19,7 +19,7 @@ const sendNotification = require("../Util/Notification/NotificationSender");
 exports.getItineraries = async (req, res, next) => {
     try {
         const itineraries = await Itinerary
-            .find({isActive: true, isBookingOpen: true, isAppropriate: true})
+            .find({isActive: true, isAppropriate: true})
             .populate("activities.activity")
             .populate("preferenceTags")
             .populate("timeline.activity");

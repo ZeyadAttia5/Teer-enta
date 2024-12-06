@@ -6,7 +6,7 @@ const DrawerBar = ({ showDrawer, drawerVisible, onClose, visibleFlag }) => {
 
   
   return (
-    <div className={`fixed ${visibleFlag ? "top-[70px]" : "top-8"} left-4 z-50 `}>
+    <div className={`fixed ${visibleFlag ? "top-[70px]" : "top-12"} left-4 z-50 `}>
       {/* Floating Button */}
       <Button
         type="danger"

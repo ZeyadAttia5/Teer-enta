@@ -9,12 +9,21 @@ import {
   message,
   Descriptions,
   Divider,
+  ConfigProvider,
+  Spin,
 } from "antd";
 import {
-  getComplaint,
-  getMyComplaints,
-  addComplaint,
-} from "../../../api/complaint.ts";
+  MessageSquarePlus,
+  Calendar,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  Eye,
+  MessageCircle,
+  XCircle,
+} from "lucide-react";
+import { getComplaint, getMyComplaints, addComplaint } from "../../../api/complaint.ts";
+
 const { TextArea } = Input;
 
 const MyComplaints = () => {
@@ -26,22 +35,26 @@ const MyComplaints = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    const fetchComplaints = async () => {
-      try {
-        const response = await getMyComplaints();
-        setComplaints(response.data);
-      } catch (error) {
-        console.error("Failed to fetch complaints:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchComplaints();
   }, []);
 
+  const fetchComplaints = async () => {
+    try {
+      const response = await getMyComplaints();
+      setComplaints(response.data);
+    } catch (error) {
+      message.error("Failed to fetch complaints");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const formatDate = (dateString) => {
-    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   const handleViewDetails = async (complaintId) => {
@@ -54,196 +67,314 @@ const MyComplaints = () => {
     }
   };
 
-  const handleCloseModal = () => {
-    setModalVisible(false);
-    setSelectedComplaint(null);
-  };
-
-  const handleCreateComplaint = () => {
-    setCreateModalVisible(true);
-  };
-
-  const handleCloseCreateModal = () => {
-    setCreateModalVisible(false);
-  };
-
-  const onFinish = async (values) => {
-    const data = { ...values };
-
-    try {
-      const response = await addComplaint(data);
-      form.resetFields(); // Reset form fields
-    } catch (error) {
-      console.error("There was an error submitting the complaint: ", error);
-    }
-
-    handleCloseCreateModal();
-    const response = await getMyComplaints();
-    setComplaints(response.data);
-  };
-
   const columns = [
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
+      render: (text) => (
+          <span className="font-medium text-[#1C325B]">{text}</span>
+      ),
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
-      render: (date) => formatDate(date),
+      render: (date) => (
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-[#1C325B]" />
+            <span>{formatDate(date)}</span>
+          </div>
+      ),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Tag color={status === "Pending" ? "orange" : "green"}>{status}</Tag>
+          <Tag
+              className={`px-3 py-1 rounded-full flex items-center gap-1 w-fit ${
+                  status === "Pending"
+                      ? "bg-orange-50 text-orange-600 border-orange-200"
+                      : "bg-green-50 text-green-600 border-green-200"
+              }`}
+          >
+            {status === "Pending" ? (
+                <Clock className="w-4 h-4" />
+            ) : (
+                <CheckCircle className="w-4 h-4" />
+            )}
+            {status}
+          </Tag>
       ),
     },
     {
       title: "Reply",
       dataIndex: "reply",
       key: "reply",
-      render: (reply) => (reply ? "Yes" : "No"),
+      render: (reply) => (
+          <Tag
+              className={`px-3 py-1 rounded-full flex items-center gap-1 w-fit ${
+                  reply
+                      ? "bg-blue-50 text-blue-600 border-blue-200"
+                      : "bg-gray-50 text-gray-600 border-gray-200"
+              }`}
+          >
+            {reply ? (
+                <MessageCircle className="w-4 h-4" />
+            ) : (
+                <XCircle className="w-4 h-4" />
+            )}
+            {reply ? "Replied" : "No Reply"}
+          </Tag>
+      ),
     },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="primary" onClick={() => handleViewDetails(record._id)}>
-          View
-        </Button>
+          <Button
+              type="primary"
+              onClick={() => handleViewDetails(record._id)}
+              icon={<Eye className="w-4 h-4" />}
+              className="bg-[#1C325B] hover:bg-[#1C325B]/90 flex items-center gap-1"
+          >
+            View
+          </Button>
       ),
     },
   ];
 
   return (
-    <div className="p-4 text-right">
-      <h2 className="text-3xl font-bold text-center mb-8 text-blue-600">
-        My Complaints
-      </h2>
-      <Button
-        type="danger"
-        onClick={handleCreateComplaint}
-        className="bg-red-500 text-white hover:bg-red-600 mb-4 mr-4 mt-4"
-        style={{ marginRight: "125px" }}
+      <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#1C325B",
+            },
+          }}
       >
-        Create Complaint
-      </Button>
-      <Table
-        columns={columns}
-        dataSource={complaints}
-        loading={loading}
-        rowKey="id"
-        className="mb-4"
-      />
-      {complaints.length === 0 && !loading && (
-        <div className="text-center text-gray-500">
-          <p>
-            No complaints here! Looks like everything is running smoothly. 🎉
-          </p>
-        </div>
-      )}
-      <Modal
-        title={<h2 className="font-bold text-center">Complaint Details</h2>}
-        visible={modalVisible}
-        onCancel={handleCloseModal}
-        footer={[
-          <Button
-            key="close"
-            onClick={handleCloseModal}
-            className="bg-gray-500 text-white hover:bg-gray-600"
-          >
-            Close
-          </Button>,
-        ]}
-        className="top-5 p-5 h-4/5"
-        bodyStyle={{
-          fontFamily: "Arial, sans-serif",
-          fontSize: "16px",
-          lineHeight: "1.5",
-          height: "calc(100% - 55px)",
-        }}
-      >
-        {selectedComplaint && (
-          <div>
-            <Descriptions bordered column={1} className="mb-4">
-              <Descriptions.Item label="Title">
-                {selectedComplaint.title}
-              </Descriptions.Item>
-              <Descriptions.Item label="Body">
-                {selectedComplaint.body}
-              </Descriptions.Item>
-              <Descriptions.Item label="Status">
-                <Tag
-                  color={
-                    selectedComplaint.status === "Pending" ? "orange" : "green"
-                  }
-                >
-                  {selectedComplaint.status}
-                </Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="Date Submitted">
-                {formatDate(selectedComplaint.date)}
-              </Descriptions.Item>
-              <Descriptions.Item label="Reply">
-                {selectedComplaint.reply ? (
-                  <span style={{ color: "grey", fontStyle: "italic" }}>
-                    {selectedComplaint.reply}
-                  </span>
+        <div className="p-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+              {/* Header Section */}
+              <div className="px-6 py-4 border-b border-gray-200">
+                <div className="bg-gradient-to-r from-[#1C325B] to-[#2A4575] rounded-xl p-6 text-white flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-1 mb-2">
+                      <AlertCircle className="w-6 h-6 text-white" />
+                      <h3 className="m-0 text-lg font-semibold text-white">
+                        My Complaints
+                      </h3>
+                    </div>
+                    <p className="text-gray-200 mt-2 mb-0 opacity-90">
+                      Manage and track your complaints
+                    </p>
+                  </div>
+
+                  <Button
+                      type="primary"
+                      icon={<MessageSquarePlus className="w-4 h-4" />}
+                      onClick={() => setCreateModalVisible(true)}
+                      className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none flex items-center gap-1"
+                      size="large"
+                  >
+                    Create Complaint
+                  </Button>
+                </div>
+              </div>
+
+              {/* Table Section */}
+              <div className="p-6">
+                {loading ? (
+                    <div className="flex justify-center items-center py-12">
+                      <Spin size="large" />
+                    </div>
                 ) : (
-                  "No reply yet"
+                    <Table
+                        columns={columns}
+                        dataSource={complaints}
+                        rowKey="_id"
+                        pagination={{
+                          pageSize: 10,
+                          showTotal: (total) => `Total ${total} complaints`,
+                        }}
+                        className="border border-gray-200 rounded-lg"
+                        rowClassName="hover:bg-[#1C325B]/5"
+                        locale={{
+                          emptyText: (
+                              <div className="py-8 text-center text-gray-500">
+                                No complaints found
+                              </div>
+                          ),
+                        }}
+                    />
                 )}
-              </Descriptions.Item>
-            </Descriptions>
-            <Divider />
+              </div>
+            </div>
           </div>
-        )}
-      </Modal>
 
-      <Modal
-        title={<h2 className="font-bold text-center">Create Complaint</h2>}
-        visible={createModalVisible}
-        onCancel={handleCloseCreateModal}
-        footer={null}
-        className="top-5 p-5 h-4/5"
-        bodyStyle={{
-          fontFamily: "Arial, sans-serif",
-          fontSize: "16px",
-          lineHeight: "1.5",
-          height: "calc(100% - 55px)",
-        }}
-      >
-        <Form layout="vertical" onFinish={onFinish} form={form}>
-          <Form.Item
-            label="Title"
-            name="title"
-            rules={[{ required: true, message: "Please input the title!" }]}
+          {/* View Modal */}
+          <Modal
+              title={
+                <div className="flex items-center gap-2 text-[#1C325B] pb-3 border-b">
+                  <AlertCircle className="w-5 h-5" />
+                  <span className="font-semibold">Complaint Details</span>
+                </div>
+              }
+              open={modalVisible}
+              onCancel={() => setModalVisible(false)}
+              footer={[
+                <Button
+                    key="close"
+                    onClick={() => setModalVisible(false)}
+                    className="hover:bg-gray-100"
+                >
+                  Close
+                </Button>,
+              ]}
+              width={700}
           >
-            <Input />
-          </Form.Item>
+            {selectedComplaint && (
+                <div className="mt-4">
+                  <Descriptions
+                      bordered
+                      column={1}
+                      className="rounded-lg overflow-hidden"
+                      labelStyle={{
+                        backgroundColor: "#f8fafc",
+                        fontWeight: 500,
+                        width: "150px",
+                      }}
+                      contentStyle={{
+                        backgroundColor: "#ffffff",
+                      }}
+                  >
+                    <Descriptions.Item label="Title">
+                      {selectedComplaint.title}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Description">
+                      {selectedComplaint.description}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Details">
+                      {selectedComplaint.body}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Status">
+                      <Tag
+                          className={`px-3 py-1 rounded-full flex items-center gap-1 w-fit ${
+                              selectedComplaint.status === "Pending"
+                                  ? "bg-orange-50 text-orange-600 border-orange-200"
+                                  : "bg-green-50 text-green-600 border-green-200"
+                          }`}
+                      >
+                        {selectedComplaint.status === "Pending" ? (
+                            <Clock className="w-4 h-4" />
+                        ) : (
+                            <CheckCircle className="w-4 h-4" />
+                        )}
+                        {selectedComplaint.status}
+                      </Tag>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Date">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-[#1C325B]" />
+                        {formatDate(selectedComplaint.date)}
+                      </div>
+                    </Descriptions.Item>
+                    {selectedComplaint.reply && (
+                        <Descriptions.Item label="Reply">
+                          <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                            <p className="text-blue-700 m-0">{selectedComplaint.reply}</p>
+                          </div>
+                        </Descriptions.Item>
+                    )}
+                  </Descriptions>
+                </div>
+            )}
+          </Modal>
 
-          <Form.Item
-            label="Body"
-            name="body"
-            rules={[{ required: true, message: "Please input the body!" }]}
+          {/* Create Modal */}
+          <Modal
+              title={
+                <div className="flex items-center gap-2 text-[#1C325B] pb-3 border-b">
+                  <MessageSquarePlus className="w-5 h-5" />
+                  <span className="font-semibold">Create Complaint</span>
+                </div>
+              }
+              open={createModalVisible}
+              onCancel={() => setCreateModalVisible(false)}
+              footer={null}
+              width={600}
           >
-            <TextArea rows={6} />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="bg-blue-500 text-white hover:bg-blue-600"
+            <Form
+                layout="vertical"
+                onFinish={async (values) => {
+                  try {
+                    await addComplaint(values);
+                    message.success("Complaint submitted successfully");
+                    setCreateModalVisible(false);
+                    form.resetFields();
+                    fetchComplaints();
+                  } catch (error) {
+                    message.error("Failed to submit complaint");
+                  }
+                }}
+                form={form}
+                className="mt-4"
             >
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+              <Form.Item
+                  label={<span className="text-gray-700 font-medium">Title</span>}
+                  name="title"
+                  rules={[{ required: true, message: "Please input the title!" }]}
+              >
+                <Input
+                    placeholder="Enter complaint title"
+                    className="rounded-md"
+                />
+              </Form.Item>
+
+              <Form.Item
+                  label={<span className="text-gray-700 font-medium">Description</span>}
+                  name="description"
+                  rules={[{ required: true, message: "Please input the description!" }]}
+              >
+                <TextArea
+                    rows={4}
+                    placeholder="Brief description of your complaint"
+                    className="rounded-md"
+                />
+              </Form.Item>
+
+              <Form.Item
+                  label={<span className="text-gray-700 font-medium">Details</span>}
+                  name="body"
+                  rules={[{ required: true, message: "Please input the details!" }]}
+              >
+                <TextArea
+                    rows={6}
+                    placeholder="Detailed explanation of your complaint"
+                    className="rounded-md"
+                />
+              </Form.Item>
+
+              <Form.Item className="mb-0 flex justify-end gap-2">
+                <Button
+                    onClick={() => setCreateModalVisible(false)}
+                    className="hover:bg-gray-100"
+                >
+                  Cancel
+                </Button>
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="bg-[#1C325B] hover:bg-[#1C325B]/90"
+                >
+                  Submit Complaint
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+        </div>
+      </ConfigProvider>
   );
 };
 
