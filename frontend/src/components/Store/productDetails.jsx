@@ -228,28 +228,29 @@ const ProductDetails = ({ setFlag }) => {
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg">
-                          <ShopOutlined className="text-xl text-blue-500" />
-                          <div>
-                            <Text className="text-sm text-blue-400 block">
-                              Available Stock
-                            </Text>
-                            <Text className="text-lg font-bold text-blue-600">
-                              {product.quantity}
-                            </Text>
-                          </div>
-                        </div>
-
+                        {product.quantity < 5 && (
+                            <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg">
+                              <ShopOutlined className="text-xl text-blue-500"/>
+                              <div>
+                                <Text className="text-sm text-blue-400 block">
+                                  Available Stock
+                                </Text>
+                                <Text className="text-lg font-bold text-blue-600">
+                                  {product.quantity}
+                                </Text>
+                              </div>
+                            </div>
+                        )}
                         <div className="flex items-center gap-3 bg-purple-50 p-4 rounded-lg">
-                          <UserOutlined className="text-xl text-purple-500" />
+                          <UserOutlined className="text-xl text-purple-500"/>
                           <div>
                             <Text className="text-sm text-purple-400 block">
                               Seller
                             </Text>
                             <Text className="text-lg font-bold text-purple-600">
                               {product.createdBy.userRole === "Admin"
-                                ? "Teer Enta"
-                                : product.createdBy.username}
+                                  ? "Teer Enta"
+                                  : product.createdBy.username}
                             </Text>
                           </div>
                         </div>
