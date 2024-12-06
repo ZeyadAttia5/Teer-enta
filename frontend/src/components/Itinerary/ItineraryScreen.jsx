@@ -415,7 +415,7 @@ const ItineraryScreen = ({ setFlag }) => {
         </div>
 
         {/* Itineraries Grid Section */}
-        {user === null || user?.userRole === "Tourist" && (
+        {(user === null || (user && user?.userRole === "Tourist")) && (
             <div className="max-w-7xl mx-auto mt-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedItineraries?.map((itinerary, index) => (
