@@ -153,7 +153,7 @@ const BookFlight = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-const [currency,setCurrency] = useState(null);
+
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(-1);
   const [promoCode, setPromoCode] = useState(null);
@@ -162,6 +162,7 @@ const [currency,setCurrency] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [departureAirports, setDepartureAirports] = useState([]);
   const [destinationAirports, setDestinationAirports] = useState([]);
+  const [currency,setCurrency] = useState(null);
   useEffect(() => {
     fetchCurrency() ;
   }, []);
