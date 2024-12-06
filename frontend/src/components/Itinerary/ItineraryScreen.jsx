@@ -173,107 +173,103 @@ const DropdownMenuSubContent = ({ children, isOpen }) => {
   );
 };
 
+
 const ItineraryScreen = ({ setFlag }) => {
   setFlag(false);
   const user = JSON.parse(localStorage.getItem("user"));
-  const [itineraries, setItineraries] = useState([]);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBudget, setSelectedBudget] = useState("");
-  const [selectedDateFilter, setSelectedDateFilter] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState("");
-  const [selectedPreference, setSelectedPreference] = useState("");
-  const [sortBy, setSortBy] = useState("");
-  const [activitiesList, setActivitiesList] = useState([]);
-  const [preferenceTagsList, setPreferenceTagsList] = useState([]);
-  const [currency, setCurrency] = useState(null);
-
   const location = useLocation();
 
+  const [itineraries, setItineraries] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [preferenceTagsList, setPreferenceTagsList] = useState([]);
+  const [currency, setCurrency] = useState(null);
+  const [filters, setFilters] = useState({
+    searchQuery: '',
+    budget: '',
+    dateFilter: '',
+    language: '',
+    preferenceTag: '',
+    sortBy: ''
+  });
+
+  // Computed values
+  const budgets = [...new Set(itineraries.map(itin => itin.price))];
+  const languages = [...new Set(itineraries.map(itin => itin.language))];
+
   useEffect(() => {
-    if (location.pathname === "/itinerary/my") {
-      fetchMyIternaries();
-    } else {
-      fetchItineraries();
-    }
-    fetchCurrency();
-    fetchActivities();
-    fetchPreferenceTags();
+    const initData = async () => {
+      if (location.pathname === "/itinerary/my") {
+        await fetchMyItineraries();
+      } else {
+        await fetchItineraries();
+      }
+      await Promise.all([
+        fetchCurrency(),
+        fetchPreferenceTags()
+      ]);
+    };
+    initData();
   }, [location.pathname]);
 
-  const resetFilters = () => {
-    setSelectedBudget("");
-    setSelectedDateFilter("");
-    setSelectedLanguage("");
-    setSelectedPreference("");
-    setSortBy("");
-    setSearchTerm("");
+  const calculateAverageRating = (ratings) => {
+    if (!ratings?.length) return 0;
+    const sum = ratings.reduce((acc, rating) => acc + rating.rating, 0);
+    // Return fixed decimal number
+    return Number((sum / ratings.length).toFixed(1));
   };
 
-  const budgets = [...new Set(itineraries.map((itin) => itin.price))];
-  const languages = [...new Set(itineraries.map((itin) => itin.language))];
 
   const filterByDate = (itin) => {
-    return itin.availableDates.some((availableDate) => {
+    if (!filters.dateFilter) return true;
+
+    return itin.availableDates.some(availableDate => {
       const date = parseISO(availableDate.Date);
+      if (isNaN(date)) return false;
 
-      if (isNaN(date)) {
-        console.error("Invalid date format:", availableDate.Date);
-        return false;
+      switch(filters.dateFilter) {
+        case "today": return isToday(date);
+        case "thisWeek": return isThisWeek(date);
+        case "thisMonth": return isThisMonth(date);
+        case "thisYear": return isThisYear(date);
+        case "allUpcoming": return date >= new Date();
+        default: return true;
       }
-
-      if (selectedDateFilter === "today") {
-        return isToday(date);
-      } else if (selectedDateFilter === "thisWeek") {
-        return isThisWeek(date, { weekStartsOn: 1 });
-      } else if (selectedDateFilter === "thisMonth") {
-        return isThisMonth(date);
-      } else if (selectedDateFilter === "thisYear") {
-        return isThisYear(date);
-      } else if (selectedDateFilter === "allUpcoming") {
-        return date >= new Date();
-      }
-
-      return true;
     });
   };
 
-  const filteredItineraries = itineraries?.filter(
-    (itin) =>
-      (selectedBudget ? itin.price <= selectedBudget : true) &&
-      filterByDate(itin) &&
-      (selectedLanguage ? itin.language === selectedLanguage : true) &&
-      (selectedPreference
-        ? itin.preferenceTags.some((tag) => tag._id === selectedPreference)
-        : true) &&
-      ((itin.name &&
-        itin.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        itin.preferenceTags.some((tag) =>
-          tag.tag.toLowerCase().includes(searchTerm.toLowerCase())
-        ))
-  );
+  const getFilteredAndSortedItineraries = () => {
+    let filtered = itineraries?.filter(itin =>
+        (filters.budget ? itin.price <= filters.budget : true) &&
+        filterByDate(itin) &&
+        (filters.language ? itin.language === filters.language : true) &&
+        (filters.preferenceTag
+            ? itin.preferenceTags.some(tag => tag._id === filters.preferenceTag)
+            : true) &&
+        (filters.searchQuery
+            ? itin.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
+            itin.preferenceTags.some(tag =>
+                tag.tag.toLowerCase().includes(filters.searchQuery.toLowerCase()))
+            : true)
+    );
 
-  const sortedItineraries = filteredItineraries?.sort((a, b) => {
-    if (sortBy === "pricingHighToLow") {
-      return b.price - a.price;
-    } else if (sortBy === "pricingLowToHigh") {
-      return a.price - b.price;
-    } else if (sortBy === "ratingHighToLow") {
-      const avgRatingA =
-        a.ratings.reduce((sum, r) => sum + r.rating, 0) / a.ratings.length || 0;
-      const avgRatingB =
-        b.ratings.reduce((sum, r) => sum + r.rating, 0) / b.ratings.length || 0;
-      return avgRatingB - avgRatingA;
-    } else if (sortBy === "ratingLowToHigh") {
-      const avgRatingA =
-        a.ratings.reduce((sum, r) => sum + r.rating, 0) / a.ratings.length || 0;
-      const avgRatingB =
-        b.ratings.reduce((sum, r) => sum + r.rating, 0) / b.ratings.length || 0;
-      return avgRatingA - avgRatingB;
+    if (filters.sortBy) {
+      filtered.sort((a, b) => {
+        const avgRatingA = calculateAverageRating(a.ratings);
+        const avgRatingB = calculateAverageRating(b.ratings);
+
+        switch(filters.sortBy) {
+          case 'pricingHighToLow': return b.price - a.price;
+          case 'pricingLowToHigh': return a.price - b.price;
+          case 'ratingHighToLow': return avgRatingB - avgRatingA;
+          case 'ratingLowToHigh': return avgRatingA - avgRatingB;
+          default: return 0;
+        }
+      });
     }
-    return 0;
-  });
+
+    return filtered;
+  };
 
   const fetchItineraries = async () => {
     setLoading(true);
@@ -286,28 +282,19 @@ const ItineraryScreen = ({ setFlag }) => {
     setLoading(false);
   };
 
-  const fetchMyIternaries = async () => {
+  const fetchMyItineraries = async () => {
     setLoading(true);
     try {
       const data = await getMyItineraries();
       setItineraries(data);
     } catch (error) {
-      if (error.response.status === 404) {
+      if (error.response?.status === 404) {
         notification.info({ message: "You didn't create any itineraries yet" });
       } else {
         notification.error({ message: "Error fetching itineraries" });
       }
     }
     setLoading(false);
-  };
-
-  const fetchActivities = async () => {
-    try {
-      const data = await getActivities();
-      setActivitiesList(data.data);
-    } catch (error) {
-      message.error("Failed to fetch activities");
-    }
   };
 
   const fetchPreferenceTags = async () => {
@@ -318,33 +305,53 @@ const ItineraryScreen = ({ setFlag }) => {
       message.error("Failed to fetch preference tags");
     }
   };
+
   const fetchCurrency = async () => {
     try {
       const response = await getCurrency();
       setCurrency(response.data);
-      // console.log("Currency:", response.data);
     } catch (error) {
       console.error("Fetch currency error:", error);
     }
   };
 
+  const handleFilterChange = (filterType, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: value
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      searchQuery: '',
+      budget: '',
+      dateFilter: '',
+      language: '',
+      preferenceTag: '',
+      sortBy: ''
+    });
+  };
 
   const handleBookItinerary = (id) => {
     navigate(`/itinerary/book/${id}`);
   };
 
+  const filteredItineraries = getFilteredAndSortedItineraries();
+
+
+
   return (
       <div className="min-h-screen bg-gray-50 px-4 py-8">
-        {/* Search and Filters Section */}
         <div className="max-w-7xl mx-auto space-y-8">
-          {/* Search Bar Section */}
+          {/* Search and Filters Section */}
           <div className="flex flex-col items-center space-y-6">
             <Search
                 enterButton={<SearchOutlined/>}
                 placeholder="Search by name, category, or tag..."
-                value={searchTerm}
+                value={filters.searchQuery}
                 allowClear
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleFilterChange('searchQuery', e.target.value)}
                 className="max-w-md w-full"
             />
 
@@ -363,28 +370,18 @@ const ItineraryScreen = ({ setFlag }) => {
                   <DropdownMenuSeparator/>
                   <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
-                      <div>
-                        <select
-                            id="sortFilter"
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value)}
-                            className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
-                        >
-                          <option value="">None</option>
-                          <option value="pricingHighToLow">
-                            Price (High to Low)
-                          </option>
-                          <option value="pricingLowToHigh">
-                            Price (Low to High)
-                          </option>
-                          <option value="ratingHighToLow">
-                            Rating (High to Low)
-                          </option>
-                          <option value="ratingLowToHigh">
-                            Rating (Low to High)
-                          </option>
-                        </select>
-                      </div>
+                      <select
+                          id="sortFilter"
+                          value={filters.sortBy}
+                          onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                          className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
+                      >
+                        <option value="">None</option>
+                        <option value="pricingHighToLow">Price (High to Low)</option>
+                        <option value="pricingLowToHigh">Price (Low to High)</option>
+                        <option value="ratingHighToLow">Rating (High to Low)</option>
+                        <option value="ratingLowToHigh">Rating (Low to High)</option>
+                      </select>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
@@ -406,15 +403,13 @@ const ItineraryScreen = ({ setFlag }) => {
                       <div className="w-full">
                         <select
                             id="budgetFilter"
-                            value={selectedBudget}
-                            onChange={(e) => setSelectedBudget(e.target.value)}
+                            value={filters.budget}
+                            onChange={(e) => handleFilterChange('budget', e.target.value)}
                             className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                         >
                           <option value="">All Budgets</option>
                           {budgets?.map((budget, index) => (
-                              <option key={index} value={budget}>
-                                {budget}
-                              </option>
+                              <option key={index} value={budget}>{budget}</option>
                           ))}
                         </select>
                       </div>
@@ -424,8 +419,8 @@ const ItineraryScreen = ({ setFlag }) => {
                       <div>
                         <select
                             id="dateFilter"
-                            value={selectedDateFilter}
-                            onChange={(e) => setSelectedDateFilter(e.target.value)}
+                            value={filters.dateFilter}
+                            onChange={(e) => handleFilterChange('dateFilter', e.target.value)}
                             className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                         >
                           <option value="">All Dates</option>
@@ -442,15 +437,13 @@ const ItineraryScreen = ({ setFlag }) => {
                       <div>
                         <select
                             id="languageFilter"
-                            value={selectedLanguage}
-                            onChange={(e) => setSelectedLanguage(e.target.value)}
+                            value={filters.language}
+                            onChange={(e) => handleFilterChange('language', e.target.value)}
                             className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                         >
                           <option value="">All Languages</option>
                           {languages?.map((language, index) => (
-                              <option key={index} value={language}>
-                                {language}
-                              </option>
+                              <option key={index} value={language}>{language}</option>
                           ))}
                         </select>
                       </div>
@@ -460,15 +453,13 @@ const ItineraryScreen = ({ setFlag }) => {
                       <div>
                         <select
                             id="preferenceFilter"
-                            value={selectedPreference}
-                            onChange={(e) => setSelectedPreference(e.target.value)}
+                            value={filters.preferenceTag}
+                            onChange={(e) => handleFilterChange('preferenceTag', e.target.value)}
                             className="w-full p-2 border rounded-md cursor-pointer bg-white hover:bg-gray-100 hover:border-transparent"
                         >
                           <option value="">All Preferences</option>
                           {preferenceTagsList?.map((preference) => (
-                              <option key={preference._id} value={preference._id}>
-                                {preference.tag}
-                              </option>
+                              <option key={preference._id} value={preference._id}>{preference.tag}</option>
                           ))}
                         </select>
                       </div>
@@ -479,45 +470,43 @@ const ItineraryScreen = ({ setFlag }) => {
 
               {/* Reset Button */}
               <Button2
-                  type="primary"
-                  danger
+                  type="danger"
                   icon={<ReloadOutlined/>}
                   onClick={resetFilters}
                   className="ml-4 h-9"
               >
-                Reset filters
+                Reset
               </Button2>
             </div>
+          </div>
+
+          {/* Itineraries Grid */}
+          {user === null || user?.userRole === "Tourist" ? (
+              filteredItineraries?.length > 0 ? (
+                  <div className="max-w-7xl mx-auto mt-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredItineraries.map((itinerary, index) => (
+                          <ItineraryCard
+                              key={itinerary._id}
+                              itinerary={itinerary}
+                              currency={currency}
+                              handleBookItinerary={handleBookItinerary}
+                              navigate={navigate}
+                              user={user}
+                              avgRating={calculateAverageRating(itinerary.ratings)}
+                          />
+                      ))}
+                    </div>
+                  </div>
+              ) : (
+                  <div className="max-w-7xl mx-auto mt-8 text-center">
+                    <p className="text-lg text-gray-500">No itineraries available at the moment.</p>
+                  </div>
+              )
+          ) : null}
         </div>
       </div>
-
-  {/* Itineraries Grid Section */
-  }
-        {user === null || user?.userRole === "Tourist" ? (
-            sortedItineraries && sortedItineraries.length > 0 ? (
-                <div className="max-w-7xl mx-auto mt-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {sortedItineraries.map((itinerary, index) => (
-                        <ItineraryCard
-                            key={index}
-                            itinerary={itinerary}
-                            currency={currency}
-                            handleBookItinerary={handleBookItinerary}
-                            navigate={navigate}
-                            user={user}
-                        />
-                    ))}
-                  </div>
-                </div>
-            ) : (
-                <div className="max-w-7xl mx-auto mt-8 text-center">
-                  <p className="text-lg text-gray-500">No itineraries available at the moment. Please check back later.</p>
-                </div>
-            )
-        ) : null}
-</div>
-)
-  ;
+  );
 };
 
 export default ItineraryScreen;

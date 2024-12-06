@@ -52,6 +52,30 @@ export const acceptUser = async (userId) => {
     });
 }
 
+export const getAllAccountsDeletionRequests = async () => {
+    return await axios.get(`${API_BASE_URL}/account/requestedAccountsDeletion`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+}
+
+export const approveAccountDeletion = async (id) => {
+    return await axios.delete(`${API_BASE_URL}/account/approveDeleteRequest/${id}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+};
+
+export const rejectAccountDeletion = async (id) => {
+    return await axios.delete(`${API_BASE_URL}/account/rejectDeleteRequest/${id}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+    });
+};
+
 export const rejectUser = async (userId) => {
     return await axios.patch(`${API_BASE_URL}/account/reject/${userId}`, {}, {
         headers: {
@@ -95,7 +119,7 @@ export const getAllPreferences = async () => {
 }
 
 export const requestAccountDeletion = async () => {
-    return await axios.delete(`${API_BASE_URL}/account/requestAccountDeletion`,
+    return await axios.post(`${API_BASE_URL}/account/requestAccountDeletion`,{},
         {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

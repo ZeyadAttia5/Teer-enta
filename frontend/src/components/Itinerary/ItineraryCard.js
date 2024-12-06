@@ -4,14 +4,7 @@ import {
     EnvironmentOutlined, ClockCircleOutlined, TeamOutlined, GlobalOutlined
 } from '@ant-design/icons';
 
-const ItineraryCard = ({itinerary, navigate, currency}) => {
-    const getRating = () => {
-        if (itinerary.ratings.length === 0) {
-            return 0;
-        }
-        const totalRating = itinerary.ratings.reduce((acc, curr) => acc + curr.rating, 0);
-        return totalRating / itinerary.ratings.length
-    }
+const ItineraryCard = ({itinerary, navigate, currency  ,avgRating}) => {
     return (
         <div className="w-[380px] transition-shadow duration-300 hover:shadow-xl cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200" onClick={() => navigate(`/itinerary/iternaryDetails/${itinerary._id}`)}>
             <div className="relative h-[280px]">
@@ -20,8 +13,8 @@ const ItineraryCard = ({itinerary, navigate, currency}) => {
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                     <h3 className="text-white text-xl font-bold tracking-wide truncate mb-2">{itinerary.name}</h3>
                     <div className="flex items-center space-x-3">
-                        <Rate disabled defaultValue={itinerary.ratings || 0} className="text-[#FFD700] text-sm"/>
-                        <span className="text-white/90 text-sm">{itinerary.comments?.length ? `(${itinerary.comments.length} reviews)` : '(No reviews yet)'}</span>
+                        <Rate disabled defaultValue={avgRating || 0} allowHalf className="text-[#FFD700] text-sm"/>
+                        <span className="text-white/90 text-sm">{itinerary.ratings?.length ? `(${itinerary.ratings.length} reviews)` : '(No reviews yet)'}</span>
                     </div>
                 </div>
             </div>

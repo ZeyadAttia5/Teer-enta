@@ -91,11 +91,11 @@ const ItineraryDetails: React.FC = () => {
       message.error("Failed to fetch tour guide ratings");
     }
   }
-  const calculateAverageRating = () => {
-    if (!itinerary?.ratings?.length) return 0;
-    const sum = itinerary.ratings.reduce((acc, curr) => acc + curr.rating, 0);
-    return (sum / itinerary.ratings.length).toFixed(1);
-  };
+    const calculateAverageRating = () => {
+        if (!itinerary?.ratings?.length) return 0;
+        const sum = itinerary.ratings.reduce((sum, r) => sum + r.rating, 0) / itinerary.ratings.length;
+        return Number(sum.toFixed(1));
+    };
   const calculateTourGuideRating = () => {
     if (!tourGuideRatings?.length) return 0;
     const sum = tourGuideRatings.reduce((acc, curr) => acc + curr.rating, 0);
@@ -219,7 +219,7 @@ const ItineraryDetails: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-white">
                     <StarOutlined />
-                    <Rate disabled value={Number(averageRating)} allowHalf className="text-sm"/>
+                    <Rate disabled value={averageRating} allowHalf className="text-sm"/>
                     <span>({itinerary.ratings?.length || 0} reviews)</span>
                   </div>
                 </div>

@@ -428,7 +428,7 @@ const TouristWelcome = ({ setFlag }) => {
                 <Button
                   type="danger"
                   className="w-fit  rounded-full"
-                  href="/touristActivities"
+                  href="/itinerary"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

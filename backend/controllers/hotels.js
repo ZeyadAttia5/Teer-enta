@@ -152,7 +152,7 @@ exports.bookHotel = async (req, res) => {
                     guests: guests?.adults,
                     price: offer.price.total,
                     createdBy: req.user._id,
-                    status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
+                    status: 'Completed',
                 });
 
                 return res.status(200).json({message: "Successfully booked!"});
