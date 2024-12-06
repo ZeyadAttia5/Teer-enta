@@ -539,9 +539,9 @@ exports.addRatingToActivity = async (req, res) => {
         const {rating} = req.body;
 
         const userId = req.user._id;
-
+        console.log("1",rating)
         const activity = await Activity.findById(id);
-
+        console.log("2",rating)
         if (!activity) {
             return res.status(404).json({message: "Activity not found"});
         }
@@ -551,6 +551,7 @@ exports.addRatingToActivity = async (req, res) => {
             activity: id,
             // status: 'Completed'
         });
+        console.log("3",rating)
 
         if (!booking) {
             return res.status(400).json({message: "You haven't completed this activity"});
@@ -559,12 +560,15 @@ exports.addRatingToActivity = async (req, res) => {
         activity.ratings.push({
             user: userId,
             rating: rating,
+            createdAt: new Date()
         });
-
+        console.log("4",rating)
         await activity.save();
+
 
         res.status(200).json({message: "Rating added successfully", activity});
     } catch (err) {
+        console.log(err);
         errorHandler.SendError(res, err);
     }
 };

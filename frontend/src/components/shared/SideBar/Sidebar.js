@@ -62,7 +62,7 @@ const Sidebar = ({ visible, onClose }) => {
       >
         {user && user.userRole !== "Tourist"  && user.userRole !== "TourismGovernor" && (
            
-              <Menu.Item key="22" onClick={() => handleClick("/reports/")} icon={<BarChartOutlined />}>
+              <Menu.Item key="22" onClick={() => handleClick("/reports")} icon={<BarChartOutlined />}>
                 Dashboard
               </Menu.Item>
             

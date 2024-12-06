@@ -14,11 +14,15 @@ const BookingPayment = ({
   onBookingClick,
   isloading,
   amount: euroAmount,
+  currency = { rate: 1.05, code: "USD" },
   setPromoCode: setOuterPromoCode,
+  setPaymentMethod: setOuterPaymentMethod,
 }) => {
+  const { rate, code } = currency;
+
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [paymentSucceed, setPaymentSucceed] = useState(false);
-  const [amount, setAmount] = useState((euroAmount * 1.05).toFixed(1));
+  const [amount, setAmount] = useState((euroAmount * rate).toFixed(1));
   const [promoCode, setPromoCode] = useState();
   const [applyingPromo, setApplyingPromo] = useState(false);
   const [promoDiscount, setPromoDiscount] = useState(0);
@@ -43,10 +47,14 @@ const BookingPayment = ({
     setApplyingPromo(true);
     try {
       const response = await applyPromoCode(promoCode);
+      console.log(response);
       setPromoDiscount(response.data.promoCode);
-      setOuterPromoCode(promoCode);
+
+      if (setOuterPromoCode) setOuterPromoCode(promoCode);
+
       message.success("Promo code applied successfully!");
     } catch (error) {
+      console.log(error);
       message.error(
         error.response?.data?.message || "Failed to apply promo code"
       );
@@ -64,14 +72,14 @@ const BookingPayment = ({
         <p className="text-lg font-medium text-[#1a2b49]">
           Total Amount:{" "}
           <span className={`${promoDiscount && "line-through"} `}>
-            ${amount}
+            {amount} {code}
           </span>
-          {promoDiscount && (
-            <span className="ml-2 text-[#526D82]">
-              ${calculateFinalPrice(parseFloat(amount))}
-            </span>
-          )}
         </p>
+        {promoDiscount !== 0 && (
+          <span className="ml-2 text-[#526D82] text-lg font-medium">
+            {calculateFinalPrice(parseFloat(amount))} {code}
+          </span>
+        )}
       </div>
       <div className="border-t pt-6"></div>
       <Typography.Text className="text-lg font-semibold block mb-3 text-[#1a2b49]">
@@ -88,8 +96,8 @@ const BookingPayment = ({
         <Button
           onClick={handleApplyPromo}
           loading={applyingPromo}
-          type="primary"
-          className="bg-[#526D82] hover:bg-[#1a2b49] text-white"
+          type="danger"
+          className="bg-second hover:bg-gray-600 text-white"
         >
           Apply
         </Button>
@@ -104,7 +112,10 @@ const BookingPayment = ({
             className={`text-center ${
               paymentMethod === "wallet" ? "border-primary bg-[#e6f7ff]" : ""
             }`}
-            onClick={() => setPaymentMethod("wallet")}
+            onClick={() => {
+              setPaymentMethod("wallet");
+              setOuterPaymentMethod("wallet");
+            }}
           >
             <WalletOutlined
               style={{
@@ -121,7 +132,10 @@ const BookingPayment = ({
             className={`text-center ${
               paymentMethod === "Card" ? "border-primary bg-[#e6f7ff]" : ""
             }`}
-            onClick={() => setPaymentMethod("Card")}
+            onClick={() => {
+              setPaymentMethod("Card");
+              setOuterPaymentMethod("Card");
+            }}
           >
             <CreditCardOutlined
               style={{
@@ -137,9 +151,11 @@ const BookingPayment = ({
       {paymentMethod === "Card" && (
         <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
           <CheckoutForm
-            amount={parseFloat(amount) * 100}
-            discountedAmount={calculateFinalPrice(parseFloat(amount) * 100)}
+            amount={parseFloat(amount)}
+            code={code}
+            discountedAmount={calculateFinalPrice(parseFloat(amount))}
             onPaymentSuccess={() => setPaymentSucceed(true)}
+            onError={() => setPaymentSucceed(false)}
             // withPayButton={false}
           />
         </Elements>
@@ -147,8 +163,8 @@ const BookingPayment = ({
 
       <Form.Item className="mt-6">
         <Button
-          type="default"
-          className="w-full h-12 text-lg  hover:bg-indigo-700 disabled:hover:bg-gray-400"
+          type="danger"
+          className="w-full h-12 text-lg text-white bg-first hover:bg-black disabled:hover:bg-gray-400"
           onClick={onBookingClick}
           loading={isloading}
           disabled={paymentMethod === "Card" && !paymentSucceed}

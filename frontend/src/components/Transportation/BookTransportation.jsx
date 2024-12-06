@@ -11,6 +11,7 @@ import {
   message,
   Button,
   Input,
+  Modal,
 } from "antd";
 import {
   CarOutlined,
@@ -22,6 +23,8 @@ import {
   TagOutlined,
   ArrowRightOutlined,
 } from "@ant-design/icons";
+import { BusFront } from "lucide-react";
+import { ScooterIcon } from "./scooterIcon.jsx";
 import { applyPromoCode } from "../../api/promoCode.ts";
 import dayjs from "dayjs";
 import {
@@ -30,19 +33,31 @@ import {
 } from "../../api/transportation.ts";
 import { getCurrency } from "../../api/account.ts";
 import StaticMap from "../shared/GoogleMaps/ViewLocation.jsx";
+import BookingPayment from "../shared/BookingPayment.jsx";
 
 const { Text } = Typography;
 
 const getVehicleIcon = (type) => {
-  const colors = {
-    Car: "#526D82",
-    Scooter: "#526D82",
-    Bus: "#526D82",
-  };
+  let icon = <CarOutlined className="w-4 h-4 stroke-white" />;
+  switch (type) {
+    case "Car":
+      icon = <CarOutlined className="w-4 h-4 stroke-white" />;
+      break;
+    case "Bus":
+      icon = <BusFront className="w-4 h-4 stroke-white" />;
+      break;
+    case "Scooter":
+      icon = <ScooterIcon className="stroke-white w-4 h-4" />;
+      break;
+    default:
+      return;
+  }
+
   return (
-    <Tag color={colors[type]} icon={<CarOutlined />}>
-      {type}
-    </Tag>
+    <div className="flex items-center gap-2 justify-between text-xs bg-[#526D82] rounded-lg px-1 py-[2px] text-white">
+      {icon}
+      <span>{type}</span>
+    </div>
   );
 };
 
@@ -53,6 +68,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
   const [showAdvertiserInfo, setShowAdvertiserInfo] = useState(false);
   const [pickupAddress, setPickupAddress] = useState(null);
   const [dropOffAddress, setDropOffAddress] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
 
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
@@ -123,8 +139,25 @@ const TransportationCard = ({ item, currency, onBook }) => {
     item?.dropOffLocation?.lng,
   ]);
 
+  const handleBookNow = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleModalOk = async () => {
+    try {
+      await onBook(item._id, promoCode);
+      setIsModalVisible(false);
+    } catch (error) {
+      message.error(error.response?.data?.message || "Booking failed");
+    }
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+  };
+
   return (
-    <div className="bg-fourth">
+    <div className="">
       <Badge.Ribbon
         text={item.isActive ? "Active" : "Inactive"}
         color={item.isActive ? "green" : "red"}
@@ -133,7 +166,6 @@ const TransportationCard = ({ item, currency, onBook }) => {
           hoverable
           title={
             <Space align="center" size="large">
-              {" "}
               {/* Space between elements horizontally */}
               <div style={{ color: item.isActive ? "#27374D" : "#526D82" }}>
                 {/* Vehicle Icon with color palette */}
@@ -201,41 +233,19 @@ const TransportationCard = ({ item, currency, onBook }) => {
                   Notes: {item.notes}
                 </Text>
               )}
-
-              {/* Promo Code Section */}
-              <div className="flex gap-2 mb-4">
-                <Input
-                  prefix={<TagOutlined />}
-                  value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
-                  placeholder="Enter promo code"
-                  className="flex-1"
-                />
-                <Button
-                  onClick={handleApplyPromo}
-                  loading={applyingPromo}
-                  type="primary"
-                  className="hover:bg-first bg-second  border-second hover:border-first mb-0"
-                >
-                  Apply
-                </Button>
-              </div>
             </div>
 
             {/* Pricing Information */}
             <Space direction="vertical" size="small">
-              <div className="flex items-center gap-2 text-first text-2xl">
-                <DollarOutlined />
-                {promoDiscount > 0 && (
-                  <Text delete type="secondary" className="text-third">
-                    Original: {currency?.code}{" "}
-                    {(item.price * currency?.rate).toFixed(2)}
+              <div className=" text-first text-2xl">
+                <div className="flex items-center justify-between gap-2">
+                  <DollarOutlined />
+                  <Text strong className="text-xl text-first">
+                    Final Price: {currency?.code}{" "}
+                    {calculateFinalPrice(item.price)}
                   </Text>
-                )}
+                </div>
               </div>
-              <Text strong className="text-xl text-first">
-                Final Price: {currency?.code} {calculateFinalPrice(item.price)}
-              </Text>
               {promoDiscount > 0 && (
                 <Text type="success" className="text-first">
                   Promo discount: {promoDiscount}% off
@@ -247,56 +257,81 @@ const TransportationCard = ({ item, currency, onBook }) => {
             <Button
               type="danger"
               block
-              onClick={() => onBook(item._id, promoCode)}
+              onClick={handleBookNow}
               className="bg-first text-white border-fourth hover:bg-black"
             >
               Book Now
             </Button>
 
             {/* Advertiser Info */}
+
             <Card
               size="small"
-              title=""
-              className="mt-1 bg-fourth underline mb-0"
+              className="mt-1 bg-fourth mb-0 "
+              onMouseEnter={() => setShowAdvertiserInfo(true)} // Show info when hovered
+              onMouseLeave={() => setShowAdvertiserInfo(false)} // Hide info when mouse leaves
             >
-              <Space align="start">
-                <Avatar src={item.createdBy.logoUrl} icon={<UserOutlined />} />
-                {/* Hover Text */}
-                <Text
-                  className="text-second italic hover:cursor-pointer"
-                  onMouseEnter={() => setShowAdvertiserInfo(true)} // Show info when hovered
-                  onMouseLeave={() => setShowAdvertiserInfo(false)} // Hide info when mouse leaves
-                >
-                  Advertiser
-                </Text>
+              <div className="flex justify-between items-center">
+                <div>
+                  <Space align="center">
+                    <Avatar
+                      src={item.createdBy.logoUrl}
+                      icon={<UserOutlined />}
+                    />
+                    {/* Hover Text */}
+                    <Text className="text-second italic hover:cursor-pointer text-nowrap">
+                      Advertiser
+                    </Text>
+                  </Space>
+                </div>
                 {/* Conditional Rendering for Advertiser Info */}
                 {showAdvertiserInfo && (
-                  <Space direction="horizontal" size={12}>
-                    <Text strong>{`Username: ${
-                      item.createdBy.username ?? "NA"
-                    }`}</Text>
-                    <Text strong>{`Company: ${
-                      item.createdBy.companyName ?? "NA"
-                    }`}</Text>
-                    <Text type="secondary" className="text-sm text-third">
-                      {`Industry: ${item.createdBy.industry ?? "NA"}`}
-                    </Text>
-                    {item.createdBy.website && (
-                      <Space size={4}>
-                        <GlobalOutlined />
-                        <a
-                          href={item.createdBy.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-second hover:underline"
+                  <div className="flex justify-around">
+                    <Space direction="" size={12}>
+                      <div className="flex flex-col text-center gap-2 ">
+                        <Text
+                          className="border-2 rounded-full px-[6px] py-[3px] bg-first text-white font-bold text-xs"
+                          strong
                         >
-                          Website
-                        </a>
-                      </Space>
-                    )}
-                  </Space>
+                          Username
+                        </Text>
+                        <span> {item.createdBy.username ?? "NA"}</span>
+                      </div>
+                      <div className="flex flex-col text-center gap-2 ">
+                        <Text
+                          strong
+                          className="border-2 rounded-full px-1 py-[2px] bg-first text-white font-bold text-xs"
+                        >
+                          Company
+                        </Text>
+                        <span>{item.createdBy.companyName ?? "NA"}</span>
+                      </div>
+                      <div className="flex flex-col text-center gap-2 ">
+                        <Text
+                          strong
+                          className="border-2 rounded-full px-1 py-[2px] bg-first text-white font-bold text-xs"
+                        >
+                          Industry
+                        </Text>
+                        <span> {item.createdBy.industry ?? "NA"}</span>
+                      </div>
+                      {item.createdBy.website && (
+                        <Space size={4}>
+                          <GlobalOutlined />
+                          <a
+                            href={item.createdBy.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-second hover:underline"
+                          >
+                            Website
+                          </a>
+                        </Space>
+                      )}
+                    </Space>
+                  </div>
                 )}
-              </Space>
+              </div>
             </Card>
 
             {/* Created Date */}
@@ -306,6 +341,23 @@ const TransportationCard = ({ item, currency, onBook }) => {
           </Space>
         </Card>
       </Badge.Ribbon>
+
+      {/* Booking Modal */}
+      <Modal
+        title="Complete Your Booking"
+        open={isModalVisible}
+        onOk={handleModalOk}
+        onCancel={handleModalCancel}
+        footer={null}
+      >
+        <BookingPayment
+          onBookingClick={handleModalOk}
+          currency={currency}
+          amount={item.price}
+          item={item}
+          promoCode={promoCode}
+        />
+      </Modal>
     </div>
   );
 };
@@ -315,6 +367,7 @@ const BookTransportation = () => {
   const [loading, setLoading] = useState(false);
   const [currency, setCurrency] = useState(null);
 
+  console.log("currency", currency);
   const fetchTransportation = async () => {
     setLoading(true);
     try {
