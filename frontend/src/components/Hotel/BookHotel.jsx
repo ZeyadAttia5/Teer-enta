@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import hotelPic from "./hotelPic.webp";
+import hotelPic from "../../assets/Blue Hotel Promo Poster.jpg";
 
 import {
   Card,
@@ -496,7 +496,7 @@ const BookHotel = () => {
           className="w-[90%] min-h-[600px] flex my-20 mx-auto shadow"
           classNames={{
             body: "flex flex-1 flex-col justify-center",
-            cover: "w-2/5",
+            cover: "w-1/3",
           }}
           cover={<img alt="" className="size-full " src={hotelPic} />}
         >

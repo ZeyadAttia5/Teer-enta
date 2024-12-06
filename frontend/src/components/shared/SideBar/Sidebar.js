@@ -17,6 +17,7 @@ import {
 
 import { LuPlane } from "react-icons/lu";
 import { MdOutlineLocalActivity } from "react-icons/md";
+import AccountDeletionRequests from "../../Users/requestedAccountsDeletion";
 
 const Sidebar = ({ visible, onClose }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -296,12 +297,11 @@ const Sidebar = ({ visible, onClose }) => {
               <Menu.Item key="10" onClick={() => handleClick("/addUser")} icon={<UserOutlined />}>
                 Add User
               </Menu.Item>,
-              <Menu.Item
-                key="11"
-                onClick={() => handleClick("/pendingUsers")}
-                icon={<UserOutlined />}
-              >
+              <Menu.Item key="11" onClick={() => handleClick("/pendingUsers")} icon={<UserOutlined />}>
                 Pending Users
+              </Menu.Item>,
+              <Menu.Item key="34" onClick={() => handleClick("/AllDeletionRequests")} icon={<UserOutlined />}>
+                Account Deletion Requests
               </Menu.Item>,
             ])}
           </Menu.SubMenu>
