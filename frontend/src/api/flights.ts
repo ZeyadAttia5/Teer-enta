@@ -32,13 +32,14 @@ export const getFlightOffers = async (origin, destination, departureDate, adults
       },
     });
 }
-export const bookFlight = async (flightOffer, travelers ,promoCode) => {
+export const bookFlight = async (flightOffer, travelers ,promoCode,paymentMethod) => {
     return await axios.post(
       `${API_BASE_URL}/bookFlight`,
       {
         offer: flightOffer,
         travelers: travelers,
-        promoCode: promoCode
+        promoCode: promoCode,
+        paymentMethod
       },
       {
         headers: {

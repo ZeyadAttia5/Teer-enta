@@ -15,6 +15,7 @@ import {
   Row,
   Col,
   message,
+  Result,
 } from "antd";
 import {
   LoadingOutlined,
@@ -37,9 +38,10 @@ import {
   SquareChevronRight,
 } from "lucide-react";
 import { Fade } from "react-awesome-reveal";
+import { useNavigate } from "react-router-dom";
 
-const { Title, Text } = Typography;
 const { Option } = Select;
+
 
 const FlightTicket = ({
   departureCity = "New York",
@@ -134,11 +136,15 @@ const FlightTicket = ({
 
 const BookFlight = () => {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+
+
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(-1);
   const [promoCode, setPromoCode] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedOffer, setSelectedOffer] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [departureAirports, setDepartureAirports] = useState([]);
   const [destinationAirports, setDestinationAirports] = useState([]);
 
@@ -202,7 +208,7 @@ const BookFlight = () => {
 
   const handleStepChange = async (step) => {
     try {
-      console.log(form.getFieldsValue());
+      console.log(form.getFieldsValue(true));
       if (step > currentStep) await form.validateFields();
       setCurrentStep(step);
       if (step === 1) fetchAirports();
@@ -212,44 +218,50 @@ const BookFlight = () => {
       message.error("Please fill in all required fields");
     }
   };
-  const handleFinish = async (values) => {
-    console.log(values);
-    setLoading(true);
+  const handleFinish = async (_) => {
+    setLoading(4);
+    const values = form.getFieldsValue(true);
     try {
       const user = localStorage.getItem("user");
       if (user) {
         let data = await bookFlight(
-          flights[selectedOffer],
+          values["selectedFlight"],
           [
             {
               id: 1,
-              ...values.passenger,
-              dateOfBirth: values.passenger.dateOfBirth.format("YYYY-MM-DD"),
+              dateOfBirth: "2024-10-10",
+              name: {
+                firstName: values.firstName,
+                lastName: values.lastName,
+              },
+              gender: values.gender.toUpperCase(),
+
               contact: {
-                ...values.passenger.contact,
+                emailAddress: values.email,
                 phones: [
                   {
                     deviceType: "MOBILE",
-                    ...values.passenger.contact.phones[0],
+                    countryCallingCode: "20",
+                    number: values.phoneNumber,
                   },
                 ],
               },
             },
           ],
-          promoCode
+          promoCode,
+          paymentMethod
         );
-        console.log(data.data);
         message.success("Booking submitted successfully!");
-        setCurrentStep(0);
+        setCurrentStep(5);
       } else {
         message.error("Please login to book a flight");
       }
     } catch (error) {
       console.log("Error submitting booking:");
       console.log(error);
-      message.error(error.data);
+      message.error(error?.response?.data?.message);
     } finally {
-      setLoading(false);
+      setLoading(-1);
     }
   };
 
@@ -481,6 +493,31 @@ const BookFlight = () => {
         isloading={loading === 3}
         amount={flights[selectedOffer] && flights[selectedOffer].price.total}
         setPromoCode={setPromoCode}
+        setPaymentMethod={setPaymentMethod}
+      />
+    ),
+    5: (
+      <Result
+        status="success"
+        title="Successfully Booked Flight,Have a safe journey!"
+        subTitle="Flight number: 2017182818828182881"
+        extra={[
+          <Button type="default" onClick={e=>{
+            form.resetFields()
+            navigate('/')
+          }}>
+            Go Home
+          </Button>,
+          <Button
+          type="primary"
+            onClick={(e) => {
+              form.resetFields();
+              setCurrentStep(0);
+            }}
+          >
+            Book Another Flight
+          </Button>,
+        ]}
       />
     ),
   };
@@ -532,7 +569,7 @@ const BookFlight = () => {
                 </Fade>
               </Form>
 
-              {loading === -1 && (
+              {loading === -1 && currentStep!=5 && (
                 <Fade direction="up">
                   <footer className="flex gap-2">
                     {currentStep > 0 && (
