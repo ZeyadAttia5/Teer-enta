@@ -406,7 +406,7 @@ const TouristWelcome = ({ setFlag }) => {
             )}
           </div>
 
-          <span className="text-4xl font-bold text-first ml-12 mt-16 block">
+          <span className="text-4xl font-bold text-first ml-12 mt-16 block mb-3">
             Top itineraries you can't miss
           </span>
 
@@ -453,7 +453,7 @@ const TouristWelcome = ({ setFlag }) => {
             Top activities you can't miss
           </span>
 
-          <div className="flex justify-center ml-4">
+          <div className="flex justify-center">
             <div className="grid grid-cols-3 gap-8 w-[90%]">
               {touristActivities?.slice(5, 8).map((place) => (
                 // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>

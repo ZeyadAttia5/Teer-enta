@@ -172,7 +172,7 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
       <Button
         type="danger"
         block
-        className="bg-[#1a2b49] border-[#1a2b49] text-white hover:bg-[#526D82] hover:border-[#526D82]"
+        className="bg-first text-white hover:bg-black"
         onClick={() => {
           bookOffer();
         }}
@@ -401,7 +401,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
             type="danger"
             block
             size="large"
-            className="bg-[#1a2b49] border-[#1a2b49] hover:bg-second hover:border-[#526D82] text-white"
+            className="bg-second hover:bg-gray-600 text-white"
             icon={<SearchOutlined />}
             onClick={handleSearch}
           >

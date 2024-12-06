@@ -4,7 +4,7 @@ const ActivitySchema = new mongoose.Schema({
     name: {type: String, required: true},
     date: {type: Date, required: true},
     time: {type: String, required: true},
-    imageUrl: {type: String, required: true},
+    imageUrl: {type: String},
     isBookingOpen: {type: Boolean, default: true},
     location: {
         lat: {type: Number, required: true},

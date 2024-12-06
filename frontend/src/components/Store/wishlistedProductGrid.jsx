@@ -29,6 +29,7 @@ import {addToCartFromWishlist, addToWishlist, deleteWishlistProduct, getWishlist
 import {getCurrency} from "../../api/account.ts";
 
 const { Title, Text } = Typography;
+const { Search } = Input;
 
 const WishlistedProductGrid = ({ setFlag }) => {
   setFlag(false);
@@ -171,23 +172,25 @@ const WishlistedProductGrid = ({ setFlag }) => {
             </Title>
           </div>
 
+          
           {/* Search and Filter Section */}
-          <Card className="mb-6 shadow-sm border-0">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <Input
-                  prefix={<SearchOutlined className="text-gray-400" />}
-                  placeholder="Search wishlist items..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="max-w-md"
-                  size="large"
-              />
+        <div className="flex justify-center mb-8">
+          <div className="flex flex-col gap-4">
+            <Search
+              enterButton={<SearchOutlined />}
+              placeholder="Search by name, location, or tag..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="p-2 rounded-md w-[400px]"
+            />
+            <div className="flex justify-center">
               <FilterDropdown
-                  filters={filters}
-                  onFilterChange={handleFilterChange}
+                filters={filters}
+                onFilterChange={handleFilterChange}
               />
             </div>
-          </Card>
+          </div>
+        </div>
 
           {/* Feedback Message */}
           {feedbackMessage && (
