@@ -212,7 +212,7 @@ function AppContent() {
             <BackButton />
           </div>
         )}
-        <div className={`${!flag && !visibleFlag ? "mt-[80px]" : !flag ? "mt-[125px]" : ""}`}>
+        <div className={`${!flag && !visibleFlag ? "mt-[80px]" : !flag ? "mt-[117px]" : ""}`}>
           <Routes>
             {/* General Routes */}
             <Route path="/" element={<TouristWelcome setFlag={setFlag} />} />
