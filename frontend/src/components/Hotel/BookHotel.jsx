@@ -271,10 +271,17 @@ const ListOffers = ({ hotelOffers, setLoading, setOffer, setStep }) => {
 
 const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
   const [form] = Form.useForm();
+  const [dateError, setDateError] = useState("");
 
   const handleSearch = async () => {
     setLoading(true);
     const values = form.getFieldsValue();
+    if (!values.dates || values.dates.length !== 2) {
+      setDateError("Please select check-in and check-out dates.");
+      setLoading(false);
+      return;
+    }
+    setDateError("");
     const formattedValues = {
       ...values,
       checkInDate: values.dates[0].format("YYYY-MM-DD"),
@@ -292,8 +299,6 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
       message.error("Error searching for hotels. Please try again later.");
     } finally {
       setLoading(false);
-
-      // onSearch();
     }
   };
 
@@ -336,6 +341,8 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
         <Form.Item
           name="dates"
           label="Check-in and Check-out Dates"
+          validateStatus={dateError ? "error" : ""}
+          help={dateError}
           rules={[
             ({ getFieldValue }) => ({
               validator(_, value) {
@@ -402,16 +409,6 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
           </Button>
         </Form.Item>
       </Form>
-
-      {/* <Space direction="vertical" className="w-full mt-4">
-        <Button
-          block
-          onClick={() => form.resetFields()}
-          className="bg-[#9DB2BF] border-[#9DB2BF] hover:bg-[#686d7e] hover:border-[#686d7e] text-white"
-        >
-          Reset Form
-        </Button>
-      </Space> */}
     </Card>
   );
 };
