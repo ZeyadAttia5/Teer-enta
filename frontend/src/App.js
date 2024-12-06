@@ -87,7 +87,8 @@ function AppContent() {
   const showBackButton =
     location.pathname !== "/" &&
     location.pathname !== "/login" &&
-    location.pathname !== "/signup";
+    location.pathname !== "/signup" &&
+    location.pathname !== "/reports";
   const [isNotificationIncoming, setIsNotificationIncoming] = useState(true);
   const [incomingNotification, setIncomingNotification] = useState(null);
   const user1 = JSON.parse(localStorage.getItem("user"));

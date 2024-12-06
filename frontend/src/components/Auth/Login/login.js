@@ -93,7 +93,11 @@ function Login({ setFlag, flag }) {
       localStorage.setItem("accessToken", accessToken);
       // Initialize notifications after storing credentials
       setMessage(response?.data.message);
-      navigate("/");
+      if(user && user.userRole === "Tourist") {
+        navigate("/");
+      }else{
+        navigate("/reports");
+      }
       // window.reload();
       setFlag(false);
     } catch (error) {
@@ -278,7 +282,7 @@ function Login({ setFlag, flag }) {
             </div>
             <button
               type="submit"
-              className="buttonlogin bg-first block pt-3 pb-3 pl-5 pr-5 text-white text-sm leading-5 font-medium w-full rounded-lg uppercase"
+              className="buttonlogin bg-first hover:bg-black block pt-3 pb-3 pl-5 pr-5 text-white text-sm leading-5 font-medium w-full rounded-lg uppercase"
               onClick={handleLoginSubmission}
             >
               Login
