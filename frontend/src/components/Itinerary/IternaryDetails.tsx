@@ -332,15 +332,6 @@ const ItineraryDetails: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
-
-                                {itinerary.additionalInfo && (
-                                    <div className="border-t border-gray-100 pt-6">
-                                        <Text className="text-gray-500 block mb-2">Additional Information</Text>
-                                        <Text className="text-gray-800">
-                                            {itinerary.additionalInfo}
-                                        </Text>
-                                    </div>
-                                )}
                             </div>
                         </Card>
 
