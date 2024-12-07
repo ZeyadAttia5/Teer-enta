@@ -24,8 +24,12 @@ Teer Enta combines technology and travel to simplify your planning process. From
 ## 🎯 Motivation
 
 *Why Teer Enta?*  
-We’ve all faced the challenges of travel planning — juggling recommendations, coordinating bookings, and managing budgets. Wanderlust was born to solve these problems, creating a stress-free, enjoyable travel experience.
-
+Travel planning can often feel overwhelming, with countless websites and tools required to organize a single trip. From researching destinations to booking accommodations and managing budgets, travelers frequently find themselves juggling multiple platforms.
+We created Teer Enta to simplify and streamline the travel experience. Our goal is to provide:
+- A single platform for planning, booking, and managing trips.
+- An intuitive interface for tourists, sellers, and tour guides.
+- Features that empower users to discover unique experiences and make informed decisions.
+By combining personalization, seamless transactions, and comprehensive planning tools, this app ensures stress-free travel, enabling users to focus on creating memories rather than logistics.
 ---
 
 ## 🛠️ Tech Stack
@@ -75,20 +79,50 @@ We’ve all faced the challenges of travel planning — juggling recommendations
 
 ### ⏰ Real-Time Updates
 - Booking notifications
-- Weather alerts
 - Schedule changes
 
+### ✈️ Comprehensive Travel Planning
+- Explore historical places
+- Plan customized itineraries for well-organized trips
+
+### 🏨 Seamless Booking Experience
+- Book transportation, hotels, and flights
+- Full control over destination, time, and airport selection on the same platform
+- Effortless hotel configuration and booking
+
+### 🛍️ Integrated Souvenir Shopping
+- Buy souvenirs from partnered sellers directly on the website
+- Secure payments powered by Stripe
+
+### 💳 Financial Transparency
+- Check your wallet or card balance anytime
+
+### 🛒 For Sellers
+- Effortless product management
+- Edit and update listings easily
+
+### 👨‍💼 For Tour Guides
+- Directly contact customers
+- View associated itineraries for better coordination
 ---
 
 ## 📸 Screenshots
 <div align="center">
-  <img src="[path_to_screenshot]" alt="Homepage Screenshot" width="700px"/>
+  <img src="./screens/homepage.png" alt="Homepage Screenshot" width="700px"/>
   <p>Teer Enta Homepage</p>
+  <img src="./screens/historical.png" alt="Historical Places Screenshot" width="700px"/>
+  <p>Historical Places</p>
+  <img src="./screens/flights.png" alt="Flights Screenshot" width="700px"/>
+  <p>Flights</p>
+  <img src="./screens/hotels.png" alt="Hotels Places Screenshot" width="700px"/>
+  <p>Hotels</p>
+  <img src="./screens/promo.png" alt="Promo Table Screenshot" width="700px"/>
+  <p>Promo Table</p>
+  <img src="./screens/complaint.png" alt="Complaint Table Screenshot" width="700px"/>
+  <p>Complaint Table</p>
+  <img src="./screens/activity.png" alt="Activity Table Screenshot" width="700px"/>
+  <p>Activity Table</p>
 </div>
-
-*Add more screenshots with descriptions for key features.*
-
----
 
 ## 🚀 Quick Start
 
