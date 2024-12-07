@@ -537,32 +537,36 @@ exports.addRatingToActivity = async (req, res) => {
     try {
         const {id} = req.params;
         const {rating} = req.body;
-
         const userId = req.user._id;
+
         console.log("1",rating)
-        const activity = await Activity.findById(id);
+        const activity = await Activity.findById(id).populate('createdBy');
         console.log("2",rating)
-        if (!activity) {
+        if (!activity ||!activity.isActive) {
             return res.status(404).json({message: "Activity not found"});
         }
 
         const booking = await BookedActivity.findOne({
             createdBy: userId,
             activity: id,
-            // status: 'Completed'
+            isActive: true,
+            status: 'Completed'
         });
         console.log("3",rating)
 
         if (!booking) {
             return res.status(400).json({message: "You haven't completed this activity"});
         }
+        const existingRating = activity.ratings.find((r) => r.user.toString() === userId);
 
-        activity.ratings.push({
-            user: userId,
-            rating: rating,
-            createdAt: new Date()
-        });
-        console.log("4",rating)
+        if (existingRating) {
+            existingRating.rating = rating;
+        } else {
+            activity.ratings.push({
+                user: userId,
+                rating: rating,
+            });
+        }
         await activity.save();
 
 

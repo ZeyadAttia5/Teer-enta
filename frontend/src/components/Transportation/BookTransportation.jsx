@@ -69,6 +69,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
   const [pickupAddress, setPickupAddress] = useState(null);
   const [dropOffAddress, setDropOffAddress] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
+  const [paymentMethod, setPaymentMethod] = useState("wallet");
 
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
@@ -350,13 +351,14 @@ const TransportationCard = ({ item, currency, onBook }) => {
         onCancel={handleModalCancel}
         footer={null}
       >
-        <BookingPayment
-          onBookingClick={handleModalOk}
-          currency={currency}
-          amount={item.price}
-          item={item}
-          promoCode={promoCode}
-        />
+          <BookingPayment
+              onBookingClick={handleModalOk}
+              currency={currency}
+              amount={item.price}
+              item={item}
+              promoCode={promoCode}
+              setPaymentMethod={setPaymentMethod}
+          />
       </Modal>
     </div>
   );

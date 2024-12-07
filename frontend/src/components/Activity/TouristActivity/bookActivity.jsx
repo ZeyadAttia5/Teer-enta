@@ -199,6 +199,7 @@ const BookActivity = () => {
                                             <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
                                                 <CheckoutForm
                                                     amount={calculateFinalPrice(currency?.rate * activity?.price?.max)}
+                                                    code={currency?.code}
                                                 />
                                             </Elements>
                                         </div>

@@ -96,7 +96,6 @@ const BookItinerary = () => {
 
     return (
         <div className="min-h-screen py-12 px-4">
-            <BackButton />
             <div className="max-w-4xl mx-auto">
                 <Card className="border-0" bodyStyle={{ padding: 0 }}>
                     {/* Header */}
@@ -219,6 +218,7 @@ const BookItinerary = () => {
                                             <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
                                                 <CheckoutForm
                                                     amount={calculateFinalPrice(currency?.rate * itinerary?.price)}
+                                                    code={currency?.code}
                                                 />
                                             </Elements>
                                         </div>

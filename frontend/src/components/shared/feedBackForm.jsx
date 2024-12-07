@@ -52,7 +52,7 @@ const FeedbackForm = ({ entity, onSubmit }) => {
                 </Form.Item>
             </Card>
             <Form.Item>
-                <Button type="primary" htmlType="submit">
+                <Button type="danger" className="bg-blue-950 hover:bg-black text-white" htmlType="submit">
                     Submit Feedback
                 </Button>
             </Form.Item>

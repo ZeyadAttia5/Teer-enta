@@ -41,12 +41,12 @@ const ForgotPassword = () => {
                         />
                     </div>
                     <Button
-                        type="dander"
+                        type="danger"
                         htmlType="submit"
                         block
                         loading={loading}
                         size="large"
-                        className="bg-second text-white hover:bg-third"
+                        className="bg-blue-950 text-white hover:bg-black"
                     >
                         Request OTP
                     </Button>

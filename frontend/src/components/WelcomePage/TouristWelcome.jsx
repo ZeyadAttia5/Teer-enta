@@ -491,6 +491,7 @@ const TouristWelcome = ({ setFlag }) => {
                   hasNotification={place.hasNotification}
                   currencyCode={currency?.code}
                   currencyRate={currency?.rate}
+                  specialDiscounts={place.specialDiscounts}
                 />
                 // </Link>
               ))}

@@ -52,12 +52,12 @@ const ResetPassword = () => {
                         />
                     </div>
                     <Button
-                        type="primary"
+                        type="danger"
                         htmlType="submit"
                         block
                         loading={loading}
                         size="large"
-                        className="bg-blue-500 hover:bg-blue-600"
+                        className="bg-blue-950 hover:bg-black text-white"
                     >
                         Reset Password
                     </Button>

@@ -6,8 +6,8 @@ import {
 
 const ItineraryCard = ({itinerary, navigate, currency  ,avgRating}) => {
     return (
-        <div className="w-[380px] transition-shadow duration-300 hover:shadow-xl cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200" onClick={() => navigate(`/itinerary/iternaryDetails/${itinerary._id}`)}>
-            <div className="relative h-[280px]">
+        <div className="w-[370px] transition-shadow duration-300 hover:shadow-xl cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200" onClick={() => navigate(`/itinerary/iternaryDetails/${itinerary._id}`)}>
+            <div className="relative h-[240px]">
                 <img src={itinerary.imageUrl || "/api/placeholder/400/320"} alt={itinerary.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 via-transparent to-transparent"/>
                 <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -32,8 +32,8 @@ const ItineraryCard = ({itinerary, navigate, currency  ,avgRating}) => {
             </div>
 
             <div className="p-4">
-                <div className="space-y-6">
-                    <div className="space-y-4">
+                <div className="space-y-2">
+                    <div className="space-y-1">
                         <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-5 shadow-sm border border-gray-100">
                             <div className="flex items-center justify-between">
                                 <div className="flex-1">
@@ -88,7 +88,7 @@ const ItineraryCard = ({itinerary, navigate, currency  ,avgRating}) => {
                         </div>
                         <Button
                             type={itinerary.isBookingOpen ? "danger" : "default"}
-                            onClick={(e) => {e.stopPropagation(); navigate(`/itineraries/book/${itinerary._id}`);}}
+                            onClick={(e) => {e.stopPropagation(); navigate(`/itinerary/book/${itinerary._id}`);}}
                             className={`px-6 h-10 rounded-lg font-medium ${
                                 itinerary.isBookingOpen
                                     ? 'bg-blue-950 hover:bg-black text-white'
