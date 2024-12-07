@@ -615,7 +615,7 @@ const BookingGrid = () => {
                           <div className="p-6 space-y-4">
                             <div className="flex justify-between items-start">
                               <Title level={4} className="text-xl font-bold text-blue-950">
-                                {`Trip #${transportation._id.slice(-6)}`}
+                                {`Trip #${transportation.transportation._id.slice(-6)}`}
                               </Title>
                               {renderStatusTag(transportation.status)}
                             </div>

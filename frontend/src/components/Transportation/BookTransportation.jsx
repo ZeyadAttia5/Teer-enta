@@ -351,14 +351,14 @@ const TransportationCard = ({ item, currency, onBook }) => {
         onCancel={handleModalCancel}
         footer={null}
       >
-        <BookingPayment
-          onBookingClick={handleModalOk}
-          currency={currency}
-          amount={item.price}
-          item={item}
-          promoCode={promoCode}
-          setPaymentMethod={setPaymentMethod}
-        />
+          <BookingPayment
+              onBookingClick={handleModalOk}
+              currency={currency}
+              amount={item.price}
+              item={item}
+              promoCode={promoCode}
+              setPaymentMethod={setPaymentMethod}
+          />
       </Modal>
     </div>
   );
