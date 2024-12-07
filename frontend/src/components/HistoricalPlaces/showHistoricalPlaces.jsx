@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getHistoricalPlace } from '../../api/historicalPlaces.ts';
-import { Button, message, Space } from "antd";
-import { CopyOutlined, MailOutlined } from "@ant-design/icons";
 import { getCurrency } from "../../api/account.ts";
+import {Card, Button, message, Skeleton, Tag, Typography, Carousel, Divider} from "antd";
+import {
+    CopyOutlined,
+    MailOutlined,
+    ClockCircleOutlined,
+    EnvironmentOutlined,
+    TagOutlined, InfoCircleOutlined,
+} from "@ant-design/icons";
+import {TicketIcon} from "lucide-react";
 
-const PORT = process.env.REACT_APP_BACKEND_URL;
+const { Title, Paragraph } = Typography;
+
+function TicketOutlined(props: { className: string }) {
+    return null;
+}
 
 const ShowHistoricalPlaces = () => {
     const { id } = useParams();
@@ -79,92 +90,127 @@ const ShowHistoricalPlaces = () => {
     }
 
     return (
-        <div className="max-w-5xl mx-auto mt-10 px-4 sm:px-6 lg:px-8 pb-7">
-            <h1 className="text-4xl font-bold mb-8 text-gray-900 text-center">{historicalPlace?.name}</h1>
-            <div className="mb-8 text-center">
-                <Space>
-                    <Button type='danger' className='hover:bg-gray-300 bg-white' icon={<CopyOutlined />} onClick={handleCopyLink}>
-                        Copy Link
-                    </Button>
-                    <Button type='danger' className='hover:bg-gray-300 bg-white' icon={<MailOutlined />} onClick={handleShareEmail}>
-                        Share via Email
-                    </Button>
-                </Space>
-            </div>
-
-            {historicalPlace?.images && historicalPlace?.images.length > 0 && (
-                <div className="mb-12 group">
-                    <img
-                        className="w-full max-h-96 object-cover rounded-lg shadow-md transition-transform duration-300 ease-in-out"
-                        src={historicalPlace?.images[0]}
-                        alt={historicalPlace?.name}
-                    />
-                </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-600">Opening Hours</h3>
-                    <p className="text-gray-700">{historicalPlace?.openingHours}</p>
-                </div>
-
-                <div>
-                    <h3 className="text-xl font-bold mb-2 text-gray-600">Location</h3>
-                    <p className="text-gray-700">{historicalPlace?.location}</p>
-                </div>
-
-                <div className="md:col-span-2">
-                    <h3 className="text-xl font-bold mb-2 text-gray-600">Description</h3>
-                    <p className="text-gray-700">{historicalPlace?.description}</p>
-                </div>
-
-                <div className="md:col-span-2">
-                    <h3 className="text-xl font-bold mb-2 text-gray-600">Tags</h3>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {historicalPlace?.tags?.map((tag, index) => (
-                            <li
-                                key={index}
-                                className=" p-3 rounded-md transition-colors duration-300 hover:bg-gray-200"
+        <div className="min-h-screen bg-gray-50 py-12">
+            <div className="max-w-5xl mx-auto px-4">
+                <Card className="border-none">
+                    {/* Header Section */}
+                    <div className="text-center mb-6">
+                        <Title level={1} className="text-4xl mb-4">
+                            {historicalPlace?.name}
+                        </Title>
+                        <div className="flex justify-center space-x-4">
+                            <Button
+                                type="danger"
+                                icon={<CopyOutlined />}
+                                onClick={handleCopyLink}
+                                className="bg-blue-950 hover:bg-black text-white"
                             >
-                                
-                
-                  <React.Fragment key={tag.name + index}>
-                    <span className="inline-block bg-green-100 rounded-full px-2 py-1 text-xs font-medium text-green-600 mr-1 mb-1">
-                      {tag.name}
-                    </span>
-                    <span className="inline-block bg-blue-200 rounded-full px-2 py-1 text-xs font-medium text-blue-400 mr-1 mb-1">
-                      {tag.type}
-                    </span>
-                    <span className="inline-block bg-yellow-100 rounded-full px-2 py-1 text-xs font-medium text-yellow-600 mr-1 mb-1">
-                      {tag.historicalPeriod}
-                    </span>
-                  </React.Fragment>
-                
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                                Copy Link
+                            </Button>
+                            <Button
+                                icon={<MailOutlined />}
+                                onClick={handleShareEmail}
+                            >
+                                Share via Email
+                            </Button>
+                        </div>
+                    </div>
 
-                <div className="md:col-span-2">
-                    <h3 className="text-xl font-bold mb-2 text-gray-600">Tickets</h3>
-                    {historicalPlace?.tickets?.length > 0 ? (
-                        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                            {historicalPlace?.tickets?.map((ticket, index) => (
-                                <li
-                                    key={index}
-                                    className=" p-3 rounded-md transition-colors duration-300 hover:bg-gray-200"
-                                >
-                                    <span className="font-medium block">{ticket.type}</span>
-                                    <span className="font-semibold block mt-1">
-                                        {currency?.rate * ticket.price} {currency?.code}
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-gray-700">No tickets available.</p>
+                    {/* Image Carousel */}
+                    {historicalPlace?.images?.length > 0 && (
+                        <div className="mb-8">
+                            <Carousel autoplay>
+                                {historicalPlace.images.map((image, index) => (
+                                    <div key={index}>
+                                        <img
+                                            src={image}
+                                            alt={`${historicalPlace.name} - ${index + 1}`}
+                                            className="w-full h-96 object-cover rounded"
+                                        />
+                                    </div>
+                                ))}
+                            </Carousel>
+                        </div>
                     )}
-                </div>
+
+                    {/* Quick Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div className="flex items-center">
+                            <ClockCircleOutlined className="  text-blue-950 mr-2 text-lg" />
+                            <div>
+                                <div className="text-gray-500 text-sm">Opening Hours</div>
+                                <div>{historicalPlace?.openingHours}</div>
+                            </div>
+                        </div>
+                        <div className="flex items-center">
+                            <EnvironmentOutlined className="  text-blue-950 mr-2 text-lg" />
+                            <div>
+                                <div className="text-gray-500 text-sm">Location</div>
+                                <div>{historicalPlace?.location}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Divider />
+
+                    {/* Description */}
+                    <div className="mb-8">
+                        <div className="flex items-center mb-4">
+                            <InfoCircleOutlined className="text-blue-950 mr-2 text-lg" />
+                            <Title level={4} className="m-0">Description</Title>
+                        </div>
+                        <Paragraph className="text-gray-700">
+                            {historicalPlace?.description}
+                        </Paragraph>
+                    </div>
+
+                    <Divider />
+
+                    {/* Tags */}
+                    <div className="mb-8">
+                        <div className="flex items-center mb-4">
+                            <TagOutlined className="  text-blue-950 mr-2 text-lg" />
+                            <Title level={4} className="m-0">Tags</Title>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {historicalPlace?.tags?.map((tag, index) => (
+                                <div key={index} className="flex gap-2">
+                                    <Tag color="blue">{tag.name}</Tag>
+                                    <Tag color="cyan">{tag.type}</Tag>
+                                    <Tag color="gold">{tag.historicalPeriod}</Tag>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <Divider />
+
+                    {/* Tickets */}
+                    <div>
+                        <div className="flex items-center mb-4">
+                            <TicketOutlined className="  text-blue-950 mr-2 text-lg" />
+                            <Title level={4} className="m-0">Tickets</Title>
+                        </div>
+                        {historicalPlace?.tickets?.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                {historicalPlace.tickets.map((ticket, index) => (
+                                    <div key={index} className="bg-gray-50 p-4 rounded">
+                                        <div className="text-lg font-medium mb-1">
+                                            {ticket.type}
+                                        </div>
+                                        <div className="text-xl text-blue-950 font-semibold">
+                                            {currency?.rate * ticket.price} {currency?.code}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <Paragraph className="text-gray-500 italic">
+                                No tickets available.
+                            </Paragraph>
+                        )}
+                    </div>
+                </Card>
             </div>
         </div>
     );

@@ -35,7 +35,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   UnorderedListOutlined,
-  GlobalOutlined,
+  GlobalOutlined, ShoppingOutlined,
 } from "@ant-design/icons";
 import { getCurrency } from "../../../api/account.ts";
 import FeedbackForm from "../../shared/FeedBackForm/FeedbackForm.jsx";
@@ -261,9 +261,16 @@ const BookingGrid = () => {
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header Section */}
-          <div className="mb-12 text-center">
-            <Title level={2} className="text-4xl font-bold text-blue-950 mb-4">My Travel Bookings</Title>
-            <Text className="text-lg text-gray-600">Manage all your travel experiences in one place</Text>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-3 mb-6 bg-white px-6 py-3 rounded-full shadow-md">
+              <CalendarOutlined className="text-2xl text-red-500"/>
+              <Title level={2} className="m-0">
+                My Bookings
+              </Title>
+            </div>
+                <p className="text-gray-600 max-w-2xl mx-auto">
+                    View and manage your bookings. You can cancel bookings, rate and review your experiences.
+                </p>
           </div>
 
           {/* Filters Section */}
@@ -272,11 +279,11 @@ const BookingGrid = () => {
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <Segmented
                     options={[
-                      { label: "Activities", value: "Activities", icon: <UnorderedListOutlined /> },
-                      { label: "Itineraries", value: "Itineraries", icon: <GlobalOutlined /> },
-                      { label: "Flights", value: "Flights", icon: <ClockCircleOutlined /> },
-                      { label: "Hotels", value: "Hotels", icon: <EnvironmentOutlined /> },
-                      { label: "Transportations", value: "Transportations", icon: <UserOutlined /> }
+                      {label: "Activities", value: "Activities", icon: <UnorderedListOutlined/>},
+                      {label: "Itineraries", value: "Itineraries", icon: <GlobalOutlined/>},
+                      {label: "Flights", value: "Flights", icon: <ClockCircleOutlined/>},
+                      {label: "Hotels", value: "Hotels", icon: <EnvironmentOutlined/>},
+                      {label: "Transportations", value: "Transportations", icon: <UserOutlined/>}
                     ]}
                     value={selectedType}
                     onChange={setSelectedType}
@@ -289,9 +296,9 @@ const BookingGrid = () => {
                       onChange={setTimeFilter}
                       className="min-w-[180px]"
                       options={[
-                        { label: "All Time", value: "all", icon: <ClockCircleOutlined /> },
-                        { label: "Upcoming", value: "upcoming", icon: <CalendarOutlined /> },
-                        { label: "Past", value: "past", icon: <HistoryOutlined /> }
+                        {label: "All Time", value: "all", icon: <ClockCircleOutlined/>},
+                        {label: "Upcoming", value: "upcoming", icon: <CalendarOutlined/>},
+                        {label: "Past", value: "past", icon: <HistoryOutlined/>}
                       ]}
                   />
 
@@ -304,19 +311,29 @@ const BookingGrid = () => {
                       }
                       onChange={(value) => {
                         switch (selectedType) {
-                          case "Activities": setActivityStatus(value); break;
-                          case "Itineraries": setItineraryStatus(value); break;
-                          case "Flights": setFlightStatus(value); break;
-                          case "Hotels": setHotelStatus(value); break;
-                          case "Transportations": setTransportationStatus(value); break;
+                          case "Activities":
+                            setActivityStatus(value);
+                            break;
+                          case "Itineraries":
+                            setItineraryStatus(value);
+                            break;
+                          case "Flights":
+                            setFlightStatus(value);
+                            break;
+                          case "Hotels":
+                            setHotelStatus(value);
+                            break;
+                          case "Transportations":
+                            setTransportationStatus(value);
+                            break;
                         }
                       }}
                       className="min-w-[180px]"
                       options={[
-                        { label: "All Status", value: "All", icon: <UnorderedListOutlined /> },
-                        { label: "Pending", value: "Pending", icon: <ClockCircleOutlined /> },
-                        { label: "Completed", value: "Completed", icon: <CheckCircleOutlined /> },
-                        { label: "Cancelled", value: "Cancelled", icon: <CloseCircleOutlined /> }
+                        {label: "All Status", value: "All", icon: <UnorderedListOutlined/>},
+                        {label: "Pending", value: "Pending", icon: <ClockCircleOutlined/>},
+                        {label: "Completed", value: "Completed", icon: <CheckCircleOutlined/>},
+                        {label: "Cancelled", value: "Cancelled", icon: <CloseCircleOutlined/>}
                       ]}
                   />
                 </div>
@@ -366,19 +383,19 @@ const BookingGrid = () => {
 
                             <div className="space-y-3">
                               <div className="flex items-center text-gray-600">
-                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <CalendarOutlined className="mr-2 text-blue-950"/>
                                 <span>{new Date(activity.date).toLocaleDateString()}</span>
                               </div>
                               <div className="flex items-center text-gray-600">
-                                <UserOutlined className="mr-2 text-blue-950" />
+                                <UserOutlined className="mr-2 text-blue-950"/>
                                 <span>{activity.createdBy.username}</span>
                               </div>
                               <div className="flex items-center text-gray-600">
-                                <EnvironmentOutlined className="mr-2 text-blue-950" />
+                                <EnvironmentOutlined className="mr-2 text-blue-950"/>
                                 <span>Location: {activity.activity.location.lat.toFixed(2)}, {activity.activity.location.lng.toFixed(2)}</span>
                               </div>
                               <div className="flex items-center font-semibold text-blue-950">
-                                <DollarOutlined className="mr-2" />
+                                <DollarOutlined className="mr-2"/>
                                 <span>{currency?.code} {(currency?.rate * activity.activity.price.min).toFixed(2)}</span>
                               </div>
                             </div>
@@ -389,7 +406,7 @@ const BookingGrid = () => {
                                       danger
                                       className="bg-red-600 text-white hover:bg-red-700 border-0"
                                       onClick={() => cancelBooking(activity._id, "activity")}
-                                      icon={<CloseOutlined />}
+                                      icon={<CloseOutlined/>}
                                   >
                                     Cancel Booking
                                   </Button>
@@ -399,7 +416,7 @@ const BookingGrid = () => {
                                       type="danger"
                                       onClick={() => openFeedbackModal('activity', activity.activity._id, activity.activity.name)}
                                       className="bg-blue-950 text-white hover:bg-black border-0"
-                                      icon={<CommentOutlined />}
+                                      icon={<CommentOutlined/>}
                                   >
                                     Rate & Review
                                   </Button>
@@ -410,7 +427,8 @@ const BookingGrid = () => {
                     ))
                 ) : (
                     <div className="col-span-full">
-                      <Empty description={<span className="text-gray-500 text-lg">No activities found</span>} className="my-16" />
+                      <Empty description={<span className="text-gray-500 text-lg">No activities found</span>}
+                             className="my-16"/>
                     </div>
                 )}
               </div>
@@ -447,15 +465,15 @@ const BookingGrid = () => {
 
                             <div className="space-y-3">
                               <div className="flex items-center text-gray-600">
-                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <CalendarOutlined className="mr-2 text-blue-950"/>
                                 <span>{new Date(itinerary.date).toLocaleDateString()}</span>
                               </div>
                               <div className="flex items-center text-gray-600">
-                                <UserOutlined className="mr-2 text-blue-950" />
+                                <UserOutlined className="mr-2 text-blue-950"/>
                                 <span>{itinerary.createdBy.username}</span>
                               </div>
                               <div className="flex items-center font-semibold text-blue-950">
-                                <DollarOutlined className="mr-2" />
+                                <DollarOutlined className="mr-2"/>
                                 <span>{currency?.code} {(currency?.rate * itinerary.itinerary.price).toFixed(2)}</span>
                               </div>
                             </div>
@@ -466,7 +484,7 @@ const BookingGrid = () => {
                                       danger
                                       className="bg-red-600 text-white hover:bg-red-700 border-0"
                                       onClick={() => cancelBooking(itinerary._id, "itinerary")}
-                                      icon={<CloseOutlined />}
+                                      icon={<CloseOutlined/>}
                                   >
                                     Cancel Booking
                                   </Button>
@@ -477,7 +495,7 @@ const BookingGrid = () => {
                                         onClick={() => openFeedbackModal('tourGuide', itinerary.itinerary.createdBy._id, itinerary.itinerary.createdBy.username)}
                                         className="bg-blue-950 text-white hover:bg-black border-0"
                                         type="danger"
-                                        icon={<UserOutlined />}
+                                        icon={<UserOutlined/>}
                                     >
                                       Rate Tour Guide
                                     </Button>
@@ -485,7 +503,7 @@ const BookingGrid = () => {
                                         onClick={() => openFeedbackModal('itinerary', itinerary.itinerary._id, itinerary.itinerary.name)}
                                         className="bg-blue-950 text-white hover:bg-black border-0"
                                         type="danger"
-                                        icon={<CommentOutlined />}
+                                        icon={<CommentOutlined/>}
                                     >
                                       Rate Itinerary
                                     </Button>
@@ -497,7 +515,8 @@ const BookingGrid = () => {
                     ))
                 ) : (
                     <div className="col-span-full">
-                      <Empty description={<span className="text-gray-500 text-lg">No itineraries found</span>} className="my-16" />
+                      <Empty description={<span className="text-gray-500 text-lg">No itineraries found</span>}
+                             className="my-16"/>
                     </div>
                 )}
               </div>
@@ -517,19 +536,19 @@ const BookingGrid = () => {
 
                             <div className="space-y-3">
                               <div className="flex items-center text-gray-600">
-                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <CalendarOutlined className="mr-2 text-blue-950"/>
                                 <span>{new Date(flight.departureDate).toLocaleDateString()}</span>
                               </div>
                               <div className="flex items-center text-gray-600">
-                                <GlobalOutlined className="mr-2 text-blue-950" />
+                                <GlobalOutlined className="mr-2 text-blue-950"/>
                                 <span>From: {flight.departureAirport}</span>
                               </div>
                               <div className="flex items-center text-gray-600">
-                                <GlobalOutlined className="mr-2 text-blue-950" />
+                                <GlobalOutlined className="mr-2 text-blue-950"/>
                                 <span>To: {flight.arrivalAirport}</span>
                               </div>
                               <div className="flex items-center font-semibold text-blue-950">
-                                <DollarOutlined className="mr-2" />
+                                <DollarOutlined className="mr-2"/>
                                 <span>{currency?.code} {(currency?.rate * flight.price).toFixed(2)}</span>
                               </div>
                             </div>
@@ -538,7 +557,8 @@ const BookingGrid = () => {
                     ))
                 ) : (
                     <div className="col-span-full">
-                      <Empty description={<span className="text-gray-500 text-lg">No flights found</span>} className="my-16" />
+                      <Empty description={<span className="text-gray-500 text-lg">No flights found</span>}
+                             className="my-16"/>
                     </div>
                 )}
               </div>
@@ -558,19 +578,19 @@ const BookingGrid = () => {
 
                             <div className="space-y-3">
                               <div className="flex items-center text-gray-600">
-                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <CalendarOutlined className="mr-2 text-blue-950"/>
                                 <span>{new Date(hotel.checkInDate).toLocaleDateString()} - {new Date(hotel.checkOutDate).toLocaleDateString()}</span>
                               </div>
                               <div className="flex items-center text-gray-600">
-                                <UserOutlined className="mr-2 text-blue-950" />
+                                <UserOutlined className="mr-2 text-blue-950"/>
                                 <span>Guests: {hotel.guests}</span>
                               </div>
                               <div className="flex items-center text-gray-600">
-                                <EnvironmentOutlined className="mr-2 text-blue-950" />
+                                <EnvironmentOutlined className="mr-2 text-blue-950"/>
                                 <span>{hotel.hotel.cityCode}</span>
                               </div>
                               <div className="flex items-center font-semibold text-blue-950">
-                                <DollarOutlined className="mr-2" />
+                                <DollarOutlined className="mr-2"/>
                                 <span>{currency?.code} {(currency?.rate * hotel.price).toFixed(2)}</span>
                               </div>
                             </div>
@@ -579,7 +599,8 @@ const BookingGrid = () => {
                     ))
                 ) : (
                     <div className="col-span-full">
-                      <Empty description={<span className="text-gray-500 text-lg">No hotels found</span>} className="my-16" />
+                      <Empty description={<span className="text-gray-500 text-lg">No hotels found</span>}
+                             className="my-16"/>
                     </div>
                 )}
               </div>
@@ -601,15 +622,15 @@ const BookingGrid = () => {
 
                             <div className="space-y-3">
                               <div className="flex items-center text-gray-600">
-                                <CalendarOutlined className="mr-2 text-blue-950" />
+                                <CalendarOutlined className="mr-2 text-blue-950"/>
                                 <span>{new Date(transportation.date).toLocaleDateString()}</span>
                               </div>
                               <div className="flex items-center text-gray-600">
-                                <UserOutlined className="mr-2 text-blue-950" />
+                                <UserOutlined className="mr-2 text-blue-950"/>
                                 <span>{transportation.createdBy.username}</span>
                               </div>
                               <div className="flex items-center font-semibold text-blue-950">
-                                <DollarOutlined className="mr-2" />
+                                <DollarOutlined className="mr-2"/>
                                 <span>{currency?.code} {(currency?.rate * transportation.price).toFixed(2)}</span>
                               </div>
                             </div>
@@ -618,7 +639,8 @@ const BookingGrid = () => {
                     ))
                 ) : (
                     <div className="col-span-full">
-                      <Empty description={<span className="text-gray-500 text-lg">No transportations found</span>} className="my-16" />
+                      <Empty description={<span className="text-gray-500 text-lg">No transportations found</span>}
+                             className="my-16"/>
                     </div>
                 )}
               </div>
@@ -628,7 +650,7 @@ const BookingGrid = () => {
           <Modal
               title={`Rate & Review ${feedbackModal.entityName}`}
               open={feedbackModal.visible}
-              onCancel={() => setFeedbackModal({ visible: false })}
+              onCancel={() => setFeedbackModal({visible: false})}
               footer={null}
               className="rounded-lg"
           >
@@ -649,7 +671,6 @@ const BookingGrid = () => {
                   <Rate
                       value={rating}
                       onChange={(value) => setRating(value)}
-                      className="text-blue-950"
                   />
                 </div>
 
@@ -659,7 +680,7 @@ const BookingGrid = () => {
                       name="comment"
                       rows={4}
                       required
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-950 focus:ring-blue-950"
+                      className="w-full rounded-md border-gray-400 shadow-sm focus:border-blue-950 focus:ring-blue-950"
                       placeholder="Share your experience..."
                   />
                 </div>
@@ -676,7 +697,7 @@ const BookingGrid = () => {
                       type="danger"
                       htmlType="submit"
                       disabled={!rating}
-                      className="bg-blue-950 border-0 hover:bg-black text-white disabled:opacity-50"
+                      className="bg-blue-950 border-0 hover:bg-black text-white disabled:opacity-50 cursor-not-allowed "
                   >
                     Submit
                   </Button>
