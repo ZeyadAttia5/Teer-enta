@@ -94,7 +94,7 @@ const WishlistedProductGrid = ({ setFlag }) => {
       setWishlist(updatedWishlist);
 
     } catch (err) {
-      message.error(err.response.data.message);
+      message.warning(err.response.data.message);
     }
   };
 

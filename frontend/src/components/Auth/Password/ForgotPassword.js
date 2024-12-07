@@ -19,7 +19,7 @@ const ForgotPassword = () => {
             navigate('/reset-password/'+response.data.token);
 
         } catch (error) {
-            message.error('An error occurred. Please try again.');
+            message.warning('An error occurred. Please try again.');
         } finally {
             setLoading(false);
         }

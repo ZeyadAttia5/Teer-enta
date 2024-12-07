@@ -243,7 +243,7 @@ const BookFlight = () => {
       if (step === 2) fetchFlights();
       // if (step === 3)
     } catch (error) {
-      message.error("Please fill in all required fields");
+      message.warning("Please fill in all required fields");
     }
   };
   const handleFinish = async (_) => {
@@ -282,12 +282,12 @@ const BookFlight = () => {
         message.success("Booking submitted successfully!");
         setCurrentStep(5);
       } else {
-        message.error("Please login to book a flight");
+        message.warning("Please login to book a flight");
       }
     } catch (error) {
       console.log("Error submitting booking:");
       console.log(error);
-      message.error(error?.response?.data?.message);
+      message.warning(error?.response?.data?.message);
     } finally {
       setLoading(-1);
     }

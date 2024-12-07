@@ -87,7 +87,7 @@ const ProductDetails = ({ setFlag }) => {
         setAddedToCart(false);
       }, 2000);
     } catch (error) {
-      message.error(error.response.data.message);
+      message.warning(error.response.data.message);
     } finally {
       setIsAddingToCart(false);
     }

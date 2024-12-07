@@ -77,7 +77,7 @@ const CheckoutPage = () => {
             setAddresses(addressesResponse.data.addresses || []);
             setCurrency(currencyResponse.data);
         } catch (error) {
-            message.error('Failed to load checkout data');
+            message.warning('Failed to load checkout data');
             console.error('Checkout data loading error:', error);
         } finally {
             setPageLoading(false);
@@ -100,7 +100,7 @@ const CheckoutPage = () => {
                 icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />
             });
         } catch (error) {
-            message.error({
+            message.warning({
                 content: error.response?.data?.message || "Failed to apply promo code",
                 icon: <InfoCircleOutlined style={{ color: '#ff4d4f' }} />
             });
@@ -149,7 +149,7 @@ const CheckoutPage = () => {
             const response = await getAllAddresses();
             setAddresses(response.data.addresses || []);
         } catch (error) {
-            message.error('Failed to add address');
+            message.warning('Failed to add address');
             console.error('Address addition error:', error);
         } finally {
             setLoading(false);
@@ -167,7 +167,7 @@ const CheckoutPage = () => {
 
     const handleSubmitOrder = async (values) => {
         if (!values.deliveryAddress) {
-            message.error("Please select a delivery address");
+            message.warning("Please select a delivery address");
             return;
         }
 
@@ -195,7 +195,7 @@ const CheckoutPage = () => {
 
 
         } catch (error) {
-            message.error({
+            message.warning({
                 content: error.response?.data?.message || 'Failed to place order',
                 icon: <InfoCircleOutlined style={{ color: '#ff4d4f' }} />
             });

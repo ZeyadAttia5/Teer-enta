@@ -34,7 +34,7 @@ const UnActiveIternaries = ({}) => {
       const data = await getUnActiveItineraries();
       setItineraries(data);
     } catch (error) {
-      message.error("Failed to fetch itineraries");
+      message.warning("Failed to fetch itineraries");
     }
     setLoading(false);
   };
@@ -105,7 +105,7 @@ const UnActiveIternaries = ({}) => {
                 message.success("Item Activated");
                 await fetchItineraries();
               } catch (error) {
-                message.error("Failed to Activate item ");
+                message.warning("Failed to Activate item ");
               } finally {
                 setLoading(false);
               }

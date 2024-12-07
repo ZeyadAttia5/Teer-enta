@@ -64,7 +64,7 @@ const OrderDetails = () => {
             });
             setProductReviews(reviewStatuses);
         } catch (error) {
-            message.error('Failed to fetch order details');
+            message.warning('Failed to fetch order details');
             navigate('/orders');
         } finally {
             setLoading(false);
@@ -89,7 +89,7 @@ const OrderDetails = () => {
                 [productId]: !prev[productId]
             }));
         } catch (error) {
-            message.error('Failed to submit review and rating');
+            message.warning('Failed to submit review and rating');
         }
     };
 
@@ -99,7 +99,7 @@ const OrderDetails = () => {
             message.success('Order cancelled successfully');
             fetchOrderDetails();
         } catch (error) {
-            message.error(error.response?.data?.message || 'Failed to cancel order');
+            message.warning(error.response?.data?.message || 'Failed to cancel order');
         }
     };
 

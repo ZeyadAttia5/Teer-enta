@@ -53,7 +53,7 @@ const BookingPayment = ({
       message.success("Promo code applied successfully!");
     } catch (error) {
       console.log(error);
-      message.error(
+      message.warning(
         error.response?.data?.message || "Failed to apply promo code"
       );
     } finally {

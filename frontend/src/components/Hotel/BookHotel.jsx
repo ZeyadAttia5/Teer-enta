@@ -311,7 +311,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
       let { data } = await getHotels(formattedValues);
       setOffers(data);
     } catch (error) {
-      message.error("Error searching for hotels. Please try again later.");
+      message.warning("Error searching for hotels. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -342,7 +342,7 @@ const HotelSearchForm = ({ setOffers, setLoading, onSearch, setStep }) => {
             onPlaceSelected={(place) => {
               console.log("Place selected:", !place);
               if (!place?.address_components)
-                return message.error("Invalid city selected");
+                return message.warning("Invalid city selected");
               let destinationCity = place?.address_components[0].long_name;
 
               form.setFieldsValue({
@@ -458,12 +458,12 @@ const BookHotel = () => {
         console.log("Hotel booked:", data);
         message.success("Hotel booked successfully!");
       } else {
-        message.error("You need to login first");
+        message.warning("You need to login first");
       }
       setStep(0);
     } catch (error) {
       console.log("Error booking hotel:", error);
-      message.error(error.response.data.message);
+      message.warning(error.response.data.message);
     } finally {
       setLoading(false);
     }

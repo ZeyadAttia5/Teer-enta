@@ -54,7 +54,7 @@ const CreateTransportation = () => {
         await createTransportation(formattedValues);
         message.success("Transportation created successfully");
       } catch (error) {
-        message.error("Failed to create transportation");
+        message.warning("Failed to create transportation");
         console.error("Form submission error:", error);
       }
     } catch (error) {
