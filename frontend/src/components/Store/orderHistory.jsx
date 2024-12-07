@@ -27,7 +27,7 @@ import {
     DollarOutlined,
     FilterOutlined,
     SearchOutlined,
-    ShoppingCartOutlined
+    ShoppingCartOutlined, HeartFilled, OrderedListOutlined
 } from '@ant-design/icons';
 import { getOrders, cancelOrder } from '../../api/order.ts';
 import { getMyCurrency } from '../../api/profile.ts';
@@ -304,16 +304,19 @@ const OrderHistory = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mb-8">
-                    <Title level={2} className="text-center text-indigo-900 mb-6">
-                        <ShoppingOutlined className="mr-3" />
-                        Order History
-                    </Title>
-
-                    {currency && (
-                        <Text className="text-gray-500 block text-center mb-6">
-                            Prices shown in {currency.code} (1 USD = {currency.rate} {currency.code})
-                        </Text>
-                    )}
+                    <div className="text-center mb-12">
+                        <div className="inline-flex items-center gap-3 mb-6 bg-white px-6 py-3 rounded-full shadow-md">
+                            <ShoppingOutlined className="text-2xl text-red-500"/>
+                            <Title level={2} className="m-0">
+                                Order History
+                            </Title>
+                        </div>
+                        {currency && (
+                            <p className="text-gray-600 max-w-2xl mx-auto">
+                                Prices shown in {currency.code} (1 USD = {currency.rate} {currency.code})
+                            </p>
+                        )}
+                    </div>
 
                     {/* Statistics Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
@@ -321,28 +324,28 @@ const OrderHistory = () => {
                             <Statistic
                                 title="Total Orders"
                                 value={stats.total}
-                                prefix={<ShoppingCartOutlined className="text-indigo-600" />}
+                                prefix={<ShoppingCartOutlined className="text-indigo-600"/>}
                             />
                         </Card>
                         <Card className="shadow-md hover:shadow-lg transition-shadow">
                             <Statistic
                                 title="Pending"
                                 value={stats.pending}
-                                prefix={<ClockCircleOutlined className="text-indigo-600" />}
+                                prefix={<ClockCircleOutlined className="text-indigo-600"/>}
                             />
                         </Card>
                         <Card className="shadow-md hover:shadow-lg transition-shadow">
                             <Statistic
                                 title="Completed"
                                 value={stats.completed}
-                                prefix={<CheckCircleOutlined className="text-green-600" />}
+                                prefix={<CheckCircleOutlined className="text-green-600"/>}
                             />
                         </Card>
                         <Card className="shadow-md hover:shadow-lg transition-shadow">
                             <Statistic
                                 title="Cancelled"
                                 value={stats.cancelled}
-                                prefix={<CloseCircleOutlined className="text-red-600" />}
+                                prefix={<CloseCircleOutlined className="text-red-600"/>}
                             />
                         </Card>
                         <Card className="shadow-md hover:shadow-lg transition-shadow">
@@ -350,7 +353,7 @@ const OrderHistory = () => {
                                 <Statistic
                                     title="Total Spent"
                                     value={stats.totalSpent}
-                                    prefix={<DollarOutlined className="text-green-600" />}
+                                    prefix={<DollarOutlined className="text-green-600"/>}
                                 />
                             </Tooltip>
                         </Card>
@@ -361,7 +364,7 @@ const OrderHistory = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <Input
                                 placeholder="Search orders..."
-                                prefix={<SearchOutlined className="text-gray-400" />}
+                                prefix={<SearchOutlined className="text-gray-400"/>}
                                 onChange={e => handleSearch(e.target.value)}
                                 className="w-full"
                             />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import hotelPic from "./hotelPic.webp";
+import hotelPic from "../../assets/Blue Hotel Promo Poster.jpg";
 
 import {
   Card,
@@ -37,6 +37,7 @@ import AutoComplete from "react-google-autocomplete";
 import BookingPayment from "../shared/BookingPayment.jsx";
 import { Fade } from "react-awesome-reveal";
 import { SquareChevronLeft } from "lucide-react";
+import {getCurrency} from "../../api/account.ts";
 
 const { Text, Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -68,6 +69,19 @@ const CustomProgressBar = ({ step, setStep, loading }) => {
 const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   const { hotel, offers } = offer;
   const mainOffer = offers[0];
+  const [currency,setCurrency] = useState(null);
+  useEffect(() => {
+    fetchCurrency() ;
+  }, []);
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      // console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
+    }
+  };
 
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString("en-US", {
@@ -160,7 +174,8 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
       </footer>
       <div className="flex justify-end">
         <section className="font-bold text-2xl flex items-end mb-5">
-          {parseFloat(mainOffer?.price?.total).toLocaleString()} €
+
+          {parseFloat(mainOffer?.price?.total * currency?.rate).toLocaleString()} {currency?.code}
         </section>
       </div>
       {mainOffer?.policies?.cancellations &&
@@ -419,7 +434,20 @@ const BookHotel = () => {
   const [loading, setLoading] = useState(false);
   const [offer, setOffer] = useState(null);
   const [promoCode, setPromoCode] = useState(null);
-
+  const [currency,setCurrency] = useState(null);
+  const [paymentMethod,setPaymentMethod] = useState(null);
+  useEffect(() => {
+    fetchCurrency() ;
+  }, []);
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      // console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
+    }
+  };
   console.log("Step", step);
   const book = async () => {
     setLoading(true);
@@ -470,8 +498,10 @@ const BookHotel = () => {
         <BookingPayment
           onBookingClick={book}
           isloading={loading}
-          amount={offer && offer.offer.price.total}
+          amount={offer && offer.offer.price.total }
           setPromoCode={setPromoCode}
+          currency={currency}
+          setPaymentMethod={setPaymentMethod}
         />
       ),
     },
@@ -496,7 +526,7 @@ const BookHotel = () => {
           className="w-[90%] min-h-[600px] flex my-20 mx-auto shadow"
           classNames={{
             body: "flex flex-1 flex-col justify-center",
-            cover: "w-2/5",
+            cover: "w-1/3",
           }}
           cover={<img alt="" className="size-full " src={hotelPic} />}
         >

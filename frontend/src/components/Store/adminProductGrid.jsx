@@ -338,7 +338,7 @@ const AdminProductGrid = ({ setFlag }) => {
                       <img
                         src={product.image || product.imageUrl}
                         alt={product.name}
-                        className="absolute top-0 left-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        className="absolute top-0 left-0 h-full w-full object-cover transition-transform duration-300"
                       />
 
                       {/* Overlay with Actions */}

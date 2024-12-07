@@ -179,6 +179,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
             {user &&
               (user.userRole === "Tourist" ||
                 user.userRole === "Advertiser" ||
+                  user.userRole === "Seller" ||
                 user.userRole === "TourGuide") && (
                     <div
                         className="flex-row text-first hover:border-b-2 px-2 hover:border-first transition-all duration-300 transform cursor-pointer">

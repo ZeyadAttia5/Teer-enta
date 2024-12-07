@@ -426,8 +426,6 @@ function Signup({ setFlag }) {
 
       setMessage(response.data.message);
       if (selectedRole === "Tourist") {
-        navigate("/");
-      } else {
         navigate("/login");
       }
       setFlag(false);
@@ -642,7 +640,7 @@ function Signup({ setFlag }) {
                     </h6>
                     <div className="mt-1">
                       <input
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="appearance-none block w-[180px] px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         type="date"
                         name="dob"
                         value={dob}
@@ -671,7 +669,7 @@ function Signup({ setFlag }) {
                           selectedRole !== "Tourist" ? "hidden" : ""
                         }`}
                       >
-                        <div style={{ width: "100%", margin: "auto" }}>
+                        <div style={{ width: "200px", margin: "auto" }}>
                           <Select
                             className=""
                             options={options}

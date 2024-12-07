@@ -2,34 +2,34 @@ import React from "react";
 import {Link} from "react-router-dom";
 import {requestAccountDeletion} from "../../api/account.ts";
 import {useNavigate} from "react-router-dom";
-import {message as messageAd} from "antd";
+import {message, message as messageAd} from "antd";
 
-function ConfirmationModal({isOpen, onClose, onConfirm, message}) {
+function ConfirmationModal({isOpen, onClose, onConfirm ,message}) {
     const navigate = useNavigate();
     if (!isOpen) return null;
     const handleModalClick = async (e) => {
-        onConfirm();
+        try{
+            onConfirm();
 
-        if (message === "Are you sure you want to delete your account?") {
-            try {
-                const reponse = await requestAccountDeletion();
-                messageAd.success(reponse.data.message);
-                localStorage.removeItem("user");
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("isAuthenticated");
-                navigate("/");
-            } catch (err) {
-                messageAd.error(err.response.data.message);
+            if (message === "Are you sure you want to delete your account?") {
+                    const response = await requestAccountDeletion();
+                    messageAd.success(response.data.message);
+                    navigate("/reports");
             }
-            // window.location.reload();
+            if (message === "Are you sure you want to log out?") {
+                // localStorage.removeItem("user");
+                // localStorage.removeItem("accessToken");
+                // localStorage.removeItem("isAuthenticated");
+                // delete all localStorage items
+                localStorage.clear();
+                navigate("/");
+                // window.location.reload();
+            }
+        }catch (error){
+            messageAd.info(error.response.data.message);
+            console.error(error);
         }
-        if (message === "Are you sure you want to log out?") {
-            localStorage.removeItem("user");
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("isAuthenticated");
-            navigate("/");
-            // window.location.reload();
-        }
+
     };
 
     return (

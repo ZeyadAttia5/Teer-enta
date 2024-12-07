@@ -76,6 +76,7 @@ import {
   setupMessageListener,
 } from "./services/firebase";
 import PromoCodeStrip from "./components/PromoCodeAdmin/PromoCodeStrip";
+import AccountDeletionRequests from "./components/Users/requestedAccountsDeletion";
 
 function AppContent() {
   const [flag, setFlag] = useState(false);
@@ -305,6 +306,11 @@ function AppContent() {
               path="/requestAccountDeletion"
               element={<DeleteAccountButton setFlag={setFlag} />}
             />
+            <Route
+              path="/AllDeletionRequests"
+              element={<AccountDeletionRequests setFlag={setFlag}/>}
+            >
+            </Route>
             <Route path="/newProfile" element={<NewProfile />} />
             {/* Product Management Routes */}
             <Route
