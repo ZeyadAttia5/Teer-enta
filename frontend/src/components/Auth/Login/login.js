@@ -176,8 +176,8 @@ function Login({ setFlag, flag }) {
             onTagsChange={setSelectedTags}
           />
           <Button
-            type="primary"
-            className="mt-4 w-full"
+            type="danger"
+            className="mt-4 bg-first hover:bg-black text-white w-full"
             loading={isLoading}
             onClick={async () => {
               try {
