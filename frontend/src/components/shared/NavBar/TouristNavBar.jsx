@@ -98,7 +98,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
         <div className="flex gap-4 ml-8">
           {/* Logo Section */}
           <span className="ml-16 text-lg leading-7">
-            <div className="cursor-pointer w-fit border border-transparent  p-2 rounded-md transition-all duration-300 hover:scale-105">
+            <div className="cursor-pointer w-fit border border-transparent  p-2 rounded-md transition-all duration-300 ">
               {/* Logo Link */}
               <Link to={(user === null) || (user && user.userRole === "Tourist") ? "/" : "/reports"} className="ring-0">
                 <img
@@ -206,55 +206,46 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
 
         {/* Mobile Menu */}
         {["xs", "sm", "md"].includes(size) && (
-          <SideBar
-            classNames={{
-              body: "bg-fourth text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
-              header: "bg-fourth text-white font-bold text-lg p-4",
-            }}
-          >
-            {user && user.userRole === "Tourist" && (
-              <div className="flex flex-col gap-4 w-full items-center mb-4">
-                {/* Mobile Bookings Icon */}
-                <div
-                  onClick={() => navigate("/Bookings")}
-                  className="flex items-center justify-center p-2 bg-fourth text-first hover:bg-second rounded-full shadow-md transition-all duration-300 transform hover:scale-110 cursor-pointer w-12 h-12"
-                >
-                  <CalendarOutlined className="text-2xl" />
-                </div>
-                {/* Mobile Cart Icon */}
-                <div
-                  onClick={() => navigate("/products/cart")}
-                  className="flex items-center justify-center p-2 bg-fourth text-first hover:bg-second rounded-full shadow-md transition-all duration-300 transform hover:scale-110 cursor-pointer w-12 h-12"
-                >
-                  <Badge count={cartCount} offset={[-5, 5]}>
-                    <ShoppingCartOutlined className="text-2xl" />
-                  </Badge>
-                </div>
-                {/* Mobile Notifications Icon */}
-                <div className=" text-first hover:border-b-2 hover:border-first shadow-md transition-all duration-300 transform hover:scale-110 cursor-pointer w-12 h-12">
-                  <NotificationIcon />
-                  <span className="text-black">Notifications</span>
-                </div>
+            <SideBar
+                classNames={{
+                  body: "bg-fourth text-white flex flex-col items-center p-4 rounded-lg shadow-lg",
+                  header: "bg-fourth text-white font-bold text-lg p-4",
+                }}
+            >
+              {user && user.userRole === "Tourist" && (
+                  <div className="flex flex-col gap-4 w-full items-center mb-4">
+                    {/* Mobile Bookings Icon */}
+                    <div
+                        onClick={() => navigate("/Bookings")}
+                        className="flex items-center justify-center p-2 bg-fourth text-first  rounded-full shadow-md transition-all duration-300 transform  cursor-pointer w-12 h-12"
+                    >
+                      <CalendarOutlined className="text-2xl"/>
+                    </div>
+                    {/* Mobile Cart Icon */}
+                    <div
+                        onClick={() => navigate("/products/cart")}
+                        className="flex items-center justify-center p-2 bg-fourth text-first  rounded-full shadow-md transition-all duration-300 transform  cursor-pointer w-12 h-12"
+                    >
+                      <Badge count={cartCount} offset={[-5, 5]}>
+                        <ShoppingCartOutlined className="text-2xl"/>
+                      </Badge>
+                    </div>
+                    {/* Mobile Notifications Icon */}
+                    <div
+                        className="flex items-center justify-center p-2 bg-fourth text-first rounded-full shadow-md transition-all duration-300 transform  cursor-pointer w-12 h-12">
+                      <NotificationIcon/>
+                    </div>
+                  </div>
+              )}
+
+              <div className="flex justify-end items-center lg:flex-1 mt-2  mr-16">
+                <AccountButton
+                    extra_tw={` transition duration-300 px-2 pt-2 transform`}
+                    onClick={onAccountClick}
+                    setModalOpen={setModalOpen}
+                />
               </div>
-            )}
-
-            <div className="flex justify-end items-center lg:flex-1 mt-4">
-              <AccountButton
-                extra_tw="bg-fourth text-first hover:bg-second transition duration-300 p-2 rounded-lg shadow-lg flex items-center justify-center transform hover:scale-110"
-                onClick={onAccountClick}
-              />
-            </div>
-
-            {user && (
-              <button
-                onClick={() => setModalOpen(true)}
-                className="flex items-center text-first hover:text-white justify-center mt-4 p-2 bg-fourth hover:bg-red-700 rounded-full transition duration-300 shadow-lg transform hover:scale-110 focus:outline-none"
-                aria-label="Logout"
-              >
-                <FiLogOut className="w-6 h-6" />
-              </button>
-            )}
-          </SideBar>
+            </SideBar>
         )}
       </div>
     </div>
