@@ -403,7 +403,7 @@ const BookingGrid = () => {
                             <div className="flex flex-col gap-3">
                               {activity.status === "Pending" && (
                                   <Button
-                                      danger
+                                      type="danger"
                                       className="bg-red-600 text-white hover:bg-red-700 border-0"
                                       onClick={() => cancelBooking(activity._id, "activity")}
                                       icon={<CloseOutlined/>}
@@ -481,7 +481,7 @@ const BookingGrid = () => {
                             <div className="flex flex-col gap-3">
                               {itinerary.status === "Pending" && (
                                   <Button
-                                      danger
+                                      type="danger"
                                       className="bg-red-600 text-white hover:bg-red-700 border-0"
                                       onClick={() => cancelBooking(itinerary._id, "itinerary")}
                                       icon={<CloseOutlined/>}
