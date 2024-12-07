@@ -38,6 +38,8 @@ import BookingPayment from "../shared/BookingPayment.jsx";
 import { Fade } from "react-awesome-reveal";
 import { SquareChevronLeft } from "lucide-react";
 import {getCurrency} from "../../api/account.ts";
+import {useNavigate} from "react-router-dom";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
 const { Text, Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -436,6 +438,9 @@ const BookHotel = () => {
   const [promoCode, setPromoCode] = useState(null);
   const [currency,setCurrency] = useState(null);
   const [paymentMethod,setPaymentMethod] = useState(null);
+  const navigate = useNavigate();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
   useEffect(() => {
     fetchCurrency() ;
   }, []);
@@ -458,7 +463,8 @@ const BookHotel = () => {
         console.log("Hotel booked:", data);
         message.success("Hotel booked successfully!");
       } else {
-        message.error("You need to login first");
+        setIsLoginModalOpen(true);
+        return;
       }
       setStep(0);
     } catch (error) {
@@ -521,6 +527,11 @@ const BookHotel = () => {
         },
       }}
     >
+      <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to Book a hotel."
+      />
       <div className="flex justify-center  min-h-[600px] my-20 mx-auto shadow">
         <Card
           className="w-[90%] min-h-[600px] flex my-20 mx-auto shadow"

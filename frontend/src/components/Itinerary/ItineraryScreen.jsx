@@ -31,6 +31,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCurrency } from "../../api/account.ts";
 import ItineraryCard from "./ItineraryCard";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
 const { Search } = Input;
 
@@ -196,6 +197,7 @@ const ItineraryScreen = ({ setFlag }) => {
   // Computed values
   const budgets = [...new Set(itineraries.map(itin => itin.price))];
   const languages = [...new Set(itineraries.map(itin => itin.language))];
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
     const initData = async () => {
@@ -334,6 +336,11 @@ const ItineraryScreen = ({ setFlag }) => {
   };
 
   const handleBookItinerary = (id) => {
+    if (!user) {;
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     navigate(`/itinerary/book/${id}`);
   };
 
@@ -343,6 +350,11 @@ const ItineraryScreen = ({ setFlag }) => {
 
   return (
       <div className="min-h-screen bg-gray-50 px-4 py-8">
+        <LoginConfirmationModal
+            open={isLoginModalOpen}
+            setOpen={setIsLoginModalOpen}
+            content="Please login to Book an iternary."
+        />
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Search and Filters Section */}
           <div className="flex flex-col items-center space-y-6">

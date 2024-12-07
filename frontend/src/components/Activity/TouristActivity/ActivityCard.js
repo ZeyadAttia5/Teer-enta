@@ -15,6 +15,7 @@ import {
 import {createNotificationRequest, getMyRequest, updateNotificationRequestStatus} from "../../../api/notifications.ts";
 import {removeSavedActivity, saveActivity} from "../../../api/profile.ts";
 import {getGoogleMapsAddress} from "../../../api/googleMaps.ts";
+import LoginConfirmationModal from "../../shared/LoginConfirmationModel";
 
 const ActivityCard = ({
                           id,
@@ -40,6 +41,7 @@ const ActivityCard = ({
     const [isHovered, setIsHovered] = useState(false);
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("user"));
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
     useEffect(() => {
 
@@ -112,6 +114,11 @@ const ActivityCard = ({
             onMouseLeave={() => setIsHovered(false)}
             onClick={handleActivityDetails}
         >
+            <LoginConfirmationModal
+                open={isLoginModalOpen}
+                setOpen={setIsLoginModalOpen}
+                content="Please login to Book an Activity."
+            />
             <div className="relative bg-white rounded-lg  overflow-hidden border border-gray-100">
                 {/* Image Section */}
                 <div className="relative h-72 overflow-hidden">
@@ -253,7 +260,11 @@ const ActivityCard = ({
                             type={isBookingOpen ? "danger" : "default"}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                navigate(`/touristActivities/book/${id}`);
+                                if (user) {
+                                    navigate(`/touristActivities/book/${id}`);
+                                } else {
+                                   setIsLoginModalOpen(true);
+                                }
                             }}
                             className={`px-6 h-10 rounded-lg font-medium shadow-sm ${
                                 isBookingOpen

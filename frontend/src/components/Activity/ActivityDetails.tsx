@@ -47,7 +47,7 @@ import StaticMap from "../shared/GoogleMaps/ViewLocation";
 import {getActivity} from "../../api/activity.ts";
 import {getMyCurrency} from "../../api/profile.ts";
 import TabPane from "antd/es/tabs/TabPane";
-
+import LoginConfirmationModal from "./../shared/LoginConfirmationModel.js"
 const {Title, Text} = Typography;
 
 const ActivityDetails = ({setFlag}) => {
@@ -58,6 +58,9 @@ const ActivityDetails = ({setFlag}) => {
     const [error, setError] = useState(null);
     const [currency, setCurrency] = useState(null);
     const [activeTab, setActiveTab] = useState('1');
+    const user = JSON.parse(localStorage.getItem("user"));
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -82,6 +85,10 @@ const ActivityDetails = ({setFlag}) => {
     }, [ActivityId]);
 
     const handleActivityBooking = () => {
+        if (!user) {
+            setIsLoginModalOpen(true);
+            return;
+        }
         navigate(`/touristActivities/book/${ActivityId}`);
     };
 
@@ -176,6 +183,11 @@ More details: ${window.location.href}
 
     return (
         <div className="flex justify-center">
+            <LoginConfirmationModal
+                open={isLoginModalOpen}
+                setOpen={setIsLoginModalOpen}
+                content="Please login Book an Activity."
+            />
             <div className="w-full">
                 {/* Hero Section */}
                 <div className="relative h-30 overflow-hidden shadow-lg shadow-gray-300">

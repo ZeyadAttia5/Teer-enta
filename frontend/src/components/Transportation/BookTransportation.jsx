@@ -34,6 +34,7 @@ import {
 import { getCurrency } from "../../api/account.ts";
 import StaticMap from "../shared/GoogleMaps/ViewLocation.jsx";
 import BookingPayment from "../shared/BookingPayment.jsx";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
 const { Text } = Typography;
 
@@ -70,7 +71,8 @@ const TransportationCard = ({ item, currency, onBook }) => {
   const [dropOffAddress, setDropOffAddress] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
   const [paymentMethod, setPaymentMethod] = useState("wallet");
-
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user"));
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
       message.warning("Please enter a promo code");
@@ -146,6 +148,10 @@ const TransportationCard = ({ item, currency, onBook }) => {
 
   const handleModalOk = async () => {
     try {
+      if(!user){
+        setIsLoginModalOpen(true);
+        return;
+      }
       await onBook(item._id, promoCode);
       setIsModalVisible(false);
     } catch (error) {
@@ -159,6 +165,11 @@ const TransportationCard = ({ item, currency, onBook }) => {
 
   return (
     <div className="">
+      <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to book transportation."
+      />
       <Badge.Ribbon
         text={item.isActive ? "Active" : "Inactive"}
         color={item.isActive ? "green" : "red"}

@@ -41,6 +41,7 @@ import {
   addToCart,
   getCart,
 } from "../../api/cart.ts";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 const { Search } = Input;
 
 const { Title, Text } = Typography;
@@ -65,6 +66,8 @@ const AdminProductGrid = ({ setFlag }) => {
   const [currency, setCurrency] = useState();
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -145,6 +148,10 @@ const AdminProductGrid = ({ setFlag }) => {
   };
   const handleAddToCartRequest = async (productId) => {
     try {
+      if (!user) {;
+        setIsLoginModalOpen(true);
+        return;
+      }
       await addToCart(productId);
       message.success("Product added to cart successfully");
       // remove the product from wishlist if it exists
@@ -222,6 +229,11 @@ const AdminProductGrid = ({ setFlag }) => {
   };
   return (
     <div className="py-8">
+      <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to add this product to your cart."
+      />
       <div className="container mx-auto px-4">
         {/* Top Action Bar */}
         <div className="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -437,8 +449,8 @@ const AdminProductGrid = ({ setFlag }) => {
 
                         {/* Action Buttons */}
                         <div className="flex gap-2 pt-2">
-                          {user && user.userRole === "Tourist" && (
-                              product.quantity > 0 ? (
+                          {/*{user && user.userRole === "Tourist" && (*/}
+                          {product.quantity > 0 ? (
                                   <Button
                                       type="danger"
                                       icon={<ShoppingCartOutlined />}
@@ -459,7 +471,8 @@ const AdminProductGrid = ({ setFlag }) => {
                                     Out of Stock
                                   </Button>
                               )
-                          )}
+                          }
+                          {/*)}*/}
                           {user && user._id === product.createdBy && (
                             <Link to={`/products/edit/${product._id}`}>
                               <Tooltip title="Edit Product">

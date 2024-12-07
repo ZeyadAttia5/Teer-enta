@@ -36,6 +36,8 @@ import {getCommentsForTourGuide, getRatingsForTourGuide} from "../../api/tourGui
 import BackButton from "../shared/BackButton/BackButton.js";
 import {getMyCurrency} from "../../api/profile.ts";
 import TabPane from "antd/es/tabs/TabPane";
+import LoginConfirmationModal  from "../shared/LoginConfirmationModel.js";
+
 
 const {Title, Text} = Typography;
 
@@ -51,6 +53,8 @@ const ItineraryDetails: React.FC = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const [activeTab, setActiveTab] = useState('1');
     const [loading, setLoading] = useState(true);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
@@ -165,6 +169,11 @@ const ItineraryDetails: React.FC = () => {
     };
 
     const handleBookItinerary = (ItineraryId) => {
+        if (!user) {
+            setIsLoginModalOpen(true);
+            return;
+        }
+
         window.location.href = `${window.location.origin}/itinerary/book/${ItineraryId}`;
     };
 
@@ -178,6 +187,11 @@ const ItineraryDetails: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+            <LoginConfirmationModal
+                open={isLoginModalOpen}
+                setOpen={setIsLoginModalOpen}
+                content="Please login to Book an iternary."
+            />
             {/* Hero Section */}
             <div className="relative h-[400px] overflow-hidden">
                 <img

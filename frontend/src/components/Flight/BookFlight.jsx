@@ -282,7 +282,8 @@ const BookFlight = () => {
         message.success("Booking submitted successfully!");
         setCurrentStep(5);
       } else {
-        message.error("Please login to book a flight");
+        navigate('/login');
+        message.info("Please login to book a flight");
       }
     } catch (error) {
       console.log("Error submitting booking:");
