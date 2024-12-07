@@ -12,10 +12,12 @@ const ProductSchema = new mongoose.Schema({
     ratings: [{
         createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
         rating: Number,
+        createdAt: {type: Date, default: Date.now}
     }],
     reviews: [{
         createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
         review: String,
+        createdAt: {type: Date, default: Date.now}
     }],
     isActive: {type: Boolean, default: true}
 }, {timestamps: true});

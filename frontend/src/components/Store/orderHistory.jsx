@@ -66,7 +66,7 @@ const OrderHistory = () => {
             setFilteredOrders(sortedOrders);
             setCurrency(currencyResponse.data);
         } catch (error) {
-            message.error('Failed to fetch orders');
+            message.warning('Failed to fetch orders');
         } finally {
             setLoading(false);
         }
@@ -92,7 +92,7 @@ const OrderHistory = () => {
                     message.success('Order cancelled successfully');
                     fetchInitialData();
                 } catch (error) {
-                    message.error(error.response?.data?.message || 'Failed to cancel order');
+                    message.warning(error.response?.data?.message || 'Failed to cancel order');
                 }
             },
         });

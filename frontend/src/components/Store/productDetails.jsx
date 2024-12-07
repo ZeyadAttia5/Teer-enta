@@ -7,9 +7,10 @@ import {
   Skeleton,
   Rate,
   message,
+  List,
   Divider,
   Alert,
-  Spin,
+  Spin, Tabs, Avatar,
 } from "antd";
 import {
   ShoppingCartOutlined,
@@ -17,7 +18,7 @@ import {
   ShopOutlined,
   UserOutlined,
   TagOutlined,
-  CheckCircleOutlined,
+  CheckCircleOutlined, StarOutlined, MessageOutlined,
 } from "@ant-design/icons";
 import { FaHeart } from "react-icons/fa";
 import {
@@ -33,6 +34,7 @@ import {
 } from "../../api/products.ts";
 import { getMyCurrency } from "../../api/profile.ts";
 import ProductReviews from "./productReviews";
+import TabPane from "antd/es/tabs/TabPane";
 
 const { Title, Text } = Typography;
 
@@ -46,6 +48,7 @@ const ProductDetails = ({ setFlag }) => {
   const [isWished, setIsWished] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [activeTab, setActiveTab] = React.useState('1');
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -84,7 +87,7 @@ const ProductDetails = ({ setFlag }) => {
         setAddedToCart(false);
       }, 2000);
     } catch (error) {
-      message.error(error.response.data.message);
+      message.warning(error.response.data.message);
     } finally {
       setIsAddingToCart(false);
     }
@@ -301,21 +304,168 @@ const ProductDetails = ({ setFlag }) => {
               </div>
             </Card>
 
-            {/* Reviews */}
-            <div className="max-w-7xl mx-auto mt-12">
-              <Card className="shadow-2xl rounded-xl bg-gradient-to-br from-white to-gray-50">
-                <div className="flex items-center gap-4 mb-8 border-l-4 border-indigo-600 pl-4">
-                  <Title level={3} className="m-0 text-indigo-900 font-bold">
-                    Customer Reviews
-                  </Title>
-                </div>
+            {/*Product Reviews */}
+            <div className="mt-8">
+              <Card className="shadow-xl rounded-xl bg-gradient-to-br from-gray-50 to-white">
+                <Tabs activeKey={activeTab} onChange={setActiveTab} className="fancy-tabs">
+                  <TabPane
+                      tab={
+                        <span className="flex items-center gap-2 px-3 py-2">
+                <StarOutlined className="text-blue-500"/>
+                <span className="font-medium">Ratings</span>
+              </span>
+                      }
+                      key="1"
+                  >
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-4">
+                      <div className="text-center">
+                        <Text
+                            className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                          {averageRating}
+                        </Text>
+                        <div className="my-3">
+                          <Rate disabled value={Number(averageRating)} allowHalf className="text-yellow-400"/>
+                        </div>
+                        <Text className="text-gray-600">
+                          Based on {product.ratings?.length || 0} reviews
+                        </Text>
+                      </div>
+                    </div>
+                    <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                      <List
+                          itemLayout="horizontal"
+                          dataSource={product.ratings}
+                          renderItem={(rating) => (
+                              <List.Item className="rounded-xl transition-all duration-300 p-4 mb-2">
+                                <List.Item.Meta
+                                    avatar={
+                                      <div className="relative">
+                                        <Avatar icon={<UserOutlined/>}
+                                                className="bg-gradient-to-r from-blue-500 to-indigo-500"/>
+                                      </div>
+                                    }
+                                    title={
+                                      <div className="flex justify-between items-center">
+                                        <Text strong className="text-gray-800">{rating.createdBy?.username}</Text>
+                                        <div className="flex items-center gap-2">
+                                          <Rate disabled defaultValue={rating.rating} className="text-sm"/>
+                                          <Text className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                                            {new Date(rating.createdAt).toLocaleDateString()}
+                                          </Text>
+                                        </div>
+                                      </div>
+                                    }
+                                />
+                              </List.Item>
+                          )}
+                          locale={{
+                            emptyText: (
+                                <div className="text-center py-8">
+                                  <Text className="block text-gray-400">No reviews yet</Text>
+                                </div>
+                            )
+                          }}
+                      />
+                    </div>
+                  </TabPane>
 
-                <div className="bg-white rounded-xl">
-                  <ProductReviews
-                    productId={id}
-                    className="divide-y divide-gray-100"
-                  />
-                </div>
+                  <TabPane
+                      tab={
+                        <span className="flex items-center gap-2 px-3 py-2">
+                <MessageOutlined className="text-green-500"/>
+                <span className="font-medium">Comments</span>
+              </span>
+                      }
+                      key="2"
+                  >
+                    <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
+                      <List
+                          dataSource={product.reviews}
+                          renderItem={(comment) => (
+                              <List.Item className="rounded-xl transition-all duration-300 p-4 mb-2">
+                                <List.Item.Meta
+                                    avatar={
+                                      <Avatar icon={<UserOutlined/>}
+                                              className="bg-gradient-to-r from-green-500 to-emerald-500"/>
+                                    }
+                                    title={
+                                      <div className="flex justify-between items-center">
+                                        <Text strong className="text-gray-800">{comment.createdBy?.username}</Text>
+                                        <Text className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">
+                                          {new Date(comment.createdAt).toLocaleDateString()}
+                                        </Text>
+                                      </div>
+                                    }
+                                    description={
+                                      <div className="mt-2 bg-white p-3 rounded-lg shadow-sm">
+                                        <Text className="text-gray-600">{comment.review}</Text>
+                                      </div>
+                                    }
+                                />
+                              </List.Item>
+                          )}
+                          locale={{
+                            emptyText: (
+                                <div className="text-center py-8">
+                                  <MessageOutlined className="text-4xl text-gray-300 mb-2"/>
+                                  <Text className="block text-gray-400">No comments yet</Text>
+                                </div>
+                            )
+                          }}
+                      />
+                    </div>
+                  </TabPane>
+                </Tabs>
+
+                <style jsx>{`
+                  .fancy-tabs .ant-tabs-nav {
+                    margin-bottom: 1rem;
+                    background: #f8fafc;
+                    padding: 0.5rem;
+                    border-radius: 0.75rem;
+                  }
+
+                  .fancy-tabs .ant-tabs-tab {
+                    margin: 0 !important;
+                    padding: 0.5rem !important;
+                    border-radius: 0.5rem;
+                    transition: all 0.3s;
+                  }
+
+                  .fancy-tabs .ant-tabs-tab:hover {
+                    background: white;
+                  }
+
+                  .fancy-tabs .ant-tabs-tab-active {
+                    background: white !important;
+                    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+                  }
+
+                  .fancy-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+                    color: #4f46e5 !important;
+                  }
+
+                  .fancy-tabs .ant-tabs-ink-bar {
+                    display: none;
+                  }
+
+                  .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                  }
+
+                  .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                  }
+
+                  .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: #e2e8f0;
+                    border-radius: 1rem;
+                  }
+
+                  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: #cbd5e1;
+                  }
+                `}</style>
               </Card>
             </div>
           </>

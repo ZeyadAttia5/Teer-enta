@@ -69,6 +69,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
   const [pickupAddress, setPickupAddress] = useState(null);
   const [dropOffAddress, setDropOffAddress] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
+  const [paymentMethod, setPaymentMethod] = useState("wallet");
 
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
@@ -82,7 +83,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
       setPromoDiscount(response.data.promoCode);
       message.success("Promo code applied successfully!");
     } catch (error) {
-      message.error(
+      message.warning(
         error.response?.data?.message || "Failed to apply promo code"
       );
     } finally {
@@ -148,7 +149,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
       await onBook(item._id, promoCode);
       setIsModalVisible(false);
     } catch (error) {
-      message.error(error.response?.data?.message || "Booking failed");
+      message.warning(error.response?.data?.message || "Booking failed");
     }
   };
 
@@ -350,13 +351,14 @@ const TransportationCard = ({ item, currency, onBook }) => {
         onCancel={handleModalCancel}
         footer={null}
       >
-        <BookingPayment
-          onBookingClick={handleModalOk}
-          currency={currency}
-          amount={item.price}
-          item={item}
-          promoCode={promoCode}
-        />
+          <BookingPayment
+              onBookingClick={handleModalOk}
+              currency={currency}
+              amount={item.price}
+              item={item}
+              promoCode={promoCode}
+              setPaymentMethod={setPaymentMethod}
+          />
       </Modal>
     </div>
   );
@@ -374,7 +376,7 @@ const BookTransportation = () => {
       const response = await getTransportations();
       setData(response.data);
     } catch (error) {
-      message.error("Failed to fetch transportation options");
+      message.warning("Failed to fetch transportation options");
     } finally {
       setLoading(false);
     }
@@ -385,7 +387,7 @@ const BookTransportation = () => {
       const response = await getCurrency();
       setCurrency(response.data);
     } catch (error) {
-      message.error("Failed to fetch currency information");
+      message.warning("Failed to fetch currency information");
     }
   };
 
@@ -398,7 +400,7 @@ const BookTransportation = () => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       if (!user) {
-        message.error("Please login to book transportation");
+        message.warning("Please login to book transportation");
         return;
       }
 
@@ -408,7 +410,7 @@ const BookTransportation = () => {
       });
       message.success("Transportation booked successfully");
     } catch (error) {
-      message.error(error.response?.data?.message || "Booking failed");
+      message.warning(error.response?.data?.message || "Booking failed");
     }
   };
 

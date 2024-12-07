@@ -233,9 +233,9 @@ exports.resetPassword = async (req, res) => {
         if (user.resetOtp !== otp || Date.now() > user.otpExpiry) {
             return res.status(400).json({message: 'Invalid or expired OTP'});
         }
-
+        console.log(newPassword)
         // Hash the new password
-        user.password = await bcrypt.hash(newPassword, 10);
+        user.password = await bcrypt.hash(newPassword, 12);
         user.resetOtp = undefined; // Clear OTP
         user.otpExpiry = undefined; // Clear expiry
         await user.save();

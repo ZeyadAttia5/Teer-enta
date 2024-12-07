@@ -133,7 +133,7 @@ More details: ${window.location.href}
         navigator.clipboard
             .writeText(window.location.href)
             .then(() => message.success("Link copied to clipboard!"))
-            .catch(() => message.error("Failed to copy link"));
+            .catch(() => message.warning("Failed to copy link"));
     };
 
     const averageRating =
@@ -176,7 +176,7 @@ More details: ${window.location.href}
 
     return (
         <div className="flex justify-center">
-            <div className="w-[90%]">
+            <div className="w-full">
                 {/* Hero Section */}
                 <div className="relative h-30 overflow-hidden shadow-lg shadow-gray-300">
                     <img
@@ -191,12 +191,12 @@ More details: ${window.location.href}
                         <Button
                             icon={<CopyOutlined/>}
                             onClick={handleCopyLink}
-                            className="bg-white/90 hover:bg-white border-none  "
+                            className="bg-white/90 hover:bg-white border-none"
                         />
                         <Button
                             icon={<MailOutlined/>}
                             onClick={handleShareEmail}
-                            className="bg-white/90 hover:bg-white border-none  "
+                            className="bg-white/90 hover:bg-white border-none"
                         />
                     </div>
 
@@ -204,10 +204,7 @@ More details: ${window.location.href}
                     <div className="absolute bottom-1 left-0 right-0 p-8">
                         <div className="max-w-7xl mx-auto">
                             <div className="space-y-4">
-                                <Title
-                                    level={1}
-                                    className="text-white m-0 text-4xl md:text-5xl font-bold"
-                                >
+                                <Title level={1} className="text-white m-0 text-4xl md:text-5xl font-bold">
                                     {activity.name}
                                 </Title>
                                 <div className="flex flex-wrap items-center gap-3">
@@ -229,12 +226,7 @@ More details: ${window.location.href}
                                     <div
                                         className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-white">
                                         <StarOutlined/>
-                                        <Rate
-                                            disabled
-                                            value={Number(averageRating)}
-                                            allowHalf
-                                            className="text-sm"
-                                        />
+                                        <Rate disabled value={Number(averageRating)} allowHalf className="text-sm"/>
                                         <span>({activity.ratings?.length} reviews)</span>
                                     </div>
                                 </div>
@@ -245,40 +237,30 @@ More details: ${window.location.href}
 
                 {/* Main Content */}
                 <div className="max-w-7xl mx-auto px-4 py-8 -mt-10 relative z-10">
-                    <Row gutter={[24, 24]}>
+                    <Row gutter={[24, 24]} className="flex flex-wrap">
                         {/* Left Column */}
-                        <Col xs={24} lg={16}>
+                        <Col xs={24} lg={16} className="flex flex-col">
                             {/* Booking Card */}
-                            <Card className="mb-6   rounded-xl">
+                            <Card className="mb-6 rounded-xl mt-8 bg-gradient-to-br from-gray-50 to-white">
                                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-4">
                                     <div className="w-full md:w-auto">
-                                        <Text className="block text-gray-500 mb-4 text-lg">
-                                            Price Range
-                                        </Text>
+                                        <Text className="block text-gray-500 mb-4 text-lg">Price Range</Text>
                                         <div className="flex flex-wrap justify-center md:justify-start gap-8">
                                             <div>
                                                 <Text className="text-sm text-gray-400">From</Text>
                                                 <div className="flex items-baseline gap-1">
-                                                    <Text className="text-lg text-gray-500">
-                                                        {currency?.code}
-                                                    </Text>
+                                                    <Text className="text-lg text-gray-500">{currency?.code}</Text>
                                                     <Text className="text-4xl font-bold text-blue-950">
-                                                        {activity.price?.min
-                                                            ? (currency?.rate * activity.price.min).toFixed(1)
-                                                            : "N/A"}
+                                                        {activity.price?.min ? (currency?.rate * activity.price.min).toFixed(1) : "N/A"}
                                                     </Text>
                                                 </div>
                                             </div>
                                             <div>
                                                 <Text className="text-sm text-gray-400">To</Text>
                                                 <div className="flex items-baseline gap-1">
-                                                    <Text className="text-lg text-gray-500">
-                                                        {currency?.code}
-                                                    </Text>
+                                                    <Text className="text-lg text-gray-500">{currency?.code}</Text>
                                                     <Text className="text-4xl font-bold text-blue-950">
-                                                        {activity.price?.max
-                                                            ? (currency?.rate * activity.price.max).toFixed(1)
-                                                            : "N/A"}
+                                                        {activity.price?.max ? (currency?.rate * activity.price.max).toFixed(1) : "N/A"}
                                                     </Text>
                                                 </div>
                                             </div>
@@ -290,13 +272,12 @@ More details: ${window.location.href}
                                         onClick={handleActivityBooking}
                                         disabled={!activity.isBookingOpen}
                                         className={`
-                                px-12 h-14 text-lg font-semibold rounded-lg
-                                ${
-                                            activity.isBookingOpen
-                                                ? "bg-blue-950 text-white hover:bg-black border-none"
-                                                : "bg-gray-200 text-gray-500 border-none"
+                            px-12 h-14 text-lg font-semibold rounded-lg
+                            ${activity.isBookingOpen
+                                            ? "bg-blue-950 text-white hover:bg-black border-none"
+                                            : "bg-gray-200 text-gray-500 border-none"
                                         }
-                            `}
+                        `}
                                     >
                                         {activity.isBookingOpen ? "Book Now" : "Not Available"}
                                     </Button>
@@ -306,320 +287,330 @@ More details: ${window.location.href}
                                     <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-100">
                                         <Text className="text-yellow-800 flex items-center gap-2">
                                             <PercentageOutlined/>
-                                            Special discounts available! Check offers section for
-                                            details.
+                                            Special discounts available! Check offers section for details.
                                         </Text>
                                     </div>
                                 )}
                             </Card>
 
-                            {/* About Section */}
-                            <div className="bg-white rounded-xl   p-6 mb-6">
-                                <Title
-                                    level={4}
-                                    className="m-0 flex items-center gap-2 text-blue-600 mb-6"
-                                >
-                                    <InfoCircleOutlined/>
-                                    About This Activity
-                                </Title>
+                            {/* Content Container */}
+                            <div className="flex-1 flex flex-col gap-6">
+                                {/* About Section */}
+                                <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6">
+                                    <Title level={4} className="m-0 flex items-center gap-2 text-blue-600 mb-6">
+                                        <InfoCircleOutlined/>
+                                        About This Activity
+                                    </Title>
 
-                                <div className="space-y-6">
-                                    <div>
-                                        <Text className="text-gray-500 block mb-3">
-                                            Categories & Tags
-                                        </Text>
-                                        <div className="flex flex-wrap gap-2">
-                                            <Tag color="blue" className="px-4 py-1 text-sm">
-                                                {activity.category?.category}
-                                            </Tag>
-                                            {activity.preferenceTags?.map((tag, index) => (
-                                                <Tag
-                                                    key={index}
-                                                    color="blue"
-                                                    className="px-4 py-1 text-sm"
-                                                >
-                                                    {tag.tag}
+                                    <div className="space-y-6">
+                                        <div>
+                                            <Text className="text-gray-500 block mb-3">Categories & Tags</Text>
+                                            <div className="flex flex-wrap gap-2">
+                                                <Tag color="blue" className="px-4 py-1 text-sm">
+                                                    {activity.category?.category}
                                                 </Tag>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-100 pt-6">
-                                        <div className="flex items-center gap-3">
-                                            <UserOutlined className="text-blue-600"/>
-                                            <div>
-                                                <Text className="text-gray-500 block text-sm">
-                                                    Created By
-                                                </Text>
-                                                <Text className="text-gray-800 font-medium">
-                                                    {activity.createdBy?.username}
-                                                </Text>
+                                                {activity.preferenceTags?.map((tag, index) => (
+                                                    <Tag key={index} color="green" className="px-4 py-1 text-sm">
+                                                        {tag.tag}
+                                                    </Tag>
+                                                ))}
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3">
-                                            <ClockCircleOutlined className="text-blue-600"/>
-                                            <div>
-                                                <Text className="text-gray-500 block text-sm">
-                                                    Last Updated
-                                                </Text>
-                                                <Text className="text-gray-800 font-medium">
-                                                    {new Date(activity.updatedAt).toLocaleDateString()}
-                                                </Text>
+
+                                        <div
+                                            className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-100 pt-6">
+                                            <div className="flex items-center gap-3">
+                                                <UserOutlined className="text-blue-600"/>
+                                                <div>
+                                                    <Text className="text-gray-500 block text-sm">Created By</Text>
+                                                    <Text className="text-gray-800 font-medium">
+                                                        {activity.createdBy?.username}
+                                                    </Text>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <ClockCircleOutlined className="text-blue-600"/>
+                                                <div>
+                                                    <Text className="text-gray-500 block text-sm">Last Updated</Text>
+                                                    <Text className="text-gray-800 font-medium">
+                                                        {new Date(activity.updatedAt).toLocaleDateString()}
+                                                    </Text>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Location Section */}
-                            <div className="bg-white rounded-xl   p-6">
-                                <Title
-                                    level={4}
-                                    className="m-0 flex items-center gap-2 text-blue-600 mb-6"
-                                >
-                                    <EnvironmentOutlined/>
-                                    Location
-                                </Title>
-                                <div className="h-[400px] rounded-lg overflow-hidden">
-                                    <StaticMap
-                                        longitude={activity.location?.lng}
-                                        latitude={activity.location?.lat}
-                                    />
+                                {/* Location Section */}
+                                <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 flex-1">
+                                    <Title level={4} className="m-0 flex items-center gap-2 text-blue-600 mb-6">
+                                        <EnvironmentOutlined/>
+                                        Location
+                                    </Title>
+                                    <div className="h-[400px] rounded-lg overflow-hidden">
+                                        <StaticMap
+                                            longitude={activity.location?.lng}
+                                            latitude={activity.location?.lat}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </Col>
 
                         {/* Right Column */}
                         <Col xs={24} lg={8}>
-                            {/* Special Offers Section */}
-                            <div className="bg-white rounded-xl   p-6 mb-6">
-                                <Title
-                                    level={4}
-                                    className="m-0 flex items-center gap-2 text-blue-600 mb-6"
-                                >
-                                    <PercentageOutlined/>
-                                    Special Offers
-                                </Title>
-                                {activity.specialDiscounts?.length > 0 ? (
-                                    <List
-                                        dataSource={activity.specialDiscounts}
-                                        renderItem={(discount) => (
-                                            <List.Item className="border-b last:border-b-0 block p-4">
-                                                <div className="flex justify-between items-start gap-4">
-                                                    <div>
-                                                        <Text className="text-3xl font-bold text-red-500 block mb-2">
-                                                            {discount.discount}% OFF
-                                                        </Text>
-                                                        <Text className="text-gray-600 block">
-                                                            {discount.Description}
-                                                        </Text>
-                                                    </div>
-                                                    <Tag
-                                                        color={discount.isAvailable ? "success" : "error"}
-                                                        className="text-sm"
-                                                    >
-                                                        {discount.isAvailable ? "Available" : "Expired"}
-                                                    </Tag>
-                                                </div>
-                                            </List.Item>
-                                        )}
-                                    />
-                                ) : (
-                                    <div className="text-center py-8 text-gray-500">
-                                        No special offers available
+                            <Card
+                                className="mt-8 bg-gradient-to-br from-gray-50 to-white  top-8"
+                                title={
+                                    <div className="flex items-center gap-2">
+                                        <PercentageOutlined className="text-red-500 text-lg" />
+                                        <span className="text-gray-800 font-medium">Special Offers</span>
                                     </div>
-                                )}
-                            </div>
-
-                            <Card className="shadow-xl rounded-xl bg-gradient-to-br from-white to-gray-50">
-                                <Tabs activeKey={activeTab} onChange={setActiveTab} className="fancy-tabs">
-                                    <TabPane
-                                        tab={
-                                            <span className="flex items-center gap-2 px-3 py-2">
-          <StarOutlined className="text-yellow-500"/>
-          <span className="font-medium">Activity Reviews</span>
-        </span>
-                                        }
-                                        key="1"
-                                    >
-                                        <div
-                                            className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-4">
-                                            <div className="text-center">
-                                                <Text
-                                                    className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                                                    {averageRating}
-                                                </Text>
-                                                <div className="my-3">
-                                                    <Rate disabled value={Number(averageRating)} allowHalf
-                                                          className="text-yellow-400"/>
-                                                </div>
-                                                <Text className="text-gray-600">
-                                                    Based on {activity.ratings?.length || 0} reviews
-                                                </Text>
-                                            </div>
-                                        </div>
-                                        <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
-                                            <List
-                                                itemLayout="horizontal"
-                                                dataSource={activity.ratings}
-                                                renderItem={(rating) => (
-                                                    <List.Item
-                                                        className="hover:bg-blue-50 rounded-xl transition-all duration-300 p-4 mb-2">
-                                                        <List.Item.Meta
-                                                            avatar={
-                                                                <div className="relative">
-                                                                    <Avatar icon={<UserOutlined/>}
-                                                                            className="bg-gradient-to-r from-blue-500 to-indigo-500"/>
-                                                                    <div
-                                                                        className="absolute -bottom-1 -right-1 bg-white rounded-full p-1">
-                                                                        <StarOutlined
-                                                                            className="text-yellow-400 text-xs"/>
-                                                                    </div>
+                                }
+                            >
+                                <div className=" overflow-y-auto pr-2 bg-gradient-to-br from-gray-50 to-white ">
+                                    {activity.specialDiscounts?.length > 0 ? (
+                                        <List
+                                            dataSource={activity.specialDiscounts}
+                                            renderItem={(discount) => (
+                                                <Card
+                                                    className="mb-4 last:mb-0 hover:shadow-md transition-shadow"
+                                                    bodyStyle={{ padding: '16px' }}
+                                                >
+                                                    <div className="flex justify-between items-start gap-4">
+                                                        <div>
+                                                            <div className="flex items-baseline gap-2">
+                                                                <Text className="text-4xl font-bold text-red-500">
+                                                                    {discount.discount}%
+                                                                </Text>
+                                                                <div className="flex flex-col">
+                                                                    <Text className="text-lg font-semibold">OFF</Text>
+                                                                    <Tag
+                                                                        color={discount.isAvailable ? "success" : "default"}
+                                                                    >
+                                                                        {discount.isAvailable ? "Active Now" : "Expired"}
+                                                                    </Tag>
                                                                 </div>
-                                                            }
-                                                            title={
-                                                                <div className="flex justify-between items-center">
-                                                                    <Text strong
-                                                                          className="text-gray-800">{rating.user?.username}</Text>
-                                                                    <Rate disabled value={rating.rating}
-                                                                          className="text-sm"/>
-                                                                </div>
-                                                            }
-                                                            description={
-                                                                <div className="mt-2 bg-white/50 p-3 rounded-lg">
-                                                                    <Text
-                                                                        className="text-gray-600 italic">"{rating.comment}"</Text>
-                                                                    <div className="mt-2 text-right">
-                                                                        <Text className="text-xs text-gray-400">
-                                                                            {new Date(rating.createdAt).toLocaleDateString()}
-                                                                        </Text>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        />
-                                                    </List.Item>
-                                                )}
-                                                locale={{
-                                                    emptyText: (
-                                                        <div className="text-center py-8">
-                                                            <StarOutlined className="text-4xl text-gray-300 mb-2"/>
-                                                            <Text className="block text-gray-400">No reviews yet</Text>
+                                                            </div>
+                                                            <Text className="block text-gray-600 mt-2">
+                                                                {discount.Description}
+                                                            </Text>
                                                         </div>
-                                                    )
-                                                }}
-                                            />
+                                                    </div>
+                                                </Card>
+                                            )}
+                                        />
+                                    ) : (
+                                        <div className="text-center p-4">
+                                            <PercentageOutlined className="text-2xl text-gray-300 mb-2" />
+                                            <Text className="block text-gray-500">
+                                                No special offers available
+                                            </Text>
                                         </div>
-                                    </TabPane>
-
-                                    <TabPane
-                                        tab={
-                                            <span className="flex items-center gap-2 px-3 py-2">
-          <MessageOutlined className="text-green-500"/>
-          <span className="font-medium">Comments</span>
-        </span>
-                                        }
-                                        key="2"
-                                    >
-                                        <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
-                                            <List
-                                                dataSource={activity.comments}
-                                                renderItem={(comment) => (
-                                                    <List.Item
-                                                        className="hover:bg-green-50 rounded-xl transition-all duration-300 p-4 mb-2">
-                                                        <List.Item.Meta
-                                                            avatar={
-                                                                <Avatar icon={<UserOutlined/>}
-                                                                        className="bg-gradient-to-r from-green-500 to-emerald-500"/>
-                                                            }
-                                                            title={
-                                                                <div className="flex justify-between items-center">
-                                                                    <Text strong
-                                                                          className="text-gray-800">{comment.user?.username}</Text>
-                                                                    <Text
-                                                                        className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">
-                                                                        {new Date(comment.createdAt).toLocaleDateString()}
-                                                                    </Text>
-                                                                </div>
-                                                            }
-                                                            description={
-                                                                <div className="mt-2 bg-white p-3 rounded-lg shadow-sm">
-                                                                    <Text
-                                                                        className="text-gray-600">{comment.comment}</Text>
-                                                                </div>
-                                                            }
-                                                        />
-                                                    </List.Item>
-                                                )}
-                                                locale={{
-                                                    emptyText: (
-                                                        <div className="text-center py-8">
-                                                            <MessageOutlined className="text-4xl text-gray-300 mb-2"/>
-                                                            <Text className="block text-gray-400">No comments yet</Text>
-                                                        </div>
-                                                    )
-                                                }}
-                                            />
-                                        </div>
-                                    </TabPane>
-                                </Tabs>
-
-                                <style jsx>{`
-                                    .fancy-tabs .ant-tabs-nav {
-                                        margin-bottom: 1rem;
-                                        background: #f8fafc;
-                                        padding: 0.5rem;
-                                        border-radius: 0.75rem;
-                                    }
-
-                                    .fancy-tabs .ant-tabs-tab {
-                                        margin: 0 !important;
-                                        padding: 0.5rem !important;
-                                        border-radius: 0.5rem;
-                                        transition: all 0.3s;
-                                    }
-
-                                    .fancy-tabs .ant-tabs-tab:hover {
-                                        background: white;
-                                    }
-
-                                    .fancy-tabs .ant-tabs-tab-active {
-                                        background: white !important;
-                                        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
-                                    }
-
-                                    .fancy-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
-                                        color: #4f46e5 !important;
-                                    }
-
-                                    .fancy-tabs .ant-tabs-ink-bar {
-                                        display: none;
-                                    }
-
-                                    .custom-scrollbar::-webkit-scrollbar {
-                                        width: 6px;
-                                    }
-
-                                    .custom-scrollbar::-webkit-scrollbar-track {
-                                        background: transparent;
-                                    }
-
-                                    .custom-scrollbar::-webkit-scrollbar-thumb {
-                                        background: #e2e8f0;
-                                        border-radius: 1rem;
-                                    }
-
-                                    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                                        background: #cbd5e1;
-                                    }
-                                `}</style>
+                                    )}
+                                </div>
                             </Card>
+
+                            <style jsx>{`
+                                ::-webkit-scrollbar {
+                                    width: 4px;
+                                }
+                                ::-webkit-scrollbar-track {
+                                    background: transparent;
+                                }
+                                ::-webkit-scrollbar-thumb {
+                                    background: #e2e8f0;
+                                    border-radius: 4px;
+                                }
+                                ::-webkit-scrollbar-thumb:hover {
+                                    background: #cbd5e1;
+                                }
+                            `}</style>
                         </Col>
                     </Row>
+
+                    {/* Activity Reviews and Comments Section */}
+                    <div className="mt-8">
+                        <Card className="shadow-xl rounded-xl bg-gradient-to-br from-gray-50 to-white">
+                            <Tabs activeKey={activeTab} onChange={setActiveTab} className="fancy-tabs">
+                                <TabPane
+                                    tab={
+                                        <span className="flex items-center gap-2 px-3 py-2">
+                                            <StarOutlined className="text-blue-500"/>
+                                            <span className="font-medium">Ratings</span>
+                                        </span>
+                                    }
+                                    key="1"
+                                >
+                                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-4">
+                                        <div className="text-center">
+                                            <Text
+                                                className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                                                {averageRating}
+                                            </Text>
+                                            <div className="my-3">
+                                                <Rate disabled value={Number(averageRating)} allowHalf
+                                                      className="text-yellow-400"/>
+                                            </div>
+                                            <Text className="text-gray-600">
+                                                Based on {activity.ratings?.length || 0} reviews
+                                            </Text>
+                                        </div>
+                                    </div>
+                                    <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                                        <List
+                                            itemLayout="horizontal"
+                                            dataSource={activity.ratings}
+                                            renderItem={(rating) => (
+                                                <List.Item
+                                                    className="rounded-xl transition-all duration-300 p-4 mb-2">
+                                                    <List.Item.Meta
+                                                        avatar={
+                                                            <div className="relative">
+                                                                <Avatar icon={<UserOutlined/>}
+                                                                        className="bg-gradient-to-r from-blue-500 to-indigo-500"/>
+                                                                <div
+                                                                    className="absolute -bottom-1 -right-1 bg-white rounded-full p-1">
+                                                                    {/*<StarOutlined className="text-yellow-400 text-xs"/>*/}
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        title={
+                                                            <div className="flex justify-between items-center">
+                                                                <Text strong
+                                                                      className="text-gray-800">{rating.user?.username}</Text>
+                                                                <div className="flex items-center gap-2">
+                                                                    <Rate disabled defaultValue={rating.rating}
+                                                                          className="text-sm"/>
+                                                                    <Text
+                                                                        className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                                                                        {new Date(rating.createdAt).toLocaleDateString()}
+                                                                    </Text>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    />
+                                                </List.Item>
+                                            )}
+                                            locale={{
+                                                emptyText: (
+                                                    <div className="text-center py-8">
+                                                        {/*<StarOutlined className="text-4xl text-gray-300 mb-2"/>*/}
+                                                        <Text className="block text-gray-400">No reviews yet</Text>
+                                                    </div>
+                                                )
+                                            }}
+                                        />
+                                    </div>
+                                </TabPane>
+
+                                <TabPane
+                                    tab={
+                                        <span className="flex items-center gap-2 px-3 py-2">
+                                            <MessageOutlined className="text-green-500"/>
+                                            <span className="font-medium">Comments</span>
+                                        </span>
+                                    }
+                                    key="2"
+                                >
+                                    <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
+                                        <List
+                                            dataSource={activity.comments}
+                                            renderItem={(comment) => (
+                                                <List.Item
+                                                    className=" rounded-xl transition-all duration-300 p-4 mb-2">
+                                                    <List.Item.Meta
+                                                        avatar={
+                                                            <Avatar icon={<UserOutlined/>}
+                                                                    className="bg-gradient-to-r from-green-500 to-emerald-500"/>
+                                                        }
+                                                        title={
+                                                            <div className="flex justify-between items-center">
+                                                                <Text strong
+                                                                      className="text-gray-800">{comment.user?.username}</Text>
+                                                                <Text
+                                                                    className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">
+                                                                    {new Date(comment.createdAt).toLocaleDateString()}
+                                                                </Text>
+                                                            </div>
+                                                        }
+                                                        description={
+                                                            <div className="mt-2 bg-white p-3 rounded-lg shadow-sm">
+                                                                <Text className="text-gray-600">{comment.comment}</Text>
+                                                            </div>
+                                                        }
+                                                    />
+                                                </List.Item>
+                                            )}
+                                            locale={{
+                                                emptyText: (
+                                                    <div className="text-center py-8">
+                                                        <MessageOutlined className="text-4xl text-gray-300 mb-2"/>
+                                                        <Text className="block text-gray-400">No comments yet</Text>
+                                                    </div>
+                                                )
+                                            }}
+                                        />
+                                    </div>
+                                </TabPane>
+                            </Tabs>
+
+                            <style jsx>{`
+                                .fancy-tabs .ant-tabs-nav {
+                                    margin-bottom: 1rem;
+                                    background: #f8fafc;
+                                    padding: 0.5rem;
+                                    border-radius: 0.75rem;
+                                }
+
+                                .fancy-tabs .ant-tabs-tab {
+                                    margin: 0 !important;
+                                    padding: 0.5rem !important;
+                                    border-radius: 0.5rem;
+                                    transition: all 0.3s;
+                                }
+
+                                .fancy-tabs .ant-tabs-tab:hover {
+                                    background: white;
+                                }
+
+                                .fancy-tabs .ant-tabs-tab-active {
+                                    background: white !important;
+                                    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+                                }
+
+                                .fancy-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+                                    color: #4f46e5 !important;
+                                }
+
+                                .fancy-tabs .ant-tabs-ink-bar {
+                                    display: none;
+                                }
+
+                                .custom-scrollbar::-webkit-scrollbar {
+                                    width: 6px;
+                                }
+
+                                .custom-scrollbar::-webkit-scrollbar-track {
+                                    background: transparent;
+                                }
+
+                                .custom-scrollbar::-webkit-scrollbar-thumb {
+                                    background: #e2e8f0;
+                                    border-radius: 1rem;
+                                }
+
+                                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                                    background: #cbd5e1;
+                                }
+                            `}</style>
+                        </Card>
+                    </div>
                 </div>
             </div>
         </div>
     );
+
 };
 
 export default ActivityDetails;

@@ -78,7 +78,7 @@ const ActivityCard = ({
             }
         } catch (error) {
             console.error("Error saving activity:", error);
-            message.error("Failed to update saved status");
+            message.warning("Failed to update saved status");
         }
     };
 
@@ -100,14 +100,14 @@ const ActivityCard = ({
                 message.info("Notifications turned off for this activity!");
             }
         } catch (error) {
-            message.error("Failed to update notification preferences");
-            console.error("Error updating notification status:", error);
+            message.warning("Failed to update notification preferences");
+            
         }
     };
 
     return (
         <div
-            className="w-full max-w-sm mx-auto transition-shadow duration-300 hover:shadow-xl cursor-pointer"
+            className="w-[370px] transition-shadow duration-300 hover:shadow-xl cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={handleActivityDetails}
@@ -120,7 +120,7 @@ const ActivityCard = ({
                         alt={name}
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#808080]/70 via-[#808080]/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 via-transparent to-transparent" />
 
                     {/* Action Buttons - Reduced Size */}
                     {user && (
@@ -202,7 +202,7 @@ const ActivityCard = ({
                 </div>
 
                 {/* Content Section */}
-                <div className="p-6 space-y-6 bg-white">
+                <div className="p-6 space-y-1 bg-white">
                     {/* Info Grid */}
                     <div className="grid grid-cols-2 gap-4">
                         <Tooltip title="Date">

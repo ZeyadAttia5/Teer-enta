@@ -20,11 +20,11 @@ const AccountDeletionRequests = ({ setFlag }) => {
                     console.log(response.data);
                     setRequests(response.data);
                 } else {
-                    message.error("Unexpected data format");
+                    message.warning("Unexpected data format");
                 }
             } catch (error) {
                 const errorMessage = error.response?.data?.message || "Failed to fetch deletion requests";
-                message.error(errorMessage);
+                message.warning(errorMessage);
             } finally {
                 setLoading(false);
             }
@@ -39,7 +39,7 @@ const AccountDeletionRequests = ({ setFlag }) => {
             setRequests((prevRequests) => prevRequests.filter((request) => request._id !== id));
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Failed to approve deletion";
-            message.error(errorMessage);
+            message.warning(errorMessage);
         }
     };
 
@@ -50,7 +50,7 @@ const AccountDeletionRequests = ({ setFlag }) => {
             setRequests((prevRequests) => prevRequests.filter((request) => request._id !== id));
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Failed to reject deletion";
-            message.error(errorMessage);
+            message.warning(errorMessage);
         }
     };
 

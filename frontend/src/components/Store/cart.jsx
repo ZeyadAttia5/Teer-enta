@@ -55,7 +55,7 @@ const CartComponent = () => {
       setCurrency(currencyResponse.data);
     } catch (err) {
       setError("Failed to fetch cart items");
-      message.error("Failed to load cart items");
+      message.warning("Failed to load cart items");
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ const CartComponent = () => {
       message.success("Cart updated successfully");
       fetchInitialData();
     } catch (err) {
-      message.error(err.response.data.message);
+      message.warning(err.response.data.message);
     }
   };
 
@@ -77,7 +77,7 @@ const CartComponent = () => {
       message.success("Product removed from cart");
       fetchInitialData();
     } catch (err) {
-      message.error("Failed to remove item");
+      message.warning("Failed to remove item");
     }
   };
 

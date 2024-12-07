@@ -87,7 +87,11 @@ exports.getProduct = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(400).send({message: 'Invalid product id'});
         }
-        const foundProduct = await product.findById(productId).populate('createdBy');
+        const foundProduct =
+            await product.findById(productId)
+                .populate('createdBy')
+                .populate('ratings.createdBy')
+                .populate('reviews.createdBy');
         console.log("Hereeee",foundProduct.createdBy);
         if (!foundProduct) {
             return res.status(404).send({message: 'Product not found'});
@@ -149,8 +153,7 @@ exports.unArchiveProduct = async (req, res) => {
 exports.addRatingToProduct = async (req, res) => {
     try {
         const { id } = req.params; 
-        const { rating } = req.body; 
-
+        const { rating } = req.body;
         const userId = req.user._id;
 
         const Product = await product.findById(id);
@@ -169,11 +172,16 @@ exports.addRatingToProduct = async (req, res) => {
         // if (!order) {
         //     return res.status(400).json({ message: "You haven't purchased this product" });
         // }
+        const existingRating = Product.ratings.find((r) => r.createdBy.toString() === userId);
 
-        Product.ratings.push({
-            createdBy: userId,
-            rating: rating,
-        });
+        if (existingRating) {
+            existingRating.rating = rating;
+        } else {
+            Product.ratings.push({
+                createdBy: userId,
+                rating: rating,
+            });
+        }
 
         await Product.save();
 

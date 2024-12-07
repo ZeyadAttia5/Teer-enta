@@ -19,11 +19,11 @@ const PendingUsers = ({ setFlag }) => {
         if (Array.isArray(response.data)) {
           setUsers(response.data);
         } else {
-          message.error("Unexpected data format");
+          message.warning("Unexpected data format");
         }
       } catch (error) {
         const errorMessage = error.response?.data?.message || "Failed to fetch users";
-        message.error(errorMessage);
+        message.warning(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -39,7 +39,7 @@ const PendingUsers = ({ setFlag }) => {
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Failed to accept user";
-      message.error(errorMessage);
+      message.warning(errorMessage);
     }
   };
 
@@ -50,7 +50,7 @@ const PendingUsers = ({ setFlag }) => {
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Failed to reject user";
-      message.error(errorMessage);
+      message.warning(errorMessage);
     }
   };
 
