@@ -100,7 +100,12 @@ const TouristWelcome = ({ setFlag }) => {
 
     const fetchTouristActivities = async () => {
       try {
-        const activitiesResponse = await getTouristActivities();
+        var activitiesResponse;
+        if(user){
+          activitiesResponse = await getSuggestedActivites();
+        }else{
+          activitiesResponse = await getTouristActivities();
+        }
         if (!mounted) return;
 
         const activitiesWithRatings = activitiesResponse.data.map(
@@ -181,10 +186,17 @@ const TouristWelcome = ({ setFlag }) => {
     const fetchItineraries = async () => {
       setLoading(true);
       try {
-        const data = await getItineraries();
-        setItineraries(data);
+        var data;
+        if(user){
+          data = await getSuggestedItinerary();
+          setItineraries(data.data);
+        }else{
+          data = await getItineraries();
+          setItineraries(data);
+        }
+        
       } catch (error) {
-        message.error("Failed to fetch itineraries");
+        // message.error("Failed to fetch itineraries");
       }
       setLoading(false);
     };
@@ -361,7 +373,7 @@ const TouristWelcome = ({ setFlag }) => {
 
           <div className="flex justify-center ">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 w-[90%]">
-              {historicalPlaces.slice(5, 9).map((place, index) => (
+              {historicalPlaces?.slice(0, 4).map((place, index) => (
                 <Link to={`/historicalPlace/details/${place?._id}`}>
                   <div className="relative hover:shadow-xl hover:border-b-2 transition-transform border-b-2 border-backgroundColor ease-in-out duration-300 hover:border-black">
                     <img
@@ -423,7 +435,7 @@ const TouristWelcome = ({ setFlag }) => {
                   />
               ))}
             </div>
-            {itineraries.length > 4 && (
+            {itineraries.length > 3 && (
               <div className="flex flex-col justify-center">
                 <Button
                   type="danger"

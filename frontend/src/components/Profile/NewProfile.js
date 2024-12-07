@@ -158,7 +158,7 @@ const TouristProfile = () => {
                 <Link to="/changePassword">
                   <Button
                     type="danger"
-                    className="hover:bg-third px-14 py-6 bg-fourth"
+                    className="hover:bg-third px-14 w-full py-6 bg-fourth"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
