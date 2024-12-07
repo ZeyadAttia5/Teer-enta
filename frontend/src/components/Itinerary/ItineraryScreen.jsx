@@ -279,7 +279,7 @@ const ItineraryScreen = ({ setFlag }) => {
       const data = await getItineraries();
       setItineraries(data);
     } catch (error) {
-      message.error("Failed to fetch itineraries");
+      message.warning("Failed to fetch itineraries");
     }
     setLoading(false);
   };
@@ -304,7 +304,7 @@ const ItineraryScreen = ({ setFlag }) => {
       const data = await getPreferenceTags();
       setPreferenceTagsList(data.data);
     } catch (error) {
-      message.error("Failed to fetch preference tags");
+      message.warning("Failed to fetch preference tags");
     }
   };
 

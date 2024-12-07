@@ -46,7 +46,7 @@ const Reviews = () => {
       setNewReview(''); // Clear the input field
       message.success("Review posted successfully!");
     } catch (err) {
-      message.error("Failed to post review");
+      message.warning("Failed to post review");
     }
   };
 

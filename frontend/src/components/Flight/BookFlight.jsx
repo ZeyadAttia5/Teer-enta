@@ -243,7 +243,7 @@ const BookFlight = () => {
       if (step === 2) fetchFlights();
       // if (step === 3)
     } catch (error) {
-      message.error("Please fill in all required fields");
+      message.warning("Please fill in all required fields");
     }
   };
   const handleFinish = async (_) => {
@@ -288,7 +288,7 @@ const BookFlight = () => {
     } catch (error) {
       console.log("Error submitting booking:");
       console.log(error);
-      message.error(error?.response?.data?.message);
+      message.warning(error?.response?.data?.message);
     } finally {
       setLoading(-1);
     }

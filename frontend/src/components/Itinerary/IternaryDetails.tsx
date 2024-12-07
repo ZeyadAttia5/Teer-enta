@@ -68,7 +68,7 @@ const ItineraryDetails: React.FC = () => {
                 setCurrency(response2.data);
                 setLoading(false);
             } catch (error) {
-                message.error("Failed to fetch itinerary details");
+                message.warning("Failed to fetch itinerary details");
             }
         };
 
@@ -81,7 +81,7 @@ const ItineraryDetails: React.FC = () => {
             const response = await getCommentsForTourGuide(tourGuideId);
             setTourGuideComments(response.data.comments);
         } catch (error) {
-            message.error("Failed to fetch tour guide comments");
+            message.warning("Failed to fetch tour guide comments");
         }
     };
 
@@ -92,7 +92,7 @@ const ItineraryDetails: React.FC = () => {
             console.log(response.ratings);
             setTourGuideRatings(response.ratings);
         } catch (error) {
-            message.error("Failed to fetch tour guide ratings");
+            message.warning("Failed to fetch tour guide ratings");
         }
     }
     const calculateAverageRating = () => {
@@ -111,7 +111,7 @@ const ItineraryDetails: React.FC = () => {
         const url = `${window.location.origin}/itinerary/iternaryDetails/${itineraryId}`;
         navigator.clipboard.writeText(url).then(
             () => message.success("Link copied to clipboard!"),
-            () => message.error("Failed to copy link")
+            () => message.warning("Failed to copy link")
         );
     };
     // Share via Email function

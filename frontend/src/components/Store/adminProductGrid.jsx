@@ -162,7 +162,7 @@ const AdminProductGrid = ({ setFlag }) => {
         await deleteWishlistProduct(productId);
       }
     } catch (error) {
-      message.error(
+      message.warning(
         error.response?.data?.message || "Failed to add product to cart"
       );
     }

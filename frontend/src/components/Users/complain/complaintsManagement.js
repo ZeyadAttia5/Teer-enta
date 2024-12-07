@@ -65,7 +65,7 @@ const ComplaintsManagement = () => {
       const { data } = await getComplaints();
       setComplaints(data);
     } catch (error) {
-      message.error("Failed to fetch complaints");
+      message.warning("Failed to fetch complaints");
       setComplaints([]);
     } finally {
       setLoading(false);
@@ -79,7 +79,7 @@ const ComplaintsManagement = () => {
       setReplyText(response.data.reply || "");
       setModalVisible(true);
     } catch (error) {
-      message.error("Failed to fetch complaint details");
+      message.warning("Failed to fetch complaint details");
     }
   };
 
@@ -106,7 +106,7 @@ const ComplaintsManagement = () => {
 
       message.success("Status updated successfully");
     } catch (error) {
-      message.error("Failed to update status");
+      message.warning("Failed to update status");
     }
   };
 
@@ -128,7 +128,7 @@ const ComplaintsManagement = () => {
 
       message.success("Reply submitted successfully");
     } catch (error) {
-      message.error("Failed to submit reply");
+      message.warning("Failed to submit reply");
     }
   };
 

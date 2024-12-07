@@ -35,7 +35,7 @@ const BookActivity = () => {
             const response = await getActivity(activityId);
             setActivity(response.data);
         } catch (err) {
-            message.error("Failed to get activity details");
+            message.warning("Failed to get activity details");
         }
     };
 
@@ -44,7 +44,7 @@ const BookActivity = () => {
             const response = await getMyCurrency();
             setCurrency(response.data);
         } catch (err) {
-            message.error("Failed to get currency information");
+            message.warning("Failed to get currency information");
         }
     };
 
@@ -69,7 +69,7 @@ const BookActivity = () => {
             setPromoDiscount(response.data.promoCode);
             message.success("Promo code applied successfully!");
         } catch (error) {
-            message.error(error.response?.data?.message || "Failed to apply promo code");
+            message.warning(error.response?.data?.message || "Failed to apply promo code");
         } finally {
             setApplyingPromo(false);
         }
@@ -86,7 +86,7 @@ const BookActivity = () => {
             message.success(response.data.message);
             setShowReceipt(true);  // Show the receipt after successful booking
         } catch (error) {
-            message.error(error.response?.data?.message || "Booking failed");
+            message.warning(error.response?.data?.message || "Booking failed");
         } finally {
             setLoading(false);
         }

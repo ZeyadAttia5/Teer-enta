@@ -144,7 +144,7 @@ const NotificationDropdown = ({onClose}) => {
                 next.delete(notificationId);
                 return next;
             });
-            message.error('Failed to delete notification');
+            message.warning('Failed to delete notification');
         }
     };
 
@@ -177,7 +177,7 @@ const NotificationDropdown = ({onClose}) => {
         } catch (error) {
             console.error('Error deleting all notifications:', error);
             setLocalNotifications(contextNotifications);
-            message.error('Failed to delete all notifications');
+            message.warning('Failed to delete all notifications');
         } finally {
             setIsDeletingAll(false);
         }
@@ -198,7 +198,7 @@ const NotificationDropdown = ({onClose}) => {
             );
         } catch (error) {
             console.error('Error marking all as read:', error);
-            message.error('Failed to mark all as read');
+            message.warning('Failed to mark all as read');
         } finally {
             setIsMarkingAll(false);
         }

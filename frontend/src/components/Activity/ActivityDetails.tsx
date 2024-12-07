@@ -140,7 +140,7 @@ More details: ${window.location.href}
         navigator.clipboard
             .writeText(window.location.href)
             .then(() => message.success("Link copied to clipboard!"))
-            .catch(() => message.error("Failed to copy link"));
+            .catch(() => message.warning("Failed to copy link"));
     };
 
     const averageRating =

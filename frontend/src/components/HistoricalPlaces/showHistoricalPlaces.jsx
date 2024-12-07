@@ -52,7 +52,7 @@ const ShowHistoricalPlaces = () => {
         const link = `${window.location.origin}/historicalPlace/details/${historicalPlace._id}`;
         navigator.clipboard.writeText(link).then(
             () => message.success("Link copied to clipboard!"),
-            () => message.error("Failed to copy the link")
+            () => message.warning("Failed to copy the link")
         );
     };
 
