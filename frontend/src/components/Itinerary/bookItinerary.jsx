@@ -11,6 +11,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { CalendarOutlined, ClockCircleOutlined, DollarOutlined, TagOutlined } from '@ant-design/icons';
 import { WalletOutlined, CreditCardOutlined } from '@ant-design/icons';
 import BackButton from "../shared/BackButton/BackButton.js";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
 const { Title, Text } = Typography;
 
@@ -26,6 +27,8 @@ const BookItinerary = () => {
     const [applyingPromo, setApplyingPromo] = useState(false);
     const [showReceipt, setShowReceipt] = useState(false);
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem("user"));
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
     const fetchItinerary = async () => {
         try {
@@ -71,6 +74,11 @@ const BookItinerary = () => {
     };
 
     const handleSubmit = async () => {
+        if (!user) {
+            setIsLoginModalOpen(true);
+            return;
+        }
+
         if (!selectedDate) {
             message.warning("Please select a date");
             return;
@@ -91,11 +99,17 @@ const BookItinerary = () => {
         if (promoDiscount) {
             return (price * (1 - promoDiscount / 100)).toFixed(2);
         }
+        console.log(price);
         return price.toFixed(2);
     };
 
     return (
         <div className="min-h-screen py-12 px-4">
+            <LoginConfirmationModal
+                open={isLoginModalOpen}
+                setOpen={setIsLoginModalOpen}
+                content="Please login to Book an iternary."
+            />
             <div className="max-w-4xl mx-auto">
                 <Card className="border-0" bodyStyle={{ padding: 0 }}>
                     {/* Header */}
@@ -219,6 +233,15 @@ const BookItinerary = () => {
                                                 <CheckoutForm
                                                     amount={calculateFinalPrice(currency?.rate * itinerary?.price)}
                                                     code={currency?.code}
+                                                    onPaymentSuccess={(paymentMethod) => {
+                                                        // Handle successful payment
+                                                        console.log('Payment successful:', paymentMethod);
+                                                    }}
+                                                    onError={(error) => {
+                                                        // Handle payment error
+                                                        console.error('Payment error:', error);
+                                                    }}
+                                                    withPayButton={false}
                                                 />
                                             </Elements>
                                         </div>

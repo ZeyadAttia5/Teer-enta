@@ -176,7 +176,6 @@ const ActivityCategories = ({ setFlag }) => {
                 }}
                 className="bg-[#1C325B] hover:bg-[#1C325B]/90"
               >
-                Edit
               </Button>
             </Tooltip>
             <Tooltip title="Delete Category">
@@ -198,7 +197,6 @@ const ActivityCategories = ({ setFlag }) => {
                   className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
                transition-all duration-200 hover:border-red-500"
                 >
-                  <span className="text-red-500 font-medium">Delete</span>
                 </Button>
               </Popconfirm>
             </Tooltip>

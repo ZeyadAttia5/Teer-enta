@@ -11,6 +11,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import {CalendarOutlined, ClockCircleOutlined, DollarOutlined, TagOutlined} from '@ant-design/icons';
 import { WalletOutlined, CreditCardOutlined } from '@ant-design/icons';
+import LoginConfirmationModal from "../../shared/LoginConfirmationModel";
 
 const { Title, Text } = Typography;
 
@@ -25,8 +26,9 @@ const BookActivity = () => {
     const [promoDiscount, setPromoDiscount] = useState(0);
     const [applyingPromo, setApplyingPromo] = useState(false);
     const [showReceipt, setShowReceipt] = useState(false);  // State to control receipt visibility
-
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem("user"));
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
     const fetchActivity = async () => {
         try {
@@ -74,6 +76,10 @@ const BookActivity = () => {
     };
 
     const handleSubmit = async () => {
+        if (!user) {
+           setIsLoginModalOpen(true);
+            return;
+        }
         setLoading(true);
         try {
             const response = await bookActivity(activityId, paymentMethod, promoCode);
@@ -101,6 +107,11 @@ const BookActivity = () => {
 
     return (
         <div className="min-h-screen py-12 px-4">
+            <LoginConfirmationModal
+                open={isLoginModalOpen}
+                setOpen={setIsLoginModalOpen}
+                content="Please login to Book an Activity."
+            />
             <div className="max-w-4xl mx-auto">
                 {/* Main Card Container */}
                 <Card className=" border-0" bodyStyle={{ padding: 0 }}>
@@ -200,6 +211,15 @@ const BookActivity = () => {
                                                 <CheckoutForm
                                                     amount={calculateFinalPrice(currency?.rate * activity?.price?.max)}
                                                     code={currency?.code}
+                                                    onPaymentSuccess={(paymentMethod) => {
+                                                        // Handle successful payment
+                                                        console.log('Payment successful:', paymentMethod);
+                                                    }}
+                                                    onError={(error) => {
+                                                        // Handle payment error
+                                                        console.error('Payment error:', error);
+                                                    }}
+                                                    withPayButton={false}
                                                 />
                                             </Elements>
                                         </div>

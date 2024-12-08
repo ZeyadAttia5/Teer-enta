@@ -40,6 +40,7 @@ import {
 import { Fade } from "react-awesome-reveal";
 import { useNavigate } from "react-router-dom";
 import {getCurrency} from "../../api/account.ts";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
 const { Option } = Select;
 
@@ -163,6 +164,7 @@ const BookFlight = () => {
   const [departureAirports, setDepartureAirports] = useState([]);
   const [destinationAirports, setDestinationAirports] = useState([]);
   const [currency,setCurrency] = useState(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   useEffect(() => {
     fetchCurrency() ;
   }, []);
@@ -241,7 +243,11 @@ const BookFlight = () => {
       setCurrentStep(step);
       if (step === 1) fetchAirports();
       if (step === 2) fetchFlights();
-      // if (step === 3)
+      if (step === 3){
+        setIsLoginModalOpen(true);
+        setCurrentStep(2);
+        return;
+      }
     } catch (error) {
       message.warning("Please fill in all required fields");
     }
@@ -282,7 +288,7 @@ const BookFlight = () => {
         message.success("Booking submitted successfully!");
         setCurrentStep(5);
       } else {
-        message.warning("Please login to book a flight");
+        setIsLoginModalOpen(true);
       }
     } catch (error) {
       console.log("Error submitting booking:");
@@ -566,6 +572,11 @@ const BookFlight = () => {
       }}
     >
       <div className="flex justify-center">
+        <LoginConfirmationModal
+            open={isLoginModalOpen}
+            setOpen={setIsLoginModalOpen}
+            content="Please login to Book a flight."
+        />
         <Card
             className="w-[90%] h-[630px] flex my-20 mx-auto shadow"
             classNames={{

@@ -1,12 +1,21 @@
-import React from 'react';
-import {Button, Rate, Tooltip} from 'antd';
+import React, {useState} from 'react';
+import {Button, message, Rate, Tooltip} from 'antd';
 import {
     EnvironmentOutlined, ClockCircleOutlined, TeamOutlined, GlobalOutlined
 } from '@ant-design/icons';
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
-const ItineraryCard = ({itinerary, navigate, currency  ,avgRating}) => {
+const ItineraryCard = ({itinerary, navigate, currency  ,avgRating }) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
     return (
         <div className="w-[370px] transition-shadow duration-300 hover:shadow-xl cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200" onClick={() => navigate(`/itinerary/iternaryDetails/${itinerary._id}`)}>
+            <LoginConfirmationModal
+                open={isLoginModalOpen}
+                setOpen={setIsLoginModalOpen}
+                content="Please login to Book an iternary."
+            />
             <div className="relative h-[240px]">
                 <img src={itinerary.imageUrl || "/api/placeholder/400/320"} alt={itinerary.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 via-transparent to-transparent"/>
@@ -88,7 +97,14 @@ const ItineraryCard = ({itinerary, navigate, currency  ,avgRating}) => {
                         </div>
                         <Button
                             type={itinerary.isBookingOpen ? "danger" : "default"}
-                            onClick={(e) => {e.stopPropagation(); navigate(`/itinerary/book/${itinerary._id}`);}}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (user) {
+                                    navigate(`/itinerary/book/${itinerary._id}`);
+                                } else {
+                                    setIsLoginModalOpen(true);
+                                }
+                            }}
                             className={`px-6 h-10 rounded-lg font-medium ${
                                 itinerary.isBookingOpen
                                     ? 'bg-blue-950 hover:bg-black text-white'
