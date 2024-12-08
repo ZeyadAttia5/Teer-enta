@@ -251,5 +251,33 @@ We’d love your input!
 
 ## 📄 License
 
-This project is licensed under the [Your License] License - see the [LICENSE.md](LICENSE.md) file for details.
+## Licenses
+
+This project uses multiple dependencies, each under its respective license. Below is a breakdown of the licenses included:
+
+- **MIT**: 1293 dependencies
+- **ISC**: 100 dependencies
+- **Apache-2.0**: 85 dependencies
+- **BSD-3-Clause**: 44 dependencies
+- **CC0-1.0**: 42 dependencies
+- **BSD-2-Clause**: 40 dependencies
+- **BlueOak-1.0.0**: 3 dependencies
+- **0BSD**: 3 dependencies
+- **(MIT OR CC0-1.0)**: 3 dependencies
+- **CC-BY-4.0**: 2 dependencies
+- **Unlicense**: 2 dependencies
+- **MIT\***: 2 dependencies
+- **Python-2.0**: 1 dependency
+- **MPL-2.0**: 1 dependency
+- **BSD**: 1 dependency
+- **UNLICENSED**: 1 dependency
+- **(Apache-2.0 OR MPL-1.1)**: 1 dependency
+- **(AFL-2.1 OR BSD-3-Clause)**: 1 dependency
+- **(BSD-3-Clause OR GPL-2.0)**: 1 dependency
+- **(MIT AND Zlib)**: 1 dependency
+- **MIT AND ISC**: 1 dependency
+
+### Notes
+- If you'd like to view the full details of each license, you can use tools like `license-checker` or check the individual dependencies in the `node_modules` directory.
+- Some dependencies may have multiple or combined licenses (e.g., `(MIT OR CC0-1.0)`).
 
