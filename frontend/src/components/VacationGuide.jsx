@@ -1,46 +1,78 @@
-import React, { useState } from 'react'
-import gif1 from './gifs/Recording 2024-12-03 211432.gif'
+import React, { useState, useEffect } from 'react'
+import gif1 from './gifs/activ.gif'
+import gif2 from './gifs/itin.gif'
+import gif3 from './gifs/hotel.gif'
+import gif4 from './gifs/trans.gif'
+import gif5 from './gifs/flight.gif'
+import gif6 from './gifs/product.gif'
+import gif7 from './gifs/ViewBookings.gif'
 
 const steps = [
   {
-    title: "Choose Your Destination",
-    description: "Click on the map to select your dream vacation spot.",
+    title: "Book Your Activities",
+    description: "Browse and book exciting activities for your trip.",
     image: gif1,
     arrowPosition: { top: '50%', left: '50%' }
   },
   {
-    title: "Select Your Dates",
-    description: "Use the calendar to pick your travel dates.",
-    image: gif1,
+    title: "Book Your Itinerary",
+    description: "Create a custom itinerary for your trip.",
+    image: gif2,
     arrowPosition: { top: '30%', right: '20%' }
   },
   {
-    title: "Book Your Flight",
-    description: "Choose from available flights for your selected dates.",
-    image: gif1,
+    title: "Book Your Hotel",
+    description: "Select from a variety of hotels or vacation rentals.",
+    image: gif3,
     arrowPosition: { bottom: '25%', left: '40%' }
   },
   {
-    title: "Reserve Your Accommodation",
-    description: "Select from a variety of hotels or vacation rentals.",
-    image: gif1,
+    title: "Book Your Transporation",
+    description: "Find the best transportation options for your trip.",
+    image: gif4,
     arrowPosition: { top: '60%', right: '30%' }
   },
   {
-    title: "Plan Your Activities",
-    description: "Browse and book exciting activities for your trip.",
-    image: gif1,
+    title: "Book Your Flight",
+    description: "Find the best deals on flights for your trip.",
+    image: gif5,
     arrowPosition: { bottom: '20%', left: '25%' }
-  }
+  },
+  {
+    title: "Purchase Travel Products",
+    description: "Shop for travel products to make your trip more enjoyable.",
+    image: gif6,
+    arrowPosition: { bottom: '20%', left: '25%' }
+  },
+  {
+    title: "View Your Bookings",
+    description: "View all of your bookings in one place.",
+    image: gif7,
+    arrowPosition: { bottom: '20%', left: '25%' }
+  },
 ]
 
 export default function VacationGuide() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isOpen, setIsOpen] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        setIsPlaying(true)
+      }, 500) // 2 seconds delay
+
+      return () => clearTimeout(timer)
+    } else {
+      setIsPlaying(false)
+    }
+  }, [isOpen, currentStep])
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
+      setIsPlaying(false) // Reset playing state for new step
     } else {
       setIsOpen(false)
       setCurrentStep(0)
@@ -52,19 +84,25 @@ export default function VacationGuide() {
     setCurrentStep(0)
   }
 
-  if (isOpen) {
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.body.style.overflow = 'unset'
-  }
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
 
   return (
     <div>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-gradient-to-r text-xl from-third to-second hover:from-first hover:to-second text-white font-bold py-1.5 px-4 rounded-full shadow-lg transform transition duration-500 hover:scale-105 "
+        className="bg-gradient-to-r text-xl from-third to-second hover:from-first hover:to-second text-white font-bold py-1.5 px-4 rounded-full shadow-lg transform transition duration-500 hover:scale-105"
       >
-        ? 
+        ?
       </button>
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
@@ -81,29 +119,23 @@ export default function VacationGuide() {
               <p className="text-gray-600 mb-4">{steps[currentStep].description}</p>
             </div>
             
-            <div className="relative aspect-[16/9] bg-gray-100">
+            <div className="relative aspect-[16/9] bg-gray-100 flex items-center justify-center">
               <img 
                 src={steps[currentStep].image} 
                 alt={steps[currentStep].title} 
-                className="w-full h-full object-cover"
-              />
-              {/* <div 
-                className="absolute w-12 h-12 bg-yellow-400 rounded-full animate-pulse"
-                style={{
-                  ...steps[currentStep].arrowPosition,
-                  transform: 'translate(-50%, -50%)'
+                className="w-full h-full object-contain"
+                style={{ 
+                  opacity: isPlaying ? 1 : 0, 
+                  transition: 'opacity 0.5s ease-in-out',
+                  objectFit: 'contain',
+                  objectPosition: 'center'
                 }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div> */}
+              />
+              {!isPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 border-4 border-second border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
             </div>
             
             {/* Step indicator dots */}

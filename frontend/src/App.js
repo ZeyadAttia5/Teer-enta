@@ -213,6 +213,13 @@ function AppContent() {
             <BackButton />
           </div>
         )}
+
+        {user1 && user1.userRole === "Tourist" && (
+          <div className="fixed bottom-4 right-4 z-10">
+            <VacationGuide />
+          </div>
+        )}
+        
         <div className={`${!flag && !visibleFlag ? "mt-[80px]" : !flag ? "mt-[117px]" : ""}`}>
           <Routes>
             {/* General Routes */}
