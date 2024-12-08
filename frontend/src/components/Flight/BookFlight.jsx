@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import bookFlightPic from "./bookFlightPic.webp";
+import React, {useEffect, useState} from "react";
+import bookFlightPic from "../../assets/Motivational Plane Travel Instagram Story.png";
 import {
   Card,
   Form,
@@ -15,7 +15,7 @@ import {
   Row,
   Col,
   message,
-  Result,
+  Result, notification,
 } from "antd";
 import {
   LoadingOutlined,
@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import { Fade } from "react-awesome-reveal";
 import { useNavigate } from "react-router-dom";
+import {getCurrency} from "../../api/account.ts";
 
 const { Option } = Select;
 
@@ -75,6 +76,20 @@ const FlightTicket = ({
       value: "40kg",
     },
   ];
+  const [currency,setCurrency] = useState(null);
+  useEffect(() => {
+    fetchCurrency() ;
+  }, []);
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      // console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
+    }
+  }
+
 
   return (
     <article
@@ -127,7 +142,7 @@ const FlightTicket = ({
           </div>
         </section>
         <section className="font-bold text-2xl ">
-          {offer.price.grandTotal} €
+          {(currency?.rate * offer.price.grandTotal).toFixed(2)} {currency?.code}
         </section>
       </footer>
     </article>
@@ -147,6 +162,19 @@ const BookFlight = () => {
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [departureAirports, setDepartureAirports] = useState([]);
   const [destinationAirports, setDestinationAirports] = useState([]);
+  const [currency,setCurrency] = useState(null);
+  useEffect(() => {
+    fetchCurrency() ;
+  }, []);
+  const fetchCurrency = async () => {
+    try {
+      const response = await getCurrency();
+      setCurrency(response.data);
+      // console.log("Currency:", response.data);
+    } catch (error) {
+      console.error("Fetch currency error:", error);
+    }
+  }
 
   const fetchAirports = async () => {
     setLoading(1);
@@ -215,7 +243,7 @@ const BookFlight = () => {
       if (step === 2) fetchFlights();
       // if (step === 3)
     } catch (error) {
-      message.error("Please fill in all required fields");
+      message.warning("Please fill in all required fields");
     }
   };
   const handleFinish = async (_) => {
@@ -254,12 +282,12 @@ const BookFlight = () => {
         message.success("Booking submitted successfully!");
         setCurrentStep(5);
       } else {
-        message.error("Please login to book a flight");
+        message.warning("Please login to book a flight");
       }
     } catch (error) {
       console.log("Error submitting booking:");
       console.log(error);
-      message.error(error?.response?.data?.message);
+      message.warning(error?.response?.data?.message);
     } finally {
       setLoading(-1);
     }
@@ -494,6 +522,7 @@ const BookFlight = () => {
         amount={flights[selectedOffer] && flights[selectedOffer].price.total}
         setPromoCode={setPromoCode}
         setPaymentMethod={setPaymentMethod}
+        currency={currency}
       />
     ),
     5: (
@@ -538,12 +567,12 @@ const BookFlight = () => {
     >
       <div className="flex justify-center">
         <Card
-          className="w-[90%] min-h-[600px] flex my-20 mx-auto shadow"
-          classNames={{
-            body: "flex flex-1 flex-col justify-center",
-            cover: "w-1/3",
-          }}
-          cover={<img alt="" className="size-full" src={bookFlightPic} />}
+            className="w-[90%] h-[630px] flex my-20 mx-auto shadow"
+            classNames={{
+              body: "flex flex-1 flex-col justify-center",
+              cover: "w-1/3",
+            }}
+            cover={<img alt="" className="size-full " src={bookFlightPic} />}
         >
           <header>
             <Typography.Title level={4} className="mb-6">

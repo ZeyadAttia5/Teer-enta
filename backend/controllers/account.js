@@ -16,9 +16,11 @@ const bcrypt = require('bcryptjs');
 const userModel = require('../models/Users/userModels');
 const TourGuide = require('../models/Users/TourGuide');
 const {uploadMultipleFiles, uploadSingleFile} = require('../middlewares/imageUploader');
-const {Model} = require("mongoose");
+const {Model, Types} = require("mongoose");
 const AccountDeletionRequest = require('../models/AccountDeletionRequest');
 const Order = require('../models/Product/Order');
+const getFCMToken = require("../Util/Notification/FCMTokenGetter");
+const sendNotification = require("../Util/Notification/NotificationSender");
 
 
 exports.deleteAccount = async (req, res) => {
@@ -154,6 +156,10 @@ exports.requestMyAccountDeletion = async (req, res) => {
     try {
         const userId = req.user._id;
         const user = await User.findById(userId);
+        const accountDeletionRequest = await AccountDeletionRequest.findOne({user : userId});
+        if(accountDeletionRequest){
+            return res.status(400).json({message: "Account Deletion request already exist , Admin Did not approve it yet"});
+        }
         if (user.userRole === "Tourist") {
             const bookedActivities = await BookedActivity.find({createdBy: userId, status: "Pending"});
             if (bookedActivities) {
@@ -239,7 +245,7 @@ exports.requestMyAccountDeletion = async (req, res) => {
                 {$unwind: '$productDetails'},
 
                 // Match products that are created by the specified user
-                {$match: {'productDetails.createdBy': mongoose.Types.ObjectId(userId)}},
+                {$match: {'productDetails.createdBy': new Types.ObjectId(userId)}},
 
                 // Group back to reconstruct the orders with matching products
                 {
@@ -494,6 +500,62 @@ exports.getSuggestedActivites = async (req, res) => {
         return res.status(500).json({message: 'Server error'});
     }
 }
+
+exports.getAllAccountsDeletionRequests = async (req, res) => {
+    try {
+        const accounts = await AccountDeletionRequest.find().populate('user');
+        // console.log(accounts)
+        res.status(200).json(accounts);
+    }catch (err){
+        errorHandler.SendError(res, err);
+    }
+}
+
+exports.approveAccountsDeletionRequest = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const request = await AccountDeletionRequest.findById(id);
+
+        if (!request) {
+            return res.status(404).json({ message: "Deletion request not found" });
+        }
+
+        // Delete user account
+        await User.findByIdAndDelete(request.userId);
+
+        // Delete the request
+        await AccountDeletionRequest.findByIdAndDelete(id);
+
+        res.status(200).json({ message: "Account deleted successfully" });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
+exports.rejectRequest = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const request = await AccountDeletionRequest.findByIdAndDelete(id);
+
+        const fcmToken = await getFCMToken(req.user._id);
+        if (fcmToken) {
+            await sendNotification({
+                title: 'Account Deletion Request',
+                body:`Your Deletion Request is Not Approved`,
+                tokens: [fcmToken],
+            })
+        }
+
+        if (!request) {
+            return res.status(404).json({ message: "Deletion request not found" });
+        }
+
+        res.status(200).json({ message: "Request rejected successfully" });
+    } catch (err) {
+        errorHandler.SendError(res, err);
+    }
+};
+
 
 
 

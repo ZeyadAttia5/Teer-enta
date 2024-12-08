@@ -13,16 +13,14 @@ import { applyPromoCode } from "../../api/promoCode.ts";
 const BookingPayment = ({
   onBookingClick,
   isloading,
-  amount: euroAmount,
-  currency = { rate: 1.05, code: "USD" },
+  amount,
+  currency ,
   setPromoCode: setOuterPromoCode,
   setPaymentMethod: setOuterPaymentMethod,
 }) => {
-  const { rate, code } = currency;
-
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [paymentSucceed, setPaymentSucceed] = useState(false);
-  const [amount, setAmount] = useState((euroAmount * rate).toFixed(1));
+  const [amountt, setAmountt] = useState((amount * currency.rate).toFixed(1));
   const [promoCode, setPromoCode] = useState();
   const [applyingPromo, setApplyingPromo] = useState(false);
   const [promoDiscount, setPromoDiscount] = useState(0);
@@ -35,8 +33,8 @@ const BookingPayment = ({
   };
 
   useEffect(() => {
-    setAmount((euroAmount * 1.05).toFixed(1)); // converting to dollars
-  }, [euroAmount]);
+    setAmountt((amount * currency.rate).toFixed(1)); // converting to dollars
+  }, [amount, currency]);
 
   const handleApplyPromo = async () => {
     if (!promoCode?.trim()) {
@@ -55,7 +53,7 @@ const BookingPayment = ({
       message.success("Promo code applied successfully!");
     } catch (error) {
       console.log(error);
-      message.error(
+      message.warning(
         error.response?.data?.message || "Failed to apply promo code"
       );
     } finally {
@@ -72,12 +70,12 @@ const BookingPayment = ({
         <p className="text-lg font-medium text-[#1a2b49]">
           Total Amount:{" "}
           <span className={`${promoDiscount && "line-through"} `}>
-            {amount} {code}
+            {amountt} {currency.code}
           </span>
         </p>
         {promoDiscount !== 0 && (
           <span className="ml-2 text-[#526D82] text-lg font-medium">
-            {calculateFinalPrice(parseFloat(amount))} {code}
+            {calculateFinalPrice(parseFloat(amountt))} {currency.code}
           </span>
         )}
       </div>
@@ -147,19 +145,21 @@ const BookingPayment = ({
           </Card>
         </Col>
       </Row>
+      <div >
+        {paymentMethod === "Card" && (
+            <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
+              <CheckoutForm
+                  amount={parseFloat(amount)}
+                  code={currency.code}
+                  discountedAmount={calculateFinalPrice(parseFloat(amount))}
+                  onPaymentSuccess={() => setPaymentSucceed(true)}
+                  onError={() => setPaymentSucceed(false)}
+                  // withPayButton={false}
+              />
+            </Elements>
+        )}
+      </div>
 
-      {paymentMethod === "Card" && (
-        <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
-          <CheckoutForm
-            amount={parseFloat(amount)}
-            code={code}
-            discountedAmount={calculateFinalPrice(parseFloat(amount))}
-            onPaymentSuccess={() => setPaymentSucceed(true)}
-            onError={() => setPaymentSucceed(false)}
-            // withPayButton={false}
-          />
-        </Elements>
-      )}
 
       <Form.Item className="mt-6">
         <Button

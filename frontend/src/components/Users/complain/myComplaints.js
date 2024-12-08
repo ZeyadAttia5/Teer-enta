@@ -47,7 +47,7 @@ const MyComplaints = () => {
       const response = await getMyComplaints();
       setComplaints(response.data);
     } catch (error) {
-      message.error("Failed to fetch complaints");
+      message.warning("Failed to fetch complaints");
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ const MyComplaints = () => {
       setSelectedComplaint(response.data);
       setModalVisible(true);
     } catch (error) {
-      message.error("Failed to fetch complaint details");
+      message.warning("Failed to fetch complaint details");
     }
   };
 
@@ -322,7 +322,7 @@ const MyComplaints = () => {
                   form.resetFields();
                   fetchComplaints();
                 } catch (error) {
-                  message.error("Failed to submit complaint");
+                  message.warning("Failed to submit complaint");
                 }
               }}
               form={form}

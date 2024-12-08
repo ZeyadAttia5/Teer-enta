@@ -32,7 +32,7 @@ const BookItinerary = () => {
             const response = await getIternary(itineraryId);
             setItinerary(response.data.itinerary);
         } catch (err) {
-            message.error("Failed to get itinerary details");
+            message.warning("Failed to get itinerary details");
         }
     };
 
@@ -41,7 +41,7 @@ const BookItinerary = () => {
             const response = await getMyCurrency();
             setCurrency(response.data);
         } catch (err) {
-            message.error("Failed to get currency information");
+            message.warning("Failed to get currency information");
         }
     };
 
@@ -64,7 +64,7 @@ const BookItinerary = () => {
             setPromoDiscount(response.data.promoCode);
             message.success("Promo code applied successfully!");
         } catch (error) {
-            message.error(error.response?.data?.message || "Failed to apply promo code");
+            message.warning(error.response?.data?.message || "Failed to apply promo code");
         } finally {
             setApplyingPromo(false);
         }
@@ -72,7 +72,7 @@ const BookItinerary = () => {
 
     const handleSubmit = async () => {
         if (!selectedDate) {
-            message.error("Please select a date");
+            message.warning("Please select a date");
             return;
         }
         setLoading(true);
@@ -81,7 +81,7 @@ const BookItinerary = () => {
             message.success(response.data.message);
             setShowReceipt(true);
         } catch (error) {
-            message.error(error.response?.data?.message || "Booking failed");
+            message.warning(error.response?.data?.message || "Booking failed");
         } finally {
             setLoading(false);
         }
@@ -96,7 +96,6 @@ const BookItinerary = () => {
 
     return (
         <div className="min-h-screen py-12 px-4">
-            <BackButton />
             <div className="max-w-4xl mx-auto">
                 <Card className="border-0" bodyStyle={{ padding: 0 }}>
                     {/* Header */}
@@ -219,6 +218,7 @@ const BookItinerary = () => {
                                             <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
                                                 <CheckoutForm
                                                     amount={calculateFinalPrice(currency?.rate * itinerary?.price)}
+                                                    code={currency?.code}
                                                 />
                                             </Elements>
                                         </div>

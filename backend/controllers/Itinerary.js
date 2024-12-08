@@ -67,9 +67,11 @@ exports.getItinerary = async (req, res, next) => {
                 },
             ],
         }).populate("timeline.activity")
+            .populate("preferenceTags")
             .populate("createdBy.ratings.createdBy")
             .populate("createdBy.comments.createdBy")
-            .populate("comments.createdBy");
+            .populate("comments.createdBy")
+            .populate("ratings.createdBy");
 
         const itineraryr = await Itinerary.findOne({
             _id: id,

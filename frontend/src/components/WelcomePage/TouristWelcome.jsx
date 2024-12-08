@@ -100,7 +100,12 @@ const TouristWelcome = ({ setFlag }) => {
 
     const fetchTouristActivities = async () => {
       try {
-        const activitiesResponse = await getTouristActivities();
+        var activitiesResponse;
+        if (user) {
+          activitiesResponse = await getSuggestedActivites();
+        } else {
+          activitiesResponse = await getTouristActivities();
+        }
         if (!mounted) return;
 
         const activitiesWithRatings = activitiesResponse.data.map(
@@ -181,10 +186,16 @@ const TouristWelcome = ({ setFlag }) => {
     const fetchItineraries = async () => {
       setLoading(true);
       try {
-        const data = await getItineraries();
-        setItineraries(data);
+        var data;
+        if (user) {
+          data = await getSuggestedItinerary();
+          setItineraries(data.data);
+        } else {
+          data = await getItineraries();
+          setItineraries(data);
+        }
       } catch (error) {
-        message.error("Failed to fetch itineraries");
+        // message.warning("Failed to fetch itineraries");
       }
       setLoading(false);
     };
@@ -361,7 +372,7 @@ const TouristWelcome = ({ setFlag }) => {
 
           <div className="flex justify-center ">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 w-[90%]">
-              {historicalPlaces.slice(5, 9).map((place, index) => (
+              {historicalPlaces?.slice(0, 4).map((place, index) => (
                 <Link to={`/historicalPlace/details/${place?._id}`}>
                   <div className="relative hover:shadow-xl hover:border-b-2 transition-transform border-b-2 border-backgroundColor ease-in-out duration-300 hover:border-black">
                     <img
@@ -405,30 +416,31 @@ const TouristWelcome = ({ setFlag }) => {
               </div>
             )}
           </div>
-
-          <span className="text-4xl font-bold text-first ml-12 mt-16 block mb-3">
-            Top itineraries you can't miss
-          </span>
+          {touristActivities.length > 0 && (
+            <span className="text-4xl font-bold text-first ml-12 mt-16 block mb-3">
+              Top itineraries you can't miss
+            </span>
+          )}
 
           <div className="flex justify-center">
             <div className="grid grid-cols-3 gap-8 w-[90%]">
               {itineraries?.slice(1, 4).map((itinerary, index) => (
-                  <ItineraryCard
-                      key={index}
-                      itinerary={itinerary}
-                      currency={currency}
-                      handleBookItinerary={handleBookItinerary}
-                      navigate={navigate}
-                      user={user}
-                  />
+                <ItineraryCard
+                  key={index}
+                  itinerary={itinerary}
+                  currency={currency}
+                  handleBookItinerary={handleBookItinerary}
+                  navigate={navigate}
+                  user={user}
+                />
               ))}
             </div>
-            {itineraries.length > 4 && (
+            {itineraries.length > 3 && (
               <div className="flex flex-col justify-center">
                 <Button
                   type="danger"
                   className="w-fit  rounded-full"
-                  href="/touristActivities"
+                  href="/itinerary"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -449,10 +461,11 @@ const TouristWelcome = ({ setFlag }) => {
             )}
           </div>
 
-          <span className="text-4xl font-bold mb-3 text-first ml-12 mt-8 block">
-            Top activities you can't miss
-          </span>
-
+          {touristActivities.length > 0 && (
+            <span className="text-4xl font-bold mb-3 text-first ml-12 mt-8 block">
+              Top activities you can't miss
+            </span>
+          )}
           <div className="flex justify-center">
             <div className="grid grid-cols-3 gap-8 w-[90%]">
               {touristActivities?.slice(5, 8).map((place) => (
@@ -479,6 +492,7 @@ const TouristWelcome = ({ setFlag }) => {
                   hasNotification={place.hasNotification}
                   currencyCode={currency?.code}
                   currencyRate={currency?.rate}
+                  specialDiscounts={place.specialDiscounts}
                 />
                 // </Link>
               ))}

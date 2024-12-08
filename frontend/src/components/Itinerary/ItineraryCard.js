@@ -4,24 +4,17 @@ import {
     EnvironmentOutlined, ClockCircleOutlined, TeamOutlined, GlobalOutlined
 } from '@ant-design/icons';
 
-const ItineraryCard = ({itinerary, navigate, currency}) => {
-    const getRating = () => {
-        if (itinerary.ratings.length === 0) {
-            return 0;
-        }
-        const totalRating = itinerary.ratings.reduce((acc, curr) => acc + curr.rating, 0);
-        return totalRating / itinerary.ratings.length
-    }
+const ItineraryCard = ({itinerary, navigate, currency  ,avgRating}) => {
     return (
-        <div className="w-[380px] transition-shadow duration-300 hover:shadow-xl cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200" onClick={() => navigate(`/itinerary/iternaryDetails/${itinerary._id}`)}>
-            <div className="relative h-[280px]">
+        <div className="w-[370px] transition-shadow duration-300 hover:shadow-xl cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200" onClick={() => navigate(`/itinerary/iternaryDetails/${itinerary._id}`)}>
+            <div className="relative h-[240px]">
                 <img src={itinerary.imageUrl || "/api/placeholder/400/320"} alt={itinerary.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 via-transparent to-transparent"/>
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                     <h3 className="text-white text-xl font-bold tracking-wide truncate mb-2">{itinerary.name}</h3>
                     <div className="flex items-center space-x-3">
-                        <Rate disabled defaultValue={itinerary.ratings || 0} className="text-[#FFD700] text-sm"/>
-                        <span className="text-white/90 text-sm">{itinerary.comments?.length ? `(${itinerary.comments.length} reviews)` : '(No reviews yet)'}</span>
+                        <Rate disabled defaultValue={avgRating || 0} allowHalf className="text-[#FFD700] text-sm"/>
+                        <span className="text-white/90 text-sm">{itinerary.ratings?.length ? `(${itinerary.ratings.length} reviews)` : '(No reviews yet)'}</span>
                     </div>
                 </div>
             </div>
@@ -39,8 +32,8 @@ const ItineraryCard = ({itinerary, navigate, currency}) => {
             </div>
 
             <div className="p-4">
-                <div className="space-y-6">
-                    <div className="space-y-4">
+                <div className="space-y-2">
+                    <div className="space-y-1">
                         <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-5 shadow-sm border border-gray-100">
                             <div className="flex items-center justify-between">
                                 <div className="flex-1">
@@ -95,10 +88,10 @@ const ItineraryCard = ({itinerary, navigate, currency}) => {
                         </div>
                         <Button
                             type={itinerary.isBookingOpen ? "danger" : "default"}
-                            onClick={(e) => {e.stopPropagation(); navigate(`/itineraries/book/${itinerary._id}`);}}
-                            className={`px-6 h-10 rounded-lg font-medium shadow-sm${
+                            onClick={(e) => {e.stopPropagation(); navigate(`/itinerary/book/${itinerary._id}`);}}
+                            className={`px-6 h-10 rounded-lg font-medium ${
                                 itinerary.isBookingOpen
-                                    ? 'bg-[#2A3663] hover:bg-black text-white'
+                                    ? 'bg-blue-950 hover:bg-black text-white'
                                     : 'bg-gray-100 text-gray-500 cursor-not-allowed hover:bg-gray-100'
                             }`}
                             disabled={!itinerary.isBookingOpen }
