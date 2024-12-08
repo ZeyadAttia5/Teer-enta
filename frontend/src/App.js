@@ -209,7 +209,7 @@ function AppContent() {
         />
 
         {showBackButton && (
-          <div className={`p-4 z-10 ${!visibleFlag ? "mt-[80px]" : "mt-[140px]"} bg-transparent absolute top-0 left-4 cursor-pointer`}>
+          <div className={`p-4 z-10 ${!visibleFlag ? "mt-[80px]" : "mt-[140px]"} bg-transparent absolute top-0 left-0 cursor-pointer`}>
             <BackButton />
           </div>
         )}
