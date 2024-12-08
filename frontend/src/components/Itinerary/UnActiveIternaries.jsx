@@ -80,7 +80,7 @@ const UnActiveIternaries = () => {
       // Trigger a refresh to ensure data consistency
       setRefreshTrigger(prev => prev + 1);
     } catch (error) {
-      message.error("Failed to update activation status");
+      message.warning(error.response.data.message);
       console.error("Status update error:", error);
     } finally {
       setLoading(false);

@@ -77,7 +77,7 @@ const CheckoutPage = () => {
             setAddresses(addressesResponse.data.addresses || []);
             setCurrency(currencyResponse.data);
         } catch (error) {
-            message.warning('Failed to load checkout data');
+            message.warning(error.response.data.message||'Failed to load checkout data');
             console.error('Checkout data loading error:', error);
         } finally {
             setPageLoading(false);

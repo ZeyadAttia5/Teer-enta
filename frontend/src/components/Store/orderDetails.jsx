@@ -64,7 +64,7 @@ const OrderDetails = () => {
             });
             setProductReviews(reviewStatuses);
         } catch (error) {
-            message.warning('Failed to fetch order details');
+            message.warning(error.response.data.message||'Failed to fetch order details');
             navigate('/orders');
         } finally {
             setLoading(false);

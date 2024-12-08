@@ -35,7 +35,7 @@ const BookItinerary = () => {
             const response = await getIternary(itineraryId);
             setItinerary(response.data.itinerary);
         } catch (err) {
-            message.warning("Failed to get itinerary details");
+            message.warning(err.response.data.message||"Failed to get itinerary details");
         }
     };
 
@@ -44,7 +44,7 @@ const BookItinerary = () => {
             const response = await getMyCurrency();
             setCurrency(response.data);
         } catch (err) {
-            message.warning("Failed to get currency information");
+            message.warning(err.response.data.message||"Failed to get currency information");
         }
     };
 

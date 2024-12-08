@@ -35,7 +35,7 @@ const BookActivity = () => {
             const response = await getActivity(activityId);
             setActivity(response.data);
         } catch (err) {
-            message.warning("Failed to get activity details");
+            message.warning(err.response.data.message);
         }
     };
 
@@ -44,7 +44,7 @@ const BookActivity = () => {
             const response = await getMyCurrency();
             setCurrency(response.data);
         } catch (err) {
-            message.warning("Failed to get currency information");
+            message.warning(err.response.data.message);
         }
     };
 

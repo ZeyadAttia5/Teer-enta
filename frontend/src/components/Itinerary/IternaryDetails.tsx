@@ -68,7 +68,7 @@ const ItineraryDetails: React.FC = () => {
                 setCurrency(response2.data);
                 setLoading(false);
             } catch (error) {
-                message.warning("Failed to fetch itinerary details");
+                message.warning(error.response.data.message||"Failed to fetch itinerary details");
             }
         };
 
@@ -81,7 +81,7 @@ const ItineraryDetails: React.FC = () => {
             const response = await getCommentsForTourGuide(tourGuideId);
             setTourGuideComments(response.data.comments);
         } catch (error) {
-            message.warning("Failed to fetch tour guide comments");
+            message.warning(error.response.data.message||"Failed to fetch tour guide comments");
         }
     };
 
@@ -92,7 +92,7 @@ const ItineraryDetails: React.FC = () => {
             console.log(response.ratings);
             setTourGuideRatings(response.ratings);
         } catch (error) {
-            message.warning("Failed to fetch tour guide ratings");
+            message.warning(error.response.data.message||"Failed to fetch tour guide ratings");
         }
     }
     const calculateAverageRating = () => {

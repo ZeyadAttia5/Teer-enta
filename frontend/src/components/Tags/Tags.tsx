@@ -12,6 +12,7 @@ import {
   Tooltip,
   notification,
   Popconfirm,
+    message
 } from "antd";
 import {
   TagsOutlined,
@@ -45,11 +46,7 @@ const Tag = ({ setFlag }) => {
       const response = await getTags();
       setTags(response.data);
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: "Failed to fetch tags",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -64,28 +61,16 @@ const Tag = ({ setFlag }) => {
     try {
       if (isEditing) {
         await updateTag(values, currentTag._id);
-        notification.success({
-          message: "Success",
-          description: "Tag updated successfully",
-          className: "bg-white shadow-lg",
-        });
+        message.success("Tag updated successfully");
       } else {
         await createTag(values);
-        notification.success({
-          message: "Success",
-          description: "Tag created successfully",
-          className: "bg-white shadow-lg",
-        });
+        message.success("Tag created successfully")
       }
       fetchTags();
       setModalVisible(false);
       form.resetFields();
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: error.response?.data?.message || "Failed to save tag",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response.data.message);
     } finally {
       setSubmitting(false);
     }
@@ -94,18 +79,10 @@ const Tag = ({ setFlag }) => {
   const handleDelete = async (tagId) => {
     try {
       await deleteTag(tagId);
-      notification.success({
-        message: "Success",
-        description: "Tag deleted successfully",
-        className: "bg-white shadow-lg",
-      });
+      message.success("Tag deleted successfully")
       fetchTags();
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: "Failed to delete tag",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response.data.message);
     }
   };
 

@@ -279,7 +279,7 @@ const ItineraryScreen = ({ setFlag }) => {
       const data = await getItineraries();
       setItineraries(data);
     } catch (error) {
-      message.warning("Failed to fetch itineraries");
+      message.warning(error.response.data.message||"Failed to fetch itineraries");
     }
     setLoading(false);
   };
@@ -291,9 +291,9 @@ const ItineraryScreen = ({ setFlag }) => {
       setItineraries(data);
     } catch (error) {
       if (error.response?.status === 404) {
-        notification.info({ message: "You didn't create any itineraries yet" });
+        message.info( "You didn't create any itineraries yet" );
       } else {
-        notification.error({ message: "Error fetching itineraries" });
+        message.warning(error.response.data.message);
       }
     }
     setLoading(false);
@@ -304,7 +304,7 @@ const ItineraryScreen = ({ setFlag }) => {
       const data = await getPreferenceTags();
       setPreferenceTagsList(data.data);
     } catch (error) {
-      message.warning("Failed to fetch preference tags");
+      message.warning(error.response.data.message||"Failed to fetch preference tags");
     }
   };
 

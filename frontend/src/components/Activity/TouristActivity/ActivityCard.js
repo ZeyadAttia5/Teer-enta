@@ -76,11 +76,11 @@ const ActivityCard = ({
             } else {
                 await removeSavedActivity(id);
                 setIsSaved(false);
-                message.info("Activity removed from saved activities!");
+                message.success("Activity removed from saved activities!");
             }
         } catch (error) {
             console.error("Error saving activity:", error);
-            message.warning("Failed to update saved status");
+            message.warning(error.response.data.message);
         }
     };
 
@@ -99,7 +99,7 @@ const ActivityCard = ({
             } else {
                 await updateNotificationRequestStatus(id, "Cancelled");
                 setIsNotified(false);
-                message.info("Notifications turned off for this activity!");
+                message.success("Notifications turned off for this activity!");
             }
         } catch (error) {
             message.warning("Failed to update notification preferences");

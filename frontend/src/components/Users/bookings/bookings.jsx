@@ -89,7 +89,7 @@ const BookingGrid = () => {
       setBookedFlights(flights.data);
       setBookedTransportations(transportations.data);
     } catch (error) {
-      message.warning("Error fetching bookings");
+      message.warning(error.response.data.message||"Error fetching bookings");
     }
   };
 
@@ -98,7 +98,7 @@ const BookingGrid = () => {
       const response = await getCurrency();
       setCurrency(response.data);
     } catch (err) {
-      message.warning("Error fetching currency");
+      message.warning(err.response.data.message||"Error fetching currency");
     }
   };
 

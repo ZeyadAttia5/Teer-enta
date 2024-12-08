@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Form, Input, Button, Select, ConfigProvider, notification} from 'antd';
+import {Form, Input, Button, Select, ConfigProvider, notification , message} from 'antd';
 import { UserOutlined, LockOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { addUser } from "../../../api/account.ts";
 
@@ -14,18 +14,10 @@ const AddUser = ({setFlag}) => {
         setLoading(true);
         try {
             await addUser(values);
-            notification.success({
-                message: 'Success',
-                description: 'User registered successfully',
-                className: 'bg-white shadow-lg',
-            });
+            message.success("User registered successfully");
             form.resetFields();
         } catch (error) {
-            notification.error({
-                message: 'Error',
-                description: error.response?.data?.message || 'Failed to register user',
-                className: 'bg-white shadow-lg',
-            });
+           message.warning(error.response.data.message);
         } finally {
             setLoading(false);
         }

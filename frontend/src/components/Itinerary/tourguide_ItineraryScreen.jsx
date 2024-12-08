@@ -102,7 +102,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
         setMyItineraries(myItinerariesData);
       } catch (error) {
         console.error("Error fetching data:", error);
-        notification.error({ message: "Failed to fetch itineraries" });
+        message.warning(error.response.data.message);
       } finally {
         setLoading(false);
       }
@@ -128,7 +128,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       const data = await getActivities();
       setActivitiesList(data.data);
     } catch (error) {
-      message.warning("Failed to fetch activities");
+      message.warning(error.response.data.message||"Failed to fetch activities");
     }
   };
 
@@ -137,7 +137,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       const data = await getPreferenceTags();
       setPreferenceTagsList(data.data);
     } catch (error) {
-      message.warning("Failed to fetch preference tags");
+      message.warning(error.response.data.message||"Failed to fetch preference tags");
     }
   };
 
@@ -227,7 +227,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       handleCancel();
 
     } catch (error) {
-      message.warning("Failed to save itinerary");
+      message.warning(error.response.data.message||"Failed to save itinerary");
       console.error(error);
     }
   };
@@ -238,7 +238,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       message.success("Itinerary deleted successfully");
       setRefreshItineraries((prev) => !prev);
     } catch (error) {
-      message.warning("Failed to delete itinerary");
+      message.warning(error.response.data.message||"Failed to delete itinerary");
     }
   };
 
@@ -426,7 +426,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                           message.success("Itinerary flagged as inappropriate");
                           setRefreshItineraries((prev) => !prev);
                         } catch (error) {
-                          message.warning("Failed to flag itinerary");
+                          message.warning(error.response.data.message||"Failed to flag itinerary");
                         }
                       }}
                   />

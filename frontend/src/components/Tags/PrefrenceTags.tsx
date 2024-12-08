@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Switch,
-  notification,
-  Popconfirm,
-  ConfigProvider,
-  Tooltip,
+    Table,
+    Button,
+    Modal,
+    Form,
+    Input,
+    Switch,
+    notification,
+    Popconfirm,
+    ConfigProvider,
+    Tooltip, message,
 } from "antd";
 import {
   PlusOutlined,
@@ -48,11 +48,7 @@ const PreferenceTags = ({ setFlag }) => {
       const response = await getPreferenceTags();
       setTags(response.data);
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: "Failed to fetch preference tags",
-        className: "bg-white shadow-lg",
-      });
+        message.warning(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -63,28 +59,16 @@ const PreferenceTags = ({ setFlag }) => {
     try {
       if (isEditing) {
         await updatePreferenceTag({ ...currentTag, ...values });
-        notification.success({
-          message: "Success",
-          description: "Tag updated successfully",
-          className: "bg-white shadow-lg",
-        });
+        message.success("Tag updated successfully");
       } else {
         await createPreferenceTag(values);
-        notification.success({
-          message: "Success",
-          description: "Tag created successfully",
-          className: "bg-white shadow-lg",
-        });
+        message.success("Tag created successfully");
       }
       fetchTags();
       setModalVisible(false);
       form.resetFields();
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: "Failed to save tag",
-        className: "bg-white shadow-lg",
-      });
+        message.warning(error.response.data.message);
     } finally {
       setSubmitting(false);
     }
@@ -93,18 +77,10 @@ const PreferenceTags = ({ setFlag }) => {
   const handleDelete = async (id) => {
     try {
       await deletePreferenceTag(id);
-      notification.success({
-        message: "Success",
-        description: "Tag deleted successfully",
-        className: "bg-white shadow-lg",
-      });
+      message.success("Preference Tag deleted successfully")
       fetchTags();
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: "Failed to delete tag",
-        className: "bg-white shadow-lg",
-      });
+        message.warning(error.response.data.message);
     }
   };
 

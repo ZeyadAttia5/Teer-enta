@@ -55,7 +55,7 @@ const CartComponent = () => {
       setCurrency(currencyResponse.data);
     } catch (err) {
       setError("Failed to fetch cart items");
-      message.warning("Failed to load cart items");
+      message.warning(error.response.data.message||"Failed to load cart items");
     } finally {
       setLoading(false);
     }
