@@ -66,7 +66,7 @@ const OrderHistory = () => {
             setFilteredOrders(sortedOrders);
             setCurrency(currencyResponse.data);
         } catch (error) {
-            message.warning('Failed to fetch orders');
+            message.warning(error.response.data.message||'Failed to fetch orders');
         } finally {
             setLoading(false);
         }

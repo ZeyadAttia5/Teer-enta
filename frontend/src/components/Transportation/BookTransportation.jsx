@@ -34,6 +34,7 @@ import {
 import { getCurrency } from "../../api/account.ts";
 import StaticMap from "../shared/GoogleMaps/ViewLocation.jsx";
 import BookingPayment from "../shared/BookingPayment.jsx";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
 const { Text } = Typography;
 
@@ -70,7 +71,8 @@ const TransportationCard = ({ item, currency, onBook }) => {
   const [dropOffAddress, setDropOffAddress] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
   const [paymentMethod, setPaymentMethod] = useState("wallet");
-
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user"));
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
       message.warning("Please enter a promo code");
@@ -104,11 +106,15 @@ const TransportationCard = ({ item, currency, onBook }) => {
       const fetchAddress = async (lat, lng) => {
         try {
           const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=REACT_APP_GOOGLE_MAPS_API_KEY`
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
           );
           const data = await response.json();
           if (data.status === "OK") {
-            setPickupAddress(data.results[0].formatted_address);
+            setPickupAddress(
+              data.results[1]
+                ? data.results[1].formatted_address
+                : data.results[0].formatted_address
+            );
           }
         } catch (error) {
           console.error("Error fetching address:", error);
@@ -121,11 +127,16 @@ const TransportationCard = ({ item, currency, onBook }) => {
       const fetchAddress = async (lat, lng) => {
         try {
           const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=REACT_APP_GOOGLE_MAPS_API_KEY`
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
           );
           const data = await response.json();
+          console.log("data", data);
           if (data.status === "OK") {
-            setDropOffAddress(data.results[0].formatted_address);
+            setDropOffAddress(
+              data.results[1]
+                ? data.results[1].formatted_address
+                : data.results[0].formatted_address
+            );
           }
         } catch (error) {
           console.error("Error fetching address:", error);
@@ -141,11 +152,19 @@ const TransportationCard = ({ item, currency, onBook }) => {
   ]);
 
   const handleBookNow = () => {
+    if(!user){
+        setIsLoginModalOpen(true);
+        return;
+    }
     setIsModalVisible(true);
   };
 
   const handleModalOk = async () => {
     try {
+      if(!user){
+        setIsLoginModalOpen(true);
+        return;
+      }
       await onBook(item._id, promoCode);
       setIsModalVisible(false);
     } catch (error) {
@@ -156,9 +175,15 @@ const TransportationCard = ({ item, currency, onBook }) => {
   const handleModalCancel = () => {
     setIsModalVisible(false);
   };
-
+  console.log("pickupAddress", pickupAddress);
+  console.log("dropOffAddress", dropOffAddress);
   return (
     <div className="">
+      <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to book transportation."
+      />
       <Badge.Ribbon
         text={item.isActive ? "Active" : "Inactive"}
         color={item.isActive ? "green" : "red"}
@@ -186,37 +211,56 @@ const TransportationCard = ({ item, currency, onBook }) => {
         >
           <Space direction="vertical" size="large" className="w-full">
             {/* Pickup and Drop-Off Locations */}
-            <div className="flex justify-between items-center  ">
-              <div className="flex gap-6">
-                {/* Pickup Location */}
-                <div className="flex items-center gap-1 text-first">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center w-full">
+                {/* Pickup Location - 50% width */}
+                <div className="flex items-center gap-2 text-first w-1/2 pr-2">
                   <CompassOutlined />
-                  <Text className="font-bold">Pickup:</Text>
-                  <Tooltip title="View Pickup Location on Map">
-                    <a
-                      href={`https://maps.google.com/?q=${item.pickupLocation.lat},${item.pickupLocation.lng}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-second hover:text-third hover:underline "
+                  <Text className="font-bold w-[50px] shrink-0">Pickup:</Text>
+                  <Tooltip
+                    title={pickupAddress}
+                    placement="topLeft"
+                    overlayStyle={{ maxWidth: "300px" }}
+                  >
+                    <Text
+                      className="text-second hover:text-third hover:underline cursor-pointer truncate"
+                      ellipsis
                     >
-                      View on map
-                    </a>
+                      <a
+                        href={`https://maps.google.com/?q=${item.pickupLocation.lat},${item.pickupLocation.lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="truncate"
+                      >
+                        {pickupAddress ? pickupAddress : "NA"}
+                      </a>
+                    </Text>
                   </Tooltip>
                 </div>
+
                 <ArrowRightOutlined className="text-second" />
 
-                {/* Drop-Off Location */}
-                <div className="flex items-center gap-1 text-first">
-                  <Text className="font-bold">Drop-off:</Text>
-                  <Tooltip title="View Drop-off Location on Map">
-                    <a
-                      href={`https://maps.google.com/?q=${item.dropOffLocation.lat},${item?.dropOffLocation?.lng}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-second hover:text-third hover:underline "
+                {/* Drop-Off Location - 50% width */}
+                <div className="flex items-center gap-2 text-first w-1/2 pl-2">
+                  <Text className="font-bold w-[70px] shrink-0">Drop-off:</Text>
+                  <Tooltip
+                    title={dropOffAddress}
+                    placement="topLeft"
+                    overlayStyle={{ maxWidth: "300px" }}
+                  >
+                    <Text
+                      className="text-second hover:text-third hover:underline cursor-pointer truncate"
+                      ellipsis
                     >
-                      View on map
-                    </a>
+                      <a
+                        href={`https://maps.google.com/?q=${item.dropOffLocation.lat},${item?.dropOffLocation?.lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="truncate"
+                      >
+                        {dropOffAddress ? dropOffAddress : "NA"}
+                      </a>
+                    </Text>
                   </Tooltip>
                 </div>
               </div>
@@ -351,14 +395,14 @@ const TransportationCard = ({ item, currency, onBook }) => {
         onCancel={handleModalCancel}
         footer={null}
       >
-          <BookingPayment
-              onBookingClick={handleModalOk}
-              currency={currency}
-              amount={item.price}
-              item={item}
-              promoCode={promoCode}
-              setPaymentMethod={setPaymentMethod}
-          />
+        <BookingPayment
+          onBookingClick={handleModalOk}
+          currency={currency}
+          amount={item.price}
+          item={item}
+          promoCode={promoCode}
+          setPaymentMethod={setPaymentMethod}
+        />
       </Modal>
     </div>
   );

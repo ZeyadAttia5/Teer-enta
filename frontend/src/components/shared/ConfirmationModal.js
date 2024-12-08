@@ -6,6 +6,7 @@ import {message, message as messageAd} from "antd";
 
 function ConfirmationModal({isOpen, onClose, onConfirm ,message}) {
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user'));
     if (!isOpen) return null;
     const handleModalClick = async (e) => {
         try{
@@ -14,7 +15,18 @@ function ConfirmationModal({isOpen, onClose, onConfirm ,message}) {
             if (message === "Are you sure you want to delete your account?") {
                     const response = await requestAccountDeletion();
                     messageAd.success(response.data.message);
-                    navigate("/reports");
+                    if (user === "Tourist") {
+                        localStorage.clear();
+                        window.location.href = "/";
+                    }else{
+                        if(response.data.message === "Account deleted successfully"){
+                            localStorage.clear();
+                            window.location.href = "/";
+                        }else{
+                            window.location.href = "/reports";
+                        }
+                    };
+                    
             }
             if (message === "Are you sure you want to log out?") {
                 // localStorage.removeItem("user");
@@ -28,6 +40,8 @@ function ConfirmationModal({isOpen, onClose, onConfirm ,message}) {
         }catch (error){
             messageAd.info(error.response.data.message);
             console.error(error);
+        }finally{
+            onClose();
         }
 
     };

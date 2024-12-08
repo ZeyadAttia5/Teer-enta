@@ -20,7 +20,7 @@ const ResetPassword = () => {
             message.success(response.data.message);
             navigate('/login');
         } catch (error) {
-            message.warning('Invalid OTP or an error occurred.');
+            message.warning(error.response.data.message||'Invalid OTP or an error occurred.');
         } finally {
             setLoading(false);
         }

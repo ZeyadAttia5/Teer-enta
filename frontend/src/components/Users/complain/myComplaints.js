@@ -47,7 +47,7 @@ const MyComplaints = () => {
       const response = await getMyComplaints();
       setComplaints(response.data);
     } catch (error) {
-      message.warning("Failed to fetch complaints");
+      message.warning(error.response.data.message||"Failed to fetch complaints");
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ const MyComplaints = () => {
       setSelectedComplaint(response.data);
       setModalVisible(true);
     } catch (error) {
-      message.warning("Failed to fetch complaint details");
+      message.warning(error.response.data.message||"Failed to fetch complaint details");
     }
   };
 

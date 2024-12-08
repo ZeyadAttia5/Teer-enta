@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, InputNumber, Button, ConfigProvider, notification } from "antd";
+import {Form, Input, InputNumber, Button, ConfigProvider, notification, message} from "antd";
 import { useNavigate } from "react-router-dom";
 import {
   PackageIcon,
@@ -37,19 +37,11 @@ const AdminProductForm = ({ setFlag }) => {
     setLoading(true);
     try {
       await addProduct(product);
-      notification.success({
-        message: 'Success',
-        description: 'Product successfully created!',
-        className: 'bg-white shadow-lg',
-      });
+      message.success("Product successfully created!");
       form.resetFields();
       navigate('/products');
     } catch (err) {
-      notification.error({
-        message: 'Error',
-        description: 'Failed to create product',
-        className: 'bg-white shadow-lg',
-      });
+      message.warning(err.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -158,11 +150,11 @@ const AdminProductForm = ({ setFlag }) => {
                 </Form.Item>
 
                 <Button
-                    type="primary"
+                    type="danger"
                     htmlType="submit"
                     loading={loading}
                     size="large"
-                    className="w-full h-12 bg-[#1C325B] hover:bg-[#1C325B]/90 rounded-lg
+                    className="w-full h-12 bg-first text-white hover:bg-black rounded-lg
                                          text-base font-medium"
                 >
                   {loading ? "Creating Product..." : "Create Product"}

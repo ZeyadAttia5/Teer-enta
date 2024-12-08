@@ -11,6 +11,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import {CalendarOutlined, ClockCircleOutlined, DollarOutlined, TagOutlined} from '@ant-design/icons';
 import { WalletOutlined, CreditCardOutlined } from '@ant-design/icons';
+import LoginConfirmationModal from "../../shared/LoginConfirmationModel";
 
 const { Title, Text } = Typography;
 
@@ -25,15 +26,16 @@ const BookActivity = () => {
     const [promoDiscount, setPromoDiscount] = useState(0);
     const [applyingPromo, setApplyingPromo] = useState(false);
     const [showReceipt, setShowReceipt] = useState(false);  // State to control receipt visibility
-
     const navigate = useNavigate();
-
+    const user = JSON.parse(localStorage.getItem("user"));
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [paymentSucceed, setPaymentSucceed] = useState(false);
     const fetchActivity = async () => {
         try {
             const response = await getActivity(activityId);
             setActivity(response.data);
         } catch (err) {
-            message.warning("Failed to get activity details");
+            message.warning(err.response.data.message);
         }
     };
 
@@ -42,7 +44,7 @@ const BookActivity = () => {
             const response = await getMyCurrency();
             setCurrency(response.data);
         } catch (err) {
-            message.warning("Failed to get currency information");
+            message.warning(err.response.data.message);
         }
     };
 
@@ -74,6 +76,10 @@ const BookActivity = () => {
     };
 
     const handleSubmit = async () => {
+        if (!user) {
+           setIsLoginModalOpen(true);
+            return;
+        }
         setLoading(true);
         try {
             const response = await bookActivity(activityId, paymentMethod, promoCode);
@@ -101,6 +107,11 @@ const BookActivity = () => {
 
     return (
         <div className="min-h-screen py-12 px-4">
+            <LoginConfirmationModal
+                open={isLoginModalOpen}
+                setOpen={setIsLoginModalOpen}
+                content="Please login to Book an Activity."
+            />
             <div className="max-w-4xl mx-auto">
                 {/* Main Card Container */}
                 <Card className=" border-0" bodyStyle={{ padding: 0 }}>
@@ -149,9 +160,9 @@ const BookActivity = () => {
                                         loading={applyingPromo}
                                         type="danger"
                                         size="large"
-                                        className="bg-blue-950 text-white hover:bg-black border-none"
+                                        className="bg-second hover:bg-gray-600 text-white"
                                     >
-                                        Apply Code
+                                        Apply
                                     </Button>
                                 </div>
                             </div>
@@ -198,8 +209,12 @@ const BookActivity = () => {
                                         <div className="bg-gray-50 p-6 rounded-xl">
                                             <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
                                                 <CheckoutForm
-                                                    amount={calculateFinalPrice(currency?.rate * activity?.price?.max)}
+                                                    amount={(currency?.rate * activity?.price?.max)}
+                                                    // withPayButton={false}
                                                     code={currency?.code}
+                                                    discountedAmount={calculateFinalPrice(currency?.rate *activity?.price?.max)}
+                                                    onPaymentSuccess={() => setPaymentSucceed(true)}
+                                                    onError={() => setPaymentSucceed(false)}
                                                 />
                                             </Elements>
                                         </div>

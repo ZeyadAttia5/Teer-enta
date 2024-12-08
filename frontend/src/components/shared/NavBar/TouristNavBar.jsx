@@ -61,7 +61,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
     const fetchCurrency = async () => {
       try {
         const response = await getCurrency();
-        setCurrency(response.data);
+        setCurrency(response?.data);
         // console.log("Currency:", response.data);
       } catch (error) {
         console.error("Fetch currency error:", error);
@@ -78,7 +78,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
     const fetchCartCount = async () => {
       try {
         const response = await getCart(); // Replace with your actual API endpoint
-        setCartCount(response.data.cart.length);
+        setCartCount(response?.data.cart.length);
       } catch (error) {
         console.error("Error fetching cart count:", error);
       }
@@ -91,9 +91,11 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
   const [visible, setVisible] = useState(true);
   return (
     <div className="fixed w-full">
-      <PromoCodeStrip setVisibleFlag={setVisible} setVisibleFlagHome={setVisibleFlagHome}/>
+      {(!user || (user && user.userRole === "Tourist")) && (
+        <PromoCodeStrip setVisibleFlag={setVisible} setVisibleFlagHome={setVisibleFlagHome}/>
+      )}
       <div
-        className={`w-full fixed ${visible ? "top-9" : "top-0"} bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
+        className={`w-full fixed ${(visible && (!user || (user && user.userRole === "Tourist"))) ? "top-9" : "top-0"} bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
       >
         <div className="flex gap-4 ml-8">
           {/* Logo Section */}
@@ -150,7 +152,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
                   <CalendarOutlined
                     className={`text-fifth text-2xl transition-colors block`}
                   />
-                  <span className="text-fifth text-sm">Calender</span>
+                  <span className="text-fifth text-sm">Bookings</span>
                 </div>
 
                 {/* Cart Icon */}
@@ -184,12 +186,8 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
                     <div
                         className="flex-row text-first hover:border-b-2 px-2 hover:border-first transition-all duration-300 transform cursor-pointer">
                       <div className="flex justify-center mt-3">
-                        <NotificationIcon className="text-fifth text-md transition-colors"/>
+                        <NotificationIcon className="text-fifth text-2xl transition-colors"/>
                       </div>
-                      <span
-                          className="text-fifth text-sm transition-transform transform relative hover:translate-y-[-4px]">
-                          Notifications
-                      </span>
                     </div>
                 )}
 

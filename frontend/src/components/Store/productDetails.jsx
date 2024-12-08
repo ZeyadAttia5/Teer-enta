@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import {useParams, Link, useNavigate} from "react-router-dom";
 import {
   Button,
   Typography,
@@ -10,7 +10,7 @@ import {
   List,
   Divider,
   Alert,
-  Spin, Tabs, Avatar,
+  Spin, Tabs, Avatar, Modal,
 } from "antd";
 import {
   ShoppingCartOutlined,
@@ -35,6 +35,8 @@ import {
 import { getMyCurrency } from "../../api/profile.ts";
 import ProductReviews from "./productReviews";
 import TabPane from "antd/es/tabs/TabPane";
+import ConfirmationModal from "../shared/ConfirmationModal";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
 const { Title, Text } = Typography;
 
@@ -49,6 +51,8 @@ const ProductDetails = ({ setFlag }) => {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
   const [activeTab, setActiveTab] = React.useState('1');
+  const navigate = useNavigate();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -68,7 +72,12 @@ const ProductDetails = ({ setFlag }) => {
   };
 
   const handleAddToCart = async () => {
+    if (!user) {;
+      setIsLoginModalOpen(true);
+      return;
+    }
     if (isAddingToCart) return;
+
 
     try {
       setIsAddingToCart(true);
@@ -155,6 +164,11 @@ const ProductDetails = ({ setFlag }) => {
 
   return (
     <div className="flex justify-center">
+      <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to add this product to your cart."
+      />
       <div className="w-[90%]  py-8 px-4 sm:px-6 lg:px-8">
         {loading ? (
           <Card className="max-w-7xl mx-auto">
@@ -266,9 +280,9 @@ const ProductDetails = ({ setFlag }) => {
                       </Text>
                     </div>
 
-                    {user && user.userRole === "Tourist" && (
+                    {/*{user && user.userRole === "Tourist" && (*/}
                       <div className="flex gap-4 mt-8">
-                        {product.quantity > 0 ? (
+                        {product.quantity > 0 && (!user || user === "Tourist") && (
                           <Button
                             type="danger"
                             size="large"
@@ -287,7 +301,9 @@ const ProductDetails = ({ setFlag }) => {
                               ? "Added to Cart!"
                               : "Add to Cart"}
                           </Button>
-                        ) : (
+                        )} 
+                        
+                        {product.quantity == 0 && (!user || user === "Tourist") &&(
                           <Button
                             type="default"
                             size="large"
@@ -298,7 +314,7 @@ const ProductDetails = ({ setFlag }) => {
                           </Button>
                         )}
                       </div>
-                    )}
+                    {/*)}*/}
                   </div>
                 </div>
               </div>

@@ -11,6 +11,7 @@ import {
   Spin,
   Tooltip,
   Popconfirm,
+    message
 } from "antd";
 import {
   PlusOutlined,
@@ -48,11 +49,7 @@ const ActivityCategories = ({ setFlag }) => {
       const data = await getActivityCategories();
       setCategories(data);
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: "Failed to fetch categories",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -67,28 +64,16 @@ const ActivityCategories = ({ setFlag }) => {
     try {
       if (isEditing) {
         await updateActivityCategory(values, currentCategory?._id);
-        notification.success({
-          message: "Success",
-          description: "Category updated successfully",
-          className: "bg-white shadow-lg",
-        });
+        message.success("Activity category Updated Successfully")
       } else {
         await createActivityCategory(values);
-        notification.success({
-          message: "Success",
-          description: "Category created successfully",
-          className: "bg-white shadow-lg",
-        });
+        message.success("Category created successfully");
       }
       fetchCategories();
       setModalVisible(false);
       form.resetFields();
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: error.response?.data?.message || "Failed to save category",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response?.data?.message);
     } finally {
       setSubmitting(false);
     }
@@ -96,19 +81,10 @@ const ActivityCategories = ({ setFlag }) => {
   const handleDelete = async (id) => {
     try {
       await deleteActivityCategory(id);
-      notification.success({
-        message: "Success",
-        description: "Category deleted successfully",
-        className: "bg-white shadow-lg",
-      });
+      message.success("Category deleted successfully");
       fetchCategories();
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description:
-          error.response?.data?.message || "Failed to delete category",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response?.data?.message);
     }
   };
 
@@ -176,7 +152,6 @@ const ActivityCategories = ({ setFlag }) => {
                 }}
                 className="bg-[#1C325B] hover:bg-[#1C325B]/90"
               >
-                Edit
               </Button>
             </Tooltip>
             <Tooltip title="Delete Category">
@@ -198,7 +173,6 @@ const ActivityCategories = ({ setFlag }) => {
                   className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
                transition-all duration-200 hover:border-red-500"
                 >
-                  <span className="text-red-500 font-medium">Delete</span>
                 </Button>
               </Popconfirm>
             </Tooltip>

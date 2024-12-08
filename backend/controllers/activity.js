@@ -339,12 +339,19 @@ exports.bookActivity = async (req, res) => {
         let {paymentMethod} = req.body; // Payment method: wallet, credit_card, or cash_on_delivery
         const promoCode = req.body.promoCode;
         paymentMethod = paymentMethod || 'wallet';
-        // Find the activity
+        const tourist = await Tourist.findById(req.user._id);
+        const today = new Date();
+        const birthDate = new Date(tourist.dateOfBirth);
+        const age = today.getFullYear() - birthDate.getFullYear() -
+            (today.getMonth() < birthDate.getMonth() ||
+                (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()));
+        if (age < 18) {
+            return res.status(400).json({message: "You must be at least 18 years old to book an activity"});
+        }
         const activity = await Activity.findOne({isActive: true, _id: id});
         if (!activity) {
             return res.status(404).json({message: "Activity not found or inactive"});
         }
-
         const existingBooking = await BookedActivity.findOne({
             activity: id,
             isActive: true,
@@ -370,7 +377,6 @@ exports.bookActivity = async (req, res) => {
         }
 
         // Retrieve the tourist's wallet balance if needed
-        const tourist = await Tourist.findById(userId);
 
         const activeDiscount = activity.specialDiscounts.find(discount => discount.isAvailable);
         const maxPrice = activity.price.max;// TODO this should be reviewed
@@ -678,7 +684,11 @@ exports.makeAllActivitiesAppropriate = async (req, res) => {
 // get unactiveActivities
 exports.getUnactiveActivities = async (req, res) => {
     try {
-        const activities = await Activity.find({ isActive: false ,createdBy : req.user._id });
+        const activities =
+            await Activity.find({ isActive: false ,createdBy : req.user._id })
+                .populate('category')
+                .populate('preferenceTags');
+        console.log(activities);
         res.status(200).json(activities);
     } catch (err) {
         errorHandler.SendError(res, err);

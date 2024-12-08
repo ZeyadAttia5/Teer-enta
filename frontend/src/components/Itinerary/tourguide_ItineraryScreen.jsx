@@ -35,6 +35,7 @@ import {
   Calendar,
   Clock,
   MapPin,
+    Type,
   Tag as TagIcon,
   ClipboardList, ImageIcon,
 } from "lucide-react";
@@ -85,13 +86,23 @@ const TourguideItineraryScreen = ({ setFlag }) => {
           getItineraries(),
           getMyItineraries(),
         ]);
-
-        const combinedItineraries = [...new Set([...itinerariesData, ...myItinerariesData])];
+        const itineraryMap = new Map();
+        itinerariesData.forEach(itinerary => {
+          itineraryMap.set(itinerary._id, itinerary);
+        });
+        console.log("dasd1",itinerariesData);
+        myItinerariesData.forEach(itinerary => {
+          if (itinerary.isActive) {
+            itineraryMap.set(itinerary._id, itinerary);
+          }
+        });
+        const combinedItineraries = Array.from(itineraryMap.values());
+        console.log("dasd",combinedItineraries);
         setItineraries(combinedItineraries);
         setMyItineraries(myItinerariesData);
       } catch (error) {
         console.error("Error fetching data:", error);
-        notification.error({ message: "Failed to fetch itineraries" });
+        message.warning(error.response.data.message);
       } finally {
         setLoading(false);
       }
@@ -117,7 +128,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       const data = await getActivities();
       setActivitiesList(data.data);
     } catch (error) {
-      message.warning("Failed to fetch activities");
+      message.warning(error.response.data.message||"Failed to fetch activities");
     }
   };
 
@@ -126,7 +137,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       const data = await getPreferenceTags();
       setPreferenceTagsList(data.data);
     } catch (error) {
-      message.warning("Failed to fetch preference tags");
+      message.warning(error.response.data.message||"Failed to fetch preference tags");
     }
   };
 
@@ -137,6 +148,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
   const showModal = (itinerary = null) => {
     setEditingItinerary(itinerary);
     setIsModalVisible(true);
+    setSelectedimage(itinerary?.imageUrl);
     if (itinerary) {
       const formattedAvailableDates = itinerary.availableDates?.map((date) => {
         const startDate = moment(date.Date);
@@ -150,8 +162,9 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       });
 
       const formattedTimeline = itinerary.timeline?.map(item => ({
-        ...item,
+        activity: item.activity?._id || item.activity,
         startTime: moment(item.startTime, "HH:mm"),
+        duration: item.duration
       }));
 
       const formattedActivities = itinerary.activities?.map(item => ({
@@ -210,11 +223,11 @@ const TourguideItineraryScreen = ({ setFlag }) => {
         await createItinerary(formattedData);
         message.success("Itinerary created successfully");
       }
-
+      setRefreshItineraries((prev) => !prev);
       handleCancel();
-      setRefreshItineraries(prev => !prev);
+
     } catch (error) {
-      message.warning("Failed to save itinerary");
+      message.warning(error.response.data.message||"Failed to save itinerary");
       console.error(error);
     }
   };
@@ -225,7 +238,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       message.success("Itinerary deleted successfully");
       setRefreshItineraries((prev) => !prev);
     } catch (error) {
-      message.warning("Failed to delete itinerary");
+      message.warning(error.response.data.message||"Failed to delete itinerary");
     }
   };
 
@@ -234,20 +247,20 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       title: "Image",
       dataIndex: "imageUrl",
       key: "image",
-      width: 100,
+      width: 80,
       render: (imageUrl) => (
-          <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200">
+          <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200">
             {imageUrl ? (
                 <Image
                     src={imageUrl}
-                    alt="Itinerary Image"
-                    width={64}
-                    height={64}
+                    alt="Itinerary"
+                    width={48}
+                    height={48}
                     style={{ objectFit: 'cover' }}
                     preview={{
                       maskClassName: 'w-full h-full',
                       mask: (
-                          <div className="flex items-center justify-center w-full h-full bg-black/50 cursor-pointer">
+                          <div className="flex items-center justify-center w-full h-full bg-black/50">
                             <EyeOutlined className="text-white text-lg" />
                           </div>
                       )
@@ -255,54 +268,74 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                 />
             ) : (
                 <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                  <ImageIcon className="w-6 h-6 text-gray-400" />
+                  <ImageIcon className="w-4 h-4 text-gray-400" />
                 </div>
             )}
           </div>
       ),
     },
-    ,{
+    {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (name) => <span className="font-medium">{name}</span>,
+      width: 100,
+      render: (name) => (
+          <Tooltip title={name}>
+            <div className="flex items-center gap-2 max-w-[130px]">
+              <span className="truncate">{name || "N/A"}</span>
+            </div>
+          </Tooltip>
+      ),
     },
     {
       title: "Dates",
       dataIndex: "availableDates",
       key: "dates",
+      width: 250,
       render: (dates) => (
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-[#1C325B]" />
-            <div className="flex flex-col">
-              {dates?.map((date, index) => (
-                  <span key={index}>
-                {moment(date.Date).format("MMM DD, YYYY")} at {date.Times}
-              </span>
-              ))}
-            </div>
+          <div className="space-y-2">
+            {dates?.slice(0, 2).map((date, index) => (
+                <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-md">
+                  <Calendar className="w-4 h-4 text-[#1C325B]" />
+                  <span className="text-gray-600">
+              {moment(date.Date).format("MMM DD, YYYY")} at {date.Times}
+            </span>
+                </div>
+            ))}
+            {dates?.length > 2 && (
+                <Tooltip title={dates.slice(2).map((date, i) =>
+                    `${moment(date.Date).format("MMM DD, YYYY")} at ${date.Date.Times}`).join('\n')
+                }>
+                  <div className="text-sm text-gray-500 pl-6">
+                    +{dates.length - 2} more dates
+                  </div>
+                </Tooltip>
+            )}
           </div>
       ),
     },
     {
       title: "Location",
       key: "location",
+      width: 200,
       render: (record) => (
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[#1C325B]" />
-            <span>
+          <Tooltip title={`${record.pickupLocation} → ${record.dropOffLocation}`}>
+            <div className="flex items-center gap-2 max-w-[180px]">
+              <MapPin className="w-4 h-4 text-[#1C325B] flex-shrink-0" />
+              <span className="truncate">
             {record.pickupLocation} → {record.dropOffLocation}
           </span>
-          </div>
+            </div>
+          </Tooltip>
       ),
     },
     {
       title: "Language",
       dataIndex: "language",
       key: "language",
+      width: 120,
       render: (language) => (
-          <Tag className="px-3 py-1 bg-[#1C325B]/10 text-[#1C325B] border-0 rounded-lg">
-            <GlobalOutlined style={{ marginRight: 8 }} />
+          <Tag className="px-2 py-1 bg-[#1C325B]/10 text-[#1C325B] border-0 rounded-md whitespace-nowrap">
             {language}
           </Tag>
       ),
@@ -311,12 +344,13 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      width: 120,
       render: (price) => (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <DollarCircleOutlined className="text-[#1C325B]" />
             <span className="font-medium">
-            {currency?.code} {(price * currency?.rate).toFixed(2)}
-          </span>
+          {currency?.code} {(price * currency?.rate).toFixed(2)}
+        </span>
           </div>
       ),
     },
@@ -324,37 +358,40 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       title: "Accessibility",
       dataIndex: "accessibility",
       key: "accessibility",
+      width: 150,
       render: (accessibility) => (
-          <div className="flex items-center gap-2">
-            <TeamOutlined className="text-[#1C325B]" />
-            <span>{accessibility || "N/A"}</span>
-          </div>
+          <Tooltip title={accessibility}>
+            <div className="flex items-center gap-2 max-w-[130px]">
+              <TeamOutlined className="text-[#1C325B] flex-shrink-0" />
+              <span className="truncate">{accessibility || "N/A"}</span>
+            </div>
+          </Tooltip>
       ),
     },
     {
       title: "Actions",
       key: "actions",
+      width: 200,
+      fixed: 'right',
       render: (record) => (
-          <div className="flex space-x-2">
+          <Space>
             <Button
                 type="primary"
-                icon={<EyeOutlined />}
+                size="small"
                 onClick={() => navigate(`/itinerary/iternaryDetails/${record._id}`)}
-                className="bg-[#1C325B] hover:bg-[#1C325B]/90 flex items-center gap-1"
-            >
-              View
-            </Button>
+                icon={<EyeOutlined />}
+                className="bg-[#1C325B]"
+            />
 
             {myItineraries?.some((myItinerary) => myItinerary._id === record._id) && (
                 <>
                   <Button
                       type="primary"
-                      icon={<EditOutlined />}
+                      size="small"
                       onClick={() => showModal(record)}
-                      className="bg-[#1C325B] hover:bg-[#1C325B]/90 flex items-center gap-1"
-                  >
-                    Edit
-                  </Button>
+                      icon={<EditOutlined />}
+                      className="bg-[#1C325B]"
+                  />
                   <Popconfirm
                       title="Delete Itinerary"
                       description="Are you sure you want to delete this itinerary?"
@@ -367,45 +404,37 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                       onConfirm={() => handleDelete(record._id)}
                   >
                     <Button
-                        type="text"
+                        type="primary"
                         danger
-                        icon={<DeleteOutlined className="text-lg" />}
-                        className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
-               transition-all duration-200 hover:border-red-500"
-                    >
-                      <span className="text-red-500 font-medium">Delete</span>
-                    </Button>
+                        size="small"
+                        icon={<DeleteOutlined />}
+                    />
                   </Popconfirm>
                 </>
             )}
 
             {user?.userRole === "Admin" && (
                 <Tooltip title="Flag as Inappropriate">
-                  <Badge count={0} offset={[-5, 5]}>
-                    <Button
-                        type="text"
-                        danger
-                        icon={<FlagFilled className="text-lg" />}
-                        onClick={async () => {
-                          try {
-                            await flagIternaary(record._id);
-                            message.success("Itinerary flagged as inappropriate");
-                            setRefreshItineraries((prev) => !prev);
-                          } catch (error) {
-                            message.warning("Failed to flag itinerary");
-                          }
-                        }}
-                        className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
-               transition-all duration-200 hover:border-red-500"
-                    >
-                      <span className="text-red-500 font-medium">Flag</span>
-                    </Button>
-                  </Badge>
+                  <Button
+                      type="primary"
+                      danger
+                      size="small"
+                      icon={<FlagFilled />}
+                      onClick={async () => {
+                        try {
+                          await flagIternaary(record._id);
+                          message.success("Itinerary flagged as inappropriate");
+                          setRefreshItineraries((prev) => !prev);
+                        } catch (error) {
+                          message.warning(error.response.data.message||"Failed to flag itinerary");
+                        }
+                      }}
+                  />
                 </Tooltip>
             )}
-          </div>
+          </Space>
       ),
-    }
+    },
   ];
 
   const filteredItineraries = itineraries?.filter((itin) =>
@@ -538,22 +567,22 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                 />
               </Form.Item>
 
-              <Form.Item name="accessibility" label="Accessibility">
+              <Form.Item name="accessibility" label="Accessibility" rules={[{required : true}]}>
                 <Input placeholder="Enter accessibility details" />
               </Form.Item>
 
-              <Form.Item name="pickupLocation" label="Pickup Location">
+              <Form.Item name="pickupLocation" label="Pickup Location" rules={[{required : true}]}>
                 <Input placeholder="Enter pickup location" />
               </Form.Item>
 
-              <Form.Item name="dropOffLocation" label="Drop Off Location">
+              <Form.Item name="dropOffLocation" label="Drop Off Location" rules={[{required : true}]}>
                 <Input placeholder="Enter drop off location" />
               </Form.Item>
 
               {/* Activities Section */}
               <div className="md:col-span-2">
                 <Divider orientation="left">Activities</Divider>
-                <Form.List name="activities">
+                <Form.List name="activities" rules={[{required : true}]}>
                   {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restField }) => (
@@ -566,8 +595,9 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                               >
                                 <Select placeholder="Select activity">
                                   {activitiesList?.map((activity) => (
+
                                       <Option key={activity._id} value={activity._id}>
-                                        {activity.name}
+                                        {activity?.name}
                                       </Option>
                                   ))}
                                 </Select>
@@ -604,7 +634,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
               {/* Locations Section */}
               <div className="md:col-span-2">
                 <Divider orientation="left">Locations</Divider>
-                <Form.List name="locations">
+                <Form.List name="locations" rules={[{required : true}]}>
                   {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restField }) => (
@@ -637,7 +667,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
               {/* Timeline Section */}
               <div className="md:col-span-2">
                 <Divider orientation="left">Timeline</Divider>
-                <Form.List name="timeline">
+                <Form.List name="timeline" rules={[{required : true}]}>
                   {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restField }) => (
@@ -651,7 +681,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                                 <Select placeholder="Select activity">
                                   {activitiesList?.map((activity) => (
                                       <Option key={activity._id} value={activity._id}>
-                                        {activity.name}
+                                        {activity?.name}
                                       </Option>
                                   ))}
                                 </Select>
@@ -696,7 +726,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
               {/* Available Dates Section */}
               <div className="md:col-span-2">
                 <Divider orientation="left">Available Dates</Divider>
-                <Form.List name="availableDates">
+                <Form.List name="availableDates" rules={[{required : true}]}>
                   {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restField }) => (
@@ -732,7 +762,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
 
               {/* Preference Tags */}
               <div className="md:col-span-2">
-                <Form.Item name="preferenceTags" label="Preference Tags">
+                <Form.Item name="preferenceTags" label="Preference Tags" rules={[{required : true}]}>
                   <Select
                       mode="multiple"
                       placeholder="Select preference tags"

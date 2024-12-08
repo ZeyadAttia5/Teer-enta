@@ -60,6 +60,15 @@ exports.bookHotel = async (req, res) => {
     }
 
     try {
+        const tourist = await Tourist.findById(req.user._id);
+        const today = new Date();
+        const birthDate = new Date(tourist.dateOfBirth);
+        const age = today.getFullYear() - birthDate.getFullYear() -
+            (today.getMonth() < birthDate.getMonth() ||
+                (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()));
+        if (age < 18) {
+            return res.status(400).json({message: "You must be at least 18 years old to book an activity"});
+        }
         let existingPromoCode ;
         if(promoCode ){
             existingPromoCode = await PromoCodes.findOne({
@@ -82,7 +91,7 @@ exports.bookHotel = async (req, res) => {
         const userId = req.user._id;
 
         // Retrieve the tourist's details (e.g., wallet balance)
-        const tourist = await Tourist.findById(userId);
+        // const tourist = await Tourist.findById(userId);
         if (!tourist) {
             return res.status(404).json({ message: "Tourist not found." });
         }

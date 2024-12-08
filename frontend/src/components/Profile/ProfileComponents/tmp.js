@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Select } from "antd";
-import { chooseMyCurrency, getAllCurrencies } from "../../../api/profile.ts";
+import { getAllCurrencies, getMyCurrency } from "../../../api/profile.ts";
 
 const { Option } = Select;
 
 const CurrencyDropdown1 = ({ setCurrencyId, isEditable }) => {
   const [currencies, setCurrencies] = useState([]);
+  const [myCurrency, setMyCurrency] = useState(null);
 
   const fetchCurrencies = async () => {
     try {
@@ -21,21 +22,49 @@ const CurrencyDropdown1 = ({ setCurrencyId, isEditable }) => {
       console.error("Error fetching currencies:", error);
     }
   };
+  const fetchMyCurrency = async () => {
+    try {
+      const response = await getMyCurrency();
+      // Assuming response is an array of { code, name, rate }
+      const formattedCurrency = response.data;
+      console.log("my formattedCurrency", formattedCurrency);
+      setMyCurrency(formattedCurrency);
+    } catch (error) {
+      console.error("Error fetching currencies:", error);
+    }
+  };
 
   useEffect(() => {
     fetchCurrencies();
   }, []);
 
-  const handleChange = async (id) => {
+  useEffect(() => {
+    fetchMyCurrency();
+  }, []);
+
+  const handleChange = async (currency) => {
     // setSelectedCurrency(curr);
     // setCurrency(curr);
-    setCurrencyId(id);
+    // setCurrencyId(currency.id);
+    // setMyCurrency(currency.code);
+    setCurrencyId(currency);
+    const selectedCurrency = currencies.find((cur) => cur._id === currency);
+    setMyCurrency(selectedCurrency);
   };
 
   return (
-    <Select onChange={handleChange} style={{ width: "100%" }}
+    <Select
+      onChange={handleChange}
+      style={{ width: "100%" }}
       disabled={!isEditable}
       className="mt-1"
+      placeholder={
+        myCurrency
+          ? ` ${myCurrency.code}${
+              isEditable ? " - Change your currency from here" : ""
+            }`
+          : "Select your currency"
+      }
     >
       {isEditable &&
         currencies.map((currency) => (

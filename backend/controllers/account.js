@@ -521,7 +521,7 @@ exports.approveAccountsDeletionRequest = async (req, res) => {
         }
 
         // Delete user account
-        await User.findByIdAndDelete(request.userId);
+        await User.findByIdAndDelete(request.user);
 
         // Delete the request
         await AccountDeletionRequest.findByIdAndDelete(id);

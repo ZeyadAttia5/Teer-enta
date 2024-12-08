@@ -185,7 +185,7 @@ const MyItineraryScreen = ({ setFlag }) => {
       const data = await getItineraries();
       setItineraries(data);
     } catch (error) {
-      message.warning("Failed to fetch itineraries");
+      message.warning(error.response.data.message||"Failed to fetch itineraries");
     }
     setLoading(false);
   };
@@ -197,9 +197,9 @@ const MyItineraryScreen = ({ setFlag }) => {
       setItineraries(data);
     } catch (error) {
       if (error.response.status === 404) {
-        notification.info({ message: "You didn't create any itineraries yet" });
+        message.info( "You didn't create any itineraries yet");
       } else {
-        notification.error({ message: "Error fetching itineraries" });
+        message.warning(error.response.data.message);
       }
     }
     setLoading(false);
@@ -419,7 +419,6 @@ const MyItineraryScreen = ({ setFlag }) => {
             onClick={() => showViewModal(record)}
             className="mr-2 bg-first text-white border-none hover:bg-[#025D4C] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#025D4C]"
           >
-            View
           </Button>
 
           {user && user._id === record.createdBy && (
@@ -429,7 +428,6 @@ const MyItineraryScreen = ({ setFlag }) => {
                 onClick={() => showModal(record)}
                 className="mr-2 bg-first text-white border-none hover:bg-[#025D4C] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#025D4C]"
               >
-                Edit
               </Button>
 
               <Popconfirm
@@ -463,7 +461,6 @@ const MyItineraryScreen = ({ setFlag }) => {
                focus:ring-red-600 rounded-md px-4 py-2 text-sm font-medium"
                   danger
                 >
-                  Delete
                 </Button>
               </Popconfirm>
             </>
@@ -519,16 +516,6 @@ const MyItineraryScreen = ({ setFlag }) => {
                     Manage and monitor your itineraries
                   </p>
                 </div>
-                {user && user.userRole === "TourGuide" && (
-                  <Button
-                    type="primary"
-                    icon={<Plus />}
-                    onClick={() => showModal()}
-                    className="bg-[#375894] hover:bg-[#2A4575]/90"
-                  >
-                    Create Itinerary
-                  </Button>
-                )}
               </div>
             </div>
             <div className="p-6">

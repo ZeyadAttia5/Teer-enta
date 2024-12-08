@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useRef } from "react";
 import { NotificationContext } from "../../notifications/NotificationContext";
 import {Bell, X, Check, CheckCheck, Clock, AlertCircle, Trash2, Loader2} from "lucide-react";
 import {deleteAllNotifications, deleteNotification} from "../../../api/notifications.ts";
-import {message, Modal} from "antd";
+import {Badge, message, Modal} from "antd";
 
 // NotificationIcon Component stays the same
 const NotificationIcon = ({ navbarcolor = "first" }) => {
@@ -19,61 +19,45 @@ const NotificationIcon = ({ navbarcolor = "first" }) => {
     };
 
     return (
-        <div className="">
+        <div className="flex flex-col items-center">
             <div
                 onClick={handleClick}
                 className={`
-                    relative
-                    inline-flex
-                    items-center
-                    justify-center
-                    rounded-full
-                    cursor-pointer
-                    transition-all
-                    duration-200
-                    hover:bg-opacity-80
-                    ${navbarcolor === "first" ? "bg-transparent" : "bg-gray-100"}
-                `}
+            relative
+            flex
+            flex-col
+            items-center
+            gap-1
+            cursor-pointer
+            transition-all
+            duration-200
+            hover:bg-opacity-80
+            ${navbarcolor === "first" ? "bg-transparent" : "bg-gray-100"}
+        `}
                 role="button"
                 aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}
             >
-                <Bell
-                    className={`
-                        w-6
-                        h-6
-                        transition-transform 
-                        duration-200 
-                        hover:scale-110
-                        ${unreadCount > 0 ? 'animate-bounce' : ''}
-                    `}
-                    color={"gray"}
-                />
-
-                {unreadCount > 0 && (
-                    <span
+                <div className="relative inline-flex items-center justify-center rounded-full">
+                    <Bell
                         className={`
-                            absolute 
-                            -top-1 
-                            -right-1
-                            min-w-[20px]
-                            h-5
-                            flex 
-                            items-center 
-                            justify-center
-                            px-1
-                            text-xs 
-                            font-bold 
-                            text-white 
-                            bg-red-500
-                            border-2
-                            ${navbarcolor === "first" ? "border-gray-900" : "border-white"}
-                            rounded-full
-                            animate-pulse
-                        `}
-                    >
-                        {unreadCount > 99 ? '99+' : unreadCount}
-                    </span>
-                )}
+                    w-6
+                    h-6
+                    transition-transform 
+                    duration-200 
+                    hover:scale-110
+                `}
+                        color={"gray"}
+                    />
+                    {unreadCount > 0 && (
+                        <Badge
+                            offset={[-5, -23]}
+                            count={unreadCount > 99 ? '99+' : unreadCount}
+                            color={navbarcolor === "first" ? "red" : "gray"}
+                        >
+                        </Badge>
+                    )}
+                </div>
+                <span className="text-fifth text-sm">Notifications</span>
             </div>
 
             {isDropdownOpen && (

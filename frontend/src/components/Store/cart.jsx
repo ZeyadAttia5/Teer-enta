@@ -55,7 +55,7 @@ const CartComponent = () => {
       setCurrency(currencyResponse.data);
     } catch (err) {
       setError("Failed to fetch cart items");
-      message.warning("Failed to load cart items");
+      message.warning(error.response.data.message||"Failed to load cart items");
     } finally {
       setLoading(false);
     }
@@ -290,9 +290,9 @@ const CartComponent = () => {
                   </Link>
                   <Link to="/checkOutOrder">
                     <Button
-                      type="primary"
+                      type="danger"
                       size="large"
-                      className="bg-blue-950 hover:bg-blue-700"
+                      className="bg-first text-white hover:bg-black"
                     >
                       Proceed to Checkout
                     </Button>

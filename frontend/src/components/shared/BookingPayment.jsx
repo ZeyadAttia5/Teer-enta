@@ -149,12 +149,12 @@ const BookingPayment = ({
         {paymentMethod === "Card" && (
             <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
               <CheckoutForm
-                  amount={parseFloat(amount)}
+                  amount={parseFloat(amountt)}
+                  // withPayButton={false}
                   code={currency.code}
-                  discountedAmount={calculateFinalPrice(parseFloat(amount))}
+                  discountedAmount={calculateFinalPrice(parseFloat(amountt))}
                   onPaymentSuccess={() => setPaymentSucceed(true)}
                   onError={() => setPaymentSucceed(false)}
-                  // withPayButton={false}
               />
             </Elements>
         )}
@@ -164,7 +164,7 @@ const BookingPayment = ({
       <Form.Item className="mt-6">
         <Button
           type="danger"
-          className="w-full h-12 text-lg text-white bg-first hover:bg-black disabled:hover:bg-gray-400"
+          className="w-full h-12 text-lg text-white bg-first hover:bg-black disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:cursor-not-allowed"
           onClick={onBookingClick}
           loading={isloading}
           disabled={paymentMethod === "Card" && !paymentSucceed}

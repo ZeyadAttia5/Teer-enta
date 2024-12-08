@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 import HistoricalPlaceSingleCard from "./historicalPlaceSingleCard";
 import {MdOutlineAddBox} from "react-icons/md";
 import {Link, useLocation} from "react-router-dom";
-import {Input, Select, Slider, Row, Col, Checkbox, Button} from "antd";
+import {Input, Select, Slider, Row, Col, Checkbox,message , Button} from "antd";
 import {Filter, SortAsc, ChevronRight, Star} from 'lucide-react'
 import {notification} from "antd";
 import {getMyHistoricalPlaces, getHistoricalPlaces} from "../../api/historicalPlaces.ts";
@@ -178,9 +178,9 @@ const ReadHistoriaclPlaces = ({setFlag}) => {
                     setHistoricalPlacesData(response.data);
                 } catch (error) {
                     if (error.response.status === 404) {
-                        notification.info({message: "You didnt create any historical places yet"})
+                        message.info("You didnt create any historical places yet")
                     } else {
-                        notification.error({message: "Error fetching historical places"});
+                        message.warning(error.response.data.message);
                     }
                 }
             }

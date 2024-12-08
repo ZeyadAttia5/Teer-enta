@@ -11,7 +11,6 @@ import { Toaster } from "react-hot-toast";
 import Signup from "./components/Auth/Signup/Signup.js";
 import Login from "./components/Auth/Login/login.js";
 import Profile from "./components/Profile/profile.js";
-import ActivityList from "./components/Activity/ActivityList.tsx"; // From feat/activities
 import TouristWelcome from "./components/WelcomePage/TouristWelcome.jsx";
 import ReadHistoriaclPlaces from "./components/HistoricalPlaces/readHistoriaclPlaces.jsx";
 import CreateHistoricalPlaces from "./components/HistoricalPlaces/createHistoricalPlaces.jsx";
@@ -210,10 +209,17 @@ function AppContent() {
         />
 
         {showBackButton && (
-          <div className={`p-4 z-10 ${!visibleFlag ? "mt-[80px]" : "mt-[140px]"} bg-transparent absolute top-0 left-4 cursor-pointer`}>
+          <div className={`p-4 z-10 ${!visibleFlag ? "mt-[80px]" : "mt-[140px]"} bg-transparent absolute top-0 left-0 cursor-pointer`}>
             <BackButton />
           </div>
         )}
+
+        {user1 && user1.userRole === "Tourist" && (
+          <div className="fixed bottom-4 right-4 z-10">
+            <VacationGuide />
+          </div>
+        )}
+        
         <div className={`${!flag && !visibleFlag ? "mt-[80px]" : !flag ? "mt-[117px]" : ""}`}>
           <Routes>
             {/* General Routes */}
@@ -256,10 +262,6 @@ function AppContent() {
               element={<ActivityCategories setFlag={setFlag} />}
             />
             <Route path="/tags" element={<Tags setFlag={setFlag} />} />
-            <Route
-              path="/activity"
-              element={<ActivityList setFlag={setFlag} />}
-            />
             <Route
               path="/unActiveActivity"
               element={<UnActiveActivities setFlag={setFlag} />}

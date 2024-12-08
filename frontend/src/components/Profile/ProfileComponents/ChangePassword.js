@@ -12,6 +12,8 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const storedUser = localStorage.getItem("user");
+    const user = storedUser ? JSON.parse(storedUser) : null;
     if (!isValid()) {
       return false;
     }
@@ -26,8 +28,11 @@ const ChangePassword = () => {
       // setMessage(error.response.data.message);
       return;
     }
-
-    window.location.href = "/";
+    if(user && user.userRole === "Tourist"){
+      window.location.href = "/";
+    }else{
+      window.location.href = "/reports";
+    }
   };
 
   const isValid = () => {

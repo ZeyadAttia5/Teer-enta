@@ -248,14 +248,7 @@ const TouristWelcome = ({ setFlag }) => {
 
   return (
     <div className="relative mt-16 ">
-      {notAccepted &&
-        user &&
-        (user.userRole === "TourGuide" ||
-          user.userRole === "Advertiser" ||
-          user.userRole === "Seller") &&
-        !user.isTermsAndConditionsAccepted && (
-          <TermsAndConditions setNotAccepted={setNotAccepted} />
-        )}
+      
       <div className='relative flex flex-col  items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
         <Fade
           className="text-white left-[100px] top-[15%] absolute"
@@ -416,15 +409,15 @@ const TouristWelcome = ({ setFlag }) => {
               </div>
             )}
           </div>
-          {touristActivities.length > 0 && (
+          {itineraries.length > 0 && (
             <span className="text-4xl font-bold text-first ml-12 mt-16 block mb-3">
               Top itineraries you can't miss
             </span>
           )}
 
           <div className="flex justify-center">
-            <div className="grid grid-cols-3 gap-8 w-[90%]">
-              {itineraries?.slice(1, 4).map((itinerary, index) => (
+            <div className="grid grid-cols-3 gap-8 ml-12 w-[90%]">
+              {itineraries?.slice(0, 3).map((itinerary, index) => (
                 <ItineraryCard
                   key={index}
                   itinerary={itinerary}
@@ -468,7 +461,7 @@ const TouristWelcome = ({ setFlag }) => {
           )}
           <div className="flex justify-center">
             <div className="grid grid-cols-3 gap-8 w-[90%]">
-              {touristActivities?.slice(5, 8).map((place) => (
+              {touristActivities?.slice(0, 3).map((place) => (
                 // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
                 <ActivityCard
                   id={place._id}
@@ -493,11 +486,12 @@ const TouristWelcome = ({ setFlag }) => {
                   currencyCode={currency?.code}
                   currencyRate={currency?.rate}
                   specialDiscounts={place.specialDiscounts}
+                  imageUrl={place.imageUrl}
                 />
                 // </Link>
               ))}
             </div>
-            {touristActivities.length > 4 && (
+            {touristActivities.length > 3 && (
               <div className="flex flex-col justify-center mt-4">
                 <Button
                   type="danger"

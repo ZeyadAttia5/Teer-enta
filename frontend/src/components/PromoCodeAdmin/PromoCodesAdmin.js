@@ -9,7 +9,7 @@ import {
   DatePicker,
   Modal,
   Spin,
-  InputNumber,
+  InputNumber, message,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -43,12 +43,7 @@ const PromoCodesAdmin = () => {
       }));
       setPromoCodes(formattedPromoCodes);
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description:
-          error.response?.data?.message || "Failed to fetch promo codes.",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -69,22 +64,13 @@ const PromoCodesAdmin = () => {
 
       await createPromoCode(formattedData);
 
-      notification.success({
-        message: "Success",
-        description: "Promo code created successfully",
-        className: "bg-white shadow-lg",
-      });
+      message.success("Promo code created successfully");
 
       setModalVisible(false);
       form.resetFields();
       fetchPromoCodes();
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description:
-          error.response?.data?.message || "Failed to create promo code",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response.data.message);
     } finally {
       setSubmitting(false);
     }

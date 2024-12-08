@@ -56,7 +56,7 @@ const ProductReviews = ({ productId, refresh }) => {
         setReviews(combinedData);
       } catch (err) {
         setError("Failed to fetch product reviews and ratings");
-        message.warning("Failed to fetch product reviews and ratings");
+        message.warning(err.response.data.message||"Failed to fetch product reviews and ratings");
       } finally {
         setLoading(false);
       }

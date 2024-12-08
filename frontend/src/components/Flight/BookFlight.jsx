@@ -11,18 +11,10 @@ import {
   Typography,
   ConfigProvider,
   Input,
-  Space,
-  Row,
-  Col,
   message,
-  Result, notification,
+  Result,
 } from "antd";
-import {
-  LoadingOutlined,
-  ArrowDownOutlined,
-  ArrowRightOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import AutoComplete from "react-google-autocomplete";
 import { bookFlight, getAirports, getFlightOffers } from "../../api/flights.ts";
 import BookingPayment from "../shared/BookingPayment.jsx";
@@ -39,10 +31,10 @@ import {
 } from "lucide-react";
 import { Fade } from "react-awesome-reveal";
 import { useNavigate } from "react-router-dom";
-import {getCurrency} from "../../api/account.ts";
+import { getCurrency } from "../../api/account.ts";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
 const { Option } = Select;
-
 
 const FlightTicket = ({
   departureCity = "New York",
@@ -76,9 +68,9 @@ const FlightTicket = ({
       value: "40kg",
     },
   ];
-  const [currency,setCurrency] = useState(null);
+  const [currency, setCurrency] = useState(null);
   useEffect(() => {
-    fetchCurrency() ;
+    fetchCurrency();
   }, []);
   const fetchCurrency = async () => {
     try {
@@ -88,8 +80,7 @@ const FlightTicket = ({
     } catch (error) {
       console.error("Fetch currency error:", error);
     }
-  }
-
+  };
 
   return (
     <article
@@ -142,7 +133,8 @@ const FlightTicket = ({
           </div>
         </section>
         <section className="font-bold text-2xl ">
-          {(currency?.rate * offer.price.grandTotal).toFixed(2)} {currency?.code}
+          {(currency?.rate * offer.price.grandTotal).toFixed(2)}{" "}
+          {currency?.code}
         </section>
       </footer>
     </article>
@@ -153,7 +145,6 @@ const BookFlight = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(-1);
   const [promoCode, setPromoCode] = useState(null);
@@ -162,9 +153,11 @@ const BookFlight = () => {
   const [paymentMethod, setPaymentMethod] = useState("wallet");
   const [departureAirports, setDepartureAirports] = useState([]);
   const [destinationAirports, setDestinationAirports] = useState([]);
-  const [currency,setCurrency] = useState(null);
+  const [currency, setCurrency] = useState(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const user = localStorage.getItem("user");
   useEffect(() => {
-    fetchCurrency() ;
+    fetchCurrency();
   }, []);
   const fetchCurrency = async () => {
     try {
@@ -174,7 +167,7 @@ const BookFlight = () => {
     } catch (error) {
       console.error("Fetch currency error:", error);
     }
-  }
+  };
 
   const fetchAirports = async () => {
     setLoading(1);
@@ -241,9 +234,17 @@ const BookFlight = () => {
       setCurrentStep(step);
       if (step === 1) fetchAirports();
       if (step === 2) fetchFlights();
-      // if (step === 3)
+      if (step === 3) {
+        if (!user) {
+          setIsLoginModalOpen(true);
+          setCurrentStep(2);
+          return;
+        }
+      }
     } catch (error) {
-      message.warning("Please fill in all required fields");
+      message.warning(
+        error.response.data.message || "Please fill in all required fields"
+      );
     }
   };
   const handleFinish = async (_) => {
@@ -282,7 +283,7 @@ const BookFlight = () => {
         message.success("Booking submitted successfully!");
         setCurrentStep(5);
       } else {
-        message.warning("Please login to book a flight");
+        setIsLoginModalOpen(true);
       }
     } catch (error) {
       console.log("Error submitting booking:");
@@ -292,7 +293,6 @@ const BookFlight = () => {
       setLoading(-1);
     }
   };
-
   const fields = {
     0: [
       {
@@ -467,12 +467,21 @@ const BookFlight = () => {
         {field.component}
       </Form.Item>
     )),
-    1: fields[1].map((field, index) => (
-      <Form.Item key={index} {...field} className="mt-8">
-        {field.component}
-      </Form.Item>
-    )),
-    2: (
+    1:
+      departureAirports.length && destinationAirports.length ? (
+        fields[1].map((field, index) => (
+          <Form.Item key={index} {...field} className="mt-8">
+            {field.component}
+          </Form.Item>
+        ))
+      ) : (
+        <Result
+          status="error"
+          title="No Airports found"
+          subTitle="Please select another city"
+        />
+      ),
+    2: flights.length ? (
       <Form.Item
         className="mt-8"
         style={{
@@ -509,6 +518,12 @@ const BookFlight = () => {
           </Fade>
         </div>
       </Form.Item>
+    ) : (
+      <Result
+        status="error"
+        title="No Flights found "
+        subTitle="Please select another date"
+      />
     ),
     3: fields[3].map((field, index) => (
       <Form.Item key={index} {...field}>
@@ -531,14 +546,17 @@ const BookFlight = () => {
         title="Successfully Booked Flight,Have a safe journey!"
         subTitle="Flight number: 2017182818828182881"
         extra={[
-          <Button type="default" onClick={e=>{
-            form.resetFields()
-            navigate('/')
-          }}>
+          <Button
+            type="default"
+            onClick={(e) => {
+              form.resetFields();
+              navigate("/");
+            }}
+          >
             Go Home
           </Button>,
           <Button
-          type="primary"
+            type="primary"
             onClick={(e) => {
               form.resetFields();
               setCurrentStep(0);
@@ -565,14 +583,20 @@ const BookFlight = () => {
         },
       }}
     >
-      <div className="flex justify-center">
+      <div className="flex justify-center ">
+        <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to Book a flight."
+        />
         <Card
-            className="w-[90%] h-[630px] flex my-20 mx-auto shadow"
-            classNames={{
-              body: "flex flex-1 flex-col justify-center",
-              cover: "w-1/3",
-            }}
-            cover={<img alt="" className="size-full " src={bookFlightPic} />}
+          className="w-[90%] max-h-[800px] flex my-20 mx-auto shadow"
+          classNames={{
+            body: "flex flex-1 flex-col justify-center",
+            cover: "w-1/3 ",
+            title: "py-2",
+          }}
+          cover={<img alt="" className="size-full " src={bookFlightPic} />}
         >
           <header>
             <Typography.Title level={4} className="mb-6">
@@ -580,7 +604,7 @@ const BookFlight = () => {
             </Typography.Title>
           </header>
           <main className="h-full flex mt-6 ">
-            <section className="flex-1 flex flex-col justify-center items-center">
+            <section className="flex-1 flex h-full flex-col justify-center items-center">
               <Form
                 scrollToFirstError
                 className="w-full flex flex-col justify-center px-4 flex-1"
@@ -598,8 +622,8 @@ const BookFlight = () => {
                 </Fade>
               </Form>
 
-              {loading === -1 && currentStep!=5 && (
-                <Fade direction="up">
+              {loading === -1 && currentStep != 5 && (
+                <Fade direction="up" className="my-2">
                   <footer className="flex gap-2">
                     {currentStep > 0 && (
                       <Button
@@ -614,6 +638,14 @@ const BookFlight = () => {
                       <Button
                         type="default"
                         onClick={() => handleStepChange(currentStep + 1)}
+                        disabled={
+                          (currentStep === 1 &&
+                            !(
+                              departureAirports.length &&
+                              destinationAirports.length
+                            )) ||
+                          (currentStep === 2 && !flights.length)
+                        }
                       >
                         Next
                         <SquareChevronRight strokeWidth={3} />

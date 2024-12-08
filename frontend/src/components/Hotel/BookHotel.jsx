@@ -38,6 +38,8 @@ import BookingPayment from "../shared/BookingPayment.jsx";
 import { Fade } from "react-awesome-reveal";
 import { SquareChevronLeft } from "lucide-react";
 import {getCurrency} from "../../api/account.ts";
+import {useNavigate} from "react-router-dom";
+import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 
 const { Text, Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -57,10 +59,15 @@ const CustomProgressBar = ({ step, setStep, loading }) => {
       direction="vertical"
       className="h-full"
       current={step}
-      onChange={setStep}
+      onChange={(current) => {
+        if (current <= step) {
+          setStep(current);
+        }
+      }}
       items={steps.map((item, index) => ({
         title: item.label,
         icon: item.icon,
+        disabled: index > step,
       }))}
     />
   );
@@ -70,6 +77,8 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   const { hotel, offers } = offer;
   const mainOffer = offers[0];
   const [currency,setCurrency] = useState(null);
+  const user = localStorage.getItem("user");
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   useEffect(() => {
     fetchCurrency() ;
   }, []);
@@ -90,8 +99,11 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
       year: "numeric",
     });
   };
-
   const bookOffer = async () => {
+    if(!user){
+      setIsLoginModalOpen(true);
+      return ;
+    }
     const payments = [
       {
         method: "creditCard",
@@ -117,6 +129,11 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
       onClick={() => console.log("Selected offer:", mainOffer?.id)}
       className={`w-full bg-slate-50 cursor-pointer p-10 h-auto justify-between flex flex-col shadow rounded-xl my-2`}
     >
+      <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to Book a hotel."
+      />
       <header className="flex items-baseline flex-1 w-full justify-between">
         <div className="flex justify-between gap-2">
           <div className="mb-6">
@@ -174,7 +191,6 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
       </footer>
       <div className="flex justify-end">
         <section className="font-bold text-2xl flex items-end mb-5">
-
           {parseFloat(mainOffer?.price?.total * currency?.rate).toLocaleString()} {currency?.code}
         </section>
       </div>
@@ -436,6 +452,9 @@ const BookHotel = () => {
   const [promoCode, setPromoCode] = useState(null);
   const [currency,setCurrency] = useState(null);
   const [paymentMethod,setPaymentMethod] = useState(null);
+  const navigate = useNavigate();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
   useEffect(() => {
     fetchCurrency() ;
   }, []);
@@ -458,7 +477,8 @@ const BookHotel = () => {
         console.log("Hotel booked:", data);
         message.success("Hotel booked successfully!");
       } else {
-        message.warning("You need to login first");
+        setIsLoginModalOpen(true);
+        return;
       }
       setStep(0);
     } catch (error) {
@@ -521,6 +541,11 @@ const BookHotel = () => {
         },
       }}
     >
+      <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to Book a hotel."
+      />
       <div className="flex justify-center  min-h-[600px] my-20 mx-auto shadow">
         <Card
           className="w-[90%] min-h-[600px] flex my-20 mx-auto shadow"

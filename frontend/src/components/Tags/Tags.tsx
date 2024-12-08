@@ -12,6 +12,7 @@ import {
   Tooltip,
   notification,
   Popconfirm,
+    message
 } from "antd";
 import {
   TagsOutlined,
@@ -45,11 +46,7 @@ const Tag = ({ setFlag }) => {
       const response = await getTags();
       setTags(response.data);
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: "Failed to fetch tags",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -64,28 +61,16 @@ const Tag = ({ setFlag }) => {
     try {
       if (isEditing) {
         await updateTag(values, currentTag._id);
-        notification.success({
-          message: "Success",
-          description: "Tag updated successfully",
-          className: "bg-white shadow-lg",
-        });
+        message.success("Tag updated successfully");
       } else {
         await createTag(values);
-        notification.success({
-          message: "Success",
-          description: "Tag created successfully",
-          className: "bg-white shadow-lg",
-        });
+        message.success("Tag created successfully")
       }
       fetchTags();
       setModalVisible(false);
       form.resetFields();
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: error.response?.data?.message || "Failed to save tag",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response.data.message);
     } finally {
       setSubmitting(false);
     }
@@ -94,31 +79,24 @@ const Tag = ({ setFlag }) => {
   const handleDelete = async (tagId) => {
     try {
       await deleteTag(tagId);
-      notification.success({
-        message: "Success",
-        description: "Tag deleted successfully",
-        className: "bg-white shadow-lg",
-      });
+      message.success("Tag deleted successfully")
       fetchTags();
     } catch (error) {
-      notification.error({
-        message: "Error",
-        description: "Failed to delete tag",
-        className: "bg-white shadow-lg",
-      });
+      message.warning(error.response.data.message);
     }
   };
 
-  const columns = [
+  // First define the base columns without the actions
+  const baseColumns = [
     {
       title: "Tag Name",
       dataIndex: "name",
       key: "name",
       render: (text) => (
-        <div className="flex items-center">
-          <TagsOutlined className="mr-2 text-[#1C325B]" />
-          <span className="font-medium">{text}</span>
-        </div>
+          <div className="flex items-center">
+            <TagsOutlined className="mr-2 text-[#1C325B]" />
+            <span className="font-medium">{text}</span>
+          </div>
       ),
     },
     {
@@ -126,10 +104,10 @@ const Tag = ({ setFlag }) => {
       dataIndex: "type",
       key: "type",
       render: (text) => (
-        <div className="flex items-center">
-          <AppstoreOutlined className="mr-2 text-[#1C325B]" />
-          <span>{text}</span>
-        </div>
+          <div className="flex items-center">
+            <AppstoreOutlined className="mr-2 text-[#1C325B]" />
+            <span>{text}</span>
+          </div>
       ),
     },
     {
@@ -137,10 +115,10 @@ const Tag = ({ setFlag }) => {
       dataIndex: "historicalPeriod",
       key: "historicalPeriod",
       render: (text) => (
-        <div className="flex items-center">
-          <HistoryOutlined className="mr-2 text-[#1C325B]" />
-          <span>{text}</span>
-        </div>
+          <div className="flex items-center">
+            <HistoryOutlined className="mr-2 text-[#1C325B]" />
+            <span>{text}</span>
+          </div>
       ),
     },
     {
@@ -148,72 +126,77 @@ const Tag = ({ setFlag }) => {
       dataIndex: "isActive",
       key: "isActive",
       render: (isActive) => (
-        <div className="flex items-center">
-          <CheckCircleOutlined
-            className={`mr-2 ${
-              isActive ? "text-emerald-500" : "text-gray-400"
-            }`}
-          />
-          <span
-            className={
-              isActive ? "text-emerald-600 font-medium" : "text-gray-500"
-            }
-          >
-            {isActive ? "Active" : "Inactive"}
-          </span>
-        </div>
+          <div className="flex items-center">
+            <CheckCircleOutlined
+                className={`mr-2 ${
+                    isActive ? "text-emerald-500" : "text-gray-400"
+                }`}
+            />
+            <span
+                className={
+                  isActive ? "text-emerald-600 font-medium" : "text-gray-500"
+                }
+            >
+          {isActive ? "Active" : "Inactive"}
+        </span>
+          </div>
       ),
     },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) =>
+  ];
+
+// Define the actions column
+  const actionsColumn = {
+    title: "Actions",
+    key: "actions",
+    render: (_, record) =>
         user &&
         user.userRole === "TourismGovernor" &&
         user._id === record.createdBy && (
-          <div className="flex items-center gap-2">
-            <Tooltip title="Edit Tag">
-              <Button
-                type="primary"
-                icon={<EditOutlined />}
-                onClick={() => {
-                  setIsEditing(true);
-                  setCurrentTag(record);
-                  form.setFieldsValue(record);
-                  setModalVisible(true);
-                }}
-                className="bg-[#1C325B] hover:bg-[#1C325B]/90"
-              >
-                Edit
-              </Button>
-            </Tooltip>
-            <Tooltip title="Delete Tag">
-              <Popconfirm
-                title="Delete Tag"
-                description="Are you sure you want to delete this tag?"
-                icon={<ExclamationCircleOutlined className="text-red-500" />}
-                okText="Delete"
-                cancelText="Cancel"
-                okButtonProps={{
-                  className: "bg-red-500 hover:bg-red-600 border-red-500",
-                }}
-                onConfirm={() => handleDelete(record._id)}
-              >
+            <div className="flex items-center gap-2">
+              <Tooltip title="Edit Tag">
                 <Button
-                  type="text"
-                  danger
-                  icon={<DeleteOutlined className="text-lg" />}
-                  className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
-               transition-all duration-200 hover:border-red-500"
+                    type="primary"
+                    icon={<EditOutlined />}
+                    onClick={() => {
+                      setIsEditing(true);
+                      setCurrentTag(record);
+                      form.setFieldsValue(record);
+                      setModalVisible(true);
+                    }}
+                    className="bg-[#1C325B] hover:bg-[#1C325B]/90"
                 >
-                  <span className="text-red-500 font-medium">Delete</span>
                 </Button>
-              </Popconfirm>
-            </Tooltip>
-          </div>
+              </Tooltip>
+              <Tooltip title="Delete Tag">
+                <Popconfirm
+                    title="Delete Tag"
+                    description="Are you sure you want to delete this tag?"
+                    icon={<ExclamationCircleOutlined className="text-red-500" />}
+                    okText="Delete"
+                    cancelText="Cancel"
+                    okButtonProps={{
+                      className: "bg-red-500 hover:bg-red-600 border-red-500",
+                    }}
+                    onConfirm={() => handleDelete(record._id)}
+                >
+                  <Button
+                      type="text"
+                      danger
+                      icon={<DeleteOutlined className="text-lg" />}
+                      className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
+           transition-all duration-200 hover:border-red-500"
+                  >
+                  </Button>
+                </Popconfirm>
+              </Tooltip>
+            </div>
         ),
-    },
-  ];
+  };
+
+// Conditionally create the final columns array
+  const columns = user?.userRole === "TourismGovernor"
+      ? [...baseColumns, actionsColumn]
+      : baseColumns;
 
   return (
     <ConfigProvider

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Form, Input, Button, ConfigProvider, notification, InputNumber } from 'antd';
+import { Form, Input, Button, ConfigProvider, notification, InputNumber ,message } from 'antd';
 import {
   PackageIcon,
   DollarSign,
@@ -42,11 +42,7 @@ const EditProductForm = ({ setFlag }) => {
         setProduct(response.data);
         form.setFieldsValue(response.data);
       } catch (err) {
-        notification.error({
-          message: 'Error',
-          description: 'Failed to fetch product data',
-          className: 'bg-white shadow-lg',
-        });
+        message.warning(err.response.data.message)
       } finally {
         setFetching(false);
       }
@@ -60,26 +56,14 @@ const EditProductForm = ({ setFlag }) => {
     try {
       if (productId) {
         await updateProduct({ ...values, imageUrl: product.imageUrl }, productId);
-        notification.success({
-          message: 'Success',
-          description: 'Product updated successfully',
-          className: 'bg-white shadow-lg',
-        });
+        message.success("Product updated successfully");
       } else {
         await addProduct({ ...values, imageUrl: product.imageUrl });
-        notification.success({
-          message: 'Success',
-          description: 'Product created successfully',
-          className: 'bg-white shadow-lg',
-        });
+        message.success("Product created successfully");
       }
       navigate('/products');
     } catch (err) {
-      notification.error({
-        message: 'Error',
-        description: 'Failed to save product',
-        className: 'bg-white shadow-lg',
-      });
+      message.warning(err.response.data.message)
     } finally {
       setLoading(false);
     }
@@ -89,26 +73,17 @@ const EditProductForm = ({ setFlag }) => {
     try {
       if (product.isActive) {
         await archiveProduct(productId);
-        notification.success({
-          message: 'Success',
-          description: 'Product archived successfully',
-        });
+        message.success("Product archived successfully");
       } else {
         await unArchiveProduct(productId);
-        notification.success({
-          message: 'Success',
-          description: 'Product unarchived successfully',
-        });
+        message.success("Product unarchived successfully");
       }
       setProduct(prev => ({
         ...prev,
         isActive: !prev.isActive,
       }));
     } catch (err) {
-      notification.error({
-        message: 'Error',
-        description: 'Failed to update archive status',
-      });
+      message.warning(err.response.data.message);
     }
   };
 
