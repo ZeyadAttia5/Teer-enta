@@ -370,7 +370,7 @@ const orderSummary = formatOrderSummary();
                                         defaultOpen={true}
                                         notFoundContent={
                                             <div className="text-center py-4 text-blue-500">
-                                                No addresses found
+                                                No addresses Added
                                             </div>
                                         }
                                         style={{ background: 'white' }}

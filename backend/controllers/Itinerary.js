@@ -402,6 +402,15 @@ exports.bookItinerary = async (req, res) => {
         const { date, paymentMethod = 'wallet' } = req.body; // Default to 'wallet' if payment method is not provided
         const userId = req.user._id;
         const promoCode = req.body.promoCode;
+        const tourist = await Tourist.findById(req.user._id);
+        const today = new Date();
+        const birthDate = new Date(tourist.dateOfBirth);
+        const age = today.getFullYear() - birthDate.getFullYear() -
+            (today.getMonth() < birthDate.getMonth() ||
+                (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()));
+        if (age < 18) {
+            return res.status(400).json({message: "You must be at least 18 years old to book an activity"});
+        }
 
         const itinerary = await Itinerary.findOne({ isActive: true, _id: id });
         if (!itinerary) {
@@ -432,7 +441,7 @@ exports.bookItinerary = async (req, res) => {
             }
         }
 
-        const tourist = await Tourist.findById(userId);
+        // const tourist = await Tourist.findById(userId);
         let totalPrice = itinerary.price; // Adjust this if needed to dynamically handle different prices
         totalPrice = promoCode ? totalPrice * (1 - existingPromoCode.discount / 100):totalPrice;
         if(promoCode){
