@@ -29,7 +29,7 @@ const BookActivity = () => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("user"));
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
+    const [paymentSucceed, setPaymentSucceed] = useState(false);
     const fetchActivity = async () => {
         try {
             const response = await getActivity(activityId);
@@ -160,9 +160,9 @@ const BookActivity = () => {
                                         loading={applyingPromo}
                                         type="danger"
                                         size="large"
-                                        className="bg-blue-950 text-white hover:bg-black border-none"
+                                        className="bg-second hover:bg-gray-600 text-white"
                                     >
-                                        Apply Code
+                                        Apply
                                     </Button>
                                 </div>
                             </div>
@@ -209,17 +209,12 @@ const BookActivity = () => {
                                         <div className="bg-gray-50 p-6 rounded-xl">
                                             <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
                                                 <CheckoutForm
-                                                    amount={calculateFinalPrice(currency?.rate * activity?.price?.max)}
+                                                    amount={(currency?.rate * activity?.price?.max)}
+                                                    // withPayButton={false}
                                                     code={currency?.code}
-                                                    onPaymentSuccess={(paymentMethod) => {
-                                                        // Handle successful payment
-                                                        console.log('Payment successful:', paymentMethod);
-                                                    }}
-                                                    onError={(error) => {
-                                                        // Handle payment error
-                                                        console.error('Payment error:', error);
-                                                    }}
-                                                    withPayButton={false}
+                                                    discountedAmount={calculateFinalPrice(currency?.rate *activity?.price?.max)}
+                                                    onPaymentSuccess={() => setPaymentSucceed(true)}
+                                                    onError={() => setPaymentSucceed(false)}
                                                 />
                                             </Elements>
                                         </div>

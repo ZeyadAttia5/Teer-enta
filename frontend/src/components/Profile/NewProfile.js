@@ -249,7 +249,7 @@ const TouristProfile = () => {
                                 </div>
                             </>
                             <div className="">
-                                <Form.Item label="Currency">
+                                <Form.Item label="Prefered Currency">
                                     <div>
                                         <CurrencyDropdown1
                                             setCurrencyId={setCurrencyId}
