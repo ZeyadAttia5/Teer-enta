@@ -59,10 +59,15 @@ const CustomProgressBar = ({ step, setStep, loading }) => {
       direction="vertical"
       className="h-full"
       current={step}
-      onChange={setStep}
+      onChange={(current) => {
+        if (current <= step) {
+          setStep(current);
+        }
+      }}
       items={steps.map((item, index) => ({
         title: item.label,
         icon: item.icon,
+        disabled: index > step,
       }))}
     />
   );
