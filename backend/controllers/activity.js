@@ -245,6 +245,7 @@ exports.updateActivity = async (req, res, next) => {
         if(oldIsBooking !== newIsBooking && newIsBooking === true){
             const interestedUsersRequests = await NotificationsRequests.find({activity: id});
             const interestedUsers = interestedUsersRequests.map(request => request.createdBy);
+            console.log("here",interestedUsers);
             for(const user of interestedUsers){
                 const fcmToken = await getFCMToken(user);
                 if (fcmToken) {
