@@ -409,7 +409,7 @@ exports.bookItinerary = async (req, res) => {
             (today.getMonth() < birthDate.getMonth() ||
                 (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()));
         if (age < 18) {
-            return res.status(400).json({message: "You must be at least 18 years old to book an activity"});
+            return res.status(400).json({message: "You must be at least 18 years old to book an Iternary"});
         }
 
         const itinerary = await Itinerary.findOne({ isActive: true, _id: id });
