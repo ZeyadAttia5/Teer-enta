@@ -189,7 +189,7 @@ exports.checkOutOrder = async (req, res) => {
             products,
             totalPrice,
             deliveryAddress,
-            status: 'Completed',
+            status: 'Pending',
             paymentMethod:paymentMethod ,
             isActive: true,
         });

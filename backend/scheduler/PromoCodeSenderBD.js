@@ -7,24 +7,24 @@ const brevoConfig = require("../Util/mailsHandler/brevo/brevoConfig");
 const brevoService = new BrevoService(brevoConfig);
 const PromoCodeTemplate = require("../Util/mailsHandler/mailTemplets/3PromoCodeTemplate");
 const moment = require('moment-timezone'); // Import moment-timezone
-
+// */1 * * * *
 // Receive a Promo code on my birthday that can be used on anything in the website by email and on the system
 cron.schedule('0 0 * * *', async () => {
     try {
         console.log('Sending promo codes to tourists for their birthdays');
 
 
-        const today = moment.utc();  // Current date in UTC
-        const todayDate = today.date(); // Gets the day of the month (1-31)
-        const todayMonth = today.month(); // Gets the month (0-11)
+        const today = moment.utc();
+        const todayMonth = today.month(); // 0-11
+        const todayDate = today.date();   // 1-31
 
-        console.log('Today (UTC):', today.toISOString());
-       // TODO:problem to calculate the birthday
         const users = await User.find({
             userRole: 'Tourist',
-            dateOfBirth: {
-                $gte: moment.utc().startOf('day').toDate(),  // Start of today (midnight UTC)
-                $lt: moment.utc().endOf('day').toDate()     // End of today (just before midnight UTC)
+            $expr: {
+                $and: [
+                    { $eq: [{ $month: '$dateOfBirth' }, todayMonth + 1] },  // MongoDB months are 1-12
+                    { $eq: [{ $dayOfMonth: '$dateOfBirth' }, todayDate] }
+                ]
             }
         });
 
@@ -34,6 +34,7 @@ cron.schedule('0 0 * * *', async () => {
         }
 
         for (const user of users) {
+            console.log(`Sending promo code to ${user.username} (${user.email})`);
             const promoCode = generateRandomCode();
             const expirationDate = moment.utc().add(7, 'days'); // Promo code expires in 7 days (UTC)
 

@@ -468,7 +468,7 @@ exports.bookItinerary = async (req, res) => {
             createdBy: userId,
             date: new Date(date),
             // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
-            status:'Pending' ,
+            status: 'Pending',
             price : totalPrice
         });
 

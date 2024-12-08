@@ -127,7 +127,7 @@ exports.bookTransportation = async (req, res) => {
             transportation: id,
             createdBy: userId,
             // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
-            status: 'Completed',
+            status: 'Pending',
             date: transportation.date ,
             price: totalPrice
         });

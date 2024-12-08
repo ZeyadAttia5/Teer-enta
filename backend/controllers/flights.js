@@ -178,7 +178,7 @@ exports.bookFlight = async (req, res) => {
             noOfPassengers: travelers.length,
             price: totalPrice,
             createdBy: userId,
-            status: 'Completed',
+            status: 'Pending',
         });
 
         // Send success response
