@@ -246,7 +246,7 @@ const ComplaintsManagement = () => {
                       className="w-full"
                       allowClear
                     >
-                      <Option value="">No Sorting</Option>
+                      <Option value="">Sort by Precedence</Option>
                       <Option value="Date ascending">
                         Date (Oldest first)
                       </Option>
