@@ -416,7 +416,7 @@ const TouristWelcome = ({ setFlag }) => {
               </div>
             )}
           </div>
-          {touristActivities.length > 0 && (
+          {itineraries.length > 0 && (
             <span className="text-4xl font-bold text-first ml-12 mt-16 block mb-3">
               Top itineraries you can't miss
             </span>
@@ -424,7 +424,7 @@ const TouristWelcome = ({ setFlag }) => {
 
           <div className="flex justify-center">
             <div className="grid grid-cols-3 gap-8 w-[90%]">
-              {itineraries?.slice(1, 4).map((itinerary, index) => (
+              {itineraries?.slice(0, 3).map((itinerary, index) => (
                 <ItineraryCard
                   key={index}
                   itinerary={itinerary}
@@ -468,7 +468,7 @@ const TouristWelcome = ({ setFlag }) => {
           )}
           <div className="flex justify-center">
             <div className="grid grid-cols-3 gap-8 w-[90%]">
-              {touristActivities?.slice(5, 8).map((place) => (
+              {touristActivities?.slice(0, 3).map((place) => (
                 // <Link key={place._id} to={`/itinerary/activityDetails/${place._id}`}>
                 <ActivityCard
                   id={place._id}
@@ -493,6 +493,7 @@ const TouristWelcome = ({ setFlag }) => {
                   currencyCode={currency?.code}
                   currencyRate={currency?.rate}
                   specialDiscounts={place.specialDiscounts}
+                  imageUrl={place.imageUrl}
                 />
                 // </Link>
               ))}
