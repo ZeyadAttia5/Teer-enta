@@ -1,7 +1,7 @@
 # 🌍 Teer Enta - Your Personal Travel Companion
 
 <div align="center">
-  <img src="[path_to_your_logo]" alt="Wanderlust Logo" width="150px" />
+  <img src="frontend/src/assets/logo/logo2.png" alt="Wanderlust Logo" width="150px" />
 </div>
 
 ---
