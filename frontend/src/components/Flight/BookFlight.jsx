@@ -40,7 +40,7 @@ import {
 import { Fade } from "react-awesome-reveal";
 import { useNavigate } from "react-router-dom";
 import {getCurrency} from "../../api/account.ts";
-import LoginConfirmationModal from "../shared/LoginConfirmationModal";
+import LoginConfirmationModal from "../shared/ConfirmationModal";
 
 const { Option } = Select;
 
