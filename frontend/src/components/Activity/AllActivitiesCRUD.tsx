@@ -102,7 +102,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       const response = await getActivities();
       setActivities(response.data);
     } catch (error) {
-      notification.error({ message: "Error fetching activities" });
+      message.warning( error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -114,9 +114,9 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       setActivities(response.data);
     } catch (error) {
       if (error.response.status === 404) {
-        notification.info({ message: "You didnt create any activities yet" });
+        message.info("You didnt create any activities yet");
       } else {
-        notification.error({ message: "Error fetching activities" });
+        message.warning( error.response.data.message);
       }
     } finally {
       setLoading(false);
@@ -127,7 +127,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       const response = await getActivityCategories();
       setCategories(response);
     } catch (error) {
-      notification.error({ message: "Error fetching categories" });
+      message.warning(error.response.data.message);
     }
   };
 
@@ -136,7 +136,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       const response = await getPreferenceTags();
       setPreferenceTags(response.data);
     } catch (error) {
-      notification.error({ message: "Error fetching tags" });
+      message.warning(error.response.data.message);
     }
   };
 
@@ -189,10 +189,10 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   const handleDeleteActivity = async (id) => {
     try {
       await deleteActivity(id);
-      notification.success({ message: "Activity deleted successfully" });
+      message.success("Activity deleted successfully");
       fetchActivities();
     } catch (error) {
-      notification.error({ message: "Error deleting activity" });
+      message.warning(error.response.data.message);
     }
   };
 
@@ -215,15 +215,15 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       if (isEditing && currentActivity) {
         // console.log("Updating activity", activityData);
         await updateActivity(activityData, currentActivity?._id);
-        notification.success({ message: "Activity updated successfully" });
+        message.success("Activity updated successfully" );
       } else {
         await createActivity(activityData);
-        notification.success({ message: "Activity created successfully" });
+        message.success("Activity created successfully" );
       }
       fetchActivities();
       setIsModalVisible(false);
     } catch (error) {
-      notification.error({ message: "Error submitting activity" });
+      message.warning(error.response.data.message);
     }
   };
 
@@ -440,7 +440,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                           message.success("Activity flagged as inappropriate");
                           await fetchActivities();
                         } catch (error) {
-                          message.warning("Failed to flag activity");
+                          message.warning(error.response.data.message);
                         } finally {
                           setLoading(false);
                         }

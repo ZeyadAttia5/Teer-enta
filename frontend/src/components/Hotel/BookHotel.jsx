@@ -191,7 +191,6 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
       </footer>
       <div className="flex justify-end">
         <section className="font-bold text-2xl flex items-end mb-5">
-
           {parseFloat(mainOffer?.price?.total * currency?.rate).toLocaleString()} {currency?.code}
         </section>
       </div>

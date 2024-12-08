@@ -252,7 +252,7 @@ const BookFlight = () => {
         }
       }
     } catch (error) {
-      message.warning("Please fill in all required fields");
+      message.warning(error.response.data.message||"Please fill in all required fields");
     }
   };
   const handleFinish = async (_) => {

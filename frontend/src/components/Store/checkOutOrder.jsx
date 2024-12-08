@@ -57,7 +57,7 @@ const CheckoutPage = () => {
     const [paymentMethod, setPaymentMethod] = useState('wallet');
     const [selectedDate, setSelectedDate] = useState(null);
     const navigate = useNavigate();
-
+    const [paymentSucceed, setPaymentSucceed] = useState(false);
     // Initial Data Loading
     useEffect(() => {
         fetchInitialData();
@@ -77,7 +77,7 @@ const CheckoutPage = () => {
             setAddresses(addressesResponse.data.addresses || []);
             setCurrency(currencyResponse.data);
         } catch (error) {
-            message.warning('Failed to load checkout data');
+            message.warning(error.response.data.message||'Failed to load checkout data');
             console.error('Checkout data loading error:', error);
         } finally {
             setPageLoading(false);
@@ -112,21 +112,21 @@ const CheckoutPage = () => {
     // Price Calculations
     const calculateFinalPrice = (price) => {
         if (!price) return 0;
-        let finalPrice = price * (currency?.rate || 1);
-        if (promoDiscount) {
-            finalPrice = finalPrice * (1 - promoDiscount / 100);
-        }
-        return finalPrice.toFixed(2);
+        // Only apply currency conversion here, not discount
+        return (price * (currency?.rate || 1)).toFixed(2);
     };
 
     const getPriceDisplay = (price) => {
-        return `${currency?.code || '$'} ${calculateFinalPrice(price)}`;
+        return `${currency?.code || '$'} ${price}`;
     };
 
     const formatOrderSummary = () => {
-        const subtotal = totalPrice;
-        const discount = promoDiscount ? (subtotal * promoDiscount / 100) : 0;
-        const final = subtotal - discount;
+        // Convert the total price to current currency
+        const subtotal = calculateFinalPrice(totalPrice);
+        // Calculate discount amount in current currency
+        const discount = promoDiscount ? (parseFloat(subtotal) * promoDiscount / 100).toFixed(2) : 0;
+        // Calculate final price by subtracting discount
+        const final = (parseFloat(subtotal) - parseFloat(discount)).toFixed(2);
 
         return {
             subtotal: getPriceDisplay(subtotal),
@@ -155,7 +155,6 @@ const CheckoutPage = () => {
             setLoading(false);
         }
     };
-
     // Payment Handling
     const handlePaymentMethodChange = (e) => {
         setPaymentMethod(e.target.value);
@@ -170,7 +169,6 @@ const CheckoutPage = () => {
             message.warning("Please select a delivery address");
             return;
         }
-
         try {
             setLoading(true);
             const orderData = {
@@ -191,8 +189,6 @@ const CheckoutPage = () => {
             setPromoCode('');
             setSelectedDate(null);
             navigate(`/products`);
-            await fetchInitialData();
-
 
         } catch (error) {
             message.warning({
@@ -306,12 +302,12 @@ const orderSummary = formatOrderSummary();
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-8 text-center">
-                        <Title level={2} className="text-indigo-900 mb-2">
+                        <Title level={2} className="text-blue-900 mb-2">
                             <ShoppingOutlined className="mr-3" />
                             Checkout
                         </Title>
                         {currency && (
-                            <Text className="text-indigo-600">
+                            <Text className="text-blue-600">
                                 Prices shown in {currency.code} (1 USD = {currency.rate} {currency.code})
                             </Text>
                         )}
@@ -324,7 +320,7 @@ const orderSummary = formatOrderSummary();
                             <Card
                                 className="shadow-lg rounded-xl border-0 hover:shadow-xl transition-shadow duration-300"
                                 title={
-                                    <div className="flex items-center text-indigo-900 py-1">
+                                    <div className="flex items-center text-blue-900 py-1">
                                         <ShoppingCartOutlined className="text-xl mr-2" />
                                         <span className="text-lg font-semibold">Order Items</span>
                                     </div>
@@ -340,7 +336,7 @@ const orderSummary = formatOrderSummary();
                                     className="custom-table"
                                     locale={{
                                         emptyText: (
-                                            <div className="py-8 text-center text-indigo-500">
+                                            <div className="py-8 text-center text-blue-500">
                                                 <ShoppingCartOutlined style={{ fontSize: '2rem' }} />
                                                 <div className="mt-2">Your cart is empty</div>
                                             </div>
@@ -353,7 +349,7 @@ const orderSummary = formatOrderSummary();
                             <Card
                                 className="shadow-lg rounded-xl border-0 hover:shadow-xl transition-shadow duration-300"
                                 title={
-                                    <div className="flex items-center text-indigo-900 py-1">
+                                    <div className="flex items-center text-blue-900 py-1">
                                         <EnvironmentOutlined className="text-xl mr-2" />
                                         <span className="text-lg font-semibold">Delivery Address</span>
                                     </div>
@@ -370,8 +366,10 @@ const orderSummary = formatOrderSummary();
                                         placeholder="Select delivery address"
                                         className="w-full"
                                         bordered={false}
+                                        defaultValue={addresses[0]}
+                                        defaultOpen={true}
                                         notFoundContent={
-                                            <div className="text-center py-4 text-indigo-500">
+                                            <div className="text-center py-4 text-blue-500">
                                                 No addresses found
                                             </div>
                                         }
@@ -380,8 +378,8 @@ const orderSummary = formatOrderSummary();
                                         {addresses.map((address, index) => (
                                             <Option key={index} value={address}>
                                                 <div className="flex items-center py-2">
-                                                    <EnvironmentOutlined className="text-indigo-600 mr-2" />
-                                                    <span className="text-indigo-900">{address}</span>
+                                                    <EnvironmentOutlined className="text-blue-600 mr-2" />
+                                                    <span className="text-blue-900">{address}</span>
                                                 </div>
                                             </Option>
                                         ))}
@@ -393,8 +391,8 @@ const orderSummary = formatOrderSummary();
                                     icon={<PlusOutlined />}
                                     onClick={() => setIsModalVisible(true)}
                                     size="large"
-                                    className="w-full border-indigo-400 text-indigo-600 hover:text-indigo-700
-                                         hover:border-indigo-500 bg-white"
+                                    className="w-full border-blue-400 text-blue-600 hover:text-blue-700
+                                         hover:border-blue-500 bg-white"
                                 >
                                     Add New Address
                                 </Button>
@@ -404,7 +402,7 @@ const orderSummary = formatOrderSummary();
                             <Card
                                 className="shadow-lg rounded-xl border-0 hover:shadow-xl transition-shadow duration-300"
                                 title={
-                                    <div className="flex items-center text-indigo-900 py-1">
+                                    <div className="flex items-center text-blue-900 py-1">
                                         <CreditCardOutlined className="text-xl mr-2" />
                                         <span className="text-lg font-semibold">Payment Method</span>
                                     </div>
@@ -414,69 +412,70 @@ const orderSummary = formatOrderSummary();
                             >
                                 {/* Promo Code Section */}
                                 <div className="mb-6">
-                                    <Text strong className="block mb-2 text-indigo-900">Promo Code</Text>
+                                    <Text strong className="block mb-2 text-blue-900">Promo Code</Text>
                                     <Input.Group compact>
-                                        <Input
-                                            style={{ width: 'calc(100% - 88px)' }}
-                                            placeholder="Enter promo code"
-                                            value={promoCode}
-                                            onChange={(e) => setPromoCode(e.target.value)}
-                                            className="h-10"
-                                            prefix={<TagOutlined className="text-indigo-400" />}
-                                        />
-                                        <Button
-                                            type="primary"
-                                            onClick={handleApplyPromo}
-                                            loading={applyingPromo}
-                                            className="h-10 bg-indigo-600 hover:bg-indigo-700"
-                                        >
-                                            Apply
-                                        </Button>
+                                        <div className="flex w-full gap-2">
+                                            <Input
+                                                placeholder="Enter promo code"
+                                                value={promoCode}
+                                                onChange={(e) => setPromoCode(e.target.value)}
+                                                className="h-10 flex-1"
+                                                prefix={<TagOutlined className="text-blue-400"/>}
+                                            />
+                                            <Button
+                                                type="danger"
+                                                onClick={handleApplyPromo}
+                                                loading={applyingPromo}
+                                                className="bg-second hover:bg-gray-600 text-white h-10 w-24"
+                                            >
+                                                Apply
+                                            </Button>
+                                        </div>
                                     </Input.Group>
                                 </div>
 
                                 <Form.Item
                                     name="paymentMethod"
-                                    rules={[{ required: true, message: 'Please select a payment method' }]}
+                                    rules={[{required: true, message: 'Please select a payment method'}]}
                                 >
                                     <Radio.Group onChange={handlePaymentMethodChange} className="w-full">
                                         <Space direction="vertical" className="w-full">
-                                            <Radio.Button value="cash_on_delivery" className="h-16 w-full bg-white hover:bg-indigo-50">
+                                        <Radio.Button value="cash_on_delivery" className="h-16 w-full bg-white hover:bg-blue-50">
                                                 <div className="flex items-center h-full">
-                                                    <MoneyCollectOutlined className="text-xl text-indigo-600 mr-3" />
+                                                    <MoneyCollectOutlined className="text-xl text-blue-600 mr-3" />
                                                     <div>
-                                                        <div className="font-semibold text-indigo-900">
+                                                        <div className="font-semibold text-blue-900">
                                                             Cash on Delivery
                                                         </div>
-                                                        <div className="text-sm text-indigo-500">
+                                                        <div className="text-sm text-blue-500">
                                                             Pay when you receive your order
                                                         </div>
                                                     </div>
                                                 </div>
                                             </Radio.Button>
                                             <Radio.Button value="wallet"
-                                                          className="h-16 w-full bg-white hover:bg-indigo-50">
+                                                          className="h-16 w-full bg-white hover:bg-blue-50">
                                                 <div className="flex items-center h-full">
-                                                    <WalletOutlined className="text-xl text-indigo-600 mr-3" />
+                                                    <WalletOutlined className="text-xl text-blue-600 mr-3" />
                                                     <div>
-                                                        <div className="font-semibold text-indigo-900">
+                                                        <div className="font-semibold text-blue-900">
                                                             Wallet Balance
                                                         </div>
-                                                        <div className="text-sm text-indigo-500">
+                                                        <div className="text-sm text-blue-500">
                                                             Pay using your wallet balance
                                                         </div>
                                                     </div>
                                                 </div>
                                             </Radio.Button>
                                             <Radio.Button value="Card"
-                                                          className="h-16 w-full bg-white hover:bg-indigo-50">
+                                                          className="h-16 w-full bg-white hover:bg-blue-50">
                                                 <div className="flex items-center h-full">
-                                                    <CreditCardOutlined className="text-xl text-indigo-600 mr-3" />
+                                                    <CreditCardOutlined className="text-xl text-blue-600 mr-3" />
                                                     <div>
-                                                        <div className="font-semibold text-indigo-900">
+                                                        <div className="font-semibold text-blue-900">
                                                             Credit/Debit Card
                                                         </div>
-                                                        <div className="text-sm text-indigo-500">
+                                                        <div className="text-sm text-blue-500">
                                                             Pay using your card
                                                         </div>
                                                     </div>
@@ -487,20 +486,15 @@ const orderSummary = formatOrderSummary();
                                 </Form.Item>
 
                                 {paymentMethod === "Card" && (
-                                    <div className="mt-6 p-4 bg-white rounded-lg border border-indigo-100">
+                                    <div className="mt-6 p-4 bg-white rounded-lg border border-blue-100">
                                         <Elements stripe={stripePromise}>
                                             <CheckoutForm
-                                                amount={calculateFinalPrice(totalPrice)}
+                                                amount={totalPrice}
                                                 code={currency?.code}
-                                                onPaymentSuccess={(paymentMethod) => {
-                                                    // Handle successful payment
-                                                    console.log('Payment successful:', paymentMethod);
-                                                }}
-                                                onError={(error) => {
-                                                    // Handle payment error
-                                                    console.error('Payment error:', error);
-                                                }}
-                                                withPayButton={false}
+                                                withPayButton={true}
+                                                discountedAmount={calculateFinalPrice(currency?.rate *totalPrice)}
+                                                onPaymentSuccess={() => setPaymentSucceed(true)}
+                                                onError={() => setPaymentSucceed(false)}
                                             />
                                         </Elements>
                                     </div>
@@ -513,7 +507,7 @@ const orderSummary = formatOrderSummary();
                             <Card
                                 className="shadow-lg rounded-xl border-0 sticky top-6 hover:shadow-xl transition-shadow duration-300"
                                 title={
-                                    <div className="flex items-center text-indigo-900 py-1">
+                                    <div className="flex items-center text-blue-900 py-1">
                                         <TagOutlined className="text-xl mr-2" />
                                         <span className="text-lg font-semibold">Order Summary</span>
                                     </div>
@@ -524,7 +518,7 @@ const orderSummary = formatOrderSummary();
                                 <div className="space-y-6">
                                     {/* Price Breakdown */}
                                     <div className="space-y-4 bg-white p-4 rounded-lg">
-                                        <div className="flex justify-between text-indigo-900">
+                                        <div className="flex justify-between text-blue-900">
                                             <Text>Subtotal</Text>
                                             <Text strong>{orderSummary.subtotal}</Text>
                                         </div>
@@ -534,10 +528,10 @@ const orderSummary = formatOrderSummary();
                                                 <Text strong>-{orderSummary.discount}</Text>
                                             </div>
                                         )}
-                                        <Divider className="my-3 border-indigo-100" />
+                                        <Divider className="my-3 border-blue-100" />
                                         <div className="flex justify-between">
-                                            <Text strong className="text-lg text-indigo-900">Total</Text>
-                                            <Text strong className="text-lg text-indigo-600">
+                                            <Text strong className="text-lg text-blue-900">Total</Text>
+                                            <Text strong className="text-lg text-blue-600">
                                                 {orderSummary.final}
                                             </Text>
                                         </div>
@@ -545,19 +539,28 @@ const orderSummary = formatOrderSummary();
 
                                     {/* Place Order Button */}
                                     <Button
-                                        type="primary"
+                                        type="danger"
                                         size="large"
                                         htmlType="submit"
                                         loading={loading}
-                                        disabled={cartItems.length === 0}
-                                        className="w-full h-12 bg-indigo-600 hover:bg-indigo-700
-                                             text-base font-medium transition-colors duration-200"
+                                        disabled={cartItems.length === 0 || (paymentMethod === "Card" && !paymentSucceed)}
+                                        className={`
+                                            w-full 
+                                            h-12 
+                                            font-medium 
+                                            transition-all 
+                                            duration-200
+                                            ${cartItems.length === 0 || (paymentMethod === "Card" && !paymentSucceed)
+                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300'
+                                            : 'bg-blue-950 hover:bg-black text-white'
+                                            }
+                                        `}
                                     >
                                         {loading ? 'Processing...' : 'Place Order'}
                                     </Button>
 
                                     {cartItems.length === 0 && (
-                                        <div className="text-center text-indigo-500 text-sm">
+                                        <div className="text-center text-blue-500 text-sm">
                                             Add items to your cart to proceed
                                         </div>
                                     )}
@@ -571,7 +574,7 @@ const orderSummary = formatOrderSummary();
             {/* Add Address Modal */}
             <Modal
                 title={
-                    <div className="flex items-center gap-2 text-indigo-900">
+                    <div className="flex items-center gap-2 text-blue-900">
                         <PlusOutlined />
                         <span className="text-lg font-semibold">Add New Address</span>
                     </div>
@@ -607,7 +610,7 @@ const orderSummary = formatOrderSummary();
                             type="primary"
                             htmlType="submit"
                             loading={loading}
-                            className="bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200"
+                            className="bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
                         >
                             Add Address
                         </Button>

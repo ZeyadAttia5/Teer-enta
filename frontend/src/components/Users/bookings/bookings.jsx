@@ -74,23 +74,24 @@ const BookingGrid = () => {
   }, []);
 
   const fetchBookings = async () => {
-    try {
-      const [activities, itineraries, hotels, flights, transportations] =
-        await Promise.all([
-          getBookedActivities(),
-          getBookedItineraries(),
-          getBookedHotels(),
-          getBookedFlights(),
-          getBookedTransportations(),
-        ]);
-      setBookedActivities(activities.data);
-      setBookedItineraries(itineraries);
-      setBookedHotels(hotels.data);
-      setBookedFlights(flights.data);
-      setBookedTransportations(transportations.data);
-    } catch (error) {
-      message.warning("Error fetching bookings");
-    }
+    // Helper function to safely fetch data
+    const safelyFetch = async (fetchFn, setterFn, entityName) => {
+      try {
+        const response = await fetchFn();
+        setterFn(response.data || response);
+      } catch (error) {
+        console.error(`Error fetching ${entityName}:`, error);
+        message.warning(`Unable to fetch ${entityName}: ${error.response?.data?.message || 'Unknown error'}`);
+      }
+    };
+
+    await Promise.allSettled([
+      safelyFetch(getBookedActivities, setBookedActivities, 'activities'),
+      safelyFetch(getBookedItineraries, setBookedItineraries, 'itineraries'),
+      safelyFetch(getBookedHotels, setBookedHotels, 'hotels'),
+      safelyFetch(getBookedFlights, setBookedFlights, 'flights'),
+      safelyFetch(getBookedTransportations, setBookedTransportations, 'transportations')
+    ]);
   };
 
   const fetchCurrency = async () => {
@@ -98,7 +99,7 @@ const BookingGrid = () => {
       const response = await getCurrency();
       setCurrency(response.data);
     } catch (err) {
-      message.warning("Error fetching currency");
+      message.warning(err.response.data.message||"Error fetching currency");
     }
   };
 

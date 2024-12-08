@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, Spin, ConfigProvider, notification } from "antd";
+import { Button, Spin, ConfigProvider, notification ,message } from "antd";
 import {
   IdcardOutlined,
   FileDoneOutlined,
@@ -45,18 +45,10 @@ const ShowDocuments = () => {
             certificates: response.data.certificates || [],
           });
         } else {
-          notification.error({
-            message: 'Error',
-            description: 'User role not supported',
-            className: 'bg-white shadow-lg',
-          });
+          message.warning("User role not found");
         }
       } catch (error) {
-        notification.error({
-          message: 'Error',
-          description: 'Failed to load documents',
-          className: 'bg-white shadow-lg',
-        });
+        message.warning(error.response.data.message||"Failed to fetch documents");
       } finally {
         setLoading(false);
       }
@@ -68,36 +60,20 @@ const ShowDocuments = () => {
   const handleAccept = async () => {
     try {
       await acceptUser(id);
-      notification.success({
-        message: 'Success',
-        description: 'User accepted successfully',
-        className: 'bg-white shadow-lg',
-      });
+      message.success("User accepted successfully")
       navigate("/pendingUsers");
     } catch (error) {
-      notification.error({
-        message: 'Error',
-        description: error.response?.data?.message || 'Failed to accept user',
-        className: 'bg-white shadow-lg',
-      });
+      message.warning(error.response.data.message);
     }
   };
 
   const handleReject = async () => {
     try {
       await rejectUser(id);
-      notification.success({
-        message: 'Success',
-        description: 'User rejected successfully',
-        className: 'bg-white shadow-lg',
-      });
+      message.success("User rejected successfully");
       navigate("/pendingUsers");
     } catch (error) {
-      notification.error({
-        message: 'Error',
-        description: 'Failed to reject user',
-        className: 'bg-white shadow-lg',
-      });
+      message.warning(error.response.data.message);
     }
   };
 

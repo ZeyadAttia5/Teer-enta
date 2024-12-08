@@ -26,6 +26,7 @@ const BookItinerary = () => {
     const [promoDiscount, setPromoDiscount] = useState(0);
     const [applyingPromo, setApplyingPromo] = useState(false);
     const [showReceipt, setShowReceipt] = useState(false);
+    const [paymentSucceed, setPaymentSucceed] = useState(false);
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("user"));
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -35,7 +36,7 @@ const BookItinerary = () => {
             const response = await getIternary(itineraryId);
             setItinerary(response.data.itinerary);
         } catch (err) {
-            message.warning("Failed to get itinerary details");
+            message.warning(err.response.data.message||"Failed to get itinerary details");
         }
     };
 
@@ -44,7 +45,7 @@ const BookItinerary = () => {
             const response = await getMyCurrency();
             setCurrency(response.data);
         } catch (err) {
-            message.warning("Failed to get currency information");
+            message.warning(err.response.data.message||"Failed to get currency information");
         }
     };
 
@@ -182,9 +183,9 @@ const BookItinerary = () => {
                                         loading={applyingPromo}
                                         type="danger"
                                         size="large"
-                                        className="bg-blue-950 text-white hover:bg-black border-none"
+                                        className="bg-second hover:bg-gray-600 text-white"
                                     >
-                                        Apply Code
+                                        Apply
                                     </Button>
                                 </div>
                             </div>
@@ -231,17 +232,12 @@ const BookItinerary = () => {
                                         <div className="bg-gray-50 p-6 rounded-xl">
                                             <Elements stripe={loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY)}>
                                                 <CheckoutForm
-                                                    amount={calculateFinalPrice(currency?.rate * itinerary?.price)}
+                                                    amount={(currency?.rate * itinerary?.price)}
+                                                    // withPayButton={false}
                                                     code={currency?.code}
-                                                    onPaymentSuccess={(paymentMethod) => {
-                                                        // Handle successful payment
-                                                        console.log('Payment successful:', paymentMethod);
-                                                    }}
-                                                    onError={(error) => {
-                                                        // Handle payment error
-                                                        console.error('Payment error:', error);
-                                                    }}
-                                                    withPayButton={false}
+                                                    discountedAmount={calculateFinalPrice(currency?.rate * itinerary?.price)}
+                                                    onPaymentSuccess={() => setPaymentSucceed(true)}
+                                                    onError={() => setPaymentSucceed(false)}
                                                 />
                                             </Elements>
                                         </div>
@@ -277,7 +273,8 @@ const BookItinerary = () => {
                                 onClick={handleSubmit}
                                 loading={loading}
                                 size="large"
-                                className="w-full h-16 text-lg font-semibold bg-blue-950 text-white hover:bg-black border-none hover:shadow-xl transition-all duration-300"
+                                disabled={paymentMethod === "Card" && !paymentSucceed}
+                                className="w-full h-12 text-lg text-white bg-first hover:bg-black disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:cursor-not-allowed"
                             >
                                 Confirm Booking
                             </Button>

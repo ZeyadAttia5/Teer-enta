@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Button, Input, Form, Modal, Switch, Spin, notification} from "antd";
+import {Button,message , Input, Form, Modal, Switch, Spin, notification} from "antd";
 import CurrencyDropdown from "./Currency/CurrencyDropdown";
 import CurrencyDropdown1 from "./ProfileComponents/tmp";
 import {
@@ -71,9 +71,9 @@ const TouristProfile = () => {
             setFetchedData(updatedData);
             setCurrency(response.data.code);
             setRate(response.data.rate);
-            notification.success({message: "Profile updated successfully!"});
+            message.success("Profile updated successfully!");
         } catch (error) {
-            notification.error({message: "Failed to update profile."});
+            message.warning(error.response.data.message);
         } finally {
             setLoading(false); // Hide spinner
             setIsEditing(false);
@@ -97,9 +97,9 @@ const TouristProfile = () => {
             setFetchedData(updatedData);
             setPoints(response.data.remaining);
             setWallet(response.data.wallet);
-            notification.success({message: "Points redeemed successfully!"});
+            message.success("Points redeemed successfully!");
         } catch (error) {
-            notification.error({message: "Failed to redeem points."});
+            message.warning(error.response.data.message);
         } finally {
             setLoading(false); // Hide spinner
         }
@@ -249,7 +249,7 @@ const TouristProfile = () => {
                                 </div>
                             </>
                             <div className="">
-                                <Form.Item label="Currency">
+                                <Form.Item label="Prefered Currency">
                                     <div>
                                         <CurrencyDropdown1
                                             setCurrencyId={setCurrencyId}
