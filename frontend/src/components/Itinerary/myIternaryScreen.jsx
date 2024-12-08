@@ -185,7 +185,7 @@ const MyItineraryScreen = ({ setFlag }) => {
       const data = await getItineraries();
       setItineraries(data);
     } catch (error) {
-      message.error("Failed to fetch itineraries");
+      message.warning("Failed to fetch itineraries");
     }
     setLoading(false);
   };
@@ -210,7 +210,7 @@ const MyItineraryScreen = ({ setFlag }) => {
       const data = await getActivities();
       setActivitiesList(data.data);
     } catch (error) {
-      message.error("Failed to fetch activities");
+      message.warning("Failed to fetch activities");
     }
   };
 
@@ -219,7 +219,7 @@ const MyItineraryScreen = ({ setFlag }) => {
       const data = await getPreferenceTags();
       setPreferenceTagsList(data.data);
     } catch (error) {
-      message.error("Failed to fetch preference tags");
+      message.warning("Failed to fetch preference tags");
     }
   };
   const fetchCurrency = async () => {
@@ -286,7 +286,7 @@ const MyItineraryScreen = ({ setFlag }) => {
       message.success("Itinerary deleted successfully");
       fetchItineraries();
     } catch (error) {
-      message.error(
+      message.warning(
         error.response && error.response.status === 400
           ? "Cannot delete itinerary with existing bookings"
           : "Failed to delete itinerary"
@@ -353,7 +353,7 @@ const MyItineraryScreen = ({ setFlag }) => {
         ? fetchMyIternaries()
         : fetchItineraries();
     } catch (error) {
-      message.error("Failed to save itinerary");
+      message.warning("Failed to save itinerary");
       console.error(error);
     }
   };
@@ -481,7 +481,7 @@ const MyItineraryScreen = ({ setFlag }) => {
                       message.success("Item flagged as inappropriate");
                       await fetchItineraries();
                     } catch (error) {
-                      message.error("Failed to flag item as inappropriate");
+                      message.warning("Failed to flag item as inappropriate");
                     } finally {
                       setLoading(false);
                     }

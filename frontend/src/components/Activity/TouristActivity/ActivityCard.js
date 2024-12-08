@@ -78,7 +78,7 @@ const ActivityCard = ({
             }
         } catch (error) {
             console.error("Error saving activity:", error);
-            message.error("Failed to update saved status");
+            message.warning("Failed to update saved status");
         }
     };
 
@@ -100,8 +100,8 @@ const ActivityCard = ({
                 message.info("Notifications turned off for this activity!");
             }
         } catch (error) {
-            message.error("Failed to update notification preferences");
-            console.error("Error updating notification status:", error);
+            message.warning("Failed to update notification preferences");
+            
         }
     };
 

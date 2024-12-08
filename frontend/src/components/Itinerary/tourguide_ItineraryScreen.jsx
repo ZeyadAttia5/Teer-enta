@@ -117,7 +117,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       const data = await getActivities();
       setActivitiesList(data.data);
     } catch (error) {
-      message.error("Failed to fetch activities");
+      message.warning("Failed to fetch activities");
     }
   };
 
@@ -126,7 +126,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       const data = await getPreferenceTags();
       setPreferenceTagsList(data.data);
     } catch (error) {
-      message.error("Failed to fetch preference tags");
+      message.warning("Failed to fetch preference tags");
     }
   };
 
@@ -214,7 +214,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       handleCancel();
       setRefreshItineraries(prev => !prev);
     } catch (error) {
-      message.error("Failed to save itinerary");
+      message.warning("Failed to save itinerary");
       console.error(error);
     }
   };
@@ -225,7 +225,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
       message.success("Itinerary deleted successfully");
       setRefreshItineraries((prev) => !prev);
     } catch (error) {
-      message.error("Failed to delete itinerary");
+      message.warning("Failed to delete itinerary");
     }
   };
 
@@ -392,7 +392,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                             message.success("Itinerary flagged as inappropriate");
                             setRefreshItineraries((prev) => !prev);
                           } catch (error) {
-                            message.error("Failed to flag itinerary");
+                            message.warning("Failed to flag itinerary");
                           }
                         }}
                         className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg

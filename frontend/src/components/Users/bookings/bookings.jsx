@@ -89,7 +89,7 @@ const BookingGrid = () => {
       setBookedFlights(flights.data);
       setBookedTransportations(transportations.data);
     } catch (error) {
-      message.error("Error fetching bookings");
+      message.warning("Error fetching bookings");
     }
   };
 
@@ -98,7 +98,7 @@ const BookingGrid = () => {
       const response = await getCurrency();
       setCurrency(response.data);
     } catch (err) {
-      message.error("Error fetching currency");
+      message.warning("Error fetching currency");
     }
   };
 
@@ -181,7 +181,7 @@ const BookingGrid = () => {
       message.success("Booking cancelled successfully");
       fetchBookings();
     } catch (err) {
-      message.error("Error cancelling booking");
+      message.warning("Error cancelling booking");
     }
   };
 
@@ -191,7 +191,7 @@ const BookingGrid = () => {
       await commentOnTourGuide(tourGuideId, feedback.comment);
       message.success("Tour guide feedback submitted successfully");
     } catch (error) {
-      message.error("Error submitting tour guide feedback");
+      message.warning("Error submitting tour guide feedback");
     }
   };
 
@@ -201,7 +201,7 @@ const BookingGrid = () => {
       await addCommentToItinerary(itineraryId, feedback.comment);
       message.success("Itinerary feedback submitted successfully");
     } catch (error) {
-      message.error("Error submitting itinerary feedback");
+      message.warning("Error submitting itinerary feedback");
     }
   };
 
@@ -211,7 +211,7 @@ const BookingGrid = () => {
       await addCommentToActivity(activityId, feedback.comment);
       message.success("Activity feedback submitted successfully");
     } catch (error) {
-      message.error("Error submitting activity feedback");
+      message.warning("Error submitting activity feedback");
     }
   };
 
@@ -242,7 +242,7 @@ const BookingGrid = () => {
       message.success('Feedback submitted successfully');
       setFeedbackModal({ visible: false, type: null, entityId: null });
     } catch (error) {
-      message.error('Failed to submit feedback');
+      message.warning('Failed to submit feedback');
     }
   };
 

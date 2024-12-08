@@ -101,9 +101,9 @@ const TouristWelcome = ({ setFlag }) => {
     const fetchTouristActivities = async () => {
       try {
         var activitiesResponse;
-        if(user){
+        if (user) {
           activitiesResponse = await getSuggestedActivites();
-        }else{
+        } else {
           activitiesResponse = await getTouristActivities();
         }
         if (!mounted) return;
@@ -187,16 +187,15 @@ const TouristWelcome = ({ setFlag }) => {
       setLoading(true);
       try {
         var data;
-        if(user){
+        if (user) {
           data = await getSuggestedItinerary();
           setItineraries(data.data);
-        }else{
+        } else {
           data = await getItineraries();
           setItineraries(data);
         }
-        
       } catch (error) {
-        // message.error("Failed to fetch itineraries");
+        // message.warning("Failed to fetch itineraries");
       }
       setLoading(false);
     };
@@ -417,22 +416,23 @@ const TouristWelcome = ({ setFlag }) => {
               </div>
             )}
           </div>
-
-          <span className="text-4xl font-bold text-first ml-12 mt-16 block mb-3">
-            Top itineraries you can't miss
-          </span>
+          {touristActivities.length > 0 && (
+            <span className="text-4xl font-bold text-first ml-12 mt-16 block mb-3">
+              Top itineraries you can't miss
+            </span>
+          )}
 
           <div className="flex justify-center">
             <div className="grid grid-cols-3 gap-8 w-[90%]">
               {itineraries?.slice(1, 4).map((itinerary, index) => (
-                  <ItineraryCard
-                      key={index}
-                      itinerary={itinerary}
-                      currency={currency}
-                      handleBookItinerary={handleBookItinerary}
-                      navigate={navigate}
-                      user={user}
-                  />
+                <ItineraryCard
+                  key={index}
+                  itinerary={itinerary}
+                  currency={currency}
+                  handleBookItinerary={handleBookItinerary}
+                  navigate={navigate}
+                  user={user}
+                />
               ))}
             </div>
             {itineraries.length > 3 && (
@@ -461,10 +461,11 @@ const TouristWelcome = ({ setFlag }) => {
             )}
           </div>
 
-          <span className="text-4xl font-bold mb-3 text-first ml-12 mt-8 block">
-            Top activities you can't miss
-          </span>
-
+          {touristActivities.length > 0 && (
+            <span className="text-4xl font-bold mb-3 text-first ml-12 mt-8 block">
+              Top activities you can't miss
+            </span>
+          )}
           <div className="flex justify-center">
             <div className="grid grid-cols-3 gap-8 w-[90%]">
               {touristActivities?.slice(5, 8).map((place) => (

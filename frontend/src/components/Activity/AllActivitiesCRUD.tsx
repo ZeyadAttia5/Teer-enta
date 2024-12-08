@@ -426,7 +426,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                             message.success("Activity flagged as inappropriate");
                             await fetchActivities();
                           } catch (error) {
-                            message.error("Failed to flag activity");
+                            message.warning("Failed to flag activity");
                           } finally {
                             setLoading(false);
                           }

@@ -30,7 +30,7 @@ const AllUsers = ({ setFlag }) => {
         const response = await getUsers();
         setUsers(response.data);
       } catch (error) {
-        message.error({
+        message.warning({
           content: "Failed to fetch users",
           className: "custom-message",
         });
@@ -51,7 +51,7 @@ const AllUsers = ({ setFlag }) => {
       });
       setUsers(users.filter((user) => user._id !== id));
     } catch (error) {
-      message.error({
+      message.warning({
         content: "Failed to delete user",
         className: "custom-message",
       });
