@@ -30,6 +30,14 @@ We created Teer Enta to simplify and streamline the travel experience. Our goal 
 - An intuitive interface for tourists, sellers, and tour guides.
 - Features that empower users to discover unique experiences and make informed decisions.
 By combining personalization, seamless transactions, and comprehensive planning tools, this app ensures stress-free travel, enabling users to focus on creating memories rather than logistics.
+
+## 🧱 Build Status
+
+The current build status reflects whether the project is successfully building and passing all tests:
+
+- **✅ Passing**: The latest on commit main branch is stable and free of errors.
+
+
 ---
 
 ## 🛠️ Tech Stack
@@ -249,9 +257,9 @@ We’d love your input!
   - [Inspiration Source]  
   - [Inspiration Source]  
 
-## 📄 License
 
-## Licenses
+
+## 📄 Licenses
 
 This project uses multiple dependencies, each under its respective license. Below is a breakdown of the licenses included:
 
