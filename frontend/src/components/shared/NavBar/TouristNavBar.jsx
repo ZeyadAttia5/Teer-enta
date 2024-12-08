@@ -152,7 +152,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
                   <CalendarOutlined
                     className={`text-fifth text-2xl transition-colors block`}
                   />
-                  <span className="text-fifth text-sm">Calender</span>
+                  <span className="text-fifth text-sm">Bookings</span>
                 </div>
 
                 {/* Cart Icon */}

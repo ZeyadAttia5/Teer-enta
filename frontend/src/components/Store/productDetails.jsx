@@ -282,7 +282,7 @@ const ProductDetails = ({ setFlag }) => {
 
                     {/*{user && user.userRole === "Tourist" && (*/}
                       <div className="flex gap-4 mt-8">
-                        {product.quantity > 0 ? (
+                        {product.quantity > 0 && (!user || user === "Tourist") && (
                           <Button
                             type="danger"
                             size="large"
@@ -301,7 +301,9 @@ const ProductDetails = ({ setFlag }) => {
                               ? "Added to Cart!"
                               : "Add to Cart"}
                           </Button>
-                        ) : (
+                        )} 
+                        
+                        {product.quantity == 0 && (!user || user === "Tourist") &&(
                           <Button
                             type="default"
                             size="large"

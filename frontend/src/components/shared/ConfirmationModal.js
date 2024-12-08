@@ -17,16 +17,16 @@ function ConfirmationModal({isOpen, onClose, onConfirm ,message}) {
                     messageAd.success(response.data.message);
                     if (user === "Tourist") {
                         localStorage.clear();
-                        navigate("/");
+                        window.location.href = "/";
                     }else{
                         if(response.data.message === "Account deleted successfully"){
                             localStorage.clear();
-                            navigate("/");
+                            window.location.href = "/";
                         }else{
-                            navigate("/reports")
+                            window.location.href = "/reports";
                         }
                     };
-                    window.reload();
+                    
             }
             if (message === "Are you sure you want to log out?") {
                 // localStorage.removeItem("user");
