@@ -130,8 +130,7 @@ const CartComponent = () => {
               </div>
               {currency && (
                 <Text className="text-gray-500">
-                  Prices shown in {currency.code} (1 USD = {currency.rate}{" "}
-                  {currency.code})
+                  Prices shown in {currency.code} 
                 </Text>
               )}
             </div>
