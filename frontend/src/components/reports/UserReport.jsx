@@ -11,6 +11,7 @@ import {
   getOrderReport,
   getAdminRevenue,
 } from "../../api/statistics.ts";
+import TermsAndConditions from "../WelcomePage/TermsAndConditions/TermsAndConditions.js";
 
 const { Title } = Typography;
 
@@ -101,9 +102,18 @@ const UserReport = () => {
   const handleReset = () => {
     setSelectedCategory("all");
   };
-
+  const user = JSON.parse(localStorage.getItem("user"));
+  const [notAccepted, setNotAccepted] = useState(false);
   return (
     <div className="flex justify-center">
+      {notAccepted &&
+        user &&
+        (user.userRole === "TourGuide" ||
+          user.userRole === "Advertiser" ||
+          user.userRole === "Seller") &&
+        !user.isTermsAndConditionsAccepted && (
+          <TermsAndConditions setNotAccepted={setNotAccepted} />
+        )}
       <div className="w-[90%] p-6">
         {/* Header Card */}
         <div className="max-w-[1200px] mx-auto mb-6">

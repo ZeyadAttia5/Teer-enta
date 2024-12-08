@@ -45,7 +45,7 @@ const AccountButton = ({ extra_tw, onClick, setModalOpen }) => {
       </button>
       {isOpen && user && (
         <div
-          className="absolute left-0 top-[60px] w-40 mt-0 bg-white border border-gray-300 rounded shadow-lg z-50"
+          className="absolute -left-4 top-[60px] w-36 mt-0 bg-white border border-gray-300 rounded shadow-lg z-50"
           onMouseEnter={() => setIsOpen(true)}
         >
           {(user.userRole === "Tourist" || user.userRole === "Advertiser" || user.userRole === "Seller" || user.userRole === "TourGuide") && (

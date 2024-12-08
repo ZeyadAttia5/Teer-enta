@@ -248,14 +248,7 @@ const TouristWelcome = ({ setFlag }) => {
 
   return (
     <div className="relative mt-16 ">
-      {notAccepted &&
-        user &&
-        (user.userRole === "TourGuide" ||
-          user.userRole === "Advertiser" ||
-          user.userRole === "Seller") &&
-        !user.isTermsAndConditionsAccepted && (
-          <TermsAndConditions setNotAccepted={setNotAccepted} />
-        )}
+      
       <div className='relative flex flex-col  items-center h-[100vh] before:content-[""] before:bg-fit before:bg-no-repeat before:size-full before:absolute before:z-[0] before:animate-tourist-background'>
         <Fade
           className="text-white left-[100px] top-[15%] absolute"
@@ -423,7 +416,7 @@ const TouristWelcome = ({ setFlag }) => {
           )}
 
           <div className="flex justify-center">
-            <div className="grid grid-cols-3 gap-8 w-[90%]">
+            <div className="grid grid-cols-3 gap-8 ml-12 w-[90%]">
               {itineraries?.slice(0, 3).map((itinerary, index) => (
                 <ItineraryCard
                   key={index}
@@ -498,7 +491,7 @@ const TouristWelcome = ({ setFlag }) => {
                 // </Link>
               ))}
             </div>
-            {touristActivities.length > 4 && (
+            {touristActivities.length > 3 && (
               <div className="flex flex-col justify-center mt-4">
                 <Button
                   type="danger"
