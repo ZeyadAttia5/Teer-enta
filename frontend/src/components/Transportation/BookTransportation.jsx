@@ -143,6 +143,10 @@ const TransportationCard = ({ item, currency, onBook }) => {
   ]);
 
   const handleBookNow = () => {
+    if(!user){
+        setIsLoginModalOpen(true);
+        return;
+    }
     setIsModalVisible(true);
   };
 

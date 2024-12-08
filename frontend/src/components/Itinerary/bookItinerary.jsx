@@ -99,6 +99,7 @@ const BookItinerary = () => {
         if (promoDiscount) {
             return (price * (1 - promoDiscount / 100)).toFixed(2);
         }
+        console.log(price);
         return price.toFixed(2);
     };
 
@@ -232,6 +233,15 @@ const BookItinerary = () => {
                                                 <CheckoutForm
                                                     amount={calculateFinalPrice(currency?.rate * itinerary?.price)}
                                                     code={currency?.code}
+                                                    onPaymentSuccess={(paymentMethod) => {
+                                                        // Handle successful payment
+                                                        console.log('Payment successful:', paymentMethod);
+                                                    }}
+                                                    onError={(error) => {
+                                                        // Handle payment error
+                                                        console.error('Payment error:', error);
+                                                    }}
+                                                    withPayButton={false}
                                                 />
                                             </Elements>
                                         </div>

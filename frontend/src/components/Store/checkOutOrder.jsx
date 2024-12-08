@@ -491,7 +491,16 @@ const orderSummary = formatOrderSummary();
                                         <Elements stripe={stripePromise}>
                                             <CheckoutForm
                                                 amount={calculateFinalPrice(totalPrice)}
-                                                currency={currency?.code?.toLowerCase() || 'usd'}
+                                                code={currency?.code}
+                                                onPaymentSuccess={(paymentMethod) => {
+                                                    // Handle successful payment
+                                                    console.log('Payment successful:', paymentMethod);
+                                                }}
+                                                onError={(error) => {
+                                                    // Handle payment error
+                                                    console.error('Payment error:', error);
+                                                }}
+                                                withPayButton={false}
                                             />
                                         </Elements>
                                     </div>

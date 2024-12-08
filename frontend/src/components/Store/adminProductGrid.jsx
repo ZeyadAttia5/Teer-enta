@@ -414,17 +414,17 @@ const AdminProductGrid = ({ setFlag }) => {
               )}
             {user && user.userRole === "Tourist" && (
               <div className="flex items-center gap-3">
-                <Link to="/products/cart">
-                  <Badge count={cartCount} className="cursor-pointer">
-                    <Button
-                      type="danger"
-                      icon={<ShoppingCartOutlined />}
-                      className="bg-fourth text-black hover:bg-third flex items-center"
-                    >
-                      Cart
-                    </Button>
-                  </Badge>
-                </Link>
+                {/*<Link to="/products/cart">*/}
+                {/*  <Badge count={cartCount} className="cursor-pointer">*/}
+                {/*    <Button*/}
+                {/*      type="danger"*/}
+                {/*      icon={<ShoppingCartOutlined />}*/}
+                {/*      className="bg-fourth text-black hover:bg-third flex items-center"*/}
+                {/*    >*/}
+                {/*      Cart*/}
+                {/*    </Button>*/}
+                {/*  </Badge>*/}
+                {/*</Link>*/}
 
                 <Link to="/wishlisted_products">
                   <Badge count={wishlistCount} className="cursor-pointer">

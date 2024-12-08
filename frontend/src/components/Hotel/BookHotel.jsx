@@ -72,6 +72,8 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
   const { hotel, offers } = offer;
   const mainOffer = offers[0];
   const [currency,setCurrency] = useState(null);
+  const user = localStorage.getItem("user");
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   useEffect(() => {
     fetchCurrency() ;
   }, []);
@@ -92,8 +94,11 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
       year: "numeric",
     });
   };
-
   const bookOffer = async () => {
+    if(!user){
+      setIsLoginModalOpen(true);
+      return ;
+    }
     const payments = [
       {
         method: "creditCard",
@@ -119,6 +124,11 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
       onClick={() => console.log("Selected offer:", mainOffer?.id)}
       className={`w-full bg-slate-50 cursor-pointer p-10 h-auto justify-between flex flex-col shadow rounded-xl my-2`}
     >
+      <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to Book a hotel."
+      />
       <header className="flex items-baseline flex-1 w-full justify-between">
         <div className="flex justify-between gap-2">
           <div className="mb-6">

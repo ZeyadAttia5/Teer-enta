@@ -211,6 +211,15 @@ const BookActivity = () => {
                                                 <CheckoutForm
                                                     amount={calculateFinalPrice(currency?.rate * activity?.price?.max)}
                                                     code={currency?.code}
+                                                    onPaymentSuccess={(paymentMethod) => {
+                                                        // Handle successful payment
+                                                        console.log('Payment successful:', paymentMethod);
+                                                    }}
+                                                    onError={(error) => {
+                                                        // Handle payment error
+                                                        console.error('Payment error:', error);
+                                                    }}
+                                                    withPayButton={false}
                                                 />
                                             </Elements>
                                         </div>
