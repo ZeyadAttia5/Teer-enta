@@ -40,6 +40,8 @@ function ConfirmationModal({isOpen, onClose, onConfirm ,message}) {
         }catch (error){
             messageAd.info(error.response.data.message);
             console.error(error);
+        }finally{
+            onClose();
         }
 
     };

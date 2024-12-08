@@ -61,7 +61,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
     const fetchCurrency = async () => {
       try {
         const response = await getCurrency();
-        setCurrency(response.data);
+        setCurrency(response?.data);
         // console.log("Currency:", response.data);
       } catch (error) {
         console.error("Fetch currency error:", error);
@@ -78,7 +78,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
     const fetchCartCount = async () => {
       try {
         const response = await getCart(); // Replace with your actual API endpoint
-        setCartCount(response.data.cart.length);
+        setCartCount(response?.data.cart.length);
       } catch (error) {
         console.error("Error fetching cart count:", error);
       }
@@ -91,11 +91,11 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
   const [visible, setVisible] = useState(true);
   return (
     <div className="fixed w-full">
-      {((user && user.userRole === "Tourist") || !user) && (
+      {(!user || (user && user.userRole === "Tourist")) && (
         <PromoCodeStrip setVisibleFlag={setVisible} setVisibleFlagHome={setVisibleFlagHome}/>
       )}
       <div
-        className={`w-full fixed ${(visible && ((user && user.userRole === "Tourist") || !user)) ? "top-9" : "top-0"} bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
+        className={`w-full fixed ${(visible && (!user || (user && user.userRole === "Tourist"))) ? "top-9" : "top-0"} bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
       >
         <div className="flex gap-4 ml-8">
           {/* Logo Section */}
