@@ -33,7 +33,7 @@ module.exports = {
         "tourist-background-keyframe": {
           "0%": {
             "background-image":
-                'linear-gradient(to bottom,rgba(73, 105, 137, 0) 70%,rgba(73, 105, 137, 1) 100%),url("assets/WelcomePhotos/mosque3.jpeg")',
+                'linear-gradient(to bottom,rgba(73, 105, 137, 0) 70%,rgba(73, 105, 137, 1) 100%),url("assets/WelcomePhotos/wallpaper.jpeg")',
           },
           '25%': { 'opacity': '0.8' },
 
@@ -45,13 +45,13 @@ module.exports = {
           '75%': { 'opacity': '0.8' },
           "100%": {
             "background-image":
-                'linear-gradient(to bottom,rgba(73, 105, 137, 0) 70%,rgba(73, 105, 137, 1) 100%),url("assets/WelcomePhotos/mosque3.jpeg")',
+                'linear-gradient(to bottom,rgba(73, 105, 137, 0) 70%,rgba(73, 105, 137, 1) 100%),url("assets/WelcomePhotos/wallpaper.jpeg")',
             'opacity': '1'
           },
         },
       },
       animation: {
-        "tourist-background": "tourist-background-keyframe 5s linear infinite"
+        "tourist-background": "tourist-background-keyframe 20s linear infinite"
       },
       backgroundSize: {
         'fit': '100% 80%',
