@@ -567,22 +567,22 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                 />
               </Form.Item>
 
-              <Form.Item name="accessibility" label="Accessibility">
+              <Form.Item name="accessibility" label="Accessibility" rules={[{required : true}]}>
                 <Input placeholder="Enter accessibility details" />
               </Form.Item>
 
-              <Form.Item name="pickupLocation" label="Pickup Location">
+              <Form.Item name="pickupLocation" label="Pickup Location" rules={[{required : true}]}>
                 <Input placeholder="Enter pickup location" />
               </Form.Item>
 
-              <Form.Item name="dropOffLocation" label="Drop Off Location">
+              <Form.Item name="dropOffLocation" label="Drop Off Location" rules={[{required : true}]}>
                 <Input placeholder="Enter drop off location" />
               </Form.Item>
 
               {/* Activities Section */}
               <div className="md:col-span-2">
                 <Divider orientation="left">Activities</Divider>
-                <Form.List name="activities">
+                <Form.List name="activities" rules={[{required : true}]}>
                   {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restField }) => (
@@ -634,7 +634,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
               {/* Locations Section */}
               <div className="md:col-span-2">
                 <Divider orientation="left">Locations</Divider>
-                <Form.List name="locations">
+                <Form.List name="locations" rules={[{required : true}]}>
                   {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restField }) => (
@@ -667,7 +667,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
               {/* Timeline Section */}
               <div className="md:col-span-2">
                 <Divider orientation="left">Timeline</Divider>
-                <Form.List name="timeline">
+                <Form.List name="timeline" rules={[{required : true}]}>
                   {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restField }) => (
@@ -726,7 +726,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
               {/* Available Dates Section */}
               <div className="md:col-span-2">
                 <Divider orientation="left">Available Dates</Divider>
-                <Form.List name="availableDates">
+                <Form.List name="availableDates" rules={[{required : true}]}>
                   {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restField }) => (
@@ -762,7 +762,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
 
               {/* Preference Tags */}
               <div className="md:col-span-2">
-                <Form.Item name="preferenceTags" label="Preference Tags">
+                <Form.Item name="preferenceTags" label="Preference Tags" rules={[{required : true}]}>
                   <Select
                       mode="multiple"
                       placeholder="Select preference tags"

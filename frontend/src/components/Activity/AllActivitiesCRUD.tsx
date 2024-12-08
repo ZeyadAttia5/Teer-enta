@@ -579,7 +579,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                     <Item
                         label="Activity Image"
                         name="imageUrl"
-                        rules={[{ required: true, message: 'Please upload an image' }]}
+                        // rules={[{ required: true, message: 'Please upload an image' }]}
                     >
                       <div className="p-4 bg-gray-50 rounded-lg">
                         {selectedImage ? (
@@ -613,7 +613,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                     <Item
                         label="Upload Image"
                         name="imageUrl"
-                        rules={[{ required: true, message: 'Please upload an image' }]}
+                        // rules={[{ required: true}]}
                     >
                       <ImageUploader
                           onImagePathChange={handleImagePathChange}
