@@ -425,9 +425,9 @@ function Signup({ setFlag }) {
       setIsLoading(false);
 
       setMessage(response.data.message);
-      if (selectedRole === "Tourist") {
+      // if (selectedRole === "Tourist") {
         navigate("/login");
-      }
+      // }
       setFlag(false);
     } catch (error) {
       setIsLoading(false);
