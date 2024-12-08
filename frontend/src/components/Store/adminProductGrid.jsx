@@ -67,37 +67,44 @@ const AdminProductGrid = ({ setFlag }) => {
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = showArchived
-          ? await getArchivedProducts()
-          : await getProducts();
-        setProducts(response.data);
+            ? await getArchivedProducts()
+            : await getProducts();
 
-        try {
-          const wishlistResponse = await getWishlist();
-          if (
-            !wishlistResponse.data.wishlist ||
-            wishlistResponse.status === 404
-          )
-            return;
+        // Set products regardless of length to handle empty state in render
+        if(response.data.length >0){
+            setProducts(response.data);
+        }else{
+            setProducts([]);
+        }
 
-          setWishlist(
-            new Set(
-              wishlistResponse.data.wishlist.map((product) => product._id)
-            )
-          );
-        } catch (err) {
-          console.error("Fetch wishlist error: ", err);
+        // Only proceed with wishlist if there are products and user is Tourist
+        if (user?.userRole === "Tourist") {
+          try {
+            const wishlistResponse = await getWishlist();
+            if (wishlistResponse.data.wishlist) {
+              setWishlist(
+                  new Set(
+                      wishlistResponse.data.wishlist.map((product) => product._id)
+                  )
+              );
+            }
+          } catch (wishlistErr) {
+            console.error("Wishlist fetch error:", wishlistErr);
+          }
         }
       } catch (err) {
-        setError(err.message);
+        console.error("Fetch products error:", err);
+        setError(err.response?.data?.message || "Failed to fetch products");
       } finally {
         setLoading(false);
       }
     };
+
     const fetchCounts = async () => {
       try {
         // Fetch cart count
@@ -111,12 +118,13 @@ const AdminProductGrid = ({ setFlag }) => {
         console.error("Error fetching counts:", error);
       }
     };
+
     if (user && user.userRole === "Tourist") {
       fetchCounts();
     }
     fetchCurrency();
     fetchProducts();
-  }, [showArchived]);
+  }, [showArchived, refreshTrigger]);
 
   const fetchCurrency = async () => {
     try {
@@ -126,7 +134,6 @@ const AdminProductGrid = ({ setFlag }) => {
       console.error("Fetch currency error:", error);
     }
   };
-
   const handleWishlistToggle = async (productId) => {
     try {
       // Toggle wishlist state locally
@@ -172,10 +179,148 @@ const AdminProductGrid = ({ setFlag }) => {
     const total = ratings.reduce((acc, rating) => acc + rating.rating, 0);
     return total / ratings.length;
   };
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+  const handleArchiveToggle = async (productId, isActive) => {
+    try {
+      if (isActive) {
+        await archiveProduct(productId);
+        setFeedbackMessage("Product Successfully Archived");
+      } else {
+        await unArchiveProduct(productId);
+        setFeedbackMessage("Product Successfully Unarchived");
+      }
 
-  if (loading)
+      setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+              product._id === productId
+                  ? { ...product, isActive: !isActive }
+                  : product
+          )
+      );
+      console.log("Product Archived" ,products);
+      setRefreshTrigger(!refreshTrigger);
+      // Clear the message after 3 seconds
+      setTimeout(() => setFeedbackMessage(""), 3000);
+    } catch (err) {
+      setError("Failed to update archive status");
+    }
+  };
+
+  if (loading) {
     return <div className="text-center mt-24">Loading products...</div>;
-  if (error) return <div className="text-center mt-24">Error: {error}</div>;
+  }
+  if (error) {
+    return <div className="text-center mt-24">Error: {error}</div>;
+  }
+  if (!products || products.length === 0) {
+    console.log("Products",products);
+    return (
+        <div className="py-8">
+          <div className="container mx-auto px-4">
+            {/* Top Action Bar - keep it visible even when no products */}
+            <div className="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+              <Title level={2} className="mb-0 text-gray-800">
+                {showArchived ? "Archived Products" : "Product Catalog"}
+              </Title>
+            </div>
+
+            {/* Search and Filter Section - optionally keep it visible */}
+            <div className="flex justify-center mb-8">
+              <div className="flex flex-col gap-4">
+                <Search
+                    enterButton={<SearchOutlined />}
+                    placeholder="Search by name, location, or tag..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="p-2 rounded-md w-[400px]"
+                />
+                <div className="flex justify-center">
+                  <FilterDropdown
+                      filters={filters}
+                      onFilterChange={handleFilterChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons - keep them visible */}
+            <div className="flex justify-end mb-8">
+              <div className="flex flex-wrap gap-3">
+                {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
+                    <>
+                      <Link to="/products/create">
+                        <Button
+                            type="danger"
+                            icon={<PlusOutlined />}
+                            className="hover:bg-gray-200 flex items-center"
+                        >
+                          Add Product
+                        </Button>
+                      </Link>
+
+                      <Link to="/products/quantity&Sales">
+                        <Button
+                            type="danger"
+                            icon={<BarChartOutlined />}
+                            className="border-first text-first hover:bg-gray-50"
+                        >
+                          Reports
+                        </Button>
+                      </Link>
+
+                      <Button
+                          type="danger"
+                          icon={<InboxOutlined />}
+                          onClick={() => setShowArchived(!showArchived)}
+                          className="bg-third hover:bg-second text-white"
+                      >
+                        {showArchived ? "View Active" : "View Archived"}
+                      </Button>
+                    </>
+                )}
+                {user && user.userRole === "Tourist" && (
+                    <div className="flex items-center gap-3">
+                      <Link to="/products/cart">
+                        <Badge count={cartCount} className="cursor-pointer">
+                          <Button
+                              type="danger"
+                              icon={<ShoppingCartOutlined />}
+                              className="bg-fourth text-black hover:bg-third flex items-center"
+                          >
+                            Cart
+                          </Button>
+                        </Badge>
+                      </Link>
+
+                      <Link to="/wishlisted_products">
+                        <Badge count={wishlistCount} className="cursor-pointer">
+                          <Button
+                              type="danger"
+                              icon={<HeartOutlined />}
+                              className="bg-fourth text-black hover:bg-third flex items-center"
+                          >
+                            Wishlist
+                          </Button>
+                        </Badge>
+                      </Link>
+                    </div>
+                )}
+              </div>
+            </div>
+
+            <Empty
+                description={
+                  <span className="text-gray-500">
+                {showArchived ? "No archived products found" : "No products available"}
+              </span>
+                }
+            />
+          </div>
+        </div>
+    );
+  }
 
   let filteredProducts = products.filter((product) => {
     const matchesSearch = product.name
@@ -199,34 +344,6 @@ const AdminProductGrid = ({ setFlag }) => {
     }
     return filters.sortOrder === "asc" ? comparison : -comparison;
   });
-
-  const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
-  };
-  const handleArchiveToggle = async (productId, isActive) => {
-    try {
-      if (isActive) {
-        await archiveProduct(productId);
-        setFeedbackMessage("Product Successfully Archived");
-      } else {
-        await unArchiveProduct(productId);
-        setFeedbackMessage("Product Successfully Unarchived");
-      }
-
-      setProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product._id === productId
-            ? { ...product, isActive: !isActive }
-            : product
-        )
-      );
-
-      // Clear the message after 3 seconds
-      setTimeout(() => setFeedbackMessage(""), 3000);
-    } catch (err) {
-      setError("Failed to update archive status");
-    }
-  };
   return (
     <div className="py-8">
       <LoginConfirmationModal
@@ -356,6 +473,31 @@ const AdminProductGrid = ({ setFlag }) => {
                       {/* Overlay with Actions */}
                       <div className="absolute inset-0 bg-black bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-20">
                         <div className="absolute top-4 right-4 flex flex-col gap-2">
+                          {user && (user.userRole === "Admin" || user.userRole === "Seller") && (
+                              <Tooltip title={product.isActive ? "Archive Product" : "Unarchive Product"}>
+                                <Button
+                                    shape="circle"
+                                    className={`transition-all duration-300 ${
+                                        product.isActive
+                                            ? "bg-white hover:bg-yellow-500 hover:border-yellow-500"
+                                            : "bg-yellow-500 border-yellow-500 hover:bg-yellow-600"
+                                    }`}
+                                    icon={
+                                      <InboxOutlined
+                                          className={`transition-colors duration-300 ${
+                                              product.isActive
+                                                  ? "text-gray-400"
+                                                  : "text-white"
+                                          }`}
+                                      />
+                                    }
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleArchiveToggle(product._id, product.isActive);
+                                    }}
+                                />
+                              </Tooltip>
+                          )}
                           {user && user.userRole === "Tourist" && (
                             <Tooltip
                               title={
@@ -376,7 +518,7 @@ const AdminProductGrid = ({ setFlag }) => {
                                     className={`transition-colors duration-300 ${
                                       wishlist.has(product._id)
                                         ? "text-white"
-                                        : "text-gray-400 group-hover:text-white"
+                                        : "text-gray-400"
                                     }`}
                                   />
                                 }
@@ -394,7 +536,7 @@ const AdminProductGrid = ({ setFlag }) => {
                                 shape="circle"
                                 className="bg-white hover:bg-first hover:border-first"
                                 icon={
-                                  <FaEye className="text-gray-400 hover:text-white" />
+                                  <FaEye className="text-gray-400" />
                                 }
                               />
                             </Tooltip>

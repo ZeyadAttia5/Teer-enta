@@ -264,7 +264,7 @@ const ItineraryDetails: React.FC = () => {
                                         )}
                                     </div>
                                 </div>
-                                {user?.userRole === "Tourist" && (
+                                {/*{user?.userRole === "Tourist" && (*/}
                                     <Button
                                         type={itinerary.isBookingOpen ? "danger" : "default"}
                                         onClick={() => handleBookItinerary(itinerary._id)}
@@ -277,7 +277,7 @@ const ItineraryDetails: React.FC = () => {
                                     >
                                         {itinerary.isBookingOpen ? "Book Now" : "Not Available"}
                                     </Button>
-                                )}
+                                {/*)}*/}
                             </div>
                         </Card>
                         {/* About Section - Added before Footer */}
@@ -375,7 +375,7 @@ const ItineraryDetails: React.FC = () => {
                                                             <div className="flex gap-4">
                                                                 <div className="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
                                                                     <img
-                                                                        src="/api/placeholder/96/96"
+                                                                        src={item.activity?.imageUrl}
                                                                         alt={item.activity?.name || 'Activity'}
                                                                         className="w-full h-full object-cover"
                                                                     />
@@ -402,14 +402,14 @@ const ItineraryDetails: React.FC = () => {
                                     },
                                     {
                                         key: '2',
-                                        label: 'List View',
+                                        label: 'All Activities',
                                         children: (
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
                                                 {itinerary.activities.map((item, index) => (
                                                     <div key={index} className="bg-white rounded-xl overflow-hidden">
                                                         <div className="h-40 overflow-hidden">
                                                             <img
-                                                                src="/api/placeholder/400/160"
+                                                                src={item.activity?.imageUrl}
                                                                 alt={item.activity?.name || 'Activity'}
                                                                 className="w-full h-full object-cover"
                                                             />
@@ -536,7 +536,6 @@ const ItineraryDetails: React.FC = () => {
                                                     dataSource={itinerary.ratings}
                                                     renderItem={(rating) => (
                                                         <List.Item className="rounded-xl p-4 mb-2">
-                                                            {console.log(itinerary.ratings)}
                                                             <List.Item.Meta
                                                                 avatar={
                                                                     <div className="relative">

@@ -9,7 +9,8 @@ const token = localStorage.getItem('accessToken');
 export const getItineraries = async (): Promise<TItinerary[]> => {
     // console.log('API_BASE_URL', API_BASE_URL);
     const response = await axios.get(`${API_BASE_URL}/itinerary`);
-    // console.log('response', response.data);
+
+    console.log('response', response.data);
     return response.data;
 };
 export const getMyItineraries = async (): Promise<TItinerary[]> => {

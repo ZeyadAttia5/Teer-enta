@@ -229,7 +229,7 @@ const ActivityCard = ({
                         <Tooltip title="Category">
                             <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
                                 <FolderOutlined className="text-[#2A3663] text-lg" />
-                                <span className="text-sm font-medium text-gray-700">{category || "N/A"}</span>
+                                <span className="text-sm font-medium text-gray-700 truncate">{category || "N/A"}</span>
                             </div>
                         </Tooltip>
                         <Tooltip title="View on map">

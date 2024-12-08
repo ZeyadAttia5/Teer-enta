@@ -146,7 +146,7 @@ const PreferenceTags = ({ setFlag }) => {
       key: "actions",
       render: (_, record) => (
           <div className="flex items-center gap-2">
-            <Tooltip title="Edit Tag">
+            <Tooltip title="Edit Prefrence Tag">
               <Button
                   type="primary"
                   icon={<EditOutlined />}
@@ -158,13 +158,12 @@ const PreferenceTags = ({ setFlag }) => {
                   }}
                   className="bg-[#1C325B] hover:bg-[#1C325B]/90"
               >
-                Edit
               </Button>
             </Tooltip>
-            <Tooltip title="Delete Tag">
+            <Tooltip title="Delete Prefrence Tag">
               <Popconfirm
-                  title="Delete Tag"
-                  description="Are you sure you want to delete this tag?"
+                  title="Delete Prefrence Tag"
+                  description="Are you sure you want to delete this Prefrence Tag?"
                   icon={<ExclamationCircleOutlined className="text-red-500" />}
                   okText="Delete"
                   cancelText="Cancel"
@@ -177,10 +176,10 @@ const PreferenceTags = ({ setFlag }) => {
                     type="text"
                     danger
                     icon={<DeleteOutlined className="text-lg" />}
-                    className="hover:bg-red-50 flex items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
+                    className="hover:bg-red-50  items-center gap-1 px-3 py-1 border border-red-300 rounded-lg
                 transition-all duration-200 hover:border-red-500"
                 >
-                  <span className="text-red-500 font-medium">Delete</span>
+                  {/*<span className="text-red-500 font-medium"></span>*/}
                 </Button>
               </Popconfirm>
             </Tooltip>

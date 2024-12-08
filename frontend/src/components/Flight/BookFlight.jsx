@@ -40,6 +40,7 @@ import {
 import { Fade } from "react-awesome-reveal";
 import { useNavigate } from "react-router-dom";
 import {getCurrency} from "../../api/account.ts";
+import LoginConfirmationModal from "../shared/LoginConfirmationModal";
 
 const { Option } = Select;
 
@@ -163,6 +164,7 @@ const BookFlight = () => {
   const [departureAirports, setDepartureAirports] = useState([]);
   const [destinationAirports, setDestinationAirports] = useState([]);
   const [currency,setCurrency] = useState(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   useEffect(() => {
     fetchCurrency() ;
   }, []);
@@ -282,8 +284,7 @@ const BookFlight = () => {
         message.success("Booking submitted successfully!");
         setCurrentStep(5);
       } else {
-        navigate('/login');
-        message.info("Please login to book a flight");
+        setIsLoginModalOpen(true);
       }
     } catch (error) {
       console.log("Error submitting booking:");
@@ -566,6 +567,11 @@ const BookFlight = () => {
         },
       }}
     >
+      <LoginConfirmationModal
+          open={isLoginModalOpen}
+          setOpen={setIsLoginModalOpen}
+          content="Please login to add this product to your cart."
+      />
       <div className="flex justify-center">
         <Card
             className="w-[90%] h-[630px] flex my-20 mx-auto shadow"
