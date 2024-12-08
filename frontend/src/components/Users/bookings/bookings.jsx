@@ -698,7 +698,7 @@ const BookingGrid = () => {
                       type="danger"
                       htmlType="submit"
                       disabled={!rating}
-                      className="bg-blue-950 border-0 hover:bg-black text-white disabled:opacity-50 cursor-not-allowed "
+                      className="bg-blue-950 border-0 hover:bg-black text-white disabled:opacity-50"
                   >
                     Submit
                   </Button>

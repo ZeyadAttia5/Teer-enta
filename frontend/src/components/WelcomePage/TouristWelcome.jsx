@@ -78,7 +78,7 @@ const TouristWelcome = ({ setFlag }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [selectedButton, setSelectedButton] = useState(1);
   setFlag(false);
-  const [notAccepted, setNotAccepted] = useState(true);
+  
   const [historicalPlaces, setHistoricalPlaces] = useState([]);
 
   useEffect(() => {

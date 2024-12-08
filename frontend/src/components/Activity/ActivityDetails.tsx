@@ -292,7 +292,7 @@ More details: ${window.location.href}
                       </div>
                     </div>
                   </div>
-                  {(!user || user === "Tourist") && (
+                  {(!user || user.userRole === "Tourist") && (
                     <Button
                       size="large"
                       type="danger"
