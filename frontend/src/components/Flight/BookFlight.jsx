@@ -165,6 +165,7 @@ const BookFlight = () => {
   const [destinationAirports, setDestinationAirports] = useState([]);
   const [currency,setCurrency] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const user = localStorage.getItem("user");
   useEffect(() => {
     fetchCurrency() ;
   }, []);
@@ -244,9 +245,11 @@ const BookFlight = () => {
       if (step === 1) fetchAirports();
       if (step === 2) fetchFlights();
       if (step === 3){
-        setIsLoginModalOpen(true);
-        setCurrentStep(2);
-        return;
+        if(!user){
+          setIsLoginModalOpen(true);
+          setCurrentStep(2);
+          return;
+        }
       }
     } catch (error) {
       message.warning("Please fill in all required fields");
