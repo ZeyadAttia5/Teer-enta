@@ -732,7 +732,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                     label="Special Discounts"
                     className="mb-0"
                     name="specialDiscounts"
-                    rules={[{ required: true, message: 'Please add at least one special discount' }]}
+
                 >
                   <Form.List name="specialDiscounts">
                     {(fields, { add, remove }) => (

@@ -366,8 +366,8 @@ const orderSummary = formatOrderSummary();
                                         placeholder="Select delivery address"
                                         className="w-full"
                                         bordered={false}
-                                        defaultValue={addresses[0]}
-                                        defaultOpen={true}
+                                        // defaultValue={addresses[0]}
+                                        // defaultOpen={true}
                                         notFoundContent={
                                             <div className="text-center py-4 text-blue-500">
                                                 No addresses Added
