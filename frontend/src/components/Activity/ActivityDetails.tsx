@@ -192,8 +192,8 @@ More details: ${window.location.href}
         {/* Hero Section */}
         <div className="relative h-[400px] overflow-hidden shadow-lg shadow-gray-300">
           <img
-            src={activity.imageUrl || "/api/placeholder/1200/600"}
-            alt={activity.name}
+            src={activity?.imageUrl || "/api/placeholder/1200/600"}
+            alt={activity?.name}
             className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
           />
           <div className="absolute inset-0" />
@@ -220,20 +220,20 @@ More details: ${window.location.href}
                   level={1}
                   className="text-white m-0 text-4xl md:text-5xl font-bold"
                 >
-                  <span className="text-white">{activity.name}</span>
+                  <span className="text-white">{activity?.name}</span>
                 </Title>
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-white">
                     <CalendarOutlined />
-                    <span>{new Date(activity.date).toLocaleDateString()}</span>
+                    <span>{new Date(activity?.date).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-white">
                     <ClockCircleOutlined />
-                    <span>{activity.time}</span>
+                    <span>{activity?.time}</span>
                   </div>
                   <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-white">
                     <TagOutlined />
-                    <span>{activity.category?.category}</span>
+                    <span>{activity?.category?.category}</span>
                   </div>
                   <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-white">
                     <StarOutlined />
@@ -243,7 +243,7 @@ More details: ${window.location.href}
                       allowHalf
                       className="text-sm"
                     />
-                    <span>({activity.ratings?.length} reviews)</span>
+                    <span>({activity?.ratings?.length} reviews)</span>
                   </div>
                 </div>
               </div>
@@ -271,8 +271,8 @@ More details: ${window.location.href}
                             {currency?.code}
                           </Text>
                           <Text className="text-4xl font-bold text-blue-950">
-                            {activity.price?.min
-                              ? (currency?.rate * activity.price.min).toFixed(1)
+                            {activity?.price?.min
+                              ? (currency?.rate * activity?.price?.min).toFixed(1)
                               : "N/A"}
                           </Text>
                         </div>
@@ -284,8 +284,8 @@ More details: ${window.location.href}
                             {currency?.code}
                           </Text>
                           <Text className="text-4xl font-bold text-blue-950">
-                            {activity.price?.max
-                              ? (currency?.rate * activity.price.max).toFixed(1)
+                            {activity?.price?.max
+                              ? (currency?.rate * activity?.price?.max).toFixed(1)
                               : "N/A"}
                           </Text>
                         </div>
@@ -297,22 +297,22 @@ More details: ${window.location.href}
                       size="large"
                       type="danger"
                       onClick={handleActivityBooking}
-                      disabled={!activity.isBookingOpen}
+                      disabled={!activity?.isBookingOpen}
                       className={`
                             px-12 h-14 text-lg font-semibold rounded-lg
                             ${
-                              activity.isBookingOpen
+                              activity?.isBookingOpen
                                 ? "bg-blue-950 text-white hover:bg-black border-none"
                                 : "bg-gray-200 text-gray-500 border-none"
                             }
                         `}
                     >
-                      {activity.isBookingOpen ? "Book Now" : "Not Available"}
+                      {activity?.isBookingOpen ? "Book Now" : "Not Available"}
                     </Button>
                   )}
                 </div>
 
-                {activity.specialDiscounts?.some((d) => d.isAvailable) && (
+                {activity?.specialDiscounts?.some((d) => d.isAvailable) && (
                   <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-100">
                     <Text className="text-yellow-800 flex items-center gap-2">
                       <PercentageOutlined />
@@ -342,15 +342,15 @@ More details: ${window.location.href}
                       </Text>
                       <div className="flex flex-wrap gap-2">
                         <Tag color="blue" className="px-4 py-1 text-sm">
-                          {activity.category?.category}
+                          {activity?.category?.category}
                         </Tag>
-                        {activity.preferenceTags?.map((tag, index) => (
+                        {activity?.preferenceTags?.map((tag, index) => (
                           <Tag
                             key={index}
                             color="green"
                             className="px-4 py-1 text-sm"
                           >
-                            {tag.tag}
+                            {tag?.tag}
                           </Tag>
                         ))}
                       </div>
@@ -364,7 +364,7 @@ More details: ${window.location.href}
                             Created By
                           </Text>
                           <Text className="text-gray-800 font-medium">
-                            {activity.createdBy?.username}
+                            {activity?.createdBy?.username}
                           </Text>
                         </div>
                       </div>
@@ -375,7 +375,7 @@ More details: ${window.location.href}
                             Last Updated
                           </Text>
                           <Text className="text-gray-800 font-medium">
-                            {new Date(activity.updatedAt).toLocaleDateString()}
+                            {new Date(activity?.updatedAt).toLocaleDateString()}
                           </Text>
                         </div>
                       </div>
@@ -394,8 +394,8 @@ More details: ${window.location.href}
                   </Title>
                   <div className="h-[400px] rounded-lg overflow-hidden">
                     <StaticMap
-                      longitude={activity.location?.lng}
-                      latitude={activity.location?.lat}
+                      longitude={activity?.location?.lng}
+                      latitude={activity?.location?.lat}
                     />
                   </div>
                 </div>
@@ -416,9 +416,9 @@ More details: ${window.location.href}
                 }
               >
                 <div className=" overflow-y-auto pr-2 bg-gradient-to-br from-gray-50 to-white ">
-                  {activity.specialDiscounts?.length > 0 ? (
+                  {activity?.specialDiscounts?.length > 0 ? (
                     <List
-                      dataSource={activity.specialDiscounts}
+                      dataSource={activity?.specialDiscounts}
                       renderItem={(discount) => (
                         <Card
                           className="mb-4 last:mb-0 hover:shadow-md transition-shadow"
@@ -515,14 +515,14 @@ More details: ${window.location.href}
                         />
                       </div>
                       <Text className="text-gray-600">
-                        Based on {activity.ratings?.length || 0} reviews
+                        Based on {activity?.ratings?.length || 0} reviews
                       </Text>
                     </div>
                   </div>
                   <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                     <List
                       itemLayout="horizontal"
-                      dataSource={activity.ratings}
+                      dataSource={activity?.ratings}
                       renderItem={(rating) => (
                         <List.Item className="rounded-xl transition-all duration-300 p-4 mb-2">
                           <List.Item.Meta
@@ -540,7 +540,7 @@ More details: ${window.location.href}
                             title={
                               <div className="flex justify-between items-center">
                                 <Text strong className="text-gray-800">
-                                  {rating.user?.username}
+                                  {rating?.user?.username}
                                 </Text>
                                 <div className="flex items-center gap-2">
                                   <Rate
@@ -584,7 +584,7 @@ More details: ${window.location.href}
                 >
                   <div className="max-h-[500px] overflow-y-auto custom-scrollbar">
                     <List
-                      dataSource={activity.comments}
+                      dataSource={activity?.comments}
                       renderItem={(comment) => (
                         <List.Item className=" rounded-xl transition-all duration-300 p-4 mb-2">
                           <List.Item.Meta

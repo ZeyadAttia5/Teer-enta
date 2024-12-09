@@ -322,7 +322,7 @@ const AdminProductGrid = ({ setFlag }) => {
     );
   }
 
-  let filteredProducts = products.filter((product) => {
+  let filteredProducts = products?.filter((product) => {
     const matchesSearch = product.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
@@ -447,7 +447,7 @@ const AdminProductGrid = ({ setFlag }) => {
           <div className="flex justify-center items-center h-64">
             <Spin size="large" />
           </div>
-        ) : filteredProducts.length === 0 ? (
+        ) : filteredProducts?.length === 0 ? (
           <Empty
             description={
               <span className="text-gray-500">No products found</span>
@@ -455,7 +455,7 @@ const AdminProductGrid = ({ setFlag }) => {
           />
         ) : (
           <Row gutter={[24, 24]}>
-            {filteredProducts.map((product) => (
+            {filteredProducts?.map((product) => (
               <Col key={product._id} xs={24} sm={12} md={8} lg={6}>
                 <Card
                   hoverable
@@ -501,7 +501,7 @@ const AdminProductGrid = ({ setFlag }) => {
                           {user && user.userRole === "Tourist" && (
                             <Tooltip
                               title={
-                                wishlist.has(product._id)
+                                wishlist?.has(product._id)
                                   ? "Remove from Wishlist"
                                   : "Add to Wishlist"
                               }
@@ -509,14 +509,14 @@ const AdminProductGrid = ({ setFlag }) => {
                               <Button
                                 shape="circle"
                                 className={`transition-all duration-300 ${
-                                  wishlist.has(product._id)
+                                  wishlist?.has(product._id)
                                     ? "bg-red-500 border-red-500 hover:bg-red-600"
                                     : "bg-white hover:bg-red-500 hover:border-red-500"
                                 }`}
                                 icon={
                                   <FaHeart
                                     className={`transition-colors duration-300 ${
-                                      wishlist.has(product._id)
+                                      wishlist?.has(product._id)
                                         ? "text-white"
                                         : "text-gray-400"
                                     }`}

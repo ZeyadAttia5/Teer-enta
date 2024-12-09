@@ -84,7 +84,7 @@ const ActivityCategories = ({ setFlag }) => {
       message.success("Category deleted successfully");
       fetchCategories();
     } catch (error) {
-      message.warning(error.response?.data?.message);
+      message.warning(error?.response?.data?.message);
     }
   };
 
@@ -147,7 +147,7 @@ const ActivityCategories = ({ setFlag }) => {
                 onClick={() => {
                   setIsEditing(true);
                   setCurrentCategory(record);
-                  form.setFieldsValue(record);
+                  form?.setFieldsValue(record);
                   setModalVisible(true);
                 }}
                 className="bg-[#1C325B] hover:bg-[#1C325B]/90"
@@ -216,7 +216,7 @@ const ActivityCategories = ({ setFlag }) => {
                     onClick={() => {
                       setIsEditing(false);
                       setCurrentCategory(null);
-                      form.resetFields();
+                      form?.resetFields();
                       setModalVisible(true);
                     }}
                     className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
@@ -260,7 +260,7 @@ const ActivityCategories = ({ setFlag }) => {
             open={modalVisible}
             onCancel={() => {
               setModalVisible(false);
-              form.resetFields();
+              form?.resetFields();
             }}
             footer={null}
             className="top-8"
@@ -322,7 +322,7 @@ const ActivityCategories = ({ setFlag }) => {
                 <Button
                   onClick={() => {
                     setModalVisible(false);
-                    form.resetFields();
+                    form?.resetFields();
                   }}
                   disabled={submitting}
                   className="hover:bg-gray-50"

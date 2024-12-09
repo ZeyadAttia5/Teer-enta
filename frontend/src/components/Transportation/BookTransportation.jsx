@@ -227,7 +227,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
                       ellipsis
                     >
                       <a
-                        href={`https://maps.google.com/?q=${item.pickupLocation.lat},${item.pickupLocation.lng}`}
+                        href={`https://maps.google.com/?q=${item.pickupLocation?.lat},${item.pickupLocation?.lng}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="truncate"
@@ -253,7 +253,7 @@ const TransportationCard = ({ item, currency, onBook }) => {
                       ellipsis
                     >
                       <a
-                        href={`https://maps.google.com/?q=${item.dropOffLocation.lat},${item?.dropOffLocation?.lng}`}
+                        href={`https://maps.google.com/?q=${item.dropOffLocation?.lat},${item?.dropOffLocation?.lng}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="truncate"
@@ -418,7 +418,7 @@ const BookTransportation = () => {
     setLoading(true);
     try {
       const response = await getTransportations();
-      setData(response.data);
+      setData(response?.data);
     } catch (error) {
       message.warning("Failed to fetch transportation options");
     } finally {
@@ -429,7 +429,7 @@ const BookTransportation = () => {
   const fetchCurrency = async () => {
     try {
       const response = await getCurrency();
-      setCurrency(response.data);
+      setCurrency(response?.data);
     } catch (error) {
       message.warning("Failed to fetch currency information");
     }

@@ -41,12 +41,12 @@ const CreateTransportation = () => {
         ...values,
         date: values.date.toISOString(),
         pickupLocation: {
-          lat: parseFloat(pickupLocation.lat),
-          lng: parseFloat(pickupLocation.lng),
+          lat: parseFloat(pickupLocation?.lat),
+          lng: parseFloat(pickupLocation?.lng),
         },
         dropOffLocation: {
-          lat: parseFloat(dropOffLocation.lat),
-          lng: parseFloat(dropOffLocation.lng),
+          lat: parseFloat(dropOffLocation?.lat),
+          lng: parseFloat(dropOffLocation?.lng),
         },
         created_by: user?._id,
       };
@@ -111,8 +111,8 @@ const CreateTransportation = () => {
                         className="mb-4"
                       >
                         <MapContainer
-                          longitude={pickupLocation.lng}
-                          latitude={pickupLocation.lat}
+                          longitude={pickupLocation?.lng}
+                          latitude={pickupLocation?.lat}
                           outputLocation={(lat, lng) =>
                             setPickupLocation({ lat, lng })
                           }
@@ -128,8 +128,8 @@ const CreateTransportation = () => {
                         className="mb-4"
                       >
                         <MapContainer
-                          longitude={dropOffLocation.lng}
-                          latitude={dropOffLocation.lat}
+                          longitude={dropOffLocation?.lng}
+                          latitude={dropOffLocation?.lat}
                           outputLocation={(lat, lng) =>
                             setDropOffLocation({ lat, lng })
                           }
@@ -225,7 +225,7 @@ const CreateTransportation = () => {
                   {/* Form Actions */}
                   <Form.Item>
                     <div className="flex justify-end gap-4">
-                      <Button onClick={() => form.resetFields()}>Reset</Button>
+                      <Button onClick={() => form?.resetFields()}>Reset</Button>
                       <Button type="primary" htmlType="submit">
                         Submit
                       </Button>

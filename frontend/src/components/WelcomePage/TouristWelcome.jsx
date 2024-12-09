@@ -85,7 +85,7 @@ const TouristWelcome = ({ setFlag }) => {
     const fetchHistoricalPlaces = async () => {
       try {
         const response = await getHistoricalPlaces();
-        setHistoricalPlaces(response.data);
+        setHistoricalPlaces(response?.data);
       } catch (error) {
         console.error("Error fetching historical places:", error);
       }
@@ -108,15 +108,15 @@ const TouristWelcome = ({ setFlag }) => {
         }
         if (!mounted) return;
 
-        const activitiesWithRatings = activitiesResponse.data.map(
+        const activitiesWithRatings = activitiesResponse?.data?.map(
           (activity) => {
-            const totalRating = activity.ratings.reduce(
+            const totalRating = activity.ratings?.reduce(
               (acc, curr) => acc + curr.rating,
               0
             );
             const avgRating =
               activity.ratings.length > 0
-                ? (totalRating / activity.ratings.length).toFixed(1)
+                ? (totalRating / activity?.ratings?.length).toFixed(1)
                 : 0;
             return { ...activity, averageRating: parseFloat(avgRating) };
           }
@@ -130,19 +130,19 @@ const TouristWelcome = ({ setFlag }) => {
 
           if (!mounted) return;
 
-          const savedActivitiesId = savedResponse.data.savedActivities.map(
+          const savedActivitiesId = savedResponse?.data?.savedActivities?.map(
             (activity) => activity._id
           );
 
           const notificationRequests =
-            notificationResponse.data.notificationsRequests || [];
-          const notificationLookup = notificationRequests.reduce((acc, req) => {
+            notificationResponse?.data?.notificationsRequests || [];
+          const notificationLookup = notificationRequests?.reduce((acc, req) => {
             acc[req.activity] = req.status === "Pending";
             return acc;
           }, {});
 
-          activitiesWithRatings.forEach((activity) => {
-            activity.isSaved = savedActivitiesId.includes(activity._id);
+          activitiesWithRatings?.forEach((activity) => {
+            activity.isSaved = savedActivitiesId?.includes(activity._id);
             activity.hasNotification =
               notificationLookup[activity._id] || false;
           });
@@ -168,7 +168,7 @@ const TouristWelcome = ({ setFlag }) => {
     const fetchCurrency = async () => {
       try {
         const response = await getCurrency();
-        setCurrency(response.data);
+        setCurrency(response?.data);
         // console.log("Currency:", response.data);
       } catch (error) {
         console.error("Fetch currency error:", error);
@@ -213,7 +213,7 @@ const TouristWelcome = ({ setFlag }) => {
     try {
       const response = await getGoogleMapsAddress(loc);
       const formattedAddress =
-        response.data.results[0]?.formatted_address || "Address not found";
+        response?.data?.results[0]?.formatted_address || "Address not found";
 
       y = formattedAddress;
     } catch (error) {
@@ -229,7 +229,7 @@ const TouristWelcome = ({ setFlag }) => {
   useEffect(() => {
     const fetchLocations = async () => {
       const locs = await Promise.all(
-        touristActivities.map(async (activity) => {
+        touristActivities?.map(async (activity) => {
           const loc = activity.location;
           if (loc && loc.lat && loc.lng) {
             const address = await callMaps({ lat: loc.lat, lng: loc.lng });
@@ -241,7 +241,7 @@ const TouristWelcome = ({ setFlag }) => {
       setLocations(locs);
     };
 
-    if (touristActivities.length > 0) {
+    if (touristActivities?.length > 0) {
       fetchLocations();
     }
   }, [touristActivities]);
@@ -384,7 +384,7 @@ const TouristWelcome = ({ setFlag }) => {
                 </Link>
               ))}
             </div>
-            {historicalPlaces.length > 4 && (
+            {historicalPlaces?.length > 4 && (
               <div className="flex flex-col justify-center mt-4">
                 <Button
                   type="danger"
@@ -409,7 +409,7 @@ const TouristWelcome = ({ setFlag }) => {
               </div>
             )}
           </div>
-          {itineraries.length > 0 && (
+          {itineraries?.length > 0 && (
             <span className="text-4xl font-bold text-first ml-12 mt-16 block mb-3">
               Top itineraries you can't miss
             </span>
@@ -428,7 +428,7 @@ const TouristWelcome = ({ setFlag }) => {
                 />
               ))}
             </div>
-            {itineraries.length > 3 && (
+            {itineraries?.length > 3 && (
               <div className="flex flex-col justify-center">
                 <Button
                   type="danger"
@@ -454,7 +454,7 @@ const TouristWelcome = ({ setFlag }) => {
             )}
           </div>
 
-          {touristActivities.length > 0 && (
+          {touristActivities?.length > 0 && (
             <span className="text-4xl font-bold mb-3 text-first ml-12 mt-8 block">
               Top activities you can't miss
             </span>
@@ -491,7 +491,7 @@ const TouristWelcome = ({ setFlag }) => {
                 // </Link>
               ))}
             </div>
-            {touristActivities.length > 3 && (
+            {touristActivities?.length > 3 && (
               <div className="flex flex-col justify-center mt-4">
                 <Button
                   type="danger"

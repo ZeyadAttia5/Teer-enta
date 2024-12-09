@@ -200,7 +200,7 @@ const FlaggedActivities = ({ setFlag }) => {
                 <div className="flex items-center justify-center h-64">
                   <Spin size="large" />
                 </div>
-              ) : activities.length === 0 ? (
+              ) : activities?.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-64 gap-3">
                   <div className="p-4 bg-gray-100/80 rounded-full">
                     <AlertCircle className="w-10 h-10 text-[#1C325B]/30" />

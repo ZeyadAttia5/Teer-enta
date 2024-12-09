@@ -75,7 +75,7 @@ const FlightTicket = ({
   const fetchCurrency = async () => {
     try {
       const response = await getCurrency();
-      setCurrency(response.data);
+      setCurrency(response?.data);
       // console.log("Currency:", response.data);
     } catch (error) {
       console.error("Fetch currency error:", error);
@@ -162,7 +162,7 @@ const BookFlight = () => {
   const fetchCurrency = async () => {
     try {
       const response = await getCurrency();
-      setCurrency(response.data);
+      setCurrency(response?.data);
       // console.log("Currency:", response.data);
     } catch (error) {
       console.error("Fetch currency error:", error);
@@ -172,11 +172,9 @@ const BookFlight = () => {
   const fetchAirports = async () => {
     setLoading(1);
     let [departureCity, departureCountry] = form
-      .getFieldValue("departure")
-      .split(",");
+      ?.getFieldValue("departure")?.split(",");
     let [destinationCity, destinationCountry] = form
-      .getFieldValue("arrival")
-      .split(",");
+      ?.getFieldValue("arrival")?.split(",");
     try {
       const { data: depAirports } = await getAirports(
         departureCity,
@@ -188,13 +186,13 @@ const BookFlight = () => {
       );
 
       setDestinationAirports(
-        destAirports?.data.map((airport) => ({
+        destAirports?.data?.map((airport) => ({
           name: airport.name,
           iataCode: airport.iataCode,
         }))
       );
       setDepartureAirports(
-        depAirports?.data.map((airport) => ({
+        depAirports?.data?.map((airport) => ({
           name: airport.name,
           iataCode: airport.iataCode,
         }))
@@ -243,7 +241,7 @@ const BookFlight = () => {
       }
     } catch (error) {
       message.warning(
-        error.response.data.message || "Please fill in all required fields"
+        error?.response?.data?.message || "Please fill in all required fields"
       );
     }
   };
@@ -506,8 +504,8 @@ const BookFlight = () => {
                 key={index}
                 isSelected={index === selectedOffer}
                 offer={flight}
-                departureCity={form.getFieldValue("departure").split(",")[0]}
-                destinationCity={form.getFieldValue("arrival").split(",")[0]}
+                departureCity={form?.getFieldValue("departure")?.split(",")[0]}
+                destinationCity={form?.getFieldValue("arrival")?.split(",")[0]}
                 selectionKey={index}
                 onClick={(key) => {
                   form.setFieldValue("selectedFlight", flights[key]);

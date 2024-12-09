@@ -48,7 +48,7 @@ const ActivityCard = ({
         const fetchAddress = async () => {
             try {
                 const response = await getGoogleMapsAddress(location);
-                const formattedAddress = response.data.results[0]?.formatted_address || "Address not found";
+                const formattedAddress = response?.data?.results[0]?.formatted_address || "Address not found";
                 setAddress(formattedAddress);
             } catch (error) {
                 console.error("Error fetching address:", error);
@@ -89,7 +89,7 @@ const ActivityCard = ({
         try {
             if (!isNotified) {
                 const response = await getMyRequest(id);
-                if (response.data.notificationsRequests.length > 0) {
+                if (response?.data?.notificationsRequests?.length > 0) {
                     await updateNotificationRequestStatus(id, "Pending");
                 } else {
                     await createNotificationRequest({ activityId: id });
@@ -173,7 +173,7 @@ const ActivityCard = ({
                                 className="text-[#FFD700] text-sm"
                             />
                             <span className="text-white/90 text-sm">
-                            {ratings?.length ? `(${ratings.length} reviews)` : '(No reviews yet)'}
+                            {ratings?.length ? `(${ratings?.length} reviews)` : '(No reviews yet)'}
                         </span>
                         </div>
                     </div>
@@ -195,7 +195,7 @@ const ActivityCard = ({
 
                         {/* Discount Tags */}
                         {specialDiscounts?.map((discount, index) => (
-                            discount.isAvailable && (
+                            discount?.isAvailable && (
                                 <div
                                     key={index}
                                     className="bg-yellow-50 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-md text-sm font-medium flex items-center gap-2"
@@ -216,7 +216,7 @@ const ActivityCard = ({
                             <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
                                 <CalendarOutlined className="text-[#2A3663] text-lg" />
                                 <span className="text-sm font-medium text-gray-700">
-                                {new Date(date).toLocaleDateString()}
+                                {new Date(date)?.toLocaleDateString()}
                             </span>
                             </div>
                         </Tooltip>
@@ -252,7 +252,7 @@ const ActivityCard = ({
                                     {currencyCode}
                                 </span>
                                                         <span className="text-3xl font-bold text-[#2A3663]">
-                                    {price?.min ? (currencyRate * price.min).toFixed(2) : "N/A"}
+                                    {price?.min ? (currencyRate * price?.min).toFixed(2) : "N/A"}
                                 </span>
                             </div>
                         </div>

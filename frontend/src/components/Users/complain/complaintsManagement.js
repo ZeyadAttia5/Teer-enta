@@ -310,34 +310,34 @@ const ComplaintsManagement = () => {
                   }}
                 >
                   <Descriptions.Item label="Title">
-                    {selectedComplaint.title}
+                    {selectedComplaint?.title}
                   </Descriptions.Item>
                   <Descriptions.Item label="Description">
-                    {selectedComplaint.body}
+                    {selectedComplaint?.body}
                   </Descriptions.Item>
                   <Descriptions.Item label="Submitted By">
-                    {selectedComplaint.createdBy.username}
+                    {selectedComplaint?.createdBy?.username}
                   </Descriptions.Item>
                   <Descriptions.Item label="Date">
-                    {new Date(selectedComplaint.date).toLocaleDateString()}
+                    {new Date(selectedComplaint?.date).toLocaleDateString()}
                   </Descriptions.Item>
                   <Descriptions.Item label="Status">
                     <Tag
                       icon={
-                        selectedComplaint.status === "Resolved" ? (
+                        selectedComplaint?.status === "Resolved" ? (
                           <CheckCircleOutlined />
                         ) : (
                           <ClockCircleOutlined />
                         )
                       }
                       color={
-                        selectedComplaint.status === "Resolved"
+                        selectedComplaint?.status === "Resolved"
                           ? "success"
                           : "warning"
                       }
                       className="px-3 py-1"
                     >
-                      {selectedComplaint.status}
+                      {selectedComplaint?.status}
                     </Tag>
                   </Descriptions.Item>
                 </Descriptions>
@@ -360,10 +360,10 @@ const ComplaintsManagement = () => {
                         Mark as resolved:
                       </span>
                       <Switch
-                        checked={selectedComplaint.status === "Resolved"}
+                        checked={selectedComplaint?.status === "Resolved"}
                         onChange={handleStatusChange}
                         className={
-                          selectedComplaint.status === "Resolved"
+                          selectedComplaint?.status === "Resolved"
                             ? "bg-emerald-500"
                             : ""
                         }

@@ -129,7 +129,7 @@ const PreferenceTags = ({ setFlag }) => {
                   onClick={() => {
                     setIsEditing(true);
                     setCurrentTag(record);
-                    form.setFieldsValue(record);
+                    form?.setFieldsValue(record);
                     setModalVisible(true);
                   }}
                   className="bg-[#1C325B] hover:bg-[#1C325B]/90"
@@ -197,7 +197,7 @@ const PreferenceTags = ({ setFlag }) => {
                         onClick={() => {
                           setIsEditing(false);
                           setCurrentTag(null);
-                          form.resetFields();
+                          form?.resetFields();
                           setModalVisible(true);
                         }}
                         className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
@@ -236,7 +236,7 @@ const PreferenceTags = ({ setFlag }) => {
                 open={modalVisible}
                 onCancel={() => {
                   setModalVisible(false);
-                  form.resetFields();
+                  form?.resetFields();
                 }}
                 footer={null}
                 className="top-8"
@@ -276,7 +276,7 @@ const PreferenceTags = ({ setFlag }) => {
                   <Button
                       onClick={() => {
                         setModalVisible(false);
-                        form.resetFields();
+                        form?.resetFields();
                       }}
                       disabled={submitting}
                       className="hover:bg-gray-50"

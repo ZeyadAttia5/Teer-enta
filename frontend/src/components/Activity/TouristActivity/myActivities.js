@@ -32,15 +32,15 @@ const TouristActivity = () => {
         setLoading(true);
         const response = await getSavedActivities();
 
-        const activitiesWithAvgRating = response.data.savedActivities.map(
+        const activitiesWithAvgRating = response?.data?.savedActivities?.map(
             (activity) => {
-              const totalRating = activity.ratings.reduce(
+              const totalRating = activity?.ratings?.reduce(
                   (acc, curr) => acc + curr.rating,
                   0
               );
               const avgRating =
-                  activity.ratings.length > 0
-                      ? (totalRating / activity.ratings.length).toFixed(1)
+                  activity?.ratings?.length > 0
+                      ? (totalRating / activity?.ratings?.length).toFixed(1)
                       : 0;
               return { ...activity, averageRating: parseFloat(avgRating) };
             }
@@ -52,20 +52,20 @@ const TouristActivity = () => {
         ]);
 
 
-        const savedActivitiesId = savedResponse.data.savedActivities.map(
-            (activity) => activity._id
+        const savedActivitiesId = savedResponse?.data?.savedActivities?.map(
+            (activity) => activity?._id
         );
 
-        const notificationRequests = notificationResponse.data.notificationsRequests || [];
-        const notificationLookup = notificationRequests.reduce((acc, req) => {
-          acc[req.activity] = req.status === 'Pending';
+        const notificationRequests = notificationResponse?.data?.notificationsRequests || [];
+        const notificationLookup = notificationRequests?.reduce((acc, req) => {
+          acc[req?.activity] = req?.status === 'Pending';
           return acc;
         }, {});
 
         // Add saved and notification status
-        activitiesWithAvgRating.forEach((activity) => {
-          activity.isSaved = savedActivitiesId.includes(activity._id);
-          activity.hasNotification = notificationLookup[activity._id] || false;
+        activitiesWithAvgRating?.forEach((activity) => {
+          activity.isSaved = savedActivitiesId?.includes(activity?._id);
+          activity.hasNotification = notificationLookup[activity?._id] || false;
         });
 
 
@@ -109,11 +109,11 @@ const TouristActivity = () => {
           </div>
 
           {/* Activities Grid */}
-          {activities.length > 0 ? (
+          {activities?.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {activities.map((place) => (
+                {activities?.map((place) => (
                     <div
-                        key={place._id}
+                        key={place?._id}
                         className="transform  transition-transform duration-300"
                     >
                       <ActivityCard
@@ -147,7 +147,7 @@ const TouristActivity = () => {
           ) : (
               <div className="bg-white rounded-2xl shadow-lg p-12">
                 <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    image={Empty?.PRESENTED_IMAGE_SIMPLE}
                     description={
                       <div className="space-y-2">
                         <p className="text-lg font-medium text-gray-800">
