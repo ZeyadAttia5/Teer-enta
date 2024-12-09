@@ -308,7 +308,7 @@ const orderSummary = formatOrderSummary();
                         </Title>
                         {currency && (
                             <Text className="text-blue-600">
-                                Prices shown in {currency.code} (1 USD = {currency.rate} {currency.code})
+                                Prices shown in {currency.code} 
                             </Text>
                         )}
                     </div>

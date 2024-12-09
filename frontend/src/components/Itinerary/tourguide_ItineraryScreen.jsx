@@ -450,7 +450,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
           }}
       >
         <div className="flex justify-center">
-          <div className="w-[90%] p-6">
+          <div className="w-[95%] p-6">
             <div className="max-w-6xl mx-auto">
               <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
                 {/* Header Section */}
@@ -473,7 +473,7 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                             type="primary"
                             icon={<PlusOutlined />}
                             onClick={() => showModal()}
-                            className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
+                            className="bg-white text-first hover:bg-[#2A4575]/90 border-none"
                             size="large"
                         >
                           Add Itinerary
