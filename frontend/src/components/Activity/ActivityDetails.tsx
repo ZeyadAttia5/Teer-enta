@@ -182,21 +182,21 @@ More details: ${window.location.href}
         );
 
     return (
-        <div className="flex justify-center">
+        <div className="flex justify-center ">
             <LoginConfirmationModal
                 open={isLoginModalOpen}
                 setOpen={setIsLoginModalOpen}
                 content="Please login Book an Activity."
             />
-            <div className="w-full">
+            <div className="w-[90%]">
                 {/* Hero Section */}
-                <div className="relative h-30 overflow-hidden shadow-lg shadow-gray-300">
+                <div className="relative h-[400px] overflow-hidden shadow-lg shadow-gray-300">
                     <img
                         src={activity.imageUrl || "/api/placeholder/1200/600"}
                         alt={activity.name}
-                        className="w-full h-full object-contain transition-transform duration-700 hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"/>
+                    <div className="absolute inset-0"/>
 
                     {/* Share Actions */}
                     <div className="absolute top-6 right-6 flex gap-2">
@@ -217,7 +217,7 @@ More details: ${window.location.href}
                         <div className="max-w-7xl mx-auto">
                             <div className="space-y-4">
                                 <Title level={1} className="text-white m-0 text-4xl md:text-5xl font-bold">
-                                    {activity.name}
+                                    <span className="text-white">{activity.name}</span>
                                 </Title>
                                 <div className="flex flex-wrap items-center gap-3">
                                     <div
