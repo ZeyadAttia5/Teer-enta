@@ -235,7 +235,7 @@ const Tag = ({ setFlag }) => {
                         form.resetFields();
                         setModalVisible(true);
                       }}
-                      className="bg-[#2A4575] hover:bg-[#2A4575]/90 border-none"
+                      className="bg-white text-first hover:bg-[#2A4575]/90 border-none"
                       size="large"
                     >
                       Create Tag

@@ -14,7 +14,7 @@ const HistoricalPlaceSingleCard = ({ currency, places }) => {
       const response = await deleteHistoricalPlace(id);
       if (response.status === 200) {
         toast.success("Historical place deleted successfully!");
-        window.location.reload();
+        window.location.href = "/historicalPlace";
       } else {
         toast.error("Failed to delete the historical place.");
       }
@@ -90,7 +90,7 @@ const HistoricalPlaceSingleCard = ({ currency, places }) => {
                     </div>
                   </Link>
                   <button onClick={handleDeleteHistoricalPlace}>
-                    <div className="flex justify-center items-center w-8 h-8 text-red-600 hover:text-black hover:scale-105 transition duration-300 ease-in-out">
+                    <div className="flex justify-center items-center z-20 w-8 h-8 text-red-600 hover:text-black hover:scale-105 transition duration-300 ease-in-out">
                       <MdOutlineDelete className="text-xl" title="Delete" />
                     </div>
                   </button>
