@@ -91,9 +91,11 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
   const [visible, setVisible] = useState(true);
   return (
     <div className="fixed w-full">
-      <PromoCodeStrip setVisibleFlag={setVisible} setVisibleFlagHome={setVisibleFlagHome}/>
+      {((user && user.userRole === "Tourist") || !user) && (
+        <PromoCodeStrip setVisibleFlag={setVisible} setVisibleFlagHome={setVisibleFlagHome}/>
+      )}
       <div
-        className={`w-full fixed ${visible ? "top-9" : "top-0"} bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
+        className={`w-full fixed ${(visible && ((user && user.userRole === "Tourist") || !user)) ? "top-9" : "top-0"} bg-white flex justify-between shadow-md  items-center to-teal-700%  p-6 h-20 text-white font-bold space-x-8`}
       >
         <div className="flex gap-4 ml-8">
           {/* Logo Section */}
