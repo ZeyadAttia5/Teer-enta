@@ -489,7 +489,7 @@ function Signup({ setFlag }) {
                 src={logo}
                 alt="Logo"
                 width={120}
-                className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
+                className="rounded-full hover:rotate-6 transition-all duration-500"
               />
             </Link>
           </div>
