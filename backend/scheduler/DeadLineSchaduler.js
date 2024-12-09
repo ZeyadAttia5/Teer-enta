@@ -10,14 +10,16 @@ cron.schedule('0 0 * * *', async () => {
     try {
         console.log('Checking for deadlines for booked events');
         const currentDate = new Date();
-        await BookedActivity.updateMany(
+        console.log("currentDate",currentDate);
+       const m = await BookedActivity.updateMany(
             {
                 isActive: true,
                 status: 'Pending',
-                scheduledDate: { $lt: currentDate }
+                date: { $lt: currentDate }
             },
             { $set: { status: 'Completed' } }
         );
+       console.log("act",m);
         await BookedItinerary.updateMany(
             {
                 isActive: true,
