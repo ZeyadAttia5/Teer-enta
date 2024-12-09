@@ -168,7 +168,7 @@ const WishlistedProductGrid = ({ setFlag }) => {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-6 bg-white px-6 py-3 rounded-full shadow-md">
               <HeartFilled className="text-2xl text-red-500"/>
-              <Title level={2} className="m-0">
+              <Title level={2} className="mt-2">
                 Wishlist
               </Title>
             </div>
