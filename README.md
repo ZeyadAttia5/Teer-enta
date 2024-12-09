@@ -945,18 +945,39 @@ npm start
 
 ---
 
-## 🧪 Testing
+## 🧪 API Testing with Postman
 
-Run the following commands to test the project:
+In this project, API testing was done using Postman to ensure that all routes and endpoints are working as expected. Below is the Postman collection link for the tests performed on the API.
 
-### Backend Tests
+### 🗂️ Postman Collection
+
+You can access and run the Postman collection by clicking on the link below. This collection contains all the API endpoints tested for this project:
+
+- [**Teer-Enta API Collection**](https://sta-api-test.postman.co/workspace/Teer-Enta~ccec1157-f214-4cef-95ac-3d9b58d1be36/collection/35577203-17260410-0009-4eb2-9c0d-ddd2f47162c5?action=share&creator=36552423) :rocket:
+
+### 🔧 How to Use the Postman Collection
+1. **Import the Collection**:
+    - Click the link above to access the Postman collection.
+    - Once inside Postman, click on "Import" and paste the link to the collection or directly import the collection into Postman. 📥
+   
+2. **Environment Setup**:
+    - You may need to set up the environment variables such as `API_URL`, `JWT_TOKEN`, etc., in Postman. ⚙️
+    - These variables can be configured in the "Environment" section of Postman.
+
+3. Start the backend server
 ```bash
-npm run test:backend
+  cd backend
 ```
-###Frontend Tests
+
 ```bash
-npm run test:frontend
+  npm start
 ```
+
+3. **Run the Tests**:
+    - Once the collection is imported, you can run individual API requests or the entire collection. ▶️
+    - The collection contains all endpoints used in this project, with example requests and responses.
+
+---
 ## 🤝 Contributing
 
 We’d love your input!  
@@ -1000,8 +1021,8 @@ We’d love your input!
   
 
 - **Inspiration**:  
-  - [Inspiration Source]  
-  - [Inspiration Source]  
+  - [React - The Complete Guide (incl. Redux)](https://www.udemy.com/course/react-the-complete-guide-incl-redux/?kw=react&src=sac&couponCode=24T3MT120924)  
+  - [NodeJS - The Complete Guide (MVC, REST APIs, GraphQL, Deno)](https://www.udemy.com/course/nodejs-the-complete-guide/?couponCode=24T3MT120924) 
 
 
 
