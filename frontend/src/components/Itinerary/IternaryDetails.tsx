@@ -288,7 +288,7 @@ const ItineraryDetails: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  {/*{user?.userRole === "Tourist" && (*/}
+                  {(!user || (user.userRole === "Tourist")) && (
                   <Button
                     type={itinerary.isBookingOpen ? "danger" : "default"}
                     onClick={() => handleBookItinerary(itinerary._id)}
@@ -301,7 +301,7 @@ const ItineraryDetails: React.FC = () => {
                   >
                     {itinerary.isBookingOpen ? "Book Now" : "Not Available"}
                   </Button>
-                  {/*)}*/}
+                  )}
                 </div>
               </Card>
               {/* About Section - Added before Footer */}
