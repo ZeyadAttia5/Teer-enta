@@ -9,6 +9,8 @@ const ProductOutOfStockTemplate = require("../Util/mailsHandler/mailTemplets/6Pr
 const FlaggedActivityTemplate = require("../Util/mailsHandler/mailTemplets/7FlaggedActivityTemplate");
 const PromoCodes = require("../models/PromoCodes");
 const Stripe = require('stripe');
+const getFCMToken = require("../Util/Notification/FCMTokenGetter");
+const sendNotification = require("../Util/Notification/NotificationSender");
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 exports.getOrders = async (req, res) => {
     try {
@@ -209,6 +211,14 @@ exports.checkOutOrder = async (req, res) => {
                     fProduct.createdBy.username
                 );
                 await brevoService.send(template,fProduct.createdBy.email);
+                const fcmToken = await getFCMToken(fProduct.createdBy);
+                if (fcmToken) {
+                    await sendNotification({
+                        title: 'Your product is out of the stock',
+                        body: `The product ${fProduct.name} is out of the stock`,
+                        tokens: [fcmToken],
+                    });
+                }
             }
             await product.save();
         }

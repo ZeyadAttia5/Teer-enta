@@ -10,7 +10,7 @@ const getFCMToken = require('../Util/Notification/FCMTokenGetter');
 const sendNotification = require('../Util/Notification/NotificationSender');
 // Receive notifications reminding me of upcoming events that I booked/ paid for via email and push notification
 // TODO: Not tested yet
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('*/1 * * * *', async () => {
     try {
         console.log('Checking for reminders for upcoming Booked events 5 days ahead');
 
@@ -30,11 +30,12 @@ cron.schedule('0 0 * * *', async () => {
 
             const activityDate = moment(booking.date);
             const daysDifference = activityDate.diff(currentDate, 'days');
+            console.log(`Days difference between ${activityDate.format('MMMM Do YYYY')} and ${currentDate.format('MMMM Do YYYY')} is ${daysDifference}`);
 
-            if (daysDifference === 5) {
+            if (daysDifference < 10) {
                 if (user && user.email) {
                     const emailParams = {
-                        name: activity.name,
+                        name: booking.activity.name,
                         userName: user.username,
                         date: moment(booking.date).format('MMMM Do YYYY'),
                     };
@@ -43,7 +44,7 @@ cron.schedule('0 0 * * *', async () => {
                         emailParams.name,
                         emailParams.userName,
                         emailParams.date,
-                        `${process.env.FRONTEND_HOST}/itinerary/activityDetails/${activity._id}`
+                        `${process.env.FRONTEND_HOST}/itinerary/activityDetails/${booking.activity._id}`
                     );
                     await brevoService.send(emailTemplate, user.email);
                     const fcmToken = await getFCMToken(user._id);
@@ -54,7 +55,7 @@ cron.schedule('0 0 * * *', async () => {
                             tokens: [fcmToken],
                         })
                     }
-                    console.log(`Reminder sent to ${user.email} for activity ${activity.name}`);
+                    console.log(`Reminder sent to ${user.email} for activity ${emailParams.name}`);
                 }
             }
         }
