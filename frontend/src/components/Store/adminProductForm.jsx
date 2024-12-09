@@ -150,11 +150,11 @@ const AdminProductForm = ({ setFlag }) => {
                 </Form.Item>
 
                 <Button
-                    type="primary"
+                    type="danger"
                     htmlType="submit"
                     loading={loading}
                     size="large"
-                    className="w-full h-12 bg-[#1C325B] hover:bg-[#1C325B]/90 rounded-lg
+                    className="w-full h-12 bg-first text-white hover:bg-black rounded-lg
                                          text-base font-medium"
                 >
                   {loading ? "Creating Product..." : "Create Product"}
