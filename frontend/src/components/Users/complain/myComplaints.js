@@ -47,7 +47,9 @@ const MyComplaints = () => {
       const response = await getMyComplaints();
       setComplaints(response.data);
     } catch (error) {
-      message.warning(error.response.data.message||"Failed to fetch complaints");
+      message.warning(
+        error.response.data.message || "Failed to fetch complaints"
+      );
     } finally {
       setLoading(false);
     }
@@ -67,7 +69,9 @@ const MyComplaints = () => {
       setSelectedComplaint(response.data);
       setModalVisible(true);
     } catch (error) {
-      message.warning(error.response.data.message||"Failed to fetch complaint details");
+      message.warning(
+        error.response.data.message || "Failed to fetch complaint details"
+      );
     }
   };
 
@@ -370,21 +374,22 @@ const MyComplaints = () => {
                   className="rounded-md"
                 />
               </Form.Item>
-
-              <Form.Item className="mb-0 flex justify-end gap-2">
-                <Button
-                  onClick={() => setCreateModalVisible(false)}
-                  className="hover:bg-gray-100"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="bg-[#1C325B] hover:bg-[#1C325B]/90"
-                >
-                  Submit Complaint
-                </Button>
+              <Form.Item className="mb-0">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    onClick={() => setCreateModalVisible(false)}
+                    className="hover:bg-gray-100"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="bg-[#1C325B] hover:bg-[#1C325B]/90"
+                  >
+                    Submit Complaint
+                  </Button>
+                </div>
               </Form.Item>
             </Form>
           </Modal>
