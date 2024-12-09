@@ -590,7 +590,7 @@ const BookFlight = () => {
           content="Please login to Book a flight."
         />
         <Card
-          className="w-[90%] max-h-[800px] flex my-20 mx-auto shadow"
+          className="w-[90%] max-h-[500px] flex my-20 mx-auto shadow"
           classNames={{
             body: "flex flex-1 flex-col justify-center",
             cover: "w-1/3 ",

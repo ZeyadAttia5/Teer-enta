@@ -296,6 +296,7 @@ const BookingGrid = () => {
                       value={timeFilter}
                       onChange={setTimeFilter}
                       className="min-w-[180px]"
+                      dropdownClassName="custom-dropdown"
                       options={[
                         {label: "All Time", value: "all", icon: <ClockCircleOutlined/>},
                         {label: "Upcoming", value: "upcoming", icon: <CalendarOutlined/>},
