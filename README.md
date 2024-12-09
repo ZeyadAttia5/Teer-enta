@@ -47,7 +47,7 @@ This section outlines the coding standards and best practices followed in the de
 ### 1. 🖥️ **JavaScript and Node.js Code Style (Backend)**
 - **ESLint**:  ESLint is configured to enforce consistent coding styles, catch potential errors, and improve overall code quality.
 - **Prettier**:  Prettier is integrated to automatically format code according to a uniform style, ensuring consistency across the project.
-- **Modularization**:  The backend code is broken into modular components such as controllers, models, routes, and services to enhance reusability and maintainability.
+- **Modularization**:  The backend code is broken into modular components such as controllers, models, routes, and middlewares to enhance reusability and maintainability.
 - **Naming Conventions**: 
   - Variables and functions use **camelCase** .
   - Classes use **PascalCase** .
@@ -65,7 +65,7 @@ This section outlines the coding standards and best practices followed in the de
 - **State Management**: 
   -  Redux/React Context (if applicable) is used for state management, following the principles of unidirectional data flow.
 - **Styling**: 
-  -  Styling is handled via **CSS-in-JS**, **CSS Modules**, or **external stylesheets** for modular and maintainable styles.
+  -  Styling is handled via Tailwind-Css for modular and maintainable styles.
 - **Prop Types / TypeScript**: 
   -  **PropTypes** or **TypeScript** are used to provide type safety for props and state, ensuring better code reliability.
 
@@ -302,7 +302,245 @@ module.exports = mongoose.model('Activity', ActivitySchema);
     export default PreferenceTags;
 ```
 
+### State Management
 
+```javascript
+  // State hooks for managing component data and UI
+  const [tags, setTags] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentTag, setCurrentTag] = useState(null);
+  const [form] = Form.useForm();
+  
+  useEffect(() => {
+      setFlag(false);
+      fetchTags();
+  }, [setFlag]);
+```
+
+### API Integration
+
+```javascript
+  // API interaction methods
+  const fetchTags = async () => {
+      setLoading(true);
+      try {
+          const response = await getPreferenceTags();
+          setTags(response.data);
+      } catch (error) {
+          message.warning(error.response.data.message);
+      } finally {
+          setLoading(false);
+      }
+  };
+  
+  const handleSubmit = async (values) => {
+      setSubmitting(true);
+      try {
+          if (isEditing) {
+              await updatePreferenceTag({ ...currentTag, ...values });
+              message.success("Tag updated successfully");
+          } else {
+              await createPreferenceTag(values);
+              message.success("Tag created successfully");
+          }
+          fetchTags();
+          setModalVisible(false);
+          form.resetFields();
+      } catch (error) {
+          message.warning(error.response.data.message);
+      } finally {
+          setSubmitting(false);
+      }
+  };
+  
+  const handleDelete = async (id) => {
+      try {
+          await deletePreferenceTag(id);
+          message.success("Preference Tag deleted successfully")
+          fetchTags();
+      } catch (error) {
+          message.warning(error.response.data.message);
+      }
+  };
+```
+
+### Table configurations
+
+```javascript
+  const columns = [
+      {
+          title: "Tag Name",
+          dataIndex: "tag",
+          key: "tag",
+          render: (text) => (
+              <div className="flex items-center">
+                  <TagsOutlined className="mr-2 text-[#1C325B]" />
+                  <span className="font-medium">{text}</span>
+              </div>
+          ),
+      },
+      {
+          title: "Status",
+          dataIndex: "isActive",
+          key: "isActive",
+          render: (isActive) => (
+              <div className="flex items-center">
+                  <CheckCircleOutlined
+                      className={`mr-2 ${
+                          isActive ? "text-emerald-500" : "text-gray-400"
+                      }`}
+                  />
+                  <span
+                      className={
+                          isActive ? "text-emerald-600 font-medium" : "text-gray-500"
+                      }
+                  >
+                      {isActive ? "Active" : "Inactive"}
+                  </span>
+              </div>
+          ),
+      },
+      {
+          title: "Actions",
+          key: "actions",
+          render: (_, record) => (
+              // Actions column implementation
+          ),
+      },
+  ];
+```
+
+### Modal form 
+
+```javascript
+  <Modal
+      title={
+          <div className="text-lg font-semibold text-[#1C325B]">
+              {isEditing ? "Edit Tag" : "Create New Tag"}
+          </div>
+      }
+      open={modalVisible}
+      onCancel={() => {
+          setModalVisible(false);
+          form.resetFields();
+      }}
+      footer={null}
+      className="top-8"
+  >
+      <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          className="mt-4"
+      >
+          <Item
+              label={<span className="text-gray-700 font-medium">Tag Name</span>}
+              name="tag"
+              rules={[{ required: true, message: "Please enter tag name" }]}
+          >
+              <Input
+                  prefix={<TagsOutlined className="text-gray-400" />}
+                  placeholder="Enter tag name"
+                  className="h-10"
+              />
+          </Item>
+  
+          <Item
+              label={<span className="text-gray-700 font-medium">Status</span>}
+              name="isActive"
+              valuePropName="checked"
+              initialValue={true}
+          >
+              <Switch />
+          </Item>
+  
+          <div className="flex justify-end space-x-2 mt-6">
+              <Button
+                  onClick={() => {
+                      setModalVisible(false);
+                      form.resetFields();
+                  }}
+                  disabled={submitting}
+                  className="hover:bg-gray-50"
+              >
+                  Cancel
+              </Button>
+              <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={submitting}
+                  className="bg-[#1C325B] hover:bg-[#1C325B]/90"
+              >
+                  {isEditing ? "Update" : "Create"} Tag
+              </Button>
+          </div>
+      </Form>
+  </Modal>
+```
+
+### Component Layout
+
+```javascript
+  return (
+      <ConfigProvider
+          theme={{
+              token: {
+                  colorPrimary: "#1C325B",
+              },
+          }}
+      >
+          <div className="flex justify-center">
+              <div className="p-6 w-[90%]">
+                  <div className="max-w-7xl mx-auto">
+                      <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+                          {/* Header Section */}
+                          <div className="px-6 py-4 border-b border-gray-200">
+                              {/* Header content */}
+                          </div>
+  
+                          {/* Table Section */}
+                          <div className="p-6">
+                              <Table
+                                  columns={columns}
+                                  dataSource={tags}
+                                  rowKey="_id"
+                                  loading={loading}
+                                  pagination={{
+                                      pageSize: 10,
+                                      showTotal: (total) => `Total ${total} tags`,
+                                  }}
+                                  className="border border-gray-200 rounded-lg"
+                                  rowClassName="hover:bg-[#1C325B]/5"
+                              />
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </ConfigProvider>
+  );
+```
+
+### Usage
+
+```javascript
+// Import the component
+import PreferenceTags from './components/PreferenceTags';
+
+// Use in your application
+function App() {
+    const handleFlagChange = (flag) => {
+        // Handle flag change
+    };
+
+    return (
+        <PreferenceTags setFlag={handleFlagChange} />
+    );
+}
+```
 
 ---
 
