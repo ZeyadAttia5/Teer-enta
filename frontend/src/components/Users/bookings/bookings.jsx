@@ -288,7 +288,7 @@ const BookingGrid = () => {
                     ]}
                     value={selectedType}
                     onChange={setSelectedType}
-                    className="bg-white border border-gray-200 shadow-sm rounded-lg p-1"
+                    className=" border border-gray-200 shadow-sm rounded-lg p-1"
                 />
 
                 <div className="flex flex-wrap gap-4">
