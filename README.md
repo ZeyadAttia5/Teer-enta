@@ -1,7 +1,7 @@
 # 🌍 Teer Enta - Your Personal Travel Companion
 
 <div align="center">
-  <img src="./frontend/src/assets/logo/logo2.png" alt="Teer enta Logo" width="350px" />
+  <img src="frontend/src/assets/logo/logo2.jpg" alt="Teer enta Logo" width="350px" />
 </div>
 
 ---
