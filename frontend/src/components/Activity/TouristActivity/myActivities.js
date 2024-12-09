@@ -64,8 +64,8 @@ const TouristActivity = () => {
 
         // Add saved and notification status
         activitiesWithAvgRating?.forEach((activity) => {
-          activity?.isSaved = savedActivitiesId?.includes(activity?._id);
-          activity?.hasNotification = notificationLookup[activity?._id] || false;
+          activity.isSaved = savedActivitiesId?.includes(activity?._id);
+          activity.hasNotification = notificationLookup[activity?._id] || false;
         });
 
 
