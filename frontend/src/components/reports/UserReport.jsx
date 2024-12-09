@@ -103,7 +103,7 @@ const UserReport = () => {
     setSelectedCategory("all");
   };
   const user = JSON.parse(localStorage.getItem("user"));
-  const [notAccepted, setNotAccepted] = useState(false);
+  const [notAccepted, setNotAccepted] = useState(true);
   return (
     <div className="flex justify-center">
       {notAccepted &&
