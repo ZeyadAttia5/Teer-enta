@@ -12,6 +12,7 @@ import {
 import LoadingCircle from "../../shared/LoadingCircle/LoadingCircle.js";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/logo/logo2.jpg";
+import backgroundImage from "../../../assets/LoginImage/download.jpeg";
 import SelectPrefrences from "../../shared/SelectPrefrences.jsx";
 import { Button } from "antd";
 import WavingHand from "../../../assets/svgs/hand-shake-svgrepo-com.svg";
@@ -121,39 +122,11 @@ function Login({ setFlag, flag }) {
   };
 
   return (
-    <div className="flex">
+    <div className="flex justify-center "
+      >
       {isLoading && <LoadingCircle />}
 
-      <div className="relative w-[66%] h-screen overflow-hidden">
-        {images?.map((image, index) => (
-          <img
-            key={index}
-            src={image}
-            alt={`Slide ${index + 1}`}
-            className={`absolute top-0 cursor-pointer left-0 w-full h-full transition-opacity duration-1000 ${
-              index === currentImageIndex ? "opacity-100" : "opacity-0"
-            }`}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onClick={handleImageClick}
-          />
-        ))}
-
-        {/* Dots Indicator */}
-        {!isPaused && (
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-            {images?.map((_, index) => (
-              <span
-                key={index}
-                className={`w-3 h-3 rounded-full cursor-pointer transition-colors duration-500 ${
-                  currentImageIndex === index ? "bg-gray-100" : "bg-gray-400"
-                }`}
-                onClick={() => setCurrentImageIndex(index)}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      
 
       {showPrefernceSelection ? (
         <div className="flex flex-col w-1/2 m-5 justify-center content-center items-center">
