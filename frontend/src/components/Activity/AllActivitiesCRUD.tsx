@@ -100,9 +100,9 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     setLoading(true);
     try {
       const response = await getActivities();
-      setActivities(response.data);
+      setActivities(response??.data);
     } catch (error) {
-      message.warning( error.response.data.message);
+      message.warning( error??.response??.data??.message);
     } finally {
       setLoading(false);
     }
@@ -111,12 +111,12 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     setLoading(true);
     try {
       const response = await getMyActivities();
-      setActivities(response.data);
+      setActivities(response??.data);
     } catch (error) {
-      if (error.response.status === 404) {
+      if (error??.response??.status === 404) {
         message.info("You didnt create any activities yet");
       } else {
-        message.warning( error.response.data.message);
+        message.warning( error??.response??.data??.message);
       }
     } finally {
       setLoading(false);
@@ -127,16 +127,16 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       const response = await getActivityCategories();
       setCategories(response);
     } catch (error) {
-      message.warning(error.response.data.message);
+      message.warning(error??.response??.data??.message);
     }
   };
 
   const fetchPreferenceTags = async () => {
     try {
       const response = await getPreferenceTags();
-      setPreferenceTags(response.data);
+      setPreferenceTags(response??.data);
     } catch (error) {
-      message.warning(error.response.data.message);
+      message.warning(error??.response??.data??.message);
     }
   };
 
@@ -144,7 +144,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     setIsEditing(false);
     setIsViewing(false);
     setCurrentActivity(null);
-    form.resetFields();
+    form??.resetFields();
     setIsModalVisible(true);
   };
 
@@ -153,7 +153,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     setIsViewing(false);
     setCurrentActivity(activity);
     setSelectedImage(activity.imageUrl);
-    form.setFieldsValue({
+    form??.setFieldsValue({
       ...activity,
       date: moment(activity.date),
       time: moment(activity.time, "HH:mm"),
@@ -172,13 +172,13 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     setIsEditing(false);
     setCurrentActivity(activity);
     setSelectedImage(activity.imageUrl);
-    form.setFieldsValue({
+    form??.setFieldsValue({
       ...activity,
       date: moment(activity.date),
       time: moment(activity.time, "HH:mm"),
       priceMin: activity.price?.min,
       priceMax: activity.price?.max,
-      preferenceTags: activity.preferenceTags.map((tag) => tag._id),
+      preferenceTags: activity.preferenceTags??.map((tag) => tag._id),
       category: activity.category?._id,
       specialDiscounts: activity.specialDiscounts,
     });
@@ -192,7 +192,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       message.success("Activity deleted successfully");
       fetchActivities();
     } catch (error) {
-      message.warning(error.response.data.message);
+      message.warning(error??.response??.data??.message);
     }
   };
 
@@ -200,8 +200,8 @@ const AllActivitiesCRUD = ({ setFlag }) => {
     const activityData = {
       ...values,
       imageUrl: selectedImage,
-      date: values.date.toISOString(),
-      time: values.time.format("HH:mm"),
+      date: values.date??.toISOString(),
+      time: values.time??.format("HH:mm"),
       location,
       price: {
         min: values.priceMin,
@@ -223,7 +223,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
       fetchActivities();
       setIsModalVisible(false);
     } catch (error) {
-      message.warning(error.response.data.message);
+      message.warning(error??.response??.data??.message);
     }
   };
 
@@ -233,12 +233,12 @@ const AllActivitiesCRUD = ({ setFlag }) => {
   };
 
   const center = {
-    lat: location.lat || -34.397,
-    lng: location.lng || 150.644,
+    lat: location??.lat || -34.397,
+    lng: location??.lng || 150.644,
   };
 
   const handleMapClick = (event) => {
-    setLocation({ lat: event.latLng.lat(), lng: event.latLng.lng() });
+    setLocation({ lat: event.latLng?.lat(), lng: event.latLng?.lng() });
   };
   const columns = [
     {
@@ -303,7 +303,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-gray-600 bg-gray-50 px-3 py-2 rounded-md">
               <Calendar className="w-4 h-4" />
-              <span className="font-medium">{moment(date).format("MMM DD, YYYY")}</span>
+              <span className="font-medium">{moment(date)?.format("MMM DD, YYYY")}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-600 bg-gray-50 px-3 py-2 rounded-md">
               <Clock className="w-4 h-4" />
@@ -440,7 +440,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                           message.success("Activity flagged as inappropriate");
                           await fetchActivities();
                         } catch (error) {
-                          message.warning(error.response.data.message);
+                          message.warning(error?.response?.data?.message);
                         } finally {
                           setLoading(false);
                         }
@@ -636,7 +636,7 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                       rules={[{ required: true, message: 'Please select a category' }]}
                   >
                     <Select placeholder="Select Category" disabled={isViewing}>
-                      {categories.map((category) => (
+                      {categories?.map((category) => (
                           <Option key={category._id} value={category._id}>
                             {category.category}
                           </Option>
@@ -703,8 +703,8 @@ const AllActivitiesCRUD = ({ setFlag }) => {
                     rules={[{ required: true, message: 'Please select a location' }]}
                 >
                   <MapContainer
-                      longitude={location.lng}
-                      latitude={location.lat}
+                      longitude={location?.lng}
+                      latitude={location?.lat}
                       outputLocation={(lat, lng) => setLocation({ lat, lng })}
                   />
                 </Item>

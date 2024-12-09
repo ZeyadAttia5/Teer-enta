@@ -166,7 +166,7 @@ const BookingGrid = () => {
     }[status] || { color: "default", icon: null };
 
     return (
-      <Tag color={tagProps.color} icon={tagProps.icon} className="px-3 py-1">
+      <Tag color={tagProps?.color} icon={tagProps?.icon} className="px-3 py-1">
         {status}
       </Tag>
     );
@@ -224,19 +224,19 @@ const BookingGrid = () => {
     try {
       const { rating, comment } = values;
       console.log("feedbackModal", values);
-      console.log('feedbackModal', feedbackModal.type);
+      console.log('feedbackModal', feedbackModal?.type);
       switch(feedbackModal.type) {
         case 'activity':
-          await addRatingToActivity(feedbackModal.entityId, rating); console.log('rating', rating);
-          await addCommentToActivity(feedbackModal.entityId, comment);
+          await addRatingToActivity(feedbackModal?.entityId, rating); console.log('rating', rating);
+          await addCommentToActivity(feedbackModal?.entityId, comment);
           break;
         case 'itinerary':
-          await addRatingToItinerary(feedbackModal.entityId, rating);console.log('rating', rating);
-          await addCommentToItinerary(feedbackModal.entityId, comment);
+          await addRatingToItinerary(feedbackModal?.entityId, rating);console.log('rating', rating);
+          await addCommentToItinerary(feedbackModal?.entityId, comment);
           break;
         case 'tourGuide':
-          await rateTourGuide(feedbackModal.entityId, rating);console.log('rating', rating);
-          await commentOnTourGuide(feedbackModal.entityId, comment);
+          await rateTourGuide(feedbackModal?.entityId, rating);console.log('rating', rating);
+          await commentOnTourGuide(feedbackModal?.entityId, comment);
           break;
       }
 
@@ -351,14 +351,14 @@ const BookingGrid = () => {
                     selectedType === "Flights" ? filteredFlights?.length :
                         selectedType === "Hotels" ? filteredHotels?.length :
                             filteredTransportations?.length || 0
-          } {timeFilter !== "all" ? `${timeFilter} ` : ""}{selectedType.toLowerCase()}
+          } {timeFilter !== "all" ? `${timeFilter} ` : ""}{selectedType?.toLowerCase()}
           </Text>
 
           {/* Activities Grid */}
           {selectedType === "Activities" && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredActivities?.length > 0 ? (
-                    filteredActivities.map((activity) => activity.activity && (
+                    filteredActivities?.map((activity) => activity.activity && (
                         <Card
                             key={activity._id}
                             className="shadow-lg rounded-xl border-0"
@@ -381,7 +381,7 @@ const BookingGrid = () => {
                         >
                           <div className="p-6 space-y-4">
                             <Title level={4}
-                                   className="text-xl font-bold text-blue-950">{activity.activity.name}</Title>
+                                   className="text-xl font-bold text-blue-950">{activity.activity?.name}</Title>
 
                             <div className="space-y-3">
                               <div className="flex items-center text-gray-600">
@@ -394,11 +394,11 @@ const BookingGrid = () => {
                               </div>
                               <div className="flex items-center text-gray-600">
                                 <EnvironmentOutlined className="mr-2 text-blue-950"/>
-                                <span>Location: {activity.activity.location.lat.toFixed(2)}, {activity.activity.location.lng.toFixed(2)}</span>
+                                <span>Location: {activity.activity?.location?.lat?.toFixed(2)}, {activity.activity?.location?.lng?.toFixed(2)}</span>
                               </div>
                               <div className="flex items-center font-semibold text-blue-950">
                                 <DollarOutlined className="mr-2"/>
-                                <span>{currency?.code} {(currency?.rate * activity.activity.price.min).toFixed(2)}</span>
+                                <span>{currency?.code} {(currency?.rate * activity.activity?.price?.min).toFixed(2)}</span>
                               </div>
                             </div>
 
@@ -416,7 +416,7 @@ const BookingGrid = () => {
                               {activity.status === "Completed" && (
                                   <Button
                                       type="danger"
-                                      onClick={() => openFeedbackModal('activity', activity.activity._id, activity.activity.name)}
+                                      onClick={() => openFeedbackModal('activity', activity.activity?._id, activity.activity?.name)}
                                       className="bg-blue-950 text-white hover:bg-black border-0"
                                       icon={<CommentOutlined/>}
                                   >
@@ -476,7 +476,7 @@ const BookingGrid = () => {
                               </div>
                               <div className="flex items-center font-semibold text-blue-950">
                                 <DollarOutlined className="mr-2"/>
-                                <span>{currency?.code} {(currency?.rate * itinerary.itinerary.price).toFixed(2)}</span>
+                                <span>{currency?.code} {(currency?.rate * itinerary.itinerary?.price).toFixed(2)}</span>
                               </div>
                             </div>
 
@@ -494,7 +494,7 @@ const BookingGrid = () => {
                               {itinerary.status === "Completed" && (
                                   <>
                                     <Button
-                                        onClick={() => openFeedbackModal('tourGuide', itinerary.itinerary.createdBy._id, itinerary.itinerary.createdBy.username)}
+                                        onClick={() => openFeedbackModal('tourGuide', itinerary.itinerary?.createdBy._id, itinerary.itinerary?.createdBy.username)}
                                         className="bg-blue-950 text-white hover:bg-black border-0"
                                         type="danger"
                                         icon={<UserOutlined/>}
@@ -502,7 +502,7 @@ const BookingGrid = () => {
                                       Rate Tour Guide
                                     </Button>
                                     <Button
-                                        onClick={() => openFeedbackModal('itinerary', itinerary.itinerary._id, itinerary.itinerary.name)}
+                                        onClick={() => openFeedbackModal('itinerary', itinerary.itinerary?._id, itinerary.itinerary?.name)}
                                         className="bg-blue-950 text-white hover:bg-black border-0"
                                         type="danger"
                                         icon={<CommentOutlined/>}

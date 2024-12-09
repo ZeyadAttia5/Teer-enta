@@ -49,7 +49,7 @@ const AccountDeletionRequests = ({ setFlag }) => {
             message.success("Account deletion rejected");
             setRequests((prevRequests) => prevRequests.filter((request) => request._id !== id));
         } catch (error) {
-            const errorMessage = error.response?.data?.message || "Failed to reject deletion";
+            const errorMessage = error?.response?.data?.message || "Failed to reject deletion";
             message.warning(errorMessage);
         }
     };

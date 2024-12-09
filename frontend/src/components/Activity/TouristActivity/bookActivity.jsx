@@ -58,7 +58,7 @@ const BookActivity = () => {
     };
 
     const handleApplyPromo = async () => {
-        if (!promoCode.trim()) {
+        if (!promoCode?.trim()) {
             message.warning("Please enter a promo code");
             return;
         }
@@ -66,10 +66,10 @@ const BookActivity = () => {
         setApplyingPromo(true);
         try {
             const response = await applyPromoCode(promoCode);
-            setPromoDiscount(response.data.promoCode);
+            setPromoDiscount(response?.data?.promoCode);
             message.success("Promo code applied successfully!");
         } catch (error) {
-            message.warning(error.response?.data?.message || "Failed to apply promo code");
+            message.warning(error?.response?.data?.message || "Failed to apply promo code");
         } finally {
             setApplyingPromo(false);
         }
@@ -83,16 +83,16 @@ const BookActivity = () => {
         setLoading(true);
         try {
             const response = await bookActivity(activityId, paymentMethod, promoCode);
-            message.success(response.data.message);
+            message.success(response?.data?.message);
             setShowReceipt(true);  // Show the receipt after successful booking
         } catch (error) {
-            message.warning(error.response?.data?.message || "Booking failed");
+            message.warning(error?.response?.data?.message || "Booking failed");
         } finally {
             setLoading(false);
         }
     };
 
-    const activeDiscount = activity?.specialDiscounts?.find(discount => discount.isAvailable)?.discount || 0;
+    const activeDiscount = activity?.specialDiscounts?.find(discount => discount?.isAvailable)?.discount || 0;
 
     const calculateFinalPrice = (price) => {
         let finalPrice = price;
@@ -277,10 +277,10 @@ const BookActivity = () => {
                                             ? `${activeDiscount + promoDiscount}%`
                                             : "None"
                                     }
-                                ].map((item, index) => (
+                                ]?.map((item, index) => (
                                     <div key={index} className="flex justify-between items-center py-3 border-b border-gray-100">
-                                        <Text className="text-gray-600">{item.label}</Text>
-                                        <Text className="font-medium">{item.value}</Text>
+                                        <Text className="text-gray-600">{item?.label}</Text>
+                                        <Text className="font-medium">{item?.value}</Text>
                                     </div>
                                 ))}
 

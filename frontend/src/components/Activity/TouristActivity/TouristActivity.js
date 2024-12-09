@@ -77,7 +77,7 @@ const DropdownMenu = ({ children }) => {
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
-      {React.Children.map(children, (child) =>
+      {React.Children?.map(children, (child) =>
         React.cloneElement(child, { isOpen, setIsOpen })
       )}
     </div>
@@ -207,16 +207,16 @@ const TouristActivity = ({ setFlag }) => {
         if (!mounted) return;
 
         // Set currency
-        setCurrency(currencyResponse.data);
+        setCurrency(currencyResponse?.data);
 
         // Calculate average rating for each activity
-        const activitiesWithAvgRating = activitiesResponse.data.map((activity) => {
-          const totalRating = activity.ratings.reduce(
-              (acc, curr) => acc + curr.rating,
+        const activitiesWithAvgRating = activitiesResponse?.data?.map((activity) => {
+          const totalRating = activity?.ratings?.reduce(
+              (acc, curr) => acc + curr?.rating,
               0
           );
-          const avgRating = activity.ratings.length > 0
-              ? (totalRating / activity.ratings.length).toFixed(1)
+          const avgRating = activity?.ratings?.length > 0
+              ? (totalRating / activity.ratings?.length).toFixed(1)
               : 0;
           return { ...activity, averageRating: parseFloat(avgRating) };
         });
@@ -230,19 +230,19 @@ const TouristActivity = ({ setFlag }) => {
 
           if (!mounted) return;
 
-          const savedActivitiesId = savedResponse.data.savedActivities.map(
+          const savedActivitiesId = savedResponse?.data?.savedActivities?.map(
               (activity) => activity._id
           );
 
-          const notificationRequests = notificationResponse.data.notificationsRequests || [];
-          const notificationLookup = notificationRequests.reduce((acc, req) => {
+          const notificationRequests = notificationResponse?.data?.notificationsRequests || [];
+          const notificationLookup = notificationRequests?.reduce((acc, req) => {
             acc[req.activity] = req.status === 'Pending';
             return acc;
           }, {});
 
           // Add saved and notification status
-          activitiesWithAvgRating.forEach((activity) => {
-            activity.isSaved = savedActivitiesId.includes(activity._id);
+          activitiesWithAvgRating?.forEach((activity) => {
+            activity.isSaved = savedActivitiesId?.includes(activity._id);
             activity.hasNotification = notificationLookup[activity._id] || false;
           });
         }
@@ -253,9 +253,9 @@ const TouristActivity = ({ setFlag }) => {
         setActivities(activitiesWithAvgRating);
         setFilteredActivities(activitiesWithAvgRating);
 
-        if (activitiesWithAvgRating.length > 0) {
+        if (activitiesWithAvgRating?.length > 0) {
           const highestPrice = Math.max(
-              ...activitiesWithAvgRating.map((act) => act.price.max)
+              ...activitiesWithAvgRating?.map((act) => act.price?.max)
           );
           setMaxBudget(highestPrice);
           setBudget([0, highestPrice]);
@@ -275,7 +275,7 @@ const TouristActivity = ({ setFlag }) => {
 
   // Search Function
   const handleSearch = (value) => {
-    setSearchQuery(value.trim().toLowerCase());
+    setSearchQuery(value?.trim()?.toLowerCase());
   };
 
   // Apply Filters
@@ -285,14 +285,14 @@ const TouristActivity = ({ setFlag }) => {
     // Search by name, category, or tags
     if (searchQuery) {
       data = data?.filter((activity) => {
-        const nameMatch = activity.name.toLowerCase().includes(searchQuery);
+        const nameMatch = activity.name?.toLowerCase().includes(searchQuery);
         const categoryMatch =
           activity.category &&
-          activity.category.category.toLowerCase().includes(searchQuery);
+          activity.category?.category?.toLowerCase()?.includes(searchQuery);
         const tagsMatch =
-          activity.preferenceTags &&
-          activity.preferenceTags.some((tag) =>
-            tag.tag.toLowerCase().includes(searchQuery)
+          activity?.preferenceTags &&
+          activity?.preferenceTags.some((tag) =>
+            tag.tag?.toLowerCase().includes(searchQuery)
           );
         return nameMatch || categoryMatch || tagsMatch;
       });
@@ -323,9 +323,9 @@ const TouristActivity = ({ setFlag }) => {
 
     // Sorting
     if (sortBy === "price") {
-      data?.sort((a, b) => a.price.min - b.price.min);
+      data?.sort((a, b) => a.price?.min - b.price?.min);
     } else if (sortBy === "price_desc") {
-      data?.sort((a, b) => b.price.max - a.price.max);
+      data?.sort((a, b) => b.price?.max - a.price?.max);
     } else if (sortBy === "rating") {
       data?.sort((a, b) => b.averageRating - a.averageRating);
     } else if (sortBy === "rating_asc") {
@@ -342,8 +342,8 @@ const TouristActivity = ({ setFlag }) => {
 
   // Extract unique categories based on _id
   const uniqueCategories = activities?.reduce((acc, act) => {
-    if (act.category && !acc.find((cat) => cat.id === act.category._id)) {
-      acc.push({ id: act.category._id, name: act.category.category });
+    if (act.category && !acc.find((cat) => cat.id === act.category?._id)) {
+      acc.push({ id: act.category?._id, name: act.category?.category });
     }
     return acc;
   }, []);
