@@ -10,7 +10,7 @@ const getFCMToken = require('../Util/Notification/FCMTokenGetter');
 const sendNotification = require('../Util/Notification/NotificationSender');
 // Receive notifications reminding me of upcoming events that I booked/ paid for via email and push notification
 // TODO: Not tested yet
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
     try {
         console.log('Checking for reminders for upcoming Booked events 5 days ahead');
 
