@@ -161,7 +161,7 @@ exports.bookHotel = async (req, res) => {
                     guests: guests?.adults,
                     price: offer.price.total,
                     createdBy: req.user._id,
-                    status: 'Completed',
+                    status: 'Pending',
                 });
 
                 return res.status(200).json({message: "Successfully booked!"});

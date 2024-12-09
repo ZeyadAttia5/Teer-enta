@@ -410,7 +410,7 @@ exports.bookActivity = async (req, res) => {
             activity: id,
             createdBy: userId,
             // status: paymentMethod === 'cash_on_delivery' ? 'Pending' : 'Completed',
-            status: "Pending",
+            status: 'Pending',
             date: activity.date ,
             price : totalPrice
         });
