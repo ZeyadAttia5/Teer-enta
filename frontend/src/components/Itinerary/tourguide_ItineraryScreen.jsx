@@ -524,7 +524,8 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                 isBookingOpen: true,
                 locations: [{ name: '' }],
                 activities: [{ activity: undefined, duration: undefined }],
-                timeline: [{ activity: undefined, startTime: undefined, duration: undefined }]
+                timeline: [{ activity: undefined, startTime: undefined, duration: undefined }],
+                availableDates: [[]] // Add this line to show one empty date field initially
               }}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -726,7 +727,19 @@ const TourguideItineraryScreen = ({ setFlag }) => {
               {/* Available Dates Section */}
               <div className="md:col-span-2">
                 <Divider orientation="left">Available Dates</Divider>
-                <Form.List name="availableDates" rules={[{required : true}]}>
+                <Form.List
+                    name="availableDates"
+                    rules={[
+                      {
+                        required: true,
+                        validator: async (_, value) => {
+                          if (!value || value.length < 1) {
+                            throw new Error('At least one available date is required');
+                          }
+                        },
+                      }
+                    ]}
+                >
                   {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restField }) => (
@@ -743,7 +756,13 @@ const TourguideItineraryScreen = ({ setFlag }) => {
                                     className="w-full"
                                 />
                               </Form.Item>
-                              <Button type="text" onClick={() => remove(name)} icon={<DeleteOutlined />} />
+                              {fields.length > 1 && (
+                                  <Button
+                                      type="text"
+                                      onClick={() => remove(name)}
+                                      icon={<DeleteOutlined />}
+                                  />
+                              )}
                             </div>
                         ))}
                         <Button
