@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import bookFlightPic from "../../assets/Motivational Plane Travel Instagram Story.png";
+import bookFlightPic from "../../assets/plane.jpeg";
 import {
   Card,
   Form,

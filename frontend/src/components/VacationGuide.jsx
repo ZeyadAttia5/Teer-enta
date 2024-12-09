@@ -113,7 +113,7 @@ export default function VacationGuide() {
           />
           
           {/* Modal */}
-          <div className="relative bg-white rounded-xl shadow-2xl w-[600px] overflow-hidden">
+          <div className="relative bg-white rounded-xl shadow-2xl w-[600px] mt-28 overflow-hidden">
             <div className="px-8 pt-6">
               <h2 className="text-2xl font-bold text-first mb-2">{steps[currentStep].title}</h2>
               <p className="text-gray-600 mb-4">{steps[currentStep].description}</p>

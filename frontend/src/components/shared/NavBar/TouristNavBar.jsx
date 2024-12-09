@@ -9,7 +9,7 @@ import { Drawer, Badge } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
-import logo from "../../../assets/logo/logo2.jpg";
+import logo from "../../../assets/logo/logo2.png";
 import NotificationIcon from "./notificationIcon";
 import { getCart } from "../../../api/cart.ts";
 import { getCurrency } from "../../../api/account.ts";
@@ -107,7 +107,7 @@ const TouristNavBar = ({ setModalOpen, isNavigate, setIsNavigate, setVisibleFlag
                   src={logo}
                   alt="Logo"
                   width={80}
-                  className="rounded-full shadow-lg hover:rotate-6 transition-all duration-500"
+                  className="rounded-full  hover:rotate-6 transition-all duration-500"
                 />
               </Link>
             </div>
