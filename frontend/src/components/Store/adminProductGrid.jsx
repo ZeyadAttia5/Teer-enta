@@ -353,11 +353,11 @@ const AdminProductGrid = ({ setFlag }) => {
       />
       <div className="container mx-auto px-4">
         {/* Top Action Bar */}
-        <div className="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <Title level={2} className="mb-0 text-gray-800">
-            {showArchived ? "Archived Products" : "Product Catalog"}
-          </Title>
-        </div>
+        {/*<div className="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">*/}
+        {/*  <Title level={2} className="mb-0 text-gray-800">*/}
+        {/*    {showArchived ? "Archived Products" : "Product Catalog"}*/}
+        {/*  </Title>*/}
+        {/*</div>*/}
 
         {/* Search and Filter Section */}
         <div className="flex justify-center mb-8">

@@ -1,7 +1,7 @@
 # 🌍 Teer Enta - Your Personal Travel Companion
 
 <div align="center">
-  <img src="./frontend/src/assets/logo/logo2.png" alt="Teer enta Logo" width="350px" />
+  <img src="frontend/src/assets/logo/logo2.jpg" alt="Teer enta Logo" width="350px" />
 </div>
 
 ---
@@ -675,7 +675,7 @@ npm start
 | POST    | `/auth/resetPassword`                    | Reset the password using a recovery token.     |
 
 
-### 🔐 Account
+### 👥 Account
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/account/accepted`                          | Get all accepted users (requires authentication).         |
@@ -702,7 +702,7 @@ npm start
 | DELETE  | `/account/rejectDeleteRequest/:id`           | Reject a user's account deletion request by ID (requires authentication). |
 
 
-### 🔐 Profile
+### 👤 Profile
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/Profile/:id`                               | Get a user's profile by ID (requires authentication).     |
@@ -716,7 +716,7 @@ npm start
 | PUT     | `/Profile/update/picture/:id`                | Update the user's profile picture by ID (requires authentication). |
 
 
-### 🔐 Activities
+### 🏃‍♂️ Activities
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/activity/`                                 | Get all activities.                                      |
@@ -746,7 +746,7 @@ npm start
 
 
 
-### 🔐 Itineraries
+### 🗺️ Itineraries
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/itinerary/`                                  | Get all itineraries.                                      |
@@ -774,7 +774,7 @@ npm start
 | PATCH   | `/itinerary/cancel/book/:id`                    | Cancel a booking for an itinerary by ID (requires authentication). |
 | DELETE  | `/itinerary/delete/:id`                         | Delete an itinerary by ID (requires authentication).      |
 
-### 🔐 Historical Places
+### 🏰 Historical Places
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/historicalPlace/`                        | Get all historical places.                                  |
@@ -785,7 +785,7 @@ npm start
 | PUT     | `/historicalPlace/update/:id`              | Update a historical place by ID (requires authentication).   |
 | DELETE  | `/historicalPlace/delete/:id`              | Delete a historical place by ID (requires authentication).   |
 
-### 🔐 Activity Categories
+### 🗂️ Activity Categories
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/activityCategory/`                       | Get all activity categories.                              |
@@ -793,7 +793,7 @@ npm start
 | PUT     | `/activityCategory/update/:id`             | Update an activity category by ID (requires authentication). |
 | DELETE  | `/activityCategory/delete/:id`             | Delete an activity category by ID (requires authentication). |
 
-### 🔐 Tags
+### 🏷️ Tags
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/tag/`                           | Get all tags.                                         |
@@ -801,7 +801,7 @@ npm start
 | PUT     | `/tag/update/:id`                  | Update a tag by ID (requires authentication).        |
 | DELETE  | `/tag/delete/:id`                  | Delete a tag by ID (requires authentication).        |
 
-### 🔐 Preference Tags
+### 🏷️ Preference Tags
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/preferenceTag/`                      | Get all preference tags.                                      |
@@ -809,7 +809,7 @@ npm start
 | PUT     | `/preferenceTag/update/:id`            | Update a preference tag by ID (requires authentication).       |
 | DELETE  | `/preferenceTag/delete/:id`            | Delete a preference tag by ID (requires authentication).       |
 
-### 🔐 Product
+### 📦 Product
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/product/`                            | Get all products.                                           |
@@ -825,7 +825,7 @@ npm start
 | PATCH   | `/product/archive/:id`                  | Archive a product by ID (requires authentication).          |
 | PATCH   | `/product/unArchive/:id`                | Unarchive a product by ID (requires authentication).        |
 
-### 🔐 Cart
+### 🛍️ Cart
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/cart/wishlist`                        | Get the wishlist of the authenticated user.                  |
@@ -837,7 +837,7 @@ npm start
 | DELETE  | `/cart/delete/wishlist/product/:id`     | Delete a product from the wishlist (requires authentication).|
 | DELETE  | `/cart/delete/cart/product/:id`         | Delete a product from the cart (requires authentication).    |
 
-### 🔐 Order
+### 🛒 Order
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/order/`                             | Get all orders for the authenticated user.                      |
@@ -848,7 +848,7 @@ npm start
 | POST    | `/order/checkOut`                     | Check out the order (requires authentication).                   |
 | PATCH   | `/order/cancel/:id`                   | Cancel a specific order by ID (requires authentication).         |
 
-### 🔐 Tour Guide
+### 👨‍💼 Tour Guide
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/tourGuide/:id/ratings`              | Get ratings for a specific tour guide by ID.                    |
@@ -856,7 +856,7 @@ npm start
 | POST    | `/tourGuide/:id/rate`                 | Rate a specific tour guide by ID (requires authentication).     |
 | POST    | `/tourGuide/:id/comment`              | Comment on a specific tour guide by ID (requires authentication).|
 
-### 🔐 Transportation
+### 🚗 Transportation
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/transportation/`                        | Get all available transportations.                           |
@@ -873,19 +873,19 @@ npm start
 | GET     | `/flights/booked`                         | Get all booked flights for the authenticated user.           |
 | POST    | `/flights/bookFlight`                     | Book a flight (requires authentication).                    |
 
-### 🔐 Hotels
+### 🏨 Hotels
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/hotels/getHotelOffers`                  | Get available hotel offers.                                |
 | POST    | `/hotels/bookHotel`                       | Book a hotel (requires authentication).                   |
 | GET     | `/hotels/booked`                          | Get all booked hotels for the authenticated user.          |
 
-### 🔐 Payment
+### 💳 Payment
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | POST   | `/payment/create-payment-intent`        | Create a payment intent (requires authentication).         |
 
-### 🔐 Complaint
+### 📜 Complaint
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/complaint/`                            | Get all complaints (requires authentication).             |
@@ -894,13 +894,13 @@ npm start
 | POST    | `/complaint/create`                      | Create a new complaint (requires authentication).         |
 | PUT     | `/complaint/update/:id`                  | Update a complaint by ID (requires authentication).       |
 
-### 🔐 Upload
+### 📂 Upload
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | POST   | `/upload/file`                          | Upload a single file (requires authentication).           |
 | POST   | `/upload/files`                         | Upload multiple files (requires authentication).         |
 
-### 🔐 Currency
+### 💰 Currency
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/currency/`                             | Get all currencies.                                        |
@@ -909,7 +909,7 @@ npm start
 | POST    | `/currency/addMultiple`                  | Add multiple currencies.                                  |
 | DELETE  | `/currency/`                              | Delete all currencies.                                     |
 
-### 🔐 Promocode
+### 🎟️ Promocode
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/promoCode/`                           | Get all promo codes. (requires authentication)              |
@@ -917,7 +917,7 @@ npm start
 | POST    | `/promoCode/create`                     | Create a new promo code. (requires authentication)          |
 | POST    | `/promoCode/apply`                      | Apply a promo code. (requires authentication)               |
 
-### 🔐 Statistics
+### 📊 Statistics
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/statistics/totalUsers`                 | Get the total number of users. (requires authentication)   |
@@ -928,7 +928,7 @@ npm start
 | GET     | `/statistics/report/transportation`      | Get the transportation report. (requires authentication)    |
 | GET     | `/statistics/report/order`               | Get the product report. (requires authentication)           |
 
-### 🔐 Notification
+### 🔔 Notification
 | Method | Endpoint              | Description               |
 |--------|-----------------------|---------------------------|
 | GET     | `/notification/my`                        | Get all notifications for the authenticated user. (requires authentication) |
