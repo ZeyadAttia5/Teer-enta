@@ -543,75 +543,244 @@ function App() {
 ```
 
 ---
+# 🌍 Welcome to Our Tourism Platform!
 
-## ⭐ Features
+Your ultimate tourism and e-commerce platform connecting tourists with guides, activities, and local treasures!
 
-### 🎯 Personalized Planning
-- Smart preference matching
-- Custom itinerary builder
-- Budget optimization tools
+## 👤 User Account Features
 
-### 🎫 Seamless Bookings
-- One-click reservations
-- Integrated payment system
-- Instant confirmations
+### Authentication & Security
+- 🔐 Login with username and password
+- 🔄 Password change functionality
+- 📧 Password recovery via email OTP
+- 🗑️ Account deletion options
 
-### 💰 Smart Budgeting
-- Real-time expense tracking
-- Cost predictions
-- Budget alerts
+### Registration Options
+#### 🎒 Tourist Registration:
+- Email, username, password
+- Mobile number
+- Nationality
+- Date of birth
+- Job/student status
 
-### 🗺️ Local Discovery
-- Hidden gems finder
-- Cultural experiences
-- Local events calendar
+#### 🧭 Service Provider Registration (Tour Guides/Advertisers/Sellers):
+- Basic info: Username, email, password
+- 📄 Document upload for verification
+- ✅ Terms and conditions acceptance
+- 👥 Profile customization options:
+  - Tour Guides: Experience, previous work, mobile
+  - Advertisers: Website link, hotline, company profile
+  - Sellers: Business name and description
 
-### ⏰ Real-Time Updates
-- Booking notifications
-- Schedule changes
+## 👨‍💼 Administrative Features
 
-### ✈️ Comprehensive Travel Planning
-- Explore historical places
-- Plan customized itineraries for well-organized trips
+### 🎫 User Management
+- 👑 Add Tourism Governors
+- 👤 Add new administrators
+- ✅ Review and verify provider documents
+- ✍️ Accept/reject service providers
+- 📊 View user statistics and growth
 
-### 🏨 Seamless Booking Experience
-- Book transportation, hotels, and flights
-- Full control over destination, time, and airport selection on the same platform
-- Effortless hotel configuration and booking
+### 📝 Content Management
+- 🏷️ Create/manage activity categories
+- 🎯 Create/manage preference tags
+- 🚩 Flag inappropriate content
+- 💼 Handle complaints and reports
 
-### 🛍️ Integrated Souvenir Shopping
-- Buy souvenirs from partnered sellers directly on the website
-- Secure payments powered by Stripe
+## 🎯 Activity & Tour Management
 
-### 💳 Financial Transparency
-- Check your wallet or card balance anytime
+### 🎨 Activity Features
+- 📅 Create/edit activities with:
+  - Date and time
+  - Location (Google Maps integration)
+  - Price/price range
+  - Category and tags
+  - Special discounts
+  - Booking availability
 
-### 🛒 For Sellers
-- Effortless product management
-- Edit and update listings easily
+### 🗺️ Itinerary Management
+- ✏️ Create/edit itineraries including:
+  - Activities list
+  - Location details
+  - Timeline
+  - Activity durations
+  - Tour language
+  - Pricing
+  - Available dates/times
+  - Accessibility options
+  - Pick-up/drop-off points
 
-### 👨‍💼 For Tour Guides
-- Directly contact customers
-- View associated itineraries for better coordination
----
+### 🏛️ Historical Places & Museums
+- 📝 Create/edit location details
+- 🖼️ Add pictures
+- 📍 Set location
+- ⏰ Specify opening hours
+- 💰 List ticket prices
+- 🏷️ Add historical period tags
+
+## 💼 Business Tools
+
+### 📊 Reporting
+- 💰 View sales reports by:
+  - Activities
+  - Itineraries
+  - Gift shop sales
+  - Date/month filters
+- 👥 Tourist engagement metrics
+- 📈 Revenue analytics
+
+### 📧 Notifications
+- 🚩 Inappropriate content flags
+- 📬 Email notifications
+- 📱 System notifications
+
+## 🎒 Tourist Features
+
+### 🗺️ Trip Planning
+- 📝 Step-by-step vacation guide
+- ✅ Set travel preferences:
+  - Historical areas
+  - Beaches
+  - Family-friendly activities
+  - Shopping
+  - Budget requirements
+- 🔍 Search functionality:
+  - By name
+  - By category
+  - By tags
+
+### 🎫 Booking & Reservations
+- ✈️ Flight booking (3rd party integration)
+- 🏨 Hotel booking (3rd party integration)
+- 🚗 Transportation booking
+- 🎯 Activity/tour booking
+- 💳 Multiple payment options:
+  - Credit/debit cards (Stripe)
+  - Digital wallet
+- ❌ 48-hour cancellation policy
+
+### 💰 Financial Features
+- 👛 Digital wallet management
+- 📧 Payment receipts via email
+- 💰 Refund tracking
+- 🎁 Loyalty points system
+- 🏅 Achievement badges
+- 💱 Multi-currency support
+
+### 📱 User Experience
+- ⭐ Rate and review:
+  - Tour guides
+  - Itineraries
+  - Activities
+  - Products
+- 🔖 Bookmark favorite events
+- 🔔 Booking notifications
+- 📧 Email reminders
+- 📱 Mobile notifications
+
+## 🛍️ Shopping Features
+
+### Product Management
+- 📝 View all products with:
+  - Pictures
+  - Prices
+  - Descriptions
+  - Seller info
+  - Ratings/reviews
+- 🔍 Search and filter options
+- 📊 Stock management
+
+### Shopping Experience
+- 🛒 Shopping cart functionality
+- 💝 Wishlist management
+- 📦 Multiple delivery addresses
+- 💳 Payment options:
+  - Wallet
+  - Credit card (Stripe)
+  - Cash on delivery
+- 📦 Order tracking
+- ❌ Order cancellation
+
+### 🎁 Special Features
+- 🏷️ Promo code creation/usage
+- 🎂 Birthday promotions
+- 📨 Out-of-stock notifications
+- 💰 Wallet balance tracking
+
+## 📝 Support System
+
+### Complaint Management
+- ✏️ File complaints with:
+  - Title
+  - Description
+  - Date
+- 👀 Track complaint status
+- 💬 Receive admin responses
+- 🔍 Filter complaints by status
+- 📅 Sort by date
+
+## 🔒 Security & Privacy
+- 🔐 Secure authentication
+- 🛡️ Protected payments
+- 🔒 Data privacy
+- ✅ Service provider verification
+
+## 🌐 Platform Features
+- 🔄 Real-time updates
+- 📱 Mobile responsiveness
+- 🌍 Multi-language support
+- 📊 Performance analytics
+- 📧 Automated notifications
+- 💱 Currency conversion
+
+Need any help getting started? Contact our support team! 🤝
+
+Join us today and start planning your next amazing adventure! 🌟
 
 ## 📸 Screenshots
-<div align="center">
-  <img src="./screens/homepage.png" alt="Homepage Screenshot" width="700px"/>
-  <p>Teer Enta Homepage</p>
-  <img src="./screens/historical.png" alt="Historical Places Screenshot" width="700px"/>
-  <p>Historical Places</p>
-  <img src="./screens/flights.png" alt="Flights Screenshot" width="700px"/>
-  <p>Flights</p>
-  <img src="./screens/hotels.png" alt="Hotels Places Screenshot" width="700px"/>
-  <p>Hotels</p>
-  <img src="./screens/promo.png" alt="Promo Table Screenshot" width="700px"/>
-  <p>Promo Table</p>
-  <img src="./screens/complaint.png" alt="Complaint Table Screenshot" width="700px"/>
-  <p>Complaint Table</p>
-  <img src="./screens/activity.png" alt="Activity Table Screenshot" width="700px"/>
-  <p>Activity Table</p>
-</div>
+
+<table>
+<tr>
+    <td align="center" width="33%">
+        <img src="./screens/homepage.png" alt="Homepage Screenshot" width="100%"/>
+        <p><b>🏠 Homepage</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/historical.png" alt="Historical Places Screenshot" width="100%"/>
+        <p><b>🏛️ Historical Places</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/flights.png" alt="Flights Screenshot" width="100%"/>
+        <p><b>✈️ Flights</b></p>
+    </td>
+</tr>
+<tr>
+    <td align="center" width="33%">
+        <img src="./screens/hotels.png" alt="Hotels Places Screenshot" width="100%"/>
+        <p><b>🏨 Hotels</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/promo.png" alt="Promo Table Screenshot" width="100%"/>
+        <p><b>🎫 Promo Table</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/complaint.png" alt="Complaint Table Screenshot" width="100%"/>
+        <p><b>📝 Complaint Table</b></p>
+    </td>
+</tr>
+<tr>
+    <td align="center" width="33%">
+        <img src="./screens/activity.png" alt="Activity Table Screenshot" width="100%"/>
+        <p><b>🎯 Activity Table</b></p>
+    </td>
+    <td align="center" width="33%">
+        <!-- Empty cell for future screenshot -->
+    </td>
+    <td align="center" width="33%">
+        <!-- Empty cell for future screenshot -->
+    </td>
+</tr>
+</table>
 
 ## 🚀 Quick Start
 
