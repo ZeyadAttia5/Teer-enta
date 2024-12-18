@@ -771,7 +771,7 @@ Join us today and start planning your next amazing adventure! 🌟
 </tr>
 <tr>
     <td align="center" width="33%">
-        <img src="./screens/itenaryDetails.png" alt="Itinerary Details" width="100%"/>
+        <img src="./screens/iternaryDetails.png" alt="Itinerary Details" width="100%"/>
         <p><b>📋 Itinerary Details</b></p>
     </td>
     <td align="center" width="33%">
@@ -816,16 +816,6 @@ Join us today and start planning your next amazing adventure! 🌟
         <img src="./screens/promoCodes.png" alt="Promo Codes" width="100%"/>
         <p><b>🎟️ Promo Codes</b></p>
     </td>
-    <td align="center" width="33%">
-        <img src="./screens/complaint.png" alt="Complaints" width="100%"/>
-        <p><b>📝 Complaints</b></p>
-    </td>
-    <td align="center" width="33%">
-        <img src="./screens/complaintsManagement.png" alt="Complaints Management" width="100%"/>
-        <p><b>✍️ Complaints Management</b></p>
-    </td>
-</tr>
-<tr>
     <td align="center" width="33%">
         <img src="./screens/AdminReports.png" alt="Admin Reports" width="100%"/>
         <p><b>📊 Admin Reports</b></p>
