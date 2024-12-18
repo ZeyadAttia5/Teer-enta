@@ -737,47 +737,102 @@ Need any help getting started? Contact our support team! 🤝
 
 Join us today and start planning your next amazing adventure! 🌟
 
+
 ## 📸 Screenshots
 
 <table>
 <tr>
     <td align="center" width="33%">
-        <img src="./screens/homepage.png" alt="Homepage Screenshot" width="100%"/>
+        <img src="./screens/homepage.png" alt="Homepage" width="100%"/>
         <p><b>🏠 Homepage</b></p>
     </td>
     <td align="center" width="33%">
-        <img src="./screens/historical.png" alt="Historical Places Screenshot" width="100%"/>
+        <img src="./screens/historical.png" alt="Historical Places" width="100%"/>
         <p><b>🏛️ Historical Places</b></p>
     </td>
     <td align="center" width="33%">
-        <img src="./screens/flights.png" alt="Flights Screenshot" width="100%"/>
-        <p><b>✈️ Flights</b></p>
+        <img src="./screens/flights.png" alt="Flights" width="100%"/>
+        <p><b>✈️ Flight Booking</b></p>
     </td>
 </tr>
 <tr>
     <td align="center" width="33%">
-        <img src="./screens/hotels.png" alt="Hotels Places Screenshot" width="100%"/>
-        <p><b>🏨 Hotels</b></p>
+        <img src="./screens/hotels.png" alt="Hotels" width="100%"/>
+        <p><b>🏨 Hotel Booking</b></p>
     </td>
     <td align="center" width="33%">
-        <img src="./screens/promo.png" alt="Promo Table Screenshot" width="100%"/>
-        <p><b>🎫 Promo Table</b></p>
+        <img src="./screens/transportation.png" alt="Transportation" width="100%"/>
+        <p><b>🚌 Transportation</b></p>
     </td>
     <td align="center" width="33%">
-        <img src="./screens/complaint.png" alt="Complaint Table Screenshot" width="100%"/>
-        <p><b>📝 Complaint Table</b></p>
+        <img src="./screens/itineraries.png" alt="Itineraries" width="100%"/>
+        <p><b>🗺️ Itineraries</b></p>
     </td>
 </tr>
 <tr>
     <td align="center" width="33%">
-        <img src="./screens/activity.png" alt="Activity Table Screenshot" width="100%"/>
-        <p><b>🎯 Activity Table</b></p>
+        <img src="./screens/itenaryDetails.png" alt="Itinerary Details" width="100%"/>
+        <p><b>📋 Itinerary Details</b></p>
     </td>
     <td align="center" width="33%">
-        <!-- Empty cell for future screenshot -->
+        <img src="./screens/activity.png" alt="Activities" width="100%"/>
+        <p><b>🎯 Activities</b></p>
     </td>
     <td align="center" width="33%">
-        <!-- Empty cell for future screenshot -->
+        <img src="./screens/bookings.png" alt="Bookings" width="100%"/>
+        <p><b>🎫 Bookings</b></p>
+    </td>
+</tr>
+<tr>
+    <td align="center" width="33%">
+        <img src="./screens/productsList.png" alt="Products List" width="100%"/>
+        <p><b>🛍️ Products List</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/productDetails.png" alt="Product Details" width="100%"/>
+        <p><b>📦 Product Details</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/cart.png" alt="Shopping Cart" width="100%"/>
+        <p><b>🛒 Shopping Cart</b></p>
+    </td>
+</tr>
+<tr>
+    <td align="center" width="33%">
+        <img src="./screens/cartCheckout.png" alt="Cart Checkout" width="100%"/>
+        <p><b>💳 Checkout</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/orderHistory.png" alt="Order History" width="100%"/>
+        <p><b>📜 Order History</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/promo.png" alt="Promotions" width="100%"/>
+        <p><b>🏷️ Promotions</b></p>
+    </td>
+</tr>
+<tr>
+    <td align="center" width="33%">
+        <img src="./screens/promoCodes.png" alt="Promo Codes" width="100%"/>
+        <p><b>🎟️ Promo Codes</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/complaint.png" alt="Complaints" width="100%"/>
+        <p><b>📝 Complaints</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/complaintsManagement.png" alt="Complaints Management" width="100%"/>
+        <p><b>✍️ Complaints Management</b></p>
+    </td>
+</tr>
+<tr>
+    <td align="center" width="33%">
+        <img src="./screens/AdminReports.png" alt="Admin Reports" width="100%"/>
+        <p><b>📊 Admin Reports</b></p>
+    </td>
+    <td align="center" width="33%">
+        <img src="./screens/UsersList.png" alt="Users List" width="100%"/>
+        <p><b>👥 Users Management</b></p>
     </td>
 </tr>
 </table>
