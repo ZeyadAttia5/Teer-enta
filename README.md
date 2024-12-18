@@ -1270,3 +1270,141 @@ This project uses multiple dependencies, each under its respective license. Belo
 - If you'd like to view the full details of each license, you can use tools like `license-checker` or check the individual dependencies in the `node_modules` directory.
 - Some dependencies may have multiple or combined licenses (e.g., `(MIT OR CC0-1.0)`).
 
+# How to Use the Website
+
+This section provides an overview of how different users can navigate and use the web application.
+
+---
+
+## Seller
+- **From Home**:  
+  - View the dashboard.  
+  - Navigate to Notifications, Profile, or Products.  
+- **From Profile Page**:  
+  - Change password.  
+  - Edit profile.  
+  - Request account deletion.  
+  - Change profile photo.  
+- **From Products**:  
+  - View all products.  
+  - Add a product.  
+  - Search and filter products.  
+  - See remaining item quantities and revenue.  
+
+---
+
+## Tour Guide
+- **From Home**:  
+  - View the dashboard.  
+  - Navigate to Notifications, Profile, or Itineraries.  
+- **From Profile Page**:  
+  - Change password.  
+  - Edit profile.  
+  - Request account deletion.  
+  - Change profile photo.  
+  - Add previous works.  
+- **From Itineraries**:  
+  - View all itineraries.  
+  - Add an itinerary.  
+  - Edit my itineraries.  
+
+---
+
+## Advertiser
+- **From Home**:  
+  - View the dashboard.  
+  - Navigate to Notifications, Profile, Activities, or Create Transportation.  
+- **From Profile Page**:  
+  - Change password.  
+  - Edit profile.  
+  - Request account deletion.  
+  - Change profile photo.  
+- **From Activities**:  
+  - View all activities.  
+  - Add an activity.  
+  - Edit my activities.  
+- **From Create Transportation**:  
+  - Create a transportation entry.  
+
+---
+
+## Tourist
+- **From Home**:  
+  - View historical places.  
+  - See suggested activities and itineraries.  
+  - Navigate to Notifications, Profile, Cart, Bookings, Transportations, Hotels, Flights, Products, Complaints.  
+- **From Profile Page**:  
+  - Change password.  
+  - Edit profile.  
+  - Request account deletion.  
+  - See my balance.  
+- **From Itineraries**:  
+  - View all itineraries.  
+  - Book an itinerary.  
+- **From Historical Places**:  
+  - View all historical places.  
+- **From Activities**:  
+  - View all activities.  
+  - Book activities.  
+- **From Products**:  
+  - View all products.  
+  - Buy products.  
+- **From Book Transportation**:  
+  - View all transportations.  
+  - Book transportation.  
+- **From Book Hotel**:  
+  - View all hotels.  
+  - Book a hotel.  
+- **From Book Flight**:  
+  - View all flights.  
+  - Book a flight.  
+- **From Complaints**:  
+  - View my complaints.  
+  - Create a complaint.  
+
+---
+
+## Tourism Governor
+- **From Home**:  
+  - View the dashboard.  
+  - Navigate to Change Password, Historical Places, or Tags.  
+- **From Tags**:  
+  - View all tags.  
+  - Create tags.  
+- **From Historical Places**:  
+  - View all historical places.  
+  - Create historical places.  
+
+---
+
+## Admin
+- **From Home**:  
+  - View the dashboard.  
+  - Navigate to Change Password, Historical Places, Tags, Itineraries, Activities, Products, Users, Complaints, and Promo Codes.  
+- **From Tags**:  
+  - View all tags.  
+- **From Preference Tags**:  
+  - View all preference tags.  
+  - Create preference tags.  
+- **From Historical Places**:  
+  - View all historical places.  
+- **From Itineraries**:  
+  - View all itineraries.  
+  - Flag itineraries.  
+- **From Activities**:  
+  - View all activities.  
+  - Flag activities.  
+- **From Products**:  
+  - View all products.  
+  - Add a product.  
+- **From Users**:  
+  - View all users.  
+  - View pending users.  
+  - Add a user.  
+  - Decide on account deletion.  
+- **From Complaints**:  
+  - Reply to complaints.  
+  - View complaints.  
+- **From Promo Codes**:  
+  - View all promo codes.  
+  - Create promo codes.  
