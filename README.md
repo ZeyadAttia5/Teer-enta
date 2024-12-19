@@ -62,8 +62,6 @@ This section outlines the coding standards and best practices followed in the de
 - **JSX Formatting**: 
   -  Proper indentation is maintained in JSX.
   -  Self-closing tags are used when applicable.
-- **State Management**: 
-  -  Redux/React Context (if applicable) is used for state management, following the principles of unidirectional data flow.
 - **Styling**: 
   -  Styling is handled via Tailwind-Css for modular and maintainable styles.
 - **Prop Types / TypeScript**: 
@@ -85,7 +83,6 @@ This section outlines the coding standards and best practices followed in the de
 
 ### Frontend
 - ⚛️ **React.js**
-- 🔄 **Redux**
 - 🎨 **Ant-Design** / **Tailwind CSS**
 - 🧭 **React Router**
 
@@ -97,7 +94,6 @@ This section outlines the coding standards and best practices followed in the de
 
 ### Tools & Deployment
 - 📊 **Git** & **GitHub**
-- 🚀 Deployment on [Your Platform]
 - 🔐 **JWT Authentication**
 - 📡**Cloudinary**
 - **Firebase** 
