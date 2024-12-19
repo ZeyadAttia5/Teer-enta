@@ -836,11 +836,6 @@ Join us today and start planning your next amazing adventure! 🌟
 ```bash
 git clone https://github.com/MahmoudHH1/Teer-enta.git
 ```
-# Teer Enta - Your Personal Travel Companion
-
----
-
-## 🚀 Quick Start
 
 ### Install Backend Dependencies
 ```bash
@@ -870,6 +865,237 @@ npm run dev
 ```bash
 npm start
 ```
+
+
+# 📚 How to use
+
+## 🧳 For Travelers
+Your gateway to unforgettable experiences!
+
+### Getting Started
+Create your adventure-ready account in minutes:
+```
+1. Click "Sign Up" on the homepage
+2. Choose "Tourist" account type
+3. Fill in your details:
+   - Email address
+   - Username
+   - Password
+   - Mobile number
+   - Nationality
+   - Date of birth
+4. Upload a profile photo (optional)
+5. Start exploring!
+```
+
+### Planning Your Perfect Trip
+Let us help you create memories that last a lifetime:
+
+#### 1. Discover Your Interests 🎯
+```
+Home > Preferences
+- Select your interests:
+  ⭐ Historical sites
+  🏖️ Beaches
+  👨‍👩‍👧‍👦 Family activities
+  🛍️ Shopping experiences
+  💰 Budget-friendly options
+```
+
+#### 2. Find Amazing Activities 🎉
+```
+Home > Activities
+- Browse upcoming events
+- Filter by:
+  - Date
+  - Price range
+  - Category
+  - Language
+  - Ratings
+- Sort by price or popularity
+- Save favorites for later
+```
+
+#### 3. Book Your Experience 🎫
+```
+- Select your chosen activity
+- Pick available date/time
+- Add to cart
+- Choose payment method:
+  💳 Credit card
+  💰 Wallet balance
+  🎁 Promo code
+```
+
+### Loyalty Rewards 🌟
+```
+Earn while you explore:
+- Get points for every booking
+- Unlock special badges
+- Receive birthday promotions
+- Convert points to wallet cash
+```
+
+## 🎯 For Tour Guides
+Create and manage unforgettable experiences!
+
+### First Steps
+```
+1. Register as Tour Guide
+2. Upload verification documents
+3. Complete your profile:
+   - Experience details
+   - Previous work
+   - Languages spoken
+   - Profile photo
+4. Wait for admin approval
+5. Accept terms & conditions
+```
+
+### Creating Magic ✨
+```
+Itineraries > Create New
+1. Design your tour:
+   - Set timeline
+   - Add activities
+   - Mark locations
+   - Set languages
+   - Define pricing
+2. Add special features:
+   - Accessibility options
+   - Pick-up points
+   - Group sizes
+   - Special requirements
+```
+
+### Track Success 📊
+```
+Dashboard
+- View bookings
+- Check ratings
+- Read reviews
+- Monitor revenue
+- Generate reports
+```
+
+## 🛍️ For Sellers
+Your marketplace for tourism merchandise!
+
+### Store Setup
+```
+1. Complete registration
+2. Upload verification
+3. Create store profile:
+   - Business name
+   - Description
+   - Contact details
+4. Start adding products
+```
+
+### Product Management 📦
+```
+Products > Add New
+1. Enter details:
+   - Name
+   - Description
+   - Price
+   - Quantity
+2. Upload photos
+3. Set categories
+4. Monitor inventory
+```
+
+### Business Analytics 📈
+```
+Dashboard > Reports
+- Track sales
+- View revenue
+- Monitor ratings
+- Check stock levels
+```
+
+## 📢 For Advertisers
+Promote your tourism services!
+
+### Getting Started
+```
+1. Register business
+2. Submit verification
+3. Create company profile:
+   - Website
+   - Hotline
+   - Description
+4. Begin creating activities
+```
+
+### Activity Creation 🎪
+```
+Activities > New Activity
+1. Basic details:
+   - Name
+   - Date/Time
+   - Location
+   - Price
+2. Additional info:
+   - Categories
+   - Tags
+   - Special offers
+```
+
+## 🏛️ For Tourism Governors
+Manage historical and cultural heritage!
+
+### Core Functions
+```
+1. Historical Places:
+   - Add new locations
+   - Update information
+   - Manage photos
+   - Set visiting hours
+   
+2. Tags & Categories:
+   - Create historical tags
+   - Set categories
+   - Update descriptions
+```
+
+## ⚙️ For Administrators
+System management and oversight!
+
+### Daily Operations
+```
+1. User Management:
+   - Review applications
+   - Handle verifications
+   - Manage accounts
+   
+2. Content Control:
+   - Monitor activities
+   - Review flags
+   - Handle complaints
+   
+3. System Tasks:
+   - Create promos
+   - Generate reports
+   - Update categories
+```
+
+---
+
+### 🌟 Pro Tips
+- Enable notifications to never miss updates
+- Book 48 hours in advance for free cancellation
+- Check for seasonal promotions
+- Use filters for better search results
+- Save favorites for quick access
+
+---
+
+## 🔐 Security Tips
+- Keep your password strong
+- Enable two-factor authentication
+- Monitor your account activity
+- Report suspicious behavior
 
 ## 📚 API Documentation
 
@@ -1266,141 +1492,4 @@ This project uses multiple dependencies, each under its respective license. Belo
 - If you'd like to view the full details of each license, you can use tools like `license-checker` or check the individual dependencies in the `node_modules` directory.
 - Some dependencies may have multiple or combined licenses (e.g., `(MIT OR CC0-1.0)`).
 
-# How to Use the Website
 
-This section provides an overview of how different users can navigate and use the web application.
-
----
-
-## Seller
-- **From Home**:  
-  - View the dashboard.  
-  - Navigate to Notifications, Profile, or Products.  
-- **From Profile Page**:  
-  - Change password.  
-  - Edit profile.  
-  - Request account deletion.  
-  - Change profile photo.  
-- **From Products**:  
-  - View all products.  
-  - Add a product.  
-  - Search and filter products.  
-  - See remaining item quantities and revenue.  
-
----
-
-## Tour Guide
-- **From Home**:  
-  - View the dashboard.  
-  - Navigate to Notifications, Profile, or Itineraries.  
-- **From Profile Page**:  
-  - Change password.  
-  - Edit profile.  
-  - Request account deletion.  
-  - Change profile photo.  
-  - Add previous works.  
-- **From Itineraries**:  
-  - View all itineraries.  
-  - Add an itinerary.  
-  - Edit my itineraries.  
-
----
-
-## Advertiser
-- **From Home**:  
-  - View the dashboard.  
-  - Navigate to Notifications, Profile, Activities, or Create Transportation.  
-- **From Profile Page**:  
-  - Change password.  
-  - Edit profile.  
-  - Request account deletion.  
-  - Change profile photo.  
-- **From Activities**:  
-  - View all activities.  
-  - Add an activity.  
-  - Edit my activities.  
-- **From Create Transportation**:  
-  - Create a transportation entry.  
-
----
-
-## Tourist
-- **From Home**:  
-  - View historical places.  
-  - See suggested activities and itineraries.  
-  - Navigate to Notifications, Profile, Cart, Bookings, Transportations, Hotels, Flights, Products, Complaints.  
-- **From Profile Page**:  
-  - Change password.  
-  - Edit profile.  
-  - Request account deletion.  
-  - See my balance.  
-- **From Itineraries**:  
-  - View all itineraries.  
-  - Book an itinerary.  
-- **From Historical Places**:  
-  - View all historical places.  
-- **From Activities**:  
-  - View all activities.  
-  - Book activities.  
-- **From Products**:  
-  - View all products.  
-  - Buy products.  
-- **From Book Transportation**:  
-  - View all transportations.  
-  - Book transportation.  
-- **From Book Hotel**:  
-  - View all hotels.  
-  - Book a hotel.  
-- **From Book Flight**:  
-  - View all flights.  
-  - Book a flight.  
-- **From Complaints**:  
-  - View my complaints.  
-  - Create a complaint.  
-
----
-
-## Tourism Governor
-- **From Home**:  
-  - View the dashboard.  
-  - Navigate to Change Password, Historical Places, or Tags.  
-- **From Tags**:  
-  - View all tags.  
-  - Create tags.  
-- **From Historical Places**:  
-  - View all historical places.  
-  - Create historical places.  
-
----
-
-## Admin
-- **From Home**:  
-  - View the dashboard.  
-  - Navigate to Change Password, Historical Places, Tags, Itineraries, Activities, Products, Users, Complaints, and Promo Codes.  
-- **From Tags**:  
-  - View all tags.  
-- **From Preference Tags**:  
-  - View all preference tags.  
-  - Create preference tags.  
-- **From Historical Places**:  
-  - View all historical places.  
-- **From Itineraries**:  
-  - View all itineraries.  
-  - Flag itineraries.  
-- **From Activities**:  
-  - View all activities.  
-  - Flag activities.  
-- **From Products**:  
-  - View all products.  
-  - Add a product.  
-- **From Users**:  
-  - View all users.  
-  - View pending users.  
-  - Add a user.  
-  - Decide on account deletion.  
-- **From Complaints**:  
-  - Reply to complaints.  
-  - View complaints.  
-- **From Promo Codes**:  
-  - View all promo codes.  
-  - Create promo codes.  
