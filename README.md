@@ -100,12 +100,6 @@ This section outlines the coding standards and best practices followed in the de
 
 ---
 
-## 📜 Code Examples
-
-In this section, we provide examples of key parts of the codebase to demonstrate the functionality and practices implemented throughout the MERN stack project.
-
-### 1. 🌐 **Express Server Setup (Backend)**
-Here’s an example of how we set up our Express server with basic configurations and routes.
 
 ## 📜 Code Examples
 
