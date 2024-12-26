@@ -1,5 +1,5 @@
 [build]
-command = "npm install && npx prisma generate"
+command = "yarn install"
 functions = "netlify/functions"
 [build.environment]
 NODE_VERSION = "20.15.1"
