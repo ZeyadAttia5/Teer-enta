@@ -37,6 +37,7 @@ require('../../scheduler/DeadLineSchaduler');
 const {initSocket} = require("../../Util/socket");
 const http = require('http');
 require('../../config/firebase-config');
+const serverless = require('serverless-http');
 
 const server = http.createServer(app);
 initSocket(server);
@@ -98,5 +99,4 @@ app.use((req, res) => {
     res.status(404).json({ message: "this page doesnt exist" });
 });
 
-// app.listen(PORT);
-server.listen(PORT);
+module.exports.handler = serverless(app);
