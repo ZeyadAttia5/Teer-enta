@@ -1,4 +1,9 @@
+[build]
+command = "npm install && npx prisma generate"
+functions = "netlify/functions"
+[build.environment]
+NODE_VERSION = "20.15.1"
 [[redirects]]
 from = "/*"
-to = "/index.html"
+to = "/.netlify/functions/app"
 status = 200
