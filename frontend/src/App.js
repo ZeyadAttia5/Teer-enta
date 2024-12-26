@@ -76,7 +76,7 @@ import {
 } from "./services/firebase";
 import PromoCodeStrip from "./components/PromoCodeAdmin/PromoCodeStrip";
 import AccountDeletionRequests from "./components/Users/requestedAccountsDeletion";
-
+import { SpeedInsights } from '@vercel/speed-insights/react'
 function AppContent() {
   const [flag, setFlag] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -177,7 +177,6 @@ function AppContent() {
   const [visibleFlag, setVisibleFlag] = useState(true);
   return (
     <div className="App relative bg-backgroundColor  min-h-screen">
-      
       <NotificationProvider
         incomingNotification={incomingNotification}
         isNotificationIncomming={isNotificationIncoming}
@@ -451,6 +450,7 @@ function AppContent() {
         </div>
         <Toaster />
       </NotificationProvider>
+      <SpeedInsights/>
     </div>
   );
 }
