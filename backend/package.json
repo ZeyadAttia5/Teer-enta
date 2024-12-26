@@ -1,9 +1,9 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "netlify/functions/app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node netlify/functions/app.js",
     "build": "npm install"
   },
   "keywords": [],
