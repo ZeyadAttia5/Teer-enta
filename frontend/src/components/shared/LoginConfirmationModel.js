@@ -10,7 +10,7 @@ const LoginConfirmationModal = ({
                                     okText = 'Login',
                                     cancelText = 'Cancel',
                                     onCancel,
-                                    redirectPath = '/login',
+                                    redirectPath = `${window.location.origin}/login`,
                                     open,
                                     setOpen,
                                     width = 400
