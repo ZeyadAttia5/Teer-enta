@@ -354,6 +354,11 @@ const ItineraryScreen = ({ setFlag }) => {
             open={isLoginModalOpen}
             setOpen={setIsLoginModalOpen}
             content="Please login to Book an iternary."
+            onCancel={() => {
+              setIsLoginModalOpen(false);
+              // Prevent any navigation after modal closes
+              return false;
+            }}
         />
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Search and Filters Section */}

@@ -187,6 +187,11 @@ More details: ${window.location.href}
         open={isLoginModalOpen}
         setOpen={setIsLoginModalOpen}
         content="Please login Book an Activity."
+        onCancel={() => {
+          setIsLoginModalOpen(false);
+          // Prevent any navigation after modal closes
+          return false;
+        }}
       />
       <div className="w-[90%]">
         {/* Hero Section */}

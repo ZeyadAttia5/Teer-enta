@@ -133,6 +133,11 @@ const HotelOfferCard = ({ offer, setOffer, setStep }) => {
           open={isLoginModalOpen}
           setOpen={setIsLoginModalOpen}
           content="Please login to Book a hotel."
+          onCancel={() => {
+            setIsLoginModalOpen(false);
+            // Prevent any navigation after modal closes
+            return false;
+          }}
       />
       <header className="flex items-baseline flex-1 w-full justify-between">
         <div className="flex justify-between gap-2">
@@ -545,6 +550,11 @@ const BookHotel = () => {
           open={isLoginModalOpen}
           setOpen={setIsLoginModalOpen}
           content="Please login to Book a hotel."
+          onCancel={() => {
+            setIsLoginModalOpen(false);
+            // Prevent any navigation after modal closes
+            return false;
+          }}
       />
       <div className="flex justify-center  min-h-[600px] my-20 mx-auto shadow">
         <Card

@@ -586,6 +586,11 @@ const BookFlight = () => {
           open={isLoginModalOpen}
           setOpen={setIsLoginModalOpen}
           content="Please login to Book a flight."
+          onCancel={() => {
+            setIsLoginModalOpen(false);
+            // Prevent any navigation after modal closes
+            return false;
+          }}
         />
         <Card
           className="w-[90%] max-h-[800px] flex my-20 mx-auto shadow"

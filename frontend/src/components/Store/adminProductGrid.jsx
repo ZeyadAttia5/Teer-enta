@@ -350,6 +350,11 @@ const AdminProductGrid = ({ setFlag }) => {
           open={isLoginModalOpen}
           setOpen={setIsLoginModalOpen}
           content="Please login to add this product to your cart."
+          onCancel={() => {
+            setIsLoginModalOpen(false);
+            // Prevent any navigation after modal closes
+            return false;
+          }}
       />
       <div className="container mx-auto px-4">
         {/* Top Action Bar */}

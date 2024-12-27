@@ -8,33 +8,62 @@ import LoginConfirmationModal from "../shared/LoginConfirmationModel";
 const ItineraryCard = ({itinerary, navigate, currency  ,avgRating }) => {
     const user = JSON.parse(localStorage.getItem('user'));
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const handleCardClick = (e) => {
+        // If login modal is open, don't navigate
+        if (!isLoginModalOpen) {
+            navigate(`/itinerary/iternaryDetails/${itinerary._id}`);
+        }
+    };
+
+    const handleBookClick = (e) => {
+        e.stopPropagation(); // Stop the card click event
+        if (user) {
+            navigate(`/itinerary/book/${itinerary._id}`);
+        } else {
+            setIsLoginModalOpen(true);
+            // Prevent the card click navigation
+            e.preventDefault();
+        }
+    };
 
     return (
-        <div className="w-[370px] transition-shadow duration-300 hover:shadow-xl cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200" onClick={() => navigate(`/itinerary/iternaryDetails/${itinerary._id}`)}>
+        <div
+            className="w-[370px] transition-shadow duration-300 hover:shadow-xl cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-200"
+            onClick={handleCardClick}>
             <LoginConfirmationModal
                 open={isLoginModalOpen}
                 setOpen={setIsLoginModalOpen}
                 content="Please login to Book an iternary."
+                onCancel={() => {
+                    setIsLoginModalOpen(false);
+                    // Prevent any navigation after modal closes
+                    return false;
+                }}
             />
             <div className="relative h-[240px]">
-                <img src={itinerary.imageUrl || "/api/placeholder/400/320"} alt={itinerary.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
+                <img src={itinerary.imageUrl || "/api/placeholder/400/320"} alt={itinerary.name}
+                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"/>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 via-transparent to-transparent"/>
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                     <h3 className="text-white text-xl font-bold tracking-wide truncate mb-2">{itinerary.name}</h3>
                     <div className="flex items-center space-x-3">
                         <Rate disabled defaultValue={avgRating || 0} allowHalf className="text-[#FFD700] text-sm"/>
-                        <span className="text-white/90 text-sm">{itinerary.ratings?.length ? `(${itinerary.ratings.length} reviews)` : '(No reviews yet)'}</span>
+                        <span
+                            className="text-white/90 text-sm">{itinerary.ratings?.length ? `(${itinerary.ratings.length} reviews)` : '(No reviews yet)'}</span>
                     </div>
                 </div>
             </div>
 
             <div className="px-6 py-4 border-b border-gray-100">
                 <div className="flex flex-wrap gap-2">
-                    <div className={`px-3 py-1 rounded-md text-sm font-medium inline-flex items-center ${itinerary.isBookingOpen ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${itinerary.isBookingOpen ? 'bg-green-500' : 'bg-red-500'} mr-2`}></span>
+                    <div
+                        className={`px-3 py-1 rounded-md text-sm font-medium inline-flex items-center ${itinerary.isBookingOpen ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>
+                        <span
+                            className={`w-1.5 h-1.5 rounded-full ${itinerary.isBookingOpen ? 'bg-green-500' : 'bg-red-500'} mr-2`}></span>
                         {itinerary.isBookingOpen ? 'Booking Open' : 'Booking Closed'}
                     </div>
-                    <div className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                    <div
+                        className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">
                         <GlobalOutlined className="mr-1"/>{itinerary.language}
                     </div>
                 </div>
@@ -48,23 +77,29 @@ const ItineraryCard = ({itinerary, navigate, currency  ,avgRating }) => {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div><EnvironmentOutlined className="text-[#2A3663] text-base"/></div>
-                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">From</span>
+                                        <span
+                                            className="text-xs font-medium text-gray-500 uppercase tracking-wide">From</span>
                                     </div>
-                                    <span className="text-sm font-semibold text-gray-700 block truncate pl-2">{itinerary.pickupLocation}</span>
+                                    <span
+                                        className="text-sm font-semibold text-gray-700 block truncate pl-2">{itinerary.pickupLocation}</span>
                                 </div>
                                 <div className="px-4 text-center">
                                     <div>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-[#2A3663]">
-                                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                             className="text-[#2A3663]">
+                                            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor"
+                                                  strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                                         </svg>
                                     </div>
                                 </div>
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div><EnvironmentOutlined className="text-[#2A3663] text-base"/></div>
-                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">To</span>
+                                        <span
+                                            className="text-xs font-medium text-gray-500 uppercase tracking-wide">To</span>
                                     </div>
-                                    <span className="text-sm font-semibold text-gray-700 block truncate pl-2">{itinerary.dropOffLocation}</span>
+                                    <span
+                                        className="text-sm font-semibold text-gray-700 block truncate pl-2">{itinerary.dropOffLocation}</span>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +118,8 @@ const ItineraryCard = ({itinerary, navigate, currency  ,avgRating }) => {
                                     <TeamOutlined className="text-[#2A3663]"/>
                                     <span className="text-xs text-gray-500">Accessibility</span>
                                 </div>
-                                <span className="text-sm font-medium text-gray-700 block truncate">{itinerary.accessibility || 'N/A'}</span>
+                                <span
+                                    className="text-sm font-medium text-gray-700 block truncate">{itinerary.accessibility || 'N/A'}</span>
                             </div>
                         </div>
                     </div>
@@ -91,28 +127,23 @@ const ItineraryCard = ({itinerary, navigate, currency  ,avgRating }) => {
                         <div className="bg-white rounded-lg p-3">
                             <span className="text-xs text-gray-500 block mb-1">Price per person</span>
                             <div className="flex items-center space-x-1">
-                                <span className="text-base font-semibold text-[#2A3663] bg-gray-50 px-2 py-1 rounded">{currency?.code}</span>
-                                <span className="text-3xl font-bold text-[#2A3663]">{(itinerary.price * currency?.rate).toFixed(2)}</span>
+                                <span
+                                    className="text-base font-semibold text-[#2A3663] bg-gray-50 px-2 py-1 rounded">{currency?.code}</span>
+                                <span
+                                    className="text-3xl font-bold text-[#2A3663]">{(itinerary.price * currency?.rate).toFixed(2)}</span>
                             </div>
                         </div>
                         <Button
                             type={itinerary.isBookingOpen ? "danger" : "default"}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (user) {
-                                    navigate(`/itinerary/book/${itinerary._id}`);
-                                } else {
-                                    setIsLoginModalOpen(true);
-                                }
-                            }}
+                            onClick={handleBookClick}
                             className={`px-6 h-10 rounded-lg font-medium ${
                                 itinerary.isBookingOpen
                                     ? 'bg-blue-950 hover:bg-black text-white'
                                     : 'bg-gray-100 text-gray-500 cursor-not-allowed hover:bg-gray-100'
                             }`}
-                            disabled={!itinerary.isBookingOpen }
+                            disabled={!itinerary.isBookingOpen}
                         >
-                            {itinerary.isBookingOpen  ? "Book Now" : "Not Available"}
+                            {itinerary.isBookingOpen ? "Book Now" : "Not Available"}
                         </Button>
                     </div>
                 </div>

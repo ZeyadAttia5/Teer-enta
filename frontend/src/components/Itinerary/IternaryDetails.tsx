@@ -202,6 +202,11 @@ const ItineraryDetails: React.FC = () => {
           open={isLoginModalOpen}
           setOpen={setIsLoginModalOpen}
           content="Please login to Book an iternary."
+          onCancel={() => {
+            setIsLoginModalOpen(false);
+            // Prevent any navigation after modal closes
+            return false;
+          }}
         />
         {/* Hero Section */}
         <div className="relative h-[400px] overflow-hidden">

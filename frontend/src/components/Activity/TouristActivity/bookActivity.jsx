@@ -111,6 +111,11 @@ const BookActivity = () => {
                 open={isLoginModalOpen}
                 setOpen={setIsLoginModalOpen}
                 content="Please login to Book an Activity."
+                onCancel={() => {
+                    setIsLoginModalOpen(false);
+                    // Prevent any navigation after modal closes
+                    return false;
+                }}
             />
             <div className="max-w-4xl mx-auto">
                 {/* Main Card Container */}

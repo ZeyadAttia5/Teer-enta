@@ -10,7 +10,6 @@ const LoginConfirmationModal = ({
                                     okText = 'Login',
                                     cancelText = 'Cancel',
                                     onCancel,
-                                    redirectPath = `${window.location.origin}/login`,
                                     open,
                                     setOpen,
                                     width = 400
@@ -19,7 +18,7 @@ const LoginConfirmationModal = ({
 
     const handleOk = () => {
         setOpen(false);
-        navigate(redirectPath);
+        navigate('/login', { replace: true });
     };
 
     const handleCancel = () => {

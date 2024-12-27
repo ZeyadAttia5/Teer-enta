@@ -183,6 +183,11 @@ const TransportationCard = ({ item, currency, onBook }) => {
           open={isLoginModalOpen}
           setOpen={setIsLoginModalOpen}
           content="Please login to book transportation."
+          onCancel={() => {
+            setIsLoginModalOpen(false);
+            // Prevent any navigation after modal closes
+            return false;
+          }}
       />
       <Badge.Ribbon
         text={item.isActive ? "Active" : "Inactive"}

@@ -57,9 +57,6 @@ const ActivityCard = ({
         fetchAddress();
     }, [location?.lat, location?.lng]);
 
-    const handleActivityDetails = () => {
-        navigate(`/itinerary/activityDetails/${id}`);
-    };
 
     const handleLocationClick = (e) => {
         e.stopPropagation();
@@ -81,6 +78,22 @@ const ActivityCard = ({
         } catch (error) {
             console.error("Error saving activity:", error);
             message.warning(error.response.data.message);
+        }
+    };
+
+    const handleActivityDetails = (e) => {
+        // Don't navigate if login modal is open
+        if (!isLoginModalOpen) {
+            navigate(`/itinerary/activityDetails/${id}`);
+        }
+    };
+
+    const handleBookClick = (e) => {
+        e.stopPropagation();
+        if (user) {
+            navigate(`/touristActivities/book/${id}`);
+        } else {
+            setIsLoginModalOpen(true);
         }
     };
 
@@ -118,6 +131,10 @@ const ActivityCard = ({
                 open={isLoginModalOpen}
                 setOpen={setIsLoginModalOpen}
                 content="Please login to Book an Activity."
+                onCancel={() => {
+                    setIsLoginModalOpen(false);
+                    return false;
+                }}
             />
             <div className="relative bg-white rounded-lg  overflow-hidden border border-gray-100">
                 {/* Image Section */}
@@ -127,7 +144,8 @@ const ActivityCard = ({
                         alt={name}
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 via-transparent to-transparent" />
+                    <div
+                        className="absolute inset-0 bg-gradient-to-t from-[#000000]/70 via-transparent to-transparent"/>
 
                     {/* Action Buttons - Reduced Size */}
                     {user && (
@@ -139,9 +157,9 @@ const ActivityCard = ({
                                          hover:scale-105 hover:bg-white cursor-pointer"
                                 >
                                     {isSaved ? (
-                                        <HeartFilled className="text-red-500 text-base" />
+                                        <HeartFilled className="text-red-500 text-base"/>
                                     ) : (
-                                        <HeartOutlined className="text-gray-600 text-base hover:text-red-500" />
+                                        <HeartOutlined className="text-gray-600 text-base hover:text-red-500"/>
                                     )}
                                 </button>
                             </Tooltip>
@@ -153,9 +171,9 @@ const ActivityCard = ({
                                          hover:scale-105 hover:bg-white cursor-pointer"
                                     >
                                         {isNotified ? (
-                                            <BellFilled className="text-[#FFD700] text-base" />
+                                            <BellFilled className="text-[#FFD700] text-base"/>
                                         ) : (
-                                            <BellOutlined className="text-gray-600 text-base hover:text-[#FFD700]" />
+                                            <BellOutlined className="text-gray-600 text-base hover:text-[#FFD700]"/>
                                         )}
                                     </button>
                                 </Tooltip>
@@ -164,7 +182,8 @@ const ActivityCard = ({
                     )}
 
                     {/* Title and Rating */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-gray-400/30 via-gray-400/30 to-transparent">
+                    <div
+                        className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-gray-400/30 via-gray-400/30 to-transparent">
                         <h3 className="text-white text-2xl font-bold tracking-wide truncate mb-2">{name}</h3>
                         <div className="flex items-center space-x-3">
                             <Rate
@@ -189,7 +208,8 @@ const ActivityCard = ({
                             : 'bg-red-100 text-red-700 border border-red-200'
                         }`}
                         >
-                            <span className={`w-1.5 h-1.5 rounded-full ${isBookingOpen ? 'bg-green-500' : 'bg-red-500'} mr-2`}></span>
+                            <span
+                                className={`w-1.5 h-1.5 rounded-full ${isBookingOpen ? 'bg-green-500' : 'bg-red-500'} mr-2`}></span>
                             {isBookingOpen ? 'Booking Open' : 'Booking Closed'}
                         </div>
 
@@ -200,7 +220,7 @@ const ActivityCard = ({
                                     key={index}
                                     className="bg-yellow-50 text-yellow-800 border border-yellow-200 px-3 py-1 rounded-md text-sm font-medium flex items-center gap-2"
                                 >
-                                    <DollarOutlined className="text-sm" />
+                                    <DollarOutlined className="text-sm"/>
                                     {`${discount.discount}% OFF`}
                                 </div>
                             )
@@ -213,22 +233,25 @@ const ActivityCard = ({
                     {/* Info Grid */}
                     <div className="grid grid-cols-2 gap-4">
                         <Tooltip title="Date">
-                            <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                                <CalendarOutlined className="text-[#2A3663] text-lg" />
+                            <div
+                                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <CalendarOutlined className="text-[#2A3663] text-lg"/>
                                 <span className="text-sm font-medium text-gray-700">
                                 {new Date(date)?.toLocaleDateString()}
                             </span>
                             </div>
                         </Tooltip>
                         <Tooltip title="Time">
-                            <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                                <ClockCircleOutlined className="text-[#2A3663] text-lg" />
+                            <div
+                                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <ClockCircleOutlined className="text-[#2A3663] text-lg"/>
                                 <span className="text-sm font-medium text-gray-700">{time}</span>
                             </div>
                         </Tooltip>
                         <Tooltip title="Category">
-                            <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                                <FolderOutlined className="text-[#2A3663] text-lg" />
+                            <div
+                                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <FolderOutlined className="text-[#2A3663] text-lg"/>
                                 <span className="text-sm font-medium text-gray-700 truncate">{category || "N/A"}</span>
                             </div>
                         </Tooltip>
@@ -237,7 +260,7 @@ const ActivityCard = ({
                                 className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                                 onClick={handleLocationClick}
                             >
-                                <EnvironmentOutlined className="text-[#2A3663] text-lg" />
+                                <EnvironmentOutlined className="text-[#2A3663] text-lg"/>
                                 <span className="text-sm font-medium text-gray-700">View Location</span>
                             </div>
                         </Tooltip>
@@ -251,21 +274,14 @@ const ActivityCard = ({
                                 <span className="text-base font-semibold text-[#2A3663] bg-gray-50 px-2 py-1 rounded">
                                     {currencyCode}
                                 </span>
-                                                        <span className="text-3xl font-bold text-[#2A3663]">
+                                <span className="text-3xl font-bold text-[#2A3663]">
                                     {price?.min ? (currencyRate * price?.min).toFixed(2) : "N/A"}
                                 </span>
                             </div>
                         </div>
                         <Button
                             type={isBookingOpen ? "danger" : "default"}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (user) {
-                                    navigate(`/touristActivities/book/${id}`);
-                                } else {
-                                   setIsLoginModalOpen(true);
-                                }
-                            }}
+                            onClick={handleBookClick}
                             className={`px-6 h-10 rounded-lg font-medium shadow-sm ${
                                 isBookingOpen
                                     ? 'bg-[#2A3663] hover:bg-black text-white'

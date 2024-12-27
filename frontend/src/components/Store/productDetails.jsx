@@ -168,6 +168,11 @@ const ProductDetails = ({ setFlag }) => {
           open={isLoginModalOpen}
           setOpen={setIsLoginModalOpen}
           content="Please login to add this product to your cart."
+          onCancel={() => {
+            setIsLoginModalOpen(false);
+            // Prevent any navigation after modal closes
+            return false;
+          }}
       />
       <div className="w-[90%]  py-8 px-4 sm:px-6 lg:px-8">
         {loading ? (

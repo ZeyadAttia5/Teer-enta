@@ -110,6 +110,11 @@ const BookItinerary = () => {
                 open={isLoginModalOpen}
                 setOpen={setIsLoginModalOpen}
                 content="Please login to Book an iternary."
+                onCancel={() => {
+                    setIsLoginModalOpen(false);
+                    // Prevent any navigation after modal closes
+                    return false;
+                }}
             />
             <div className="max-w-4xl mx-auto">
                 <Card className="border-0" bodyStyle={{ padding: 0 }}>
